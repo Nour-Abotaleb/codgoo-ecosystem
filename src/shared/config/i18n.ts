@@ -3,21 +3,32 @@ import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 
 import commonEn from "@assets/locales/en/common.json";
-import commonEs from "@assets/locales/es/common.json";
+import commonAr from "@assets/locales/ar/common.json";
 import landingEn from "@features/landing/locales/en.json";
-import landingEs from "@features/landing/locales/es.json";
+import landingAr from "@features/landing/locales/ar.json";
 
 export const defaultNS = "common";
-export const supportedLanguages = ["en", "es"] as const;
+export const supportedLanguages = ["en", "ar"] as const;
+
+const rtlLanguages = new Set<string>(["ar"]);
+
+const applyLanguageAttributes = (language: string) => {
+  if (typeof document === "undefined") {
+    return;
+  }
+
+  document.documentElement.lang = language;
+  document.documentElement.dir = rtlLanguages.has(language) ? "rtl" : "ltr";
+};
 
 const resources = {
   en: {
     common: commonEn,
     landing: landingEn
   },
-  es: {
-    common: commonEs,
-    landing: landingEs
+  ar: {
+    common: commonAr,
+    landing: landingAr
   }
 } as const;
 
@@ -37,7 +48,12 @@ void i18n
       order: ["querystring", "localStorage", "navigator"],
       caches: ["localStorage"]
     }
+  })
+  .then(() => {
+    applyLanguageAttributes(i18n.language);
   });
+
+i18n.on("languageChanged", applyLanguageAttributes);
 
 export { i18n };
 

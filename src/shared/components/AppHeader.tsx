@@ -1,8 +1,8 @@
 import { NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-import { LanguageSwitcher } from "./language-switcher";
-import { ThemeToggle } from "./theme-toggle";
+import { LanguageSwitcher } from "./LanguageSwitcher";
+import { ThemeToggle } from "./ThemeToggle";
 
 export const AppHeader = () => {
   const { t } = useTranslation("common");

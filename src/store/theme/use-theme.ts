@@ -1,14 +1,27 @@
-import { useContext } from "react";
+import { useCallback } from "react";
 
-import { ThemeContext } from "./theme-context";
+import { useAppDispatch, useAppSelector } from "../hooks";
+import { selectTheme, setTheme, toggleTheme } from "./theme-slice";
 
 export const useTheme = () => {
-  const context = useContext(ThemeContext);
+  const dispatch = useAppDispatch();
+  const theme = useAppSelector(selectTheme);
 
-  if (!context) {
-    throw new Error("useTheme must be used within a ThemeProvider");
-  }
+  const handleToggle = useCallback(() => {
+    dispatch(toggleTheme());
+  }, [dispatch]);
 
-  return context;
+  const handleSetTheme = useCallback(
+    (value: "light" | "dark") => {
+      dispatch(setTheme(value));
+    },
+    [dispatch]
+  );
+
+  return {
+    theme,
+    toggleTheme: handleToggle,
+    setTheme: handleSetTheme
+  };
 };
 

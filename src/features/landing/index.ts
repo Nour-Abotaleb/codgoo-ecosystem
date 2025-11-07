@@ -1,2 +1,2 @@
-export { LandingHero } from "./ui/landing-hero";
+export { LandingHero } from "./ui/LandingHero";
 

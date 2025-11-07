@@ -1,0 +1,19 @@
+{
+  "app": {
+    "title": "منظومة كودغو",
+    "tagline": "انطلاقة React موجهة للميزات مع Vite وTailwind وi18n"
+  },
+  "navigation": {
+    "home": "الرئيسية",
+    "docs": "التوثيق",
+    "language": "اللغة"
+  },
+  "actions": {
+    "learnMore": "اعرف المزيد",
+    "getStarted": "ابدأ الآن"
+  },
+  "footer": {
+    "madeWith": "صنع بحب ❤️ بعقلية تركز على الميزات"
+  }
+}
+

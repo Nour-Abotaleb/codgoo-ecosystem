@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 
-import { AppHeader } from "@shared/components/app-header";
-import { AppFooter } from "@shared/components/app-footer";
+import { AppFooter } from "@shared/components/AppFooter";
+import { AppHeader } from "@shared/components/AppHeader";
 
 type AppLayoutProps = {
   readonly children: ReactNode;
