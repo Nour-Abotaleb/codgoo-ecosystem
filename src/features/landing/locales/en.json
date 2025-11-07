@@ -1,0 +1,11 @@
+{
+  "hero": {
+    "headline": "Ship features, not folders",
+    "subheading": "Organize your domain by features and keep translations, services, and UI together."
+  },
+  "cta": {
+    "primary": "Explore features",
+    "secondary": "View architecture"
+  }
+}
+

@@ -1,0 +1,19 @@
+{
+  "app": {
+    "title": "Codgoo Ecosystem",
+    "tagline": "Feature-first React starter with Vite, Tailwind, and i18n"
+  },
+  "navigation": {
+    "home": "Home",
+    "docs": "Documentation",
+    "language": "Language"
+  },
+  "actions": {
+    "learnMore": "Learn more",
+    "getStarted": "Get started"
+  },
+  "footer": {
+    "madeWith": "Made with ❤️ from a feature-oriented mindset"
+  }
+}
+

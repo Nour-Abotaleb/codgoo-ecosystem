@@ -1,0 +1,19 @@
+{
+  "app": {
+    "title": "Codgoo Ecosystem",
+    "tagline": "Inicio para React orientado a funcionalidades con Vite, Tailwind e i18n"
+  },
+  "navigation": {
+    "home": "Inicio",
+    "docs": "Documentación",
+    "language": "Idioma"
+  },
+  "actions": {
+    "learnMore": "Aprender más",
+    "getStarted": "Comenzar"
+  },
+  "footer": {
+    "madeWith": "Hecho con ❤️ desde una mentalidad orientada a funcionalidades"
+  }
+}
+
