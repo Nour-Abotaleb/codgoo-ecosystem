@@ -1,4 +1,5 @@
-import { ReactNode, useEffect } from "react";
+import { useEffect } from "react";
+import type { ReactNode } from "react";
 
 import { useAppSelector } from "../hooks";
 import { selectTheme } from "./theme-slice";

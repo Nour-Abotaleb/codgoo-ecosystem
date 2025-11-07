@@ -29,6 +29,7 @@
       "@routes/*": ["./routes/*"],
       "@services/*": ["./services/*"],
       "@shared/*": ["./shared/*"],
+      "@store": ["./store/index.ts"],
       "@store/*": ["./store/*"]
     },
     "resolveJsonModule": true,
