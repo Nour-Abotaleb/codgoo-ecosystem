@@ -26,6 +26,7 @@
       "@/*": ["./*"],
       "@assets/*": ["./assets/*"],
       "@features/*": ["./features/*"],
+      "@utilities/*": ["./utilities/*"],
       "@routes/*": ["./routes/*"],
       "@services/*": ["./services/*"],
       "@shared/*": ["./shared/*"],
