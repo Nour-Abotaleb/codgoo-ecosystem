@@ -3,21 +3,9 @@ import { useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
 import { selectTheme, setTheme, toggleTheme } from "@store/theme/theme-slice";
 
-import {
-  dashboardApps,
-  dashboardContent,
-  statusColors
-} from "./constants";
+import { dashboardApps, dashboardContent } from "./constants";
 import { DashboardHeader } from "./components/DashboardHeader";
-import { DashboardHero } from "./components/DashboardHero";
-import { ManagedSitesGrid } from "./components/ManagedSitesGrid";
 import { DashboardSidebar } from "./components/DashboardSidebar";
-import { DashboardStatsGrid } from "./components/DashboardStatsGrid";
-import { DomainsPanel } from "./components/DomainsPanel";
-import { ProductsTable } from "./components/ProductsTable";
-import { RecentNewsPanel } from "./components/RecentNewsPanel";
-import { SupportTicketsPanel } from "./components/SupportTicketsPanel";
-import { UtilityPanels } from "./components/UtilityPanels";
 import type { DashboardAppId, DashboardTokens } from "./types";
 
 export const DashboardPage = () => {
@@ -84,7 +72,7 @@ export const DashboardPage = () => {
             onToggleTheme={handleToggleTheme}
           />
 
-          {/* {hasPlaceholder ? (
+          {hasPlaceholder ? (
             <div
               className={`${tokens.cardBase} flex flex-col items-start gap-4 rounded-[32px] px-8 py-10 text-left`}
             >
@@ -98,31 +86,7 @@ export const DashboardPage = () => {
                 Sidebar navigation updated for this workspace
               </p>
             </div>
-          ) : (
-            <>
-              <DashboardHero tokens={tokens} hero={dataset.hero} />
-              <DashboardStatsGrid stats={dataset.stats} tokens={tokens} />
-
-              <div className="grid gap-8 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-                <div className="flex flex-col gap-8">
-                  <ProductsTable products={dataset.products} tokens={tokens} />
-                  <UtilityPanels tokens={tokens} />
-                </div>
-
-                <div className="flex flex-col gap-8">
-                  <DomainsPanel
-                    domains={dataset.domains}
-                    statusColors={statusColors}
-                    tokens={tokens}
-                  />
-                  <SupportTicketsPanel tickets={dataset.tickets} tokens={tokens} />
-                  <RecentNewsPanel news={dataset.news} tokens={tokens} />
-                </div>
-              </div>
-
-              <ManagedSitesGrid sites={dataset.sites} tokens={tokens} />
-            </>
-          )} */}
+          ) : null}
         </div>
       </section>
     </div>
