@@ -20,14 +20,14 @@ export const PasswordField = ({
       <span className="pointer-events-none absolute left-5 top-0 -translate-y-[40%] bg-white px-2 text-base md:text-lg font-medium tracking-wide text-black">
         {label}
       </span>
-      <div className="flex h-14 items-center overflow-hidden rounded-[16px] border border-[#E6E6E6] bg-white text-sm text-slate-700 transition focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20">
+      <div className="flex h-14 items-center overflow-hidden rounded-[16px] border border-[color:var(--color-auth-border)] bg-white text-sm text-slate-700 transition focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20">
         <input
           id={name}
           name={name}
           type={isVisible ? "text" : "password"}
           placeholder={placeholder}
           autoComplete={autoComplete}
-          className="h-full w-full border-none bg-transparent px-5 text-sm text-[#6B6B6B] placeholder:text-[#6B6B6B] focus:outline-none"
+          className="h-full w-full border-none bg-transparent px-5 text-sm text-[color:var(--color-auth-placeholder)] placeholder:text-[color:var(--color-auth-placeholder)] focus:outline-none"
         />
         <button
           type="button"

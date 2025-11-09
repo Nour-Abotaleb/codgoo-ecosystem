@@ -25,6 +25,8 @@ type DashboardSidebarProps = {
   readonly activeAppId: DashboardAppId;
   readonly onSelectApp: (id: DashboardAppId) => void;
   readonly navigationItems: readonly DashboardNavItem[];
+  readonly activeNavId: string;
+  readonly onSelectNav: (id: string) => void;
   readonly tokens: DashboardTokens;
 };
 
@@ -33,6 +35,8 @@ export const DashboardSidebar = ({
   activeAppId,
   onSelectApp,
   navigationItems,
+  activeNavId,
+  onSelectNav,
   tokens
 }: DashboardSidebarProps) => {
   const [isSwitcherOpen, setSwitcherOpen] = useState(false);
@@ -57,15 +61,12 @@ export const DashboardSidebar = ({
     return () => document.removeEventListener("mousedown", handleClick);
   }, [isSwitcherOpen]);
 
-  const popoverBaseClass = tokens.isDark
-    ? "bg-[#10122b] text-white ring-white/10"
-    : "bg-white/95 text-[#0f1035] ring-[#d8d6ff]";
-  const popoverActiveClass = tokens.isDark
-    ? "bg-white/10 text-white"
-    : "bg-[#ede8ff] text-[#2f276c]";
-  const popoverIdleClass = tokens.isDark
-    ? "text-white/70 hover:bg-white/5"
-    : "text-[#56608f] hover:bg-[#f7f4ff]";
+  const popoverBaseClass =
+    "bg-[var(--color-popover-bg)] text-[color:var(--color-popover-text)] ring-[color:var(--color-popover-ring)]";
+  const popoverActiveClass =
+    "bg-[var(--color-popover-active-bg)] text-[color:var(--color-popover-active-text)]";
+  const popoverIdleClass =
+    "text-[color:var(--color-popover-idle-text)] hover:bg-[var(--color-popover-hover-bg)]";
   const getInitials = (name: string) =>
     name
       .split(" ")
@@ -86,9 +87,9 @@ export const DashboardSidebar = ({
 
   return (
     <aside
-      className={`dashboard__sidebar fixed inset-y-0 left-0 z-20 hidden min-h-screen w-72 flex-col border-r py-14 lg:flex ${tokens.sidebarClass}`}
+      className={`dashboard__sidebar fixed inset-y-0 left-0 z-20 hidden min-h-screen w-64 pe-1 flex-col py-14 lg:flex ${tokens.sidebarClass}`}
     >
-      <div className="relative flex justify-center gap-6 border-b border-[#232637] pb-4">
+      <div className="relative flex justify-center gap-6 border-b border-[color:var(--color-sidebar-divider)] pb-4">
         <img src={activeLogo} alt={`${activeAppId} logo`} className="h-10 md:h-auto w-auto" />
         <div ref={switcherRef} className="relative">
           <button
@@ -96,7 +97,11 @@ export const DashboardSidebar = ({
             aria-haspopup="true"
             aria-expanded={isSwitcherOpen}
             onClick={() => setSwitcherOpen((prev) => !prev)}
-              className={`mt-1 md:mt-2 inline-flex ${activeAppId === "app" ? "text-black" : "text-white/80"}`}
+            className={`mt-1 inline-flex md:mt-2 ${
+              activeAppId === "app"
+                ? "text-[color:var(--color-switcher-icon-active)]"
+                : "text-[color:var(--color-switcher-icon-inactive)]"
+            }`}
           >
             <DotsSwitcher className="h-6 w-6 cursor-pointer" />
           </button>
@@ -138,17 +143,21 @@ export const DashboardSidebar = ({
         </div>
       </div>
 
-      <nav className="mt-12 flex flex-col px-4">
-        {navigationItems.map((item, index) => {
-          const isActive = index === 0;
+      <nav className="mt-12 flex flex-col px-2">
+        {navigationItems.map((item) => {
+          const isActive = item.id === activeNavId;
           const Icon = item.icon ? iconMap[item.icon] : undefined;
 
           return (
             <button
               key={item.id}
               type="button"
-              className={`relative flex items-center gap-4 overflow-hidden rounded-xl px-4 py-3 text-lg font-semibold text-white transition ${
-                isActive ? "" : "opacity-85 hover:opacity-100"
+              onClick={() => onSelectNav(item.id)}
+              aria-current={isActive ? "page" : undefined}
+              className={`relative flex items-center gap-2 overflow-hidden rounded-xl cursor-pointer px-2 py-3 text-lg font-semibold transition ${
+                isActive
+                  ? tokens.sidebarNavActiveText
+                  : `${tokens.sidebarNavIdleText} opacity-80 hover:opacity-100`
               }`}
             >
               {isActive && (
@@ -163,7 +172,7 @@ export const DashboardSidebar = ({
                   <PlaceholderIcon label={item.label} isActive={isActive} tokens={tokens} />
                 )}
               </span>
-              <span className="relative">{item.label}</span>
+              <span className="relative font-light">{item.label}</span>
             </button>
           );
         })}

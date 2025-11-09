@@ -9,7 +9,10 @@ export const LoginRoute = () => (
     bottomSlot={
       <span className="text-base md:text-lg text-black text-center">
         You do not have an account?{" "}
-        <Link to="/register" className="font-medium text-[#584ABC] hover:text-indigo-500 underline">
+        <Link
+          to="/register"
+          className="font-medium text-[color:var(--color-link)] hover:text-indigo-500 underline"
+        >
           Register now
         </Link>
       </span>

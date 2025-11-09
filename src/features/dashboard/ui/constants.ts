@@ -1,5 +1,5 @@
 import heroTexture from "@assets/images/cloud/widget2.png";
-import heroWave from "@assets/images/cloud/widget.png";
+import heroWave from "@assets/images/cloud/bg.png";
 import recentOne from "@assets/images/cloud/recent-1.png";
 import recentTwo from "@assets/images/cloud/recent-2.png";
 import logoApp from "@assets/logos/logo-app.svg";
@@ -14,6 +14,8 @@ import type {
   DomainStatus,
   NewsItem,
   ProductItem,
+  ServerService,
+  ServerServiceStatus,
   SiteItem,
   StatItem,
   TicketItem
@@ -23,10 +25,110 @@ export const supportChannels = ["Chat", "Tickets", "Knowledgebase"] as const;
 export type SupportChannel = (typeof supportChannels)[number];
 
 export const statusColors: Record<DomainStatus, string> = {
-  Active: "bg-emerald-500/15 text-emerald-300",
-  Pending: "bg-amber-500/15 text-amber-300",
+  // Active: "bg-emerald-500/15 text-emerald-300",
+  // Pending: "bg-amber-500/15 text-amber-300",
+  Active: "text-emerald-300",
+  Pending: "text-amber-300",
   Fraud: "bg-rose-500/15 text-rose-300"
 };
+
+export const serverServiceStatusStyles: Record<ServerServiceStatus, string> = {
+  Active: "text-white",
+  Pending: "text-white"
+};
+
+export const serverServices: readonly ServerService[] = [
+  {
+    id: "srv-001",
+    product: "11aveafrica.com",
+    plan: "(Starter cPanel)",
+    pricing: "$30.00 USD",
+    billingCycle: "Monthly",
+    nextDueDate: "2024-03-17",
+    status: "Pending"
+  },
+  {
+    id: "srv-002",
+    product: "5545dd.com",
+    plan: "(Pro)",
+    pricing: "$30.00 USD",
+    billingCycle: "Quarterly",
+    nextDueDate: "2024-03-17",
+    status: "Active"
+  },
+  {
+    id: "srv-003",
+    product: "5545dd.com",
+    plan: "(Pro)",
+    pricing: "$30.00 USD",
+    billingCycle: "Triennially",
+    nextDueDate: "2024-03-17",
+    status: "Pending"
+  },
+  {
+    id: "srv-004",
+    product: "5545dd.com",
+    plan: "(Pro)",
+    pricing: "$30.00 USD",
+    billingCycle: "Monthly",
+    nextDueDate: "2024-03-17",
+    status: "Active"
+  },
+  {
+    id: "srv-005",
+    product: "5545dd.com",
+    plan: "(Pro)",
+    pricing: "$30.00 USD",
+    billingCycle: "Monthly",
+    nextDueDate: "2024-03-17",
+    status: "Active"
+  },
+  {
+    id: "srv-006",
+    product: "5545dd.com",
+    plan: "(Pro)",
+    pricing: "$30.00 USD",
+    billingCycle: "Monthly",
+    nextDueDate: "2024-03-17",
+    status: "Pending"
+  },
+  {
+    id: "srv-007",
+    product: "5545dd.com",
+    plan: "(Pro)",
+    pricing: "$30.00 USD",
+    billingCycle: "Monthly",
+    nextDueDate: "2024-03-17",
+    status: "Pending"
+  },
+  {
+    id: "srv-008",
+    product: "5545dd.com",
+    plan: "(Pro)",
+    pricing: "$30.00 USD",
+    billingCycle: "Monthly",
+    nextDueDate: "2024-03-17",
+    status: "Pending"
+  },
+  {
+    id: "srv-009",
+    product: "5545dd.com",
+    plan: "(Pro)",
+    pricing: "$30.00 USD",
+    billingCycle: "Monthly",
+    nextDueDate: "2024-03-17",
+    status: "Pending"
+  },
+  {
+    id: "srv-010",
+    product: "5545dd.com",
+    plan: "(Pro)",
+    pricing: "$30.00 USD",
+    billingCycle: "Monthly",
+    nextDueDate: "2024-03-17",
+    status: "Active"
+  }
+] as const;
 
 export const heroAssets = {
   texture: heroTexture,
@@ -105,7 +207,6 @@ export const dashboardContent: Record<DashboardAppId, DashboardDataset> = {
   cloud: {
     navigation: cloudNavigation,
     hero: {
-      eyebrow: "Daily Website Backup",
       title: "Keep your sites safe in the Codgoo Cloud",
       highlights: [
         "Automatic daily backup of your website",
@@ -114,7 +215,7 @@ export const dashboardContent: Record<DashboardAppId, DashboardDataset> = {
         "One-click restore whenever you need it"
       ],
       priceLabel: "Starting from just",
-      price: "$209/month",
+      price: "$2.09/month",
       ctaLabel: "Get Started",
       gradient:
         "linear-gradient(125deg, rgba(124,77,255,0.9) 0%, rgba(73,43,210,0.85) 45%, rgba(26,21,60,0.95) 100%)"
@@ -159,7 +260,7 @@ export const dashboardContent: Record<DashboardAppId, DashboardDataset> = {
       {
         id: "#162796",
         title: "One Page Orderform Template Released",
-        tag: "Customer Reply",
+        tag: "Customer-Reply",
         date: "Sunday, June 22nd, 2025",
         time: "14:10"
       }
@@ -188,7 +289,6 @@ export const dashboardContent: Record<DashboardAppId, DashboardDataset> = {
   app: {
     navigation: appNavigation,
     hero: {
-      eyebrow: "Mobile Release Hub",
       title: "Ship Codgoo App updates without downtime",
       highlights: [
         "Automatic rollout waves with health checks",
@@ -214,7 +314,6 @@ export const dashboardContent: Record<DashboardAppId, DashboardDataset> = {
   software: {
     navigation: softwareNavigation,
     hero: {
-      eyebrow: "Operations Command",
       title: "Codgoo Software keeps teams in sync",
       highlights: [
         "Unified dashboards for engineering, ops, and finance",

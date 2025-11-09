@@ -6,6 +6,11 @@
     sans-serif;
   color-scheme: light dark;
   direction: ltr;
+  --color-auth-border: #e2e8f0;
+  --color-auth-placeholder: #94a3b8;
+  --color-auth-helper: #475569;
+  --color-link: #6366f1;
+  --color-nav-link: #584ABC;
 }
 
 body {

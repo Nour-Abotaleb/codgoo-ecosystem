@@ -135,12 +135,12 @@ export const PhoneField = ({ label, name = "phone", defaultCountry = "US" }: Pho
       <span className="pointer-events-none absolute left-5 top-0 -translate-y-[40%] bg-white px-2 text-base md:text-lg font-medium tracking-wide text-black">
         {label}
       </span>
-      <div className="flex h-14 items-center gap-3 rounded-[16px] border border-[#E6E6E6] bg-white pe-4 text-sm text-slate-600 transition focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20">
+      <div className="flex h-14 items-center gap-3 rounded-[16px] border border-[color:var(--color-auth-border)] bg-white pe-4 text-sm text-slate-600 transition focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20">
         <input
           type="tel"
           name={name}
           placeholder="Phone number"
-          className="w-full border-e border-[#E6E6E6] bg-transparent px-5 text-left text-sm text-slate-900 placeholder:text-[#6B6B6B] focus:outline-none"
+          className="w-full border-e border-[color:var(--color-auth-border)] bg-transparent px-5 text-left text-sm text-slate-900 placeholder:text-[color:var(--color-auth-placeholder)] focus:outline-none"
           autoComplete="tel"
           inputMode="tel"
         />

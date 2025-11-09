@@ -54,7 +54,7 @@ export const RegisterForm = () => {
         />
       </div>
 
-      <label className="mt-2 flex items-center gap-3 text-sm text-[#6B6B6B]">
+      <label className="mt-2 flex items-center gap-3 text-sm text-[color:var(--color-auth-placeholder)]">
         <span className="relative inline-flex">
           <input
             type="checkbox"

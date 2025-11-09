@@ -26,7 +26,7 @@ export const TextField = ({
       placeholder={placeholder}
       autoComplete={autoComplete}
       autoFocus={autoFocus}
-      className="h-14 w-full rounded-[16px] border border-[#E6E6E6] bg-white px-5 text-sm text-slate-700 transition placeholder:text-[#6B6B6B] focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+      className="h-14 w-full rounded-[16px] border border-[color:var(--color-auth-border)] bg-white px-5 text-sm text-slate-700 transition placeholder:text-[color:var(--color-auth-placeholder)] focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
     />
   </label>
 );

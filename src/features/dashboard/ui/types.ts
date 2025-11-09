@@ -3,6 +3,8 @@ export type DashboardTokens = {
   readonly rootClass: string;
   readonly sidebarClass: string;
   readonly cardBase: string;
+  readonly sidebarNavActiveText: string;
+  readonly sidebarNavIdleText: string;
   readonly subtleText: string;
   readonly divider: string;
   readonly buttonFilled: string;
@@ -73,7 +75,6 @@ export type NewsItem = {
 };
 
 export type DashboardHeroContent = {
-  readonly eyebrow: string;
   readonly title: string;
   readonly highlights: readonly string[];
   readonly priceLabel: string;
@@ -92,5 +93,17 @@ export type DashboardDataset = {
   readonly tickets: readonly TicketItem[];
   readonly news: readonly NewsItem[];
   readonly placeholder?: string;
+};
+
+export type ServerServiceStatus = "Active" | "Pending";
+
+export type ServerService = {
+  readonly id: string;
+  readonly product: string;
+  readonly plan: string;
+  readonly pricing: string;
+  readonly billingCycle: string;
+  readonly nextDueDate: string;
+  readonly status: ServerServiceStatus;
 };
 

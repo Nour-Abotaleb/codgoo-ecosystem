@@ -24,7 +24,9 @@ export const AuthTemplate = ({
           <h1 className="text-2xl md:text-4xl font-semibold tracking-tight text-slate-900">
             {title}
           </h1>
-          <p className="font-extralight text-base md:text-lg text-[#6B6B6B]">{subtitle}</p>
+          <p className="font-extralight text-base md:text-lg text-[color:var(--color-auth-placeholder)]">
+            {subtitle}
+          </p>
         </header>
 
         <div className={className}>{children}</div>

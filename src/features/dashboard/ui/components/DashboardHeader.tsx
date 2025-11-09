@@ -13,6 +13,7 @@ import type { DashboardApp, DashboardTokens } from "../types";
 type DashboardHeaderProps = {
   readonly tokens: DashboardTokens;
   readonly activeApp: DashboardApp;
+  readonly activeNavigationLabel?: string;
   readonly subtitle?: string;
   readonly onToggleTheme: () => void;
 };
@@ -20,6 +21,7 @@ type DashboardHeaderProps = {
 export const DashboardHeader = ({
   tokens,
   activeApp,
+  activeNavigationLabel,
   subtitle,
   onToggleTheme
 }: DashboardHeaderProps) => {
@@ -29,29 +31,26 @@ export const DashboardHeader = ({
     [tokens.cardBase]
   );
 
-  const searchFieldClass = useMemo(
-    () =>
-      tokens.isDark
-        ? "bg-white/8 text-white placeholder:text-[#6B73A0]"
-        : "bg-white/60 text-[#22274a] placeholder:text-[#727aa5]",
-    [tokens.isDark]
-  );
+  const searchFieldClass =
+    "bg-[var(--color-search-bg)] text-[color:var(--color-search-text)] placeholder:text-[color:var(--color-search-placeholder)]";
 
   const iconButtonClass = useMemo(
     () =>
-      `${tokens.buttonGhost} flex h-10 w-10 items-center justify-center rounded-full`,
-    [tokens.buttonGhost]
+      `flex h-10 w-10 items-center justify-center rounded-full`,
+    []
   );
+
+  const pageLabel = activeNavigationLabel ?? activeApp.name;
 
   return (
     <header className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
       <div>
         <p
-          className={`text-xs font-semibold uppercase tracking-[0.35em] ${tokens.subtleText}`}
+          className={`text-xs font-semibold uppercase tracking-[0.05em] ${tokens.subtleText}`}
         >
-          Pages / Dashboard
+          Pages / {pageLabel}
         </p>
-        <h1 className="mt-3 text-3xl font-semibold md:text-4xl">{activeApp.name}</h1>
+        <h1 className="mt-3 text-3xl font-semibold md:text-4xl">{pageLabel}</h1>
         {subtitle && (
           <p className={`mt-2 text-sm ${tokens.subtleText}`}>
             {subtitle}
