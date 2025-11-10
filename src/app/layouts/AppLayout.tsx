@@ -14,9 +14,8 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
 
   const { isAuthRoute, isDashboardRoute, containerClass, mainClass } = useMemo(() => {
     const authRoutes = new Set(["/login", "/register"]);
-    const dashboardRoutes = new Set(["/dashboard"]);
     const auth = authRoutes.has(location.pathname);
-    const dashboard = dashboardRoutes.has(location.pathname);
+    const dashboard = location.pathname.startsWith("/dashboard");
 
     return {
       isAuthRoute: auth,

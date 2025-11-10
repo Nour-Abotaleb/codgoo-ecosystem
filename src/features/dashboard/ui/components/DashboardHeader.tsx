@@ -22,7 +22,7 @@ export const DashboardHeader = ({
   tokens,
   activeApp,
   activeNavigationLabel,
-  subtitle,
+  // subtitle,
   onToggleTheme
 }: DashboardHeaderProps) => {
   const actionBarClass = useMemo(
@@ -45,17 +45,17 @@ export const DashboardHeader = ({
   return (
     <header className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
       <div>
-        <p
+        {/* <p
           className={`text-xs font-semibold uppercase tracking-[0.05em] ${tokens.subtleText}`}
         >
           Pages / {pageLabel}
-        </p>
-        <h1 className="mt-3 text-3xl font-semibold md:text-4xl">{pageLabel}</h1>
-        {subtitle && (
+        </p> */}
+        <h1 className="text-3xl font-semibold md:text-4xl">{pageLabel}</h1>
+        {/* {subtitle && (
           <p className={`mt-2 text-sm ${tokens.subtleText}`}>
             {subtitle}
           </p>
-        )}
+        )} */}
       </div>
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
