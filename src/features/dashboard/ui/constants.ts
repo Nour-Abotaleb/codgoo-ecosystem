@@ -183,7 +183,7 @@ const createNews = (items: NewsItem[]): NewsItem[] => items;
 const cloudNavigation: DashboardNavItem[] = [
   { id: "dashboard", label: "Dashboard", icon: "dashboard" },
   { id: "host", label: "Host", icon: "host" },
-  { id: "server", label: "Server", icon: "server" },
+  { id: "server", label: "Servers", icon: "server" },
   { id: "domains", label: "Domains", icon: "domains" },
   { id: "websites", label: "Websites", icon: "websites" },
   { id: "billing", label: "Billing", icon: "billing" }
