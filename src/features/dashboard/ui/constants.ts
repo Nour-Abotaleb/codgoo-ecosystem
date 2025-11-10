@@ -186,7 +186,8 @@ const cloudNavigation: DashboardNavItem[] = [
   { id: "server", label: "Servers", icon: "server" },
   { id: "domains", label: "Domains", icon: "domains" },
   { id: "websites", label: "Websites", icon: "websites" },
-  { id: "billing", label: "Billing", icon: "billing" }
+  { id: "billing", label: "Billing", icon: "billing" },
+  { id: "settings", label: "Settings", icon: "settings" }
 ];
 
 const appNavigation: DashboardNavItem[] = [

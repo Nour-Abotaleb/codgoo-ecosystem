@@ -7,7 +7,8 @@ import {
   DotsSwitcher,
   HostIcon,
   ServerIcon,
-  WebsitesIcon
+  WebsitesIcon,
+  SettingsIcon
 } from "@utilities/icons";
 
 import navBackground from "@assets/images/cloud/nav-bg.svg";
@@ -82,7 +83,8 @@ export const DashboardSidebar = ({
     server: ServerIcon,
     domains: DomainsIcon,
     websites: WebsitesIcon,
-    billing: BillingIcon
+    billing: BillingIcon,
+    settings: SettingsIcon
   };
 
   return (

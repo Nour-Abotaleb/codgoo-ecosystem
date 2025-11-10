@@ -26,7 +26,7 @@ export type DashboardApp = {
 export type DashboardNavItem = {
   readonly id: string;
   readonly label: string;
-  readonly icon?: "dashboard" | "host" | "server" | "domains" | "websites" | "billing";
+  readonly icon?: "dashboard" | "host" | "server" | "domains" | "websites" | "billing" | "settings";
 };
 
 export type StatItem = {

@@ -52,10 +52,9 @@ export const DashboardPage = () => {
         "--color-card-text": "#F5F6FF",
         "--color-text-subtle": "rgba(203,213,255,0.7)",
         "--color-border-divider": "#2E3141",
-        "--color-button-filled-bg":
-          "linear-gradient(120deg, rgba(124,77,255,0.95) 0%, rgba(73,43,210,0.95) 55%, rgba(26,21,60,0.95) 100%)",
+        "--color-button-filled-bg":"#7469C7",
         "--color-button-filled-text": "#F8FAFF",
-        "--color-button-ghost-bg": "rgba(124,77,255,0.12)",
+        "--color-button-ghost-bg": "#9A9B9C22",
         "--color-button-ghost-text": "#E2E8FF",
         "--color-surface-muted": "rgba(11,15,36,0.75)",
         "--color-icon-active": "#FFFFFF",
@@ -202,10 +201,10 @@ export const DashboardPage = () => {
     sidebarNavActiveText: "text-[var(--color-sidebar-nav-active-text)]",
     sidebarNavIdleText:
       "text-[var(--color-sidebar-nav-idle-text)] hover:text-[var(--color-sidebar-nav-active-text)]",
-    subtleText: "text-[var(--color-text-subtle)] font-light",
+    subtleText: "text-white font-light",
     divider: "border-[var(--color-border-divider)]",
     buttonFilled:
-      "bg-[var(--color-button-filled-bg)] text-[var(--color-button-filled-text)] shadow-[var(--color-button-shadow)]",
+      "bg-[var(--color-button-filled-bg)] text-[var(--color-button-filled-text)]",
     buttonGhost:
       "bg-[var(--color-button-ghost-bg)] text-[var(--color-button-ghost-text)]",
     surfaceMuted: "bg-[var(--color-surface-muted)]",
@@ -228,7 +227,7 @@ export const DashboardPage = () => {
       />
 
       <section className="flex min-h-screen flex-1 flex-col lg:ms-64 bg-[var(--color-shell-bg)] rounded-[32px] m-6 transition-colors duration-300">
-        <div className="flex flex-col gap-8 px-6 pb-12 pt-8">
+        <div className="flex flex-col gap-8 px-6 py-6">
           <DashboardHeader
             tokens={tokens}
             activeApp={activeApp}

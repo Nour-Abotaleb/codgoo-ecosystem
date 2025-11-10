@@ -33,7 +33,7 @@ export const ServerServicesView = ({
 
   const manageButtonClass = useMemo(
     () =>
-      `${tokens.buttonGhost} flex h-10 w-10 items-center justify-center rounded-full transition-colors duration-200 hover:opacity-90`,
+      `${tokens.buttonGhost} flex h-10 w-10 items-center justify-center cursor-pointer rounded-full transition-colors duration-200 hover:opacity-90`,
     [tokens.buttonGhost]
   );
 
