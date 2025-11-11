@@ -12,7 +12,7 @@ import {
 } from "@utilities/icons";
 
 import navBackground from "@assets/images/cloud/nav-bg.svg";
-import { dashboardAppLogos } from "../constants";
+import { dashboardAppLogos, dashboardAppLogosLight } from "../constants";
 import type {
   DashboardApp,
   DashboardAppId,
@@ -76,7 +76,9 @@ export const DashboardSidebar = ({
       .join("")
       .slice(0, 2) || name.slice(0, 2).toUpperCase();
 
-  const activeLogo = dashboardAppLogos[activeAppId] ?? dashboardAppLogos.cloud;
+  const activeLogo = tokens.isDark
+    ? dashboardAppLogos[activeAppId] ?? dashboardAppLogos.cloud
+    : dashboardAppLogosLight[activeAppId] ?? dashboardAppLogos[activeAppId] ?? dashboardAppLogos.cloud;
   const iconMap = {
     dashboard: DashboardIcon,
     host: HostIcon,
@@ -86,6 +88,12 @@ export const DashboardSidebar = ({
     billing: BillingIcon,
     settings: SettingsIcon
   };
+
+  const navActiveColorHex = tokens.isDark ? "#FEFEFE" : "#584ABC";
+  const navIdleColorHex = tokens.isDark ? "#C6CCDF" : "#A3AED0";
+
+  const navActiveColorClass = `text-[${navActiveColorHex}]`;
+  const navIdleColorClass = `text-[${navIdleColorHex}]`;
 
   return (
     <aside
@@ -100,9 +108,11 @@ export const DashboardSidebar = ({
             aria-expanded={isSwitcherOpen}
             onClick={() => setSwitcherOpen((prev) => !prev)}
             className={`mt-1 inline-flex md:mt-2 ${
-              activeAppId === "app"
-                ? "text-[color:var(--color-switcher-icon-active)]"
-                : "text-[color:var(--color-switcher-icon-inactive)]"
+              tokens.isDark
+                ? activeAppId === "app"
+                  ? "text-[color:var(--color-switcher-icon-active)]"
+                  : "text-[color:var(--color-switcher-icon-inactive)]"
+                : "text-[#584ABC]"
             }`}
           >
             <DotsSwitcher className="h-6 w-6 cursor-pointer" />
@@ -150,17 +160,21 @@ export const DashboardSidebar = ({
           const isActive = item.id === activeNavId;
           const Icon = item.icon ? iconMap[item.icon] : undefined;
 
+          const hoverColorClass = tokens.isDark ? "text-[#FEFEFE]" : "text-[#584ABC]";
+          const iconColorClass = isActive
+            ? navActiveColorClass
+            : `${navIdleColorClass} group-hover:${hoverColorClass}`;
+          const labelColorClass = isActive
+            ? `font-bold ${navActiveColorClass}`
+            : `font-light ${navIdleColorClass} group-hover:${hoverColorClass}`;
+
           return (
             <button
               key={item.id}
               type="button"
               onClick={() => onSelectNav(item.id)}
               aria-current={isActive ? "page" : undefined}
-              className={`relative flex items-center gap-2 overflow-hidden rounded-xl cursor-pointer px-2 py-3 text-lg font-semibold transition ${
-                isActive
-                  ? tokens.sidebarNavActiveText
-                  : `${tokens.sidebarNavIdleText} opacity-80 hover:opacity-100`
-              }`}
+              className="group relative flex cursor-pointer items-center gap-2 overflow-hidden rounded-xl px-2 py-3 text-lg font-semibold transition-colors"
             >
               {isActive && (
                 <span className="absolute inset-0">
@@ -169,12 +183,20 @@ export const DashboardSidebar = ({
               )}
               <span className="relative flex h-10 w-10 items-center justify-center">
                 {Icon ? (
-                  <Icon className="h-5 w-5" />
+                  <Icon className={`h-5 w-5 transition-colors ${iconColorClass}`} />
                 ) : (
-                  <PlaceholderIcon label={item.label} isActive={isActive} tokens={tokens} />
+                  <PlaceholderIcon
+                    label={item.label}
+                    isActive={isActive}
+                    tokens={tokens}
+                    activeClassName={`${navActiveColorClass} bg-transparent`}
+                    idleClassName={`${navIdleColorClass} bg-transparent group-hover:${hoverColorClass}`}
+                  />
                 )}
               </span>
-              <span className="relative font-light">{item.label}</span>
+              <span className={`relative transition-colors ${labelColorClass}`}>
+                {item.label}
+              </span>
             </button>
           );
         })}

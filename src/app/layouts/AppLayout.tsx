@@ -26,7 +26,7 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
           ? "bg-transparent text-white"
           : "bg-slate-950 text-slate-100",
       mainClass: auth
-        ? "flex flex-1 items-center justify-center px-4 py-10 sm:px-6 lg:px-8"
+        ? "flex flex-1"
         : dashboard
           ? "flex flex-1"
           : "flex flex-1 items-center justify-center px-4 py-10 sm:px-6 lg:px-8",

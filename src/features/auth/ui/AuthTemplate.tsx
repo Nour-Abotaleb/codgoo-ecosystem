@@ -17,7 +17,7 @@ export const AuthTemplate = ({
   bottomSlot,
   className,
 }: AuthTemplateProps) => (
-  <div className="flex w-full flex-1 items-center justify-center bg-white px-4 py-4 sm:px-6 lg:px-8">
+  <div className="flex w-full flex-1 min-h-screen items-center justify-center bg-white px-4 py-4 sm:px-6 lg:px-8">
     <div className="mx-auto grid w-full max-w-6xl items-center justify-items-center gap-16 md:min-h-[640px] md:grid-cols-[minmax(0,520px)_minmax(0,1fr)]">
       <div className="order-1 flex w-full max-w-xl flex-col gap-10 md:justify-self-start">
         <header className="space-y-3">

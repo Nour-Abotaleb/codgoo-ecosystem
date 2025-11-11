@@ -31,14 +31,17 @@ export const DashboardHeader = ({
     [tokens.cardBase]
   );
 
-  const searchFieldClass =
-    "bg-[var(--color-search-bg)] text-[color:var(--color-search-text)] placeholder:text-[color:var(--color-search-placeholder)]";
+  const searchFieldClass = tokens.isDark
+    ? "bg-[var(--color-search-bg)] text-[color:var(--color-search-text)] placeholder:text-[color:var(--color-search-placeholder)]"
+    : "bg-[#F4F7FE] text-[color:var(--color-search-text)] placeholder:text-[color:var(--color-search-placeholder)]";
 
   const iconButtonClass = useMemo(
     () =>
       `flex h-10 w-10 items-center justify-center rounded-full`,
     []
   );
+
+  const iconColorClass = tokens.isDark ? "text-white" : "text-[#A3AED0]";
 
   const pageLabel = activeNavigationLabel ?? activeApp.name;
 
@@ -50,7 +53,13 @@ export const DashboardHeader = ({
         >
           Pages / {pageLabel}
         </p> */}
-        <h1 className="text-3xl font-semibold md:text-4xl">{pageLabel}</h1>
+        <h1
+          className={`text-3xl font-semibold md:text-4xl ${
+            tokens.isDark ? "" : "text-[#584ABC]"
+          }`}
+        >
+          {pageLabel}
+        </h1>
         {/* {subtitle && (
           <p className={`mt-2 text-sm ${tokens.subtleText}`}>
             {subtitle}
@@ -74,7 +83,7 @@ export const DashboardHeader = ({
             className={iconButtonClass}
             aria-label="Notifications"
           >
-            <NotificationIcon className="h-5 w-5" />
+            <NotificationIcon className={`h-5 w-5 ${iconColorClass}`} />
           </button>
 
           <button
@@ -83,7 +92,7 @@ export const DashboardHeader = ({
             className={iconButtonClass}
             aria-label="Toggle theme"
           >
-            <DarkModeIcon className="h-5 w-5" />
+            <DarkModeIcon className={`h-5 w-5 ${iconColorClass}`} />
           </button>
 
           <button
@@ -91,7 +100,7 @@ export const DashboardHeader = ({
             className={iconButtonClass}
             aria-label="Cart"
           >
-            <CartIcon className="h-5 w-5" />
+            <CartIcon className={`h-5 w-5 ${iconColorClass}`} />
           </button>
 
           <img

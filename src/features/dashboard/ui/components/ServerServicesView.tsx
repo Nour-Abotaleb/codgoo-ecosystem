@@ -71,7 +71,7 @@ export const ServerServicesView = ({
             </button>
           </div>
         </div>
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mt-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mt-2">
           <div className="flex items-center gap-6 rounded-full p-1">
             <button
               type="button"

@@ -14,6 +14,8 @@ import { DashboardHeader } from "./components/DashboardHeader";
 import { DashboardSidebar } from "./components/DashboardSidebar";
 import { ServerServicesView } from "./components/ServerServicesView";
 import { ManageServerView } from "./components/ManageServerView";
+import { DomainsView } from "./components/DomainsView";
+import { DashboardOverview } from "./components/DashboardOverview";
 import type { DashboardAppId, DashboardTokens } from "./types";
 
 export const DashboardPage = () => {
@@ -201,7 +203,7 @@ export const DashboardPage = () => {
     sidebarNavActiveText: "text-[var(--color-sidebar-nav-active-text)]",
     sidebarNavIdleText:
       "text-[var(--color-sidebar-nav-idle-text)] hover:text-[var(--color-sidebar-nav-active-text)]",
-    subtleText: "text-white font-light",
+    subtleText: isDark ? "text-white/70" : "text-[var(--color-page-text)]/65",
     divider: "border-[var(--color-border-divider)]",
     buttonFilled:
       "bg-[var(--color-button-filled-bg)] text-[var(--color-button-filled-text)]",
@@ -234,7 +236,13 @@ export const DashboardPage = () => {
             activeNavigationLabel={activeNavigationItem?.label}
             onToggleTheme={handleToggleTheme}
           />
-          {activeNavId === "server" ? (
+          {activeNavId === "dashboard" ? (
+            <DashboardOverview
+              dataset={dataset}
+              tokens={tokens}
+              onManageDomain={() => handleSelectNav("domains")}
+            />
+          ) : activeNavId === "server" ? (
             manageMatch && selectedService ? (
               <ManageServerView
                 service={selectedService}
@@ -249,6 +257,8 @@ export const DashboardPage = () => {
                 onOpenService={handleOpenService}
               />
             )
+          ) : activeNavId === "domains" ? (
+            <DomainsView domains={dataset.domains} tokens={tokens} />
           ) : (
             <div className={`${tokens.cardBase} rounded-3xl p-10`}>
               <h2 className="text-2xl font-semibold">
