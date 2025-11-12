@@ -217,7 +217,6 @@ export const dashboardContent: Record<DashboardAppId, DashboardDataset> = {
     navigation: cloudNavigation,
     hero: {
       title: "Daily Website Backup",
-      description: "One-click restore whenever you need it",
       highlights: [
         "Automatic daily backup of your website",
         "Keep your WordPress or website updated automatically",

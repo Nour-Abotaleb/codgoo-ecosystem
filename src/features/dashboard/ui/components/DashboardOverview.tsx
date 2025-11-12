@@ -1,19 +1,17 @@
-import domainsBg from "@assets/images/cloud/domains-bg.png";
+// import domainsBg from "@assets/images/cloud/domains-bg.png";
 import heroWave from "@assets/images/cloud/bg.png";
 
-import { SearchIcon } from "@utilities/icons";
+// import { SearchIcon } from "@utilities/icons";
 
-import { statusColors } from "../constants";
+// import { statusColors } from "../constants";
 import type { DashboardDataset, DashboardTokens, DomainItem } from "../types";
+import { DiamondIcon, ArrowRightIcon } from "@utilities/icons";
 
 type DashboardOverviewProps = {
   readonly dataset: DashboardDataset;
   readonly tokens: DashboardTokens;
   readonly onManageDomain?: (domain: DomainItem) => void;
 };
-
-const cardBaseClass = (tokens: DashboardTokens) =>
-  `${tokens.cardBase} rounded-[28px] border border-[var(--color-card-border)] p-6 transition-colors`;
 
 const getHeroBackground = (tokens: DashboardTokens, dataset: DashboardDataset) => {
   const hero = dataset.hero;
@@ -35,68 +33,50 @@ const getHeroBackground = (tokens: DashboardTokens, dataset: DashboardDataset) =
 export const DashboardOverview = ({
   dataset,
   tokens,
-  onManageDomain
+  // onManageDomain
 }: DashboardOverviewProps) => {
-  const cardClass = cardBaseClass(tokens);
+  // const cardClass = cardBaseClass(tokens);
   const heroBackgroundStyle = getHeroBackground(tokens, dataset);
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Hero Section */}
       <section>
         <div
-          className="relative overflow-hidden rounded-[32px] p-8 text-white shadow-lg"
+          className="relative overflow-hidden rounded-[28px] px-8 py-8 text-white shadow-lg min-h-[240px]"
           style={{
             background: dataset.hero.gradient,
             ...heroBackgroundStyle
           }}
         >
-          <div className="relative z-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-            <div className="max-w-xl space-y-4">
-              <p className="text-sm font-semibold uppercase tracking-[0.3em] text-white/70">
-                {dataset.hero.priceLabel}
-              </p>
-              <h1 className="text-3xl font-semibold leading-tight md:text-4xl">
+          <div className="relative z-10 flex flex-col">
+            <div className="flex-1 space-y-4 md:space-y-5 max-w-2xl">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
                 {dataset.hero.title}
               </h1>
-              {dataset.hero.description ? (
-                <p className="text-sm text-white/85">{dataset.hero.description}</p>
-              ) : null}
-              <ul className="space-y-2 text-sm text-white/85">
+              <ul className="space-y-2.5 text-sm md:text-base text-white grid grid-cols-2 gap-2">
                 {dataset.hero.highlights.map((highlight) => (
                   <li key={highlight} className="flex items-start gap-3">
-                    <span className="mt-1 inline-block h-1.5 w-1.5 rounded-full bg-white/70" />
+                    <DiamondIcon className="h-4 w-4 mt-0.5 flex-shrink-0" />
                     <span>{highlight}</span>
                   </li>
                 ))}
               </ul>
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
-                <button
-                  type="button"
-                  className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2 text-sm font-semibold text-[#4F3BD3] shadow-md transition hover:opacity-90"
-                >
-                  {dataset.hero.ctaLabel}
-                </button>
-                <p className="text-sm text-white/75">
-                  <span className="font-semibold text-white">{dataset.hero.price}</span>
-                </p>
-              </div>
+            </div>
+            <div className="flex justify-end">
+              <button
+                type="button"
+                className="inline-flex items-center gap-2 rounded-full border-2 border-white bg-transparent px-5 md:px-6 py-2.5 md:py-3 text-sm font-semibold text-white transition hover:opacity-90 whitespace-nowrap"
+              >
+                <span>{dataset.hero.priceLabel} {dataset.hero.price}</span>
+                <ArrowRightIcon className="h-4 w-4 flex-shrink-0 [&_path]:stroke-white" />
+              </button>
             </div>
           </div>
-          <div className="absolute inset-x-0 bottom-8 flex justify-center gap-2">
-            {[0, 1, 2].map((index) => (
-              <span
-                key={index}
-                className={`h-2 w-2 rounded-full ${
-                  index === 0 ? "bg-white" : "bg-white/40"
-                }`}
-              />
-            ))}
-          </div>
-          <div className="pointer-events-none absolute inset-0 bg-black/10" />
         </div>
       </section>
 
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      {/* <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {dataset.stats.map((stat) => (
           <div
             key={stat.id}
@@ -106,9 +86,9 @@ export const DashboardOverview = ({
             <p className="text-2xl font-semibold text-[var(--color-page-text)]">{stat.value}</p>
           </div>
         ))}
-      </section>
+      </section> */}
 
-      <section className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+      {/* <section className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         <div className={cardClass}>
           <div className="flex items-center justify-between gap-2">
             <h3 className="text-lg font-semibold text-[var(--color-page-text)]">
@@ -342,7 +322,7 @@ export const DashboardOverview = ({
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
     </div>
   );
 };

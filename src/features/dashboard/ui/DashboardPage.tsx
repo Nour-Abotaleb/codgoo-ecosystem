@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { useMatch, useNavigate } from "react-router-dom";
+import { useMatch, useNavigate, useLocation } from "react-router-dom";
 
 import { useAppDispatch, useAppSelector } from "@store/hooks";
 import { selectTheme, setTheme, toggleTheme } from "@store/theme/theme-slice";
@@ -7,7 +7,6 @@ import { selectTheme, setTheme, toggleTheme } from "@store/theme/theme-slice";
 import {
   dashboardApps,
   dashboardContent,
-  serverServiceStatusStyles,
   serverServices
 } from "./constants";
 import { DashboardHeader } from "./components/DashboardHeader";
@@ -16,11 +15,13 @@ import { ServerServicesView } from "./components/ServerServicesView";
 import { ManageServerView } from "./components/ManageServerView";
 import { DomainsView } from "./components/DomainsView";
 import { DashboardOverview } from "./components/DashboardOverview";
+import { BillingView } from "./components/BillingView";
 import type { DashboardAppId, DashboardTokens } from "./types";
 
 export const DashboardPage = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const theme = useAppSelector(selectTheme);
   const isDark = theme === "dark";
   const [activeAppId, setActiveAppId] = useState<DashboardAppId>(dashboardApps[0].id);
@@ -54,8 +55,8 @@ export const DashboardPage = () => {
         "--color-card-text": "#F5F6FF",
         "--color-text-subtle": "rgba(203,213,255,0.7)",
         "--color-border-divider": "#2E3141",
-        "--color-button-filled-bg":"#7469C7",
-        "--color-button-filled-text": "#F8FAFF",
+        "--color-button-filled-bg": "#7469C7",
+        "--color-button-filled-text": "#FFFFFF",
         "--color-button-ghost-bg": "#9A9B9C22",
         "--color-button-ghost-text": "#E2E8FF",
         "--color-surface-muted": "rgba(11,15,36,0.75)",
@@ -97,8 +98,7 @@ export const DashboardPage = () => {
         "--color-card-text": "#111539",
         "--color-text-subtle": "rgba(30,41,109,0.6)",
         "--color-border-divider": "rgba(99,102,241,0.18)",
-        "--color-button-filled-bg":
-          "linear-gradient(120deg, rgba(119,69,255,0.95) 0%, rgba(116,97,255,0.95) 45%, rgba(147,114,255,0.9) 100%)",
+        "--color-button-filled-bg": "#7469C7",
         "--color-button-filled-text": "#FFFFFF",
         "--color-button-ghost-bg": "rgba(116,97,255,0.12)",
         "--color-button-ghost-text": "#4C1D95",
@@ -152,6 +152,35 @@ export const DashboardPage = () => {
     }
   }, [manageMatch, activeNavId]);
 
+  // Sync activeNavId with current route
+  useEffect(() => {
+    const path = location.pathname;
+    
+    // Handle manage-server route
+    if (path.includes("/manage-server/")) {
+      if (activeNavId !== "server") {
+        setActiveNavId("server");
+      }
+      return;
+    }
+
+    // Extract navId from path (e.g., /dashboard/domains -> domains)
+    const pathParts = path.split("/").filter(Boolean);
+    if (pathParts.length >= 2 && pathParts[0] === "dashboard") {
+      const routeNavId = pathParts[1];
+      // Check if this route corresponds to a valid nav item
+      const matchingNavItem = navigationItems.find((item) => item.id === routeNavId);
+      if (matchingNavItem && activeNavId !== routeNavId) {
+        setActiveNavId(routeNavId);
+      } else if (pathParts.length === 1 || (pathParts.length === 2 && routeNavId === "dashboard")) {
+        // Default to first nav item if at /dashboard or /dashboard/dashboard
+        if (activeNavId !== navigationItems[0]?.id) {
+          setActiveNavId(navigationItems[0]?.id ?? "");
+        }
+      }
+    }
+  }, [location.pathname, navigationItems, activeNavId]);
+
   const handleToggleTheme = () => {
     dispatch(toggleTheme());
   };
@@ -159,13 +188,14 @@ export const DashboardPage = () => {
   const handleSelectNav = useCallback(
     (navId: string) => {
       setActiveNavId(navId);
-      if (navId === "server") {
+      // Navigate to the appropriate route
+      if (navId === "dashboard") {
         navigate("/dashboard");
-      } else if (manageMatch) {
-        navigate("/dashboard");
+      } else {
+        navigate(`/dashboard/${navId}`);
       }
     },
-    [navigate, manageMatch]
+    [navigate]
   );
 
   const handleSelectApp = useCallback(
@@ -252,13 +282,14 @@ export const DashboardPage = () => {
             ) : (
               <ServerServicesView
                 services={serverServices}
-                statusStyles={serverServiceStatusStyles}
                 tokens={tokens}
                 onOpenService={handleOpenService}
               />
             )
           ) : activeNavId === "domains" ? (
             <DomainsView domains={dataset.domains} tokens={tokens} />
+          ) : activeNavId === "billing" ? (
+            <BillingView tokens={tokens} />
           ) : (
             <div className={`${tokens.cardBase} rounded-3xl p-10`}>
               <h2 className="text-2xl font-semibold">

@@ -11,20 +11,17 @@ import {
 
 import type {
   DashboardTokens,
-  ServerService,
-  ServerServiceStatus
+  ServerService
 } from "../types";
 
 type ServerServicesViewProps = {
   readonly services: readonly ServerService[];
-  readonly statusStyles: Record<ServerServiceStatus, string>;
   readonly tokens: DashboardTokens;
   readonly onOpenService?: (serviceId: string) => void;
 };
 
 export const ServerServicesView = ({
   services,
-  statusStyles,
   tokens,
   onOpenService
 }: ServerServicesViewProps) => {
@@ -90,7 +87,7 @@ export const ServerServicesView = ({
 
         <div className="mt-6 overflow-x-auto">
           <table className="min-w-full table-auto border-separate border-spacing-y-2">
-            <thead>
+            <thead className={tokens.isDark ? "" : "bg-[#F7F6FF]"}>
               <tr className="[&>th]:border-y [&>th]:border-[var(--color-border-divider)]">
                 <th className="whitespace-nowrap py-3 pe-6 text-left">
                   <span className={tableHeaderClass}>Product/Server</span>
@@ -111,9 +108,6 @@ export const ServerServicesView = ({
             </thead>
             <tbody>
               {services.map((service) => {
-                const statusClass =
-                  statusStyles[service.status] ?? "bg-slate-500/10 text-slate-300";
-
                 return (
                   <tr key={service.id} className="text-sm">
                     <td className="whitespace-nowrap px-6 py-3 pe-6 rounded-l-xl bg-[var(--color-table-row-bg)] transition-colors">
@@ -144,7 +138,9 @@ export const ServerServicesView = ({
                     </td>
                     <td className="whitespace-nowrap px-6 py-3 pe-6 bg-[var(--color-table-row-bg)] transition-colors">
                       <span
-                        className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm font-medium ${statusClass}`}
+                        className={`inline-flex items-center gap-1 text-sm font-medium ${
+                          tokens.isDark ? "text-white" : "text-[#2B3674]"
+                        }`}
                       >
                         {service.status === "Pending" ? <PendingIcon className="h-5 w-5" /> : <ActiveIcon className="h-5 w-5" />}
                         {service.status}
@@ -165,7 +161,7 @@ export const ServerServicesView = ({
                           className={manageButtonClass}
                           aria-label={`Server actions for ${service.product}`}
                         >
-                          <DeleteIcon className="h-4 w-4" />
+                          <DeleteIcon className={`h-4 w-4 ${tokens.isDark ? "" : "[&_path]:fill-[#584ABC]"}`} />
                         </button>
                       </div>
                     </td>

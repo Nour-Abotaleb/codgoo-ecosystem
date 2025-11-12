@@ -3,7 +3,6 @@ import { useMemo } from "react";
 import {
   SettingsIcon,
   DeleteIcon,
-  PlusCircleIcon,
   ServerIcon,
   KeyIcon,
   WebsitesIcon,
@@ -18,7 +17,9 @@ import {
   BandwidthIcon,
   DiskIcon,
   MemoryIcon,
-
+  ActiveIcon,
+  UnpaidIcon,
+  DomainsIcon,
 } from "@utilities/icons";
 import type { DashboardTokens, ServerService } from "../types";
 
@@ -41,7 +42,7 @@ export const ManageServerView = ({ service, tokens }: ManageServerViewProps) => 
         { label: "IP Address", value: "192.168.1.10" },
         { label: "OS", value: "192.168.1.10" }
       ] as const,
-    [service.plan]
+    []
   );
 
   const billingDetails = useMemo(
@@ -134,7 +135,7 @@ export const ManageServerView = ({ service, tokens }: ManageServerViewProps) => 
 
   const cardClass =
     "rounded-[24px] border border-[var(--color-card-border)] p-4 transition-colors";
-  const summaryCardClass = `bg-[var(--color-table-row-bg)] text-[var(--color-card-text)] rounded-2xl p-6 transition-colors`;
+  const summaryCardClass = `${tokens.isDark ? "bg-[var(--color-table-row-bg)]" : "bg-[#F4F4FF]"} text-[var(--color-card-text)] rounded-2xl p-6 transition-colors`;
   const usageCardClass =
     "rounded-[24px] border border-[var(--color-card-border)] p-6 transition-colors";
   const labelClass = `text-base ${tokens.subtleText}`;
@@ -164,7 +165,7 @@ export const ManageServerView = ({ service, tokens }: ManageServerViewProps) => 
             <span
               className={`${tokens.buttonGhost} inline-flex h-10 w-10 items-center justify-center rounded-full`}
             >
-              <ServerIcon className="h-6 w-6" />
+              <ServerIcon className={`h-6 w-6 ${tokens.isDark ? "" : "text-[#584ABC]"}`} />
             </span>
             <div className="flex flex-col">
               <h1 className="text-lg font-semibold md:text-2xl">{service.product}</h1>
@@ -205,7 +206,7 @@ export const ManageServerView = ({ service, tokens }: ManageServerViewProps) => 
               <span
                 className={`${tokens.buttonGhost} inline-flex h-10 w-10 items-center justify-center rounded-full`}
               >
-                <action.Icon className="h-5 w-5 md:h-6 md:w-6" />
+                <action.Icon className={`h-5 w-5 md:h-6 md:w-6 ${tokens.isDark ? "" : "[&_path]:fill-[#584ABC]"}`} />
               </span>
               <div className="flex items-center justify-between gap-3">
                 <span className="text-base font-light text-[var(--color-card-text)]">
@@ -219,7 +220,7 @@ export const ManageServerView = ({ service, tokens }: ManageServerViewProps) => 
                   <span
                     className={`inline-flex h-8 w-8 items-center justify-center rounded-full`}
                   >
-                    <ArrowRightIcon className="h-4 w-4 md:h-5 md:w-5" />
+                    <ArrowRightIcon className={`h-4 w-4 md:h-5 md:w-5 ${tokens.isDark ? "" : "[&_path]:stroke-[#584ABC]"}`} />
                   </span>
                 ) : null}
               </div>
@@ -229,7 +230,7 @@ export const ManageServerView = ({ service, tokens }: ManageServerViewProps) => 
       </div>
       {/* Billing & Renewal */}
       <div className="grid gap-6">
-        <div className="grid gap-6 xl:grid-cols-2">
+        <div className="grid gap-4 xl:grid-cols-2">
           <div className={`${tokens.cardBase} ${cardClass}`}>
             <div className="flex items-center justify-between">
               <h2 className={sectionTitleClass}>Billing &amp; Renewal</h2>
@@ -244,7 +245,7 @@ export const ManageServerView = ({ service, tokens }: ManageServerViewProps) => 
                     <span
                       className={`${tokens.buttonGhost} inline-flex h-6 w-6 items-center justify-center rounded-full`}
                     >
-                      <Icon className="h-4 w-4" />
+                      <Icon className={`h-4 w-4 ${tokens.isDark ? "" : "[&_path]:fill-[#584ABC]"}`} />
                     </span>
                     <div className="flex items-center justify-between">
                       <p className={labelClass}>{label}</p>
@@ -268,7 +269,7 @@ export const ManageServerView = ({ service, tokens }: ManageServerViewProps) => 
                 type="button"
                 className={`inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-base text-[#9E96D8]`}
               >
-                <ChangePaymentMethodIcon className="h-5 w-5" />
+                <ChangePaymentMethodIcon className={`h-5 w-5 ${tokens.isDark ? "" : "[&_path]:fill-[#584ABC]"}`} />
                 Change Payment Method
               </button>
             </div>
@@ -285,7 +286,7 @@ export const ManageServerView = ({ service, tokens }: ManageServerViewProps) => 
                     <span
                       className={`${tokens.buttonGhost} inline-flex h-10 w-10 items-center justify-center rounded-full`}
                     >
-                      <MetricIcon className="h-6 w-6" />
+                      <MetricIcon className={`h-6 w-6 ${tokens.isDark ? "" : "[&_path]:fill-[#584ABC]"}`} />
                     </span>
                     <div className="flex flex-col gap-1">
                       <div>
@@ -307,23 +308,23 @@ export const ManageServerView = ({ service, tokens }: ManageServerViewProps) => 
           </div>
         </div>
         {/* Website */}
-        <div className="grid items-stretch gap-6 grid-cols-1 lg:grid-cols-[2.4fr_1fr]">
+        <div className="grid items-stretch gap-4 grid-cols-1 lg:grid-cols-[2.4fr_1fr]">
           <div className="flex flex-col">
             <div className={`${tokens.cardBase} ${cardClass} h-full`}>
               <div className="flex items-center justify-between">
                 <h2 className={sectionTitleClass}>Website</h2>
-                <button
+                {/* <button
                   type="button"
                   className={`${tokens.buttonGhost} inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold`}
                 >
                   <PlusCircleIcon className="h-4 w-4" />
                   Add Site
-                </button>
+                </button> */}
               </div>
-              <div className="mt-6 overflow-x-auto">
+              <div className="mt-2 overflow-x-auto">
                 <table className="min-w-full table-auto border-separate border-spacing-y-3 text-sm">
-                  <thead>
-                    <tr className="text-left uppercase text-xs tracking-[0.18em] [&>th]:border-b [&>th]:border-[var(--color-border-divider)]">
+                  <thead className={tokens.isDark ? "" : "bg-[#F7F6FF]"}>
+                    <tr className="text-left uppercase text-xs [&>th]:border-b [&>th]:border-[var(--color-border-divider)]">
                       <th className="px-4 py-4">Domain Name</th>
                       <th className="px-4 py-4">Status</th>
                       <th className="px-4 py-4">Platform</th>
@@ -340,24 +341,30 @@ export const ManageServerView = ({ service, tokens }: ManageServerViewProps) => 
                         </td>
                         <td className="px-4 py-2">
                           <span
-                            className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
-                              row.status === "Active"
-                                ? "bg-emerald-500/10 text-emerald-300"
-                                : "bg-amber-500/10 text-amber-300"
+                            className={`inline-flex items-center gap-1 text-sm font-medium ${
+                              tokens.isDark ? "text-white" : "text-[#2B3674]"
                             }`}
                           >
+                            {row.status === "Active" ? (
+                              <ActiveIcon className="h-5 w-5" />
+                            ) : (
+                              <UnpaidIcon className="h-5 w-5" />
+                            )}
                             {row.status}
                           </span>
                         </td>
                         <td className="px-4 py-2 text-[var(--color-card-text)]">{row.platform}</td>
                         <td className="px-4 py-2">
                           <span
-                            className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
-                              row.ssl === "Active"
-                                ? "bg-emerald-500/10 text-emerald-300"
-                                : "bg-rose-500/10 text-rose-300"
+                            className={`inline-flex items-center gap-1 text-sm font-medium ${
+                              tokens.isDark ? "text-white" : "text-[#2B3674]"
                             }`}
                           >
+                            {row.ssl === "Active" ? (
+                              <ActiveIcon className="h-5 w-5" />
+                            ) : (
+                              <UnpaidIcon className="h-5 w-5" />
+                            )}
                             {row.ssl}
                           </span>
                         </td>
@@ -369,14 +376,21 @@ export const ManageServerView = ({ service, tokens }: ManageServerViewProps) => 
                               className={`${tokens.buttonGhost} flex h-9 w-9 items-center justify-center rounded-full`}
                               aria-label={`Manage ${row.domain}`}
                             >
-                              <SettingsIcon className="h-4 w-4" />
+                              <SettingsIcon className={`h-4 w-4 ${tokens.isDark ? "" : "text-[#584ABC]"}`} />
                             </button>
                             <button
                               type="button"
                               className={`${tokens.buttonGhost} flex h-9 w-9 items-center justify-center rounded-full`}
                               aria-label={`Remove ${row.domain}`}
                             >
-                              <DeleteIcon className="h-4 w-4" />
+                              <DeleteIcon className={`h-4 w-4 ${tokens.isDark ? "" : "[&_path]:fill-[#584ABC]"}`} />
+                            </button>
+                            <button
+                              type="button"
+                              className={`${tokens.buttonGhost} flex h-9 w-9 items-center justify-center rounded-full`}
+                              aria-label={`Domain settings for ${row.domain}`}
+                            >
+                              <DomainsIcon className={`h-4 w-4 ${tokens.isDark ? "" : "text-[#584ABC]"}`} />
                             </button>
                           </div>
                         </td>
@@ -405,7 +419,7 @@ export const ManageServerView = ({ service, tokens }: ManageServerViewProps) => 
                         <p className="text-[#A3AED0] text-sm">{item.hint}</p>
                       ) : null}
                     </div>
-                    <span className="inline-flex items-center rounded-full bg-[var(--color-button-ghost-bg)] px-3.5 py-2 text-sm font-light text-[#EEEDF8]">
+                    <span className={`inline-flex items-center rounded-full bg-[var(--color-button-ghost-bg)] px-3.5 py-2 text-sm font-light ${tokens.isDark ? "text-[#EEEDF8]" : "text-[#362D73]"}`}>
                       {item.value}
                     </span>
                   </div>

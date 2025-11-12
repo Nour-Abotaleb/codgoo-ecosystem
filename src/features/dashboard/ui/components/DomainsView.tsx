@@ -1,18 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
+import { CartIcon, DomainsIcon, ProceedIcon } from "@utilities/icons";
 
 import {
   DotsSwitcher,
   BackupIcon,
   PendingIcon,
   ActiveIcon,
+  UnpaidIcon,
   SearchIcon,
   SettingsIcon,
 } from "@utilities/icons";
 
-import domainsBg from "@assets/images/cloud/domains-bg.png";
-
-import { statusColors } from "../constants";
 import type { DashboardTokens, DomainItem } from "../types";
 
 type DomainsViewProps = {
@@ -22,18 +21,17 @@ type DomainsViewProps = {
 
 type DomainPanel = "domains-table" | "manage-nameservers" | "nameserver-checkout" | "domain-overview";
 
-const autoRenewClass = (isEnabled: boolean) =>
-  isEnabled
-    ? "bg-emerald-500/10 text-emerald-300"
-    : "bg-slate-500/10 text-slate-300";
-
 const renderStatusIcon = (status: DomainItem["status"]) => {
   if (status === "Active") {
-    return <ActiveIcon className="h-4 w-4" />;
+    return <ActiveIcon className="h-5 w-5" />;
   }
 
   if (status === "Pending") {
-    return <PendingIcon className="h-4 w-4" />;
+    return <PendingIcon className="h-5 w-5" />;
+  }
+
+  if (status === "Fraud") {
+    return <UnpaidIcon className="h-5 w-5" />;
   }
 
   return (
@@ -72,7 +70,7 @@ const manageNameserversData = {
       price: "45 SAR / year",
       priceValue: 45,
       available: true,
-      ctaLabel: "Manage Nameservers"
+      ctaLabel: "Add To Cart"
     },
     {
       id: "primary-unavailable",
@@ -80,7 +78,7 @@ const manageNameserversData = {
       price: "45 SAR / year",
       priceValue: 45,
       available: false,
-      ctaLabel: "Manage Nameservers"
+      ctaLabel: "Add To Cart"
     }
   ] as const,
   suggestions: [
@@ -103,19 +101,23 @@ const manageNameserversData = {
   ] as const
 };
 
-const AvailabilityBadge = ({ available }: { readonly available: boolean }) => (
+const AvailabilityBadge = ({ 
+  available, 
+  tokens 
+}: { 
+  readonly available: boolean;
+  readonly tokens: DashboardTokens;
+}) => (
   <span
-    className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold ${
-      available
-        ? "bg-emerald-500/10 text-emerald-500"
-        : "bg-rose-500/10 text-rose-500"
+    className={`inline-flex items-center gap-1 text-sm font-medium ${
+      tokens.isDark ? "text-white" : "text-[#2B3674]"
     }`}
   >
-    <span
-      className={`h-2.5 w-2.5 rounded-full ${
-        available ? "bg-emerald-500" : "bg-rose-500"
-      }`}
-    />
+    {available ? (
+      <ActiveIcon className="h-5 w-5" />
+    ) : (
+      <UnpaidIcon className="h-5 w-5" />
+    )}
     {available ? "Available" : "Not Available"}
   </span>
 );
@@ -142,8 +144,7 @@ const nameserverAddOns: readonly NameserverAddOn[] = [
 
 const ManageNameserverCheckoutPanel = ({
   tokens,
-  option,
-  onBack
+  option
 }: NameserverCheckoutPanelProps) => {
   const [selectedAddOns, setSelectedAddOns] = useState<Record<string, boolean>>(() =>
     nameserverAddOns.reduce<Record<string, boolean>>((acc, addOn) => {
@@ -172,39 +173,44 @@ const ManageNameserverCheckoutPanel = ({
   const formatPrice = (value: number) => `${value} SAR`;
 
   return (
-    <div className={`${tokens.cardBase} rounded-[32px] border border-[var(--color-card-border)] p-6 shadow-sm transition-colors lg:p-8`}>
-      <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+    <div className={`${tokens.cardBase} rounded-[32px] border border-[var(--color-card-border)] lg:p-8`}>
+      {/* <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
         <div>
           <button type="button" onClick={onBack} className={`${tokens.buttonGhost} inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold`}>
             ← Back to Search
           </button>
-          <h2 className="mt-6 text-3xl font-semibold md:text-4xl">
-            Domains
-          </h2>
         </div>
-        <div className={`${tokens.buttonGhost} inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold`}>
-          Duration: 1 Year
-        </div>
-      </div>
+      </div> */}
 
-      <div className="mt-8 rounded-[28px] border border-[var(--color-border-divider)] bg-[var(--color-shell-bg)] p-6 transition-colors md:p-8">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h3 className="text-xl font-semibold text-[var(--color-page-text)]">{option.domain}</h3>
-            <p className={`text-sm ${tokens.subtleText}`}>Duration: 1 Year</p>
+      <div className="">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between border-b border-dashed border-[var(--color-border-divider)] pb-10">
+          <div className="flex items-center gap-4">
+            <span className={`flex h-10 w-10 items-center justify-center rounded-full ${
+              tokens.isDark
+                ? "bg-white/10"
+                : "bg-[#E6E3FF]"
+            }`}>
+              <DomainsIcon 
+                className={`h-5 w-5 ${tokens.isDark ? "" : "[&_path]:fill-[#584ABC]"}`}
+              />
+            </span>
+            <div>
+              <h3 className="text-xl font-semibold text-[var(--color-page-text)]">{option.domain}</h3>
+              <p className={`text-sm ${tokens.subtleText}`}>Duration: 1 Year</p>
+            </div>
           </div>
-          <div className={`${tokens.buttonFilled} inline-flex rounded-full px-5 py-2 text-sm font-semibold`}>
+          <div className="bg-[#EEEDF8] text-[#362D73] inline-flex rounded-full px-5 py-2 text-sm font-semibold">
             {formatPrice(option.priceValue)} / Year
           </div>
         </div>
 
         <div className="mt-8">
           <h4 className="text-base font-semibold text-[var(--color-page-text)]">Add-ons</h4>
-          <div className="mt-4 flex flex-col gap-3">
+          <div className="mt-4 flex flex-col">
             {nameserverAddOns.map((addOn) => (
               <label
                 key={addOn.id}
-                className="flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-[var(--color-border-divider)] bg-[var(--color-card-bg)] px-4 py-3 transition-colors hover:border-[var(--color-sidebar-border)]"
+                className="flex cursor-pointer items-center justify-between gap-2 px-4 py-3 transition-colors hover:border-[var(--color-sidebar-border)]"
               >
                 <div className="flex items-center gap-3">
                   <input
@@ -213,33 +219,53 @@ const ManageNameserverCheckoutPanel = ({
                     onChange={() => toggleAddOn(addOn.id)}
                     className="h-4 w-4 rounded border-[var(--color-border-divider)] accent-[#584ABC]"
                   />
-                  <span className="text-sm font-medium text-[var(--color-page-text)]">
+                  <span className="text-base font-medium text-[var(--color-page-text)]">
                     {addOn.label}
                   </span>
                 </div>
-                <span className="text-sm font-semibold text-[#584ABC]">+{formatPrice(addOn.price)}</span>
+                <span className="text-base font-semibold text-[#584ABC]">+{formatPrice(addOn.price)}</span>
               </label>
             ))}
           </div>
         </div>
 
-        <div className="mt-8 border-t border-[var(--color-border-divider)] pt-6">
-          <div className="flex flex-col gap-3 text-sm text-[var(--color-page-text)]">
+        <div className="mt-8 border-t border-dashed border-[var(--color-border-divider)] pt-6">
+          <div className={`flex flex-col gap-3 text-base ${
+            tokens.isDark ? "text-[var(--color-page-text)]" : "text-[#A3AED0]"
+          }`}>
             <div className="flex items-center justify-between">
               <span>Base Domain</span>
-              <span>{formatPrice(option.priceValue)}</span>
+              <span>
+                <span className={tokens.isDark ? "" : "text-[#3E3484]"}>
+                  {option.priceValue}
+                </span>
+                {" SAR"}
+              </span>
             </div>
             {nameserverAddOns.map((addOn) =>
               selectedAddOns[addOn.id] ? (
                 <div key={addOn.id} className="flex items-center justify-between text-sm">
                   <span>{addOn.label}</span>
-                  <span>+{formatPrice(addOn.price)}</span>
+                  <span>
+                    +
+                    <span className={tokens.isDark ? "" : "text-[#3E3484]"}>
+                      {addOn.price}
+                    </span>
+                    {" SAR"}
+                  </span>
                 </div>
               ) : null
             )}
-            <div className="flex items-center justify-between text-base font-semibold">
+            <div className={`flex items-center justify-between text-base font-semibold ${
+              tokens.isDark ? "text-[var(--color-page-text)]" : "text-[#A3AED0]"
+            }`}>
               <span>Total</span>
-              <span>{formatPrice(total)}</span>
+              <span>
+                <span className={tokens.isDark ? "" : "text-[#3E3484]"}>
+                  {total}
+                </span>
+                {" SAR"}
+              </span>
             </div>
           </div>
         </div>
@@ -249,6 +275,7 @@ const ManageNameserverCheckoutPanel = ({
             type="button"
             className={`${tokens.buttonFilled} inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold`}
           >
+            <ProceedIcon className="h-5 w-5" />
             Proceed To Checkout
           </button>
         </div>
@@ -259,16 +286,9 @@ const ManageNameserverCheckoutPanel = ({
 
 const ManageDomainOverviewPanel = ({
   tokens,
-  domain,
+  domain: _domain, // eslint-disable-line @typescript-eslint/no-unused-vars
   onBack
 }: ManageDomainOverviewPanelProps) => {
-  const statusChipClass =
-    domain.status === "Active"
-      ? "bg-emerald-500/10 text-emerald-300"
-      : domain.status === "Pending"
-      ? "bg-amber-500/10 text-amber-300"
-      : "bg-rose-500/10 text-rose-300";
-
   return (
     <div className={`${tokens.cardBase} rounded-[32px] border border-[var(--color-card-border)] p-6 shadow-sm transition-colors lg:p-8`}>
       <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
@@ -289,7 +309,7 @@ const ManageDomainOverviewPanel = ({
         </div>
       </div>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1.4fr)_minmax(0,1.2fr)]">
+      {/* <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1.4fr)_minmax(0,1.2fr)]">
         <div className="flex flex-col gap-6">
           <div className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-[#6446F7] via-[#846DFF] to-[#A58BFF] p-6 text-white shadow-lg">
             <div className="flex items-start justify-between gap-3">
@@ -423,7 +443,7 @@ const ManageDomainOverviewPanel = ({
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
@@ -449,17 +469,6 @@ const ManageNameserversPanel = ({
   return (
     <div className={`${tokens.cardBase} rounded-[28px] border border-[var(--color-card-border)] p-6 shadow-sm transition-colors`}>
       <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-        <div>
-          <p className={`text-xs font-semibold uppercase tracking-[0.4em] ${tokens.subtleText}`}>
-            Domain Search
-          </p>
-          <h2 className="mt-2 text-3xl font-semibold md:text-4xl">
-            Manage Nameservers
-          </h2>
-          <p className={`mt-2 text-sm ${tokens.subtleText}`}>
-            Check availability and update nameserver records for any domain.
-          </p>
-        </div>
         <button
           type="button"
           onClick={onBack}
@@ -536,8 +545,14 @@ const ManageNameserversPanel = ({
                   >
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center gap-3">
-                        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#E6E3FF] text-[#5B4FC9] dark:bg-white/10 dark:text-white">
-                          <BackupIcon className="h-5 w-5" />
+                        <span className={`flex h-10 w-10 items-center justify-center rounded-full ${
+                          tokens.isDark
+                            ? "bg-white/10"
+                            : "bg-[#E6E3FF]"
+                        }`}>
+                          <DomainsIcon 
+                            className={`h-5 w-5 ${tokens.isDark ? "" : "[&_path]:fill-[#584ABC]"}`}
+                          />
                         </span>
                         <div>
                           <p className="text-lg font-semibold text-[var(--color-page-text)]">
@@ -554,24 +569,21 @@ const ManageNameserversPanel = ({
                       </div>
                     </div>
 
-                    <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-                      <AvailabilityBadge available={item.available} />
-                      <button
-                        type="button"
-                        className={`${tokens.buttonFilled} inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold disabled:opacity-60 disabled:cursor-not-allowed`}
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          if (!isDisabled) {
+                    <div className="flex flex-col items-end gap-10">
+                      <AvailabilityBadge available={item.available} tokens={tokens} />
+                      {item.available ? (
+                        <button
+                          type="button"
+                          className={`${tokens.buttonFilled} inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-light`}
+                          onClick={(event) => {
+                            event.stopPropagation();
                             onOpenCheckout(item);
-                          }
-                        }}
-                        disabled={isDisabled}
-                      >
-                        <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/10 text-white">
-                          🛒
-                        </span>
-                        {item.ctaLabel}
-                      </button>
+                          }}
+                        >
+                          <CartIcon className="h-5 w-5" />
+                          {item.ctaLabel}
+                        </button>
+                      ) : null}
                     </div>
                   </div>
                 );
@@ -666,9 +678,15 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
     [tokens.buttonGhost]
   );
 
+  const filledButtonClass = useMemo(
+    () =>
+      `rounded-full px-4 py-1.5 text-sm font-semibold inline-flex items-center bg-[#7469C7] text-white`,
+    []
+  );
+
   const tableHeaderClass = useMemo(
     () =>
-      `text-xs uppercase tracking-[0.35em] ${tokens.subtleText}`,
+      `text-sm uppercase font-medium ${tokens.subtleText}`,
     [tokens.subtleText]
   );
 
@@ -684,15 +702,9 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
         <div className={`${tokens.cardBase} rounded-[28px] border border-[var(--color-card-border)] p-6 shadow-sm transition-colors`}>
           <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
             <div>
-              <p className={`text-xs font-semibold uppercase tracking-[0.4em] ${tokens.subtleText}`}>
-                Domains
-              </p>
               <h2 className="mt-2 text-3xl font-semibold md:text-4xl">
                 All Domains
               </h2>
-              <p className={`mt-2 text-sm ${tokens.subtleText}`}>
-                Manage DNS, renewals, and status for every domain in one place.
-              </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <div
@@ -707,9 +719,9 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
               </div>
               <button
                 type="button"
-                className={`${tokens.buttonFilled} inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold`}
+                className={`${filledButtonClass} gap-2`}
               >
-                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/10">
+                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white text-[#584ABC]">
                   +
                 </span>
                 Register Domain
@@ -725,13 +737,23 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
                   <DotsSwitcher className="h-4 w-4" />
                 </button>
                 {isActionsOpen ? (
-                  <div className="absolute right-0 z-20 mt-3 w-56 rounded-2xl border border-white/10 bg-white/95 p-1 text-left shadow-xl backdrop-blur-md dark:border-white/10 dark:bg-white/10">
+                  <div
+                    className={`absolute right-0 z-20 mt-3 w-56 rounded-2xl border p-1 text-left shadow-xl ${
+                      tokens.isDark
+                        ? "border-white/10 bg-white/10"
+                        : "border-gray-200 bg-white"
+                    }`}
+                  >
                     <ul className="flex flex-col">
                       {actions.map((action) => (
                         <li key={action.id}>
                           <button
                             type="button"
-                            className="w-full rounded-xl px-4 py-2 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-100 dark:hover:bg-white/10 dark:hover:text-white"
+                            className={`w-full rounded-xl px-4 py-2 text-left text-sm font-medium transition ${
+                              tokens.isDark
+                                ? "text-slate-100 hover:bg-white/10 hover:text-white"
+                                : "text-black hover:bg-gray-100 hover:text-black"
+                            }`}
                             onClick={() => handleSelectAction(action.id)}
                           >
                             {action.label}
@@ -749,7 +771,7 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
             <div className="flex items-center gap-3 text-sm font-medium">
               <button
                 type="button"
-                className={`${tokens.buttonFilled} rounded-full px-4 py-1.5 text-sm font-semibold`}
+                className={filledButtonClass}
               >
                 All Domains ({totalCount})
               </button>
@@ -772,7 +794,7 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
 
           <div className="mt-6 overflow-x-auto">
             <table className="min-w-full table-auto border-separate border-spacing-y-2">
-              <thead>
+              <thead className={tokens.isDark ? "" : "bg-[#F7F6FF]"}>
                 <tr className="[&>th]:border-y [&>th]:border-[var(--color-border-divider)]">
                   <th className="whitespace-nowrap py-3 pe-6 text-left">
                     <span className={tableHeaderClass}>Domain</span>
@@ -797,10 +819,6 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
               <tbody>
                 {hasDomains ? (
                   domains.map((domain) => {
-                    const statusClass =
-                      statusColors[domain.status] ??
-                      "bg-slate-500/10 text-slate-300";
-
                     return (
                       <tr
                         key={domain.id}
@@ -835,15 +853,17 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
                         </td>
                         <td className="bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
                           <span
-                            className={`inline-flex items-center gap-2 rounded-full px-4 py-1 text-xs font-semibold ${autoRenewClass(domain.autoRenew)}`}
+                            className={`inline-flex items-center gap-2 rounded-full px-2 py-1 text-sm font-semibold}`}
                           >
-                            <span className="h-2.5 w-2.5 rounded-full bg-current" />
+                            
                             {domain.autoRenew ? "Enabled" : "Disabled"}
                           </span>
                         </td>
                         <td className="bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
                           <span
-                            className={`inline-flex items-center gap-2 rounded-full px-4 py-1 text-sm font-semibold ${statusClass}`}
+                            className={`inline-flex items-center gap-1 text-sm font-medium ${
+                              tokens.isDark ? "text-white" : "text-[#2B3674]"
+                            }`}
                           >
                             {renderStatusIcon(domain.status)}
                             {domain.status}
@@ -864,7 +884,9 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
                               className={manageButtonClass}
                               aria-label={`More actions for ${domain.name}`}
                             >
-                              <BackupIcon className="h-4 w-4" />
+                              <BackupIcon 
+                                className={`h-4 w-4 ${tokens.isDark ? "" : "[&_path]:fill-[#584ABC]"}`}
+                              />
                             </button>
                           </div>
                         </td>
