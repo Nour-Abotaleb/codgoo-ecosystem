@@ -3,6 +3,7 @@ import heroWave from "@assets/images/cloud/bg.png";
 import recentOne from "@assets/images/cloud/recent-1.png";
 import recentTwo from "@assets/images/cloud/recent-2.png";
 import logoApp from "@assets/logos/logo-app.svg";
+import logoCloudLight from "@assets/logos/logo-cloud-light.svg";
 import logoCloudPng from "@assets/logos/logo-cloud.png";
 import logoCloudSvg from "@assets/logos/logo-cloud.svg";
 
@@ -25,11 +26,9 @@ export const supportChannels = ["Chat", "Tickets", "Knowledgebase"] as const;
 export type SupportChannel = (typeof supportChannels)[number];
 
 export const statusColors: Record<DomainStatus, string> = {
-  // Active: "bg-emerald-500/15 text-emerald-300",
-  // Pending: "bg-amber-500/15 text-amber-300",
-  Active: "text-emerald-300",
-  Pending: "text-amber-300",
-  Fraud: "bg-rose-500/15 text-rose-300"
+  Active: "bg-emerald-500/10 text-emerald-300",
+  Pending: "bg-amber-500/10 text-amber-300",
+  Fraud: "bg-rose-500/10 text-rose-300"
 };
 
 export const serverServiceStatusStyles: Record<ServerServiceStatus, string> = {
@@ -159,6 +158,12 @@ export const dashboardAppLogos: Record<DashboardAppId, string> = {
   software: logoCloudPng
 };
 
+export const dashboardAppLogosLight: Record<DashboardAppId, string> = {
+  cloud: logoCloudLight,
+  app: logoApp,
+  software: logoCloudPng
+};
+
 const createStats = (values: [string, string, string, string]): StatItem[] => [
   { id: "hosting", label: "Active Hosting", value: values[0] },
   { id: "tickets", label: "Active Tickets", value: values[1] },
@@ -168,11 +173,14 @@ const createStats = (values: [string, string, string, string]): StatItem[] => [
 
 const createProducts = (items: ProductItem[]): ProductItem[] => items;
 
-const createDomains = (items: { id: string; name: string; status: DomainStatus }[]): {
+const createDomains = (items: {
   id: string;
   name: string;
+  registrationDate: string;
+  nextDueDate: string;
+  autoRenew: boolean;
   status: DomainStatus;
-}[] => items;
+}[]) => items;
 
 const createSites = (items: SiteItem[]): SiteItem[] => items;
 
@@ -208,10 +216,10 @@ export const dashboardContent: Record<DashboardAppId, DashboardDataset> = {
   cloud: {
     navigation: cloudNavigation,
     hero: {
-      title: "Keep your sites safe in the Codgoo Cloud",
+      title: "Daily Website Backup",
       highlights: [
         "Automatic daily backup of your website",
-        "Keep your WordPress or site updated automatically",
+        "Keep your WordPress or website updated automatically",
         "Monitor for malware and get alerts",
         "One-click restore whenever you need it"
       ],
@@ -219,7 +227,8 @@ export const dashboardContent: Record<DashboardAppId, DashboardDataset> = {
       price: "$2.09/month",
       ctaLabel: "Get Started",
       gradient:
-        "linear-gradient(125deg, rgba(124,77,255,0.9) 0%, rgba(73,43,210,0.85) 45%, rgba(26,21,60,0.95) 100%)"
+        "linear-gradient(135deg, rgba(64,41,158,0.95) 0%, rgba(98,52,204,0.95) 45%, rgba(168,113,255,0.9) 100%)",
+      backgroundImage: heroWave
     },
     stats: createStats(["24", "24", "24", "1"]),
     products: createProducts([
@@ -246,10 +255,86 @@ export const dashboardContent: Record<DashboardAppId, DashboardDataset> = {
       }
     ]),
     domains: createDomains([
-      { id: "codgoo", name: "Codgoo UI.com", status: "Active" },
-      { id: "codgoo-dashboard", name: "Codgoo UI.com", status: "Pending" },
-      { id: "marketplace", name: "Marketplace.com", status: "Fraud" },
-      { id: "weekly", name: "Weekly Updates.com", status: "Pending" }
+      {
+        id: "domain-001",
+        name: "Codgoo UI.com",
+        registrationDate: "2024-03-17",
+        nextDueDate: "2024-03-17",
+        autoRenew: true,
+        status: "Active"
+      },
+      {
+        id: "domain-002",
+        name: "Codgoo Dashboard.com",
+        registrationDate: "2024-03-17",
+        nextDueDate: "2024-03-17",
+        autoRenew: true,
+        status: "Pending"
+      },
+      {
+        id: "domain-003",
+        name: "Marketplace.com",
+        registrationDate: "2024-03-17",
+        nextDueDate: "2024-03-17",
+        autoRenew: true,
+        status: "Fraud"
+      },
+      {
+        id: "domain-004",
+        name: "Weekly Updates.com",
+        registrationDate: "2024-03-17",
+        nextDueDate: "2024-03-17",
+        autoRenew: true,
+        status: "Pending"
+      },
+      {
+        id: "domain-005",
+        name: "codgoo.dev",
+        registrationDate: "2024-03-17",
+        nextDueDate: "2024-03-17",
+        autoRenew: true,
+        status: "Pending"
+      },
+      {
+        id: "domain-006",
+        name: "codgoo.app",
+        registrationDate: "2024-03-17",
+        nextDueDate: "2024-03-17",
+        autoRenew: true,
+        status: "Pending"
+      },
+      {
+        id: "domain-007",
+        name: "codgoo.software",
+        registrationDate: "2024-03-17",
+        nextDueDate: "2024-03-17",
+        autoRenew: true,
+        status: "Pending"
+      },
+      {
+        id: "domain-008",
+        name: "codgoo-suite.com",
+        registrationDate: "2024-03-17",
+        nextDueDate: "2024-03-17",
+        autoRenew: true,
+        status: "Pending"
+      },
+      {
+        id: "domain-009",
+        name: "codgoo-labs.com",
+        registrationDate: "2024-03-17",
+        nextDueDate: "2024-03-17",
+        autoRenew: true,
+        status: "Pending"
+      },
+      {
+        id: "domain-010",
+        name: "codgoo-beta.com",
+        registrationDate: "2024-03-17",
+        nextDueDate: "2024-03-17",
+        autoRenew: true,
+        status: "Pending"
+      }
     ]),
     sites: createSites([
       { id: "business", name: "mybusiness.com", type: "WordPress" },

@@ -28,16 +28,15 @@ export const RegisterForm = () => {
           placeholder="Email"
           autoComplete="email"
         />
+         <PhoneField label="Phone number" />
       </div>
-
+{/* 
       <TextField
         name="company"
         label="Enter Legal Name of Company"
         placeholder="Enter Legal Name of Company"
         autoComplete="organization"
-      />
-
-      <PhoneField label="Phone number" />
+      /> */}
 
       <div className="grid gap-5 grid-cols-1">
         <PasswordField
@@ -71,7 +70,7 @@ export const RegisterForm = () => {
 
       <button
         type="submit"
-        className="mt-2 inline-flex h-14 md:h-17 items-center cursor-pointer justify-center rounded-[32px] bg-black text-base md:text-xl font-medium text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+        className="mt-2 inline-flex h-14 items-center cursor-pointer justify-center rounded-[32px] bg-black text-base md:text-xl font-medium text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
         >
         Create
       </button>

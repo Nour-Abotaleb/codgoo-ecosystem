@@ -25,7 +25,7 @@ export const SocialProviders = ({ label, providers }: SocialProvidersProps) => (
           className="flex items-center justify-center cursor-pointer"
         >
           <span className="flex items-center justify-center">
-            <img src={provider.icon} alt="" className="w-10 h-10 md:w-auto md:h-auto" loading="lazy" />
+            <img src={provider.icon} alt="" className="w-8 h-8" loading="lazy" />
           </span>
         </button>
       ))}

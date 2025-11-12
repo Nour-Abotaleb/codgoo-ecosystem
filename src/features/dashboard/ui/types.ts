@@ -48,6 +48,9 @@ export type DomainStatus = "Active" | "Pending" | "Fraud";
 export type DomainItem = {
   readonly id: string;
   readonly name: string;
+  readonly registrationDate: string;
+  readonly nextDueDate: string;
+  readonly autoRenew: boolean;
   readonly status: DomainStatus;
 };
 
@@ -77,10 +80,13 @@ export type NewsItem = {
 export type DashboardHeroContent = {
   readonly title: string;
   readonly highlights: readonly string[];
+  readonly description?: string;
   readonly priceLabel: string;
   readonly price: string;
   readonly ctaLabel: string;
   readonly gradient: string;
+  readonly backgroundImage?: string;
+  readonly backgroundImageDark?: string;
 };
 
 export type DashboardDataset = {
