@@ -5,7 +5,6 @@ import {
   DeleteIcon,
   SettingsIcon,
   PendingIcon,
-  PlusCircleIcon,
   SearchIcon,
 } from "@utilities/icons";
 
@@ -42,7 +41,7 @@ export const ServerServicesView = ({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className={`${tokens.cardBase} rounded-[20px] p-6 shadow-sm border border-[var(--color-card-border)] transition-colors`}>
+      <div className={`${tokens.cardBase} rounded-[20px] py-4 px-6 border border-[var(--color-card-border)] transition-colors`}>
         <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
           <div>
             <h2 className="text-3xl font-semibold md:text-4xl">All Servers</h2>
@@ -50,7 +49,7 @@ export const ServerServicesView = ({
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <div
-              className={`flex h-12 w-full items-center gap-3 rounded-full px-4 sm:w-68 border ${tokens.divider} bg-[var(--color-search-bg)] text-[var(--color-search-text)] transition-colors`}
+              className={`flex h-11 w-full items-center gap-3 rounded-full px-4 sm:w-68 border ${tokens.divider} bg-[var(--color-search-bg)] text-[var(--color-search-text)] transition-colors`}
             >
               <SearchIcon className="w-5 text-[var(--color-search-placeholder)]" />
               <input
@@ -61,9 +60,11 @@ export const ServerServicesView = ({
             </div>
             <button
               type="button"
-              className={`${tokens.buttonFilled} inline-flex items-center justify-center gap-1 rounded-full px-3 py-2.5 text-sm md:text-base font-semibold`}
+              className={`${tokens.buttonFilled} inline-flex items-center justify-center gap-1 rounded-full px-3 py-2 text-sm font-semibold`}
             >
-              <PlusCircleIcon className="h-4 w-4 md:h-5 md:w-5" />
+               <span className="inline-flex h-6 w-6 items-center justify-center text-sm rounded-full bg-white text-[#584ABC]">
+                  +
+                </span>
               Order New Server
             </button>
           </div>
@@ -85,7 +86,7 @@ export const ServerServicesView = ({
           </div>
         </div>
 
-        <div className="mt-6 overflow-x-auto">
+        <div className="mt-2 overflow-x-auto">
           <table className="min-w-full table-auto border-separate border-spacing-y-2">
             <thead className={tokens.isDark ? "" : "bg-[#F7F6FF]"}>
               <tr className="[&>th]:border-y [&>th]:border-[var(--color-border-divider)]">

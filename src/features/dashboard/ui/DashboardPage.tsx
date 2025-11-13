@@ -14,8 +14,14 @@ import { DashboardSidebar } from "./components/DashboardSidebar";
 import { ServerServicesView } from "./components/ServerServicesView";
 import { ManageServerView } from "./components/ManageServerView";
 import { DomainsView } from "./components/DomainsView";
+import { ManageDomainView } from "./components/ManageDomainView";
+import { RegisterDomainView } from "./components/RegisterDomainView";
 import { DashboardOverview } from "./components/DashboardOverview";
 import { BillingView } from "./components/BillingView";
+import { WebsitesView } from "./components/WebsitesView";
+import { ManageWebsiteView } from "./components/ManageWebsiteView";
+import { HostView } from "./components/HostView";
+import { ManageHostView } from "./components/ManageHostView";
 import type { DashboardAppId, DashboardTokens } from "./types";
 
 export const DashboardPage = () => {
@@ -31,6 +37,10 @@ export const DashboardPage = () => {
     [activeAppId]
   );
   const manageMatch = useMatch("/dashboard/manage-server/:serviceId");
+  const manageDomainMatch = useMatch("/dashboard/manage-domain/:domainId");
+  const manageNameserversMatch = useMatch("/dashboard/manage-nameservers");
+  const manageWebsiteMatch = useMatch("/dashboard/manage-website/:websiteId");
+  const manageHostMatch = useMatch("/dashboard/manage-host/:hostId");
   const dataset = dashboardContent[activeApp.id];
   const navigationItems = dataset.navigation;
   const [activeNavId, setActiveNavId] = useState(() => navigationItems[0]?.id ?? "");
@@ -152,6 +162,24 @@ export const DashboardPage = () => {
     }
   }, [manageMatch, activeNavId]);
 
+  useEffect(() => {
+    if (manageDomainMatch && activeNavId !== "domains") {
+      setActiveNavId("domains");
+    }
+  }, [manageDomainMatch, activeNavId]);
+
+  useEffect(() => {
+    if (manageNameserversMatch && activeNavId !== "domains") {
+      setActiveNavId("domains");
+    }
+  }, [manageNameserversMatch, activeNavId]);
+
+  useEffect(() => {
+    if (manageWebsiteMatch && activeNavId !== "websites") {
+      setActiveNavId("websites");
+    }
+  }, [manageWebsiteMatch, activeNavId]);
+
   // Sync activeNavId with current route
   useEffect(() => {
     const path = location.pathname;
@@ -160,6 +188,38 @@ export const DashboardPage = () => {
     if (path.includes("/manage-server/")) {
       if (activeNavId !== "server") {
         setActiveNavId("server");
+      }
+      return;
+    }
+
+    // Handle manage-domain route
+    if (path.includes("/manage-domain/")) {
+      if (activeNavId !== "domains") {
+        setActiveNavId("domains");
+      }
+      return;
+    }
+
+    // Handle manage-nameservers route
+    if (path.includes("/manage-nameservers")) {
+      if (activeNavId !== "domains") {
+        setActiveNavId("domains");
+      }
+      return;
+    }
+
+    // Handle manage-website route
+    if (path.includes("/manage-website/")) {
+      if (activeNavId !== "websites") {
+        setActiveNavId("websites");
+      }
+      return;
+    }
+
+    // Handle manage-host route
+    if (path.includes("/manage-host/")) {
+      if (activeNavId !== "host") {
+        setActiveNavId("host");
       }
       return;
     }
@@ -259,7 +319,7 @@ export const DashboardPage = () => {
       />
 
       <section className="flex min-h-screen flex-1 flex-col lg:ms-64 bg-[var(--color-shell-bg)] rounded-[32px] m-6 transition-colors duration-300">
-        <div className="flex flex-col gap-8 px-6 py-6">
+        <div className="flex flex-col gap-8 px-6 py-4">
           <DashboardHeader
             tokens={tokens}
             activeApp={activeApp}
@@ -272,6 +332,12 @@ export const DashboardPage = () => {
               tokens={tokens}
               onManageDomain={() => handleSelectNav("domains")}
             />
+          ) : activeNavId === "host" ? (
+            manageHostMatch ? (
+              <ManageHostView hostId={manageHostMatch.params.hostId ?? ""} tokens={tokens} />
+            ) : (
+              <HostView tokens={tokens} />
+            )
           ) : activeNavId === "server" ? (
             manageMatch && selectedService ? (
               <ManageServerView
@@ -287,7 +353,19 @@ export const DashboardPage = () => {
               />
             )
           ) : activeNavId === "domains" ? (
-            <DomainsView domains={dataset.domains} tokens={tokens} />
+            manageDomainMatch ? (
+              <ManageDomainView tokens={tokens} />
+            ) : manageNameserversMatch ? (
+              <RegisterDomainView tokens={tokens} />
+            ) : (
+              <DomainsView domains={dataset.domains} tokens={tokens} />
+            )
+          ) : activeNavId === "websites" ? (
+            manageWebsiteMatch ? (
+              <ManageWebsiteView tokens={tokens} />
+            ) : (
+              <WebsitesView sites={dataset.sites} tokens={tokens} />
+            )
           ) : activeNavId === "billing" ? (
             <BillingView tokens={tokens} />
           ) : (

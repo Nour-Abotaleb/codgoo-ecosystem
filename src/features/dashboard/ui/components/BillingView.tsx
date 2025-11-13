@@ -343,7 +343,7 @@ const QuotesTable = ({ tokens }: { readonly tokens: DashboardTokens }) => {
 
 const MassPayment = ({ tokens }: { readonly tokens: DashboardTokens }) => {
   return (
-    <div className={`${tokens.cardBase} rounded-[28px] border border-[var(--color-card-border)] p-8 shadow-sm transition-colors`}>
+    <div className={`${tokens.cardBase} rounded-[28px] border border-[var(--color-card-border)] p-8 transition-colors`}>
       <h3 className="text-2xl font-semibold mb-4">Mass Payment</h3>
       <p className={`text-sm ${tokens.subtleText} mb-6`}>
         Pay multiple invoices at once using this feature. Select the invoices you want to pay and proceed with a single payment.
@@ -366,7 +366,7 @@ const MassPayment = ({ tokens }: { readonly tokens: DashboardTokens }) => {
 
 const AddFunds = ({ tokens }: { readonly tokens: DashboardTokens }) => {
   return (
-    <div className={`${tokens.cardBase} rounded-[28px] border border-[var(--color-card-border)] p-8 shadow-sm transition-colors`}>
+    <div className={`${tokens.cardBase} rounded-[28px] border border-[var(--color-card-border)] p-8 transition-colors`}>
       <h3 className="text-2xl font-semibold mb-4">Add Funds</h3>
       <p className={`text-sm ${tokens.subtleText} mb-6`}>
         Add funds to your account balance to pay for invoices automatically or use for future purchases.
@@ -429,10 +429,10 @@ export const BillingView = ({ tokens }: BillingViewProps) => {
   };
 
   return (
-    <div className={`${tokens.cardBase} rounded-[28px] border border-[var(--color-card-border)] p-6 shadow-sm transition-colors`}>
-      <div className="flex flex-col gap-6">
+    <div className={`${tokens.cardBase} rounded-[28px] border border-[var(--color-card-border)] px-6 py-4 transition-colors`}>
+      <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <h2 className="mt-2 text-3xl font-semibold md:text-4xl">
+          <h2 className="text-3xl font-semibold md:text-4xl">
             {tabs.find((tab) => tab.id === activeTab)?.label ?? "Billing"}
           </h2>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -458,7 +458,7 @@ export const BillingView = ({ tokens }: BillingViewProps) => {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 pb-4">
+        <div className="flex flex-wrap items-center gap-2">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id;
             return (
@@ -478,7 +478,7 @@ export const BillingView = ({ tokens }: BillingViewProps) => {
           })}
         </div>
 
-        <div className="mt-4">{renderTabContent()}</div>
+        <div className="">{renderTabContent()}</div>
       </div>
     </div>
   );
