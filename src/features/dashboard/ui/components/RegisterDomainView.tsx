@@ -103,7 +103,6 @@ type RegisterDomainViewProps = {
 const ManageNameserverCheckoutPanel = ({
   tokens,
   option,
-  onBack
 }: {
   readonly tokens: DashboardTokens;
   readonly option: NameserverOption;
@@ -136,21 +135,9 @@ const ManageNameserverCheckoutPanel = ({
   const formatPrice = (value: number) => `${value} SAR`;
 
   return (
-    <div className={`${tokens.cardBase} rounded-[32px] border border-[var(--color-card-border)] lg:p-8`}>
-      <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-        <div>
-          <button 
-            type="button" 
-            onClick={onBack} 
-            className={`${tokens.buttonGhost} inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold`}
-          >
-            ← Back to Search
-          </button>
-        </div>
-      </div>
-
-      <div className="mt-6">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between border-b border-dashed border-[var(--color-border-divider)] pb-10">
+    <div className={`${tokens.cardBase} rounded-[32px] border border-[var(--color-card-border)] px-6 py-4`}>
+      <div>
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between border-b border-dashed border-[var(--color-border-divider)] pb-6">
           <div className="flex items-center gap-4">
             <span className={`flex h-10 w-10 items-center justify-center rounded-full ${
               tokens.isDark
@@ -253,13 +240,15 @@ const ManageNameserverCheckoutPanel = ({
 
 const ManageNameserversSearchPanel = ({
   tokens,
-  onBack,
+  onBack: _onBack,
   onOpenCheckout
 }: {
   readonly tokens: DashboardTokens;
   readonly onBack: () => void;
   readonly onOpenCheckout: (option: NameserverOption) => void;
 }) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  void _onBack;
   const sections = [
     {
       id: "primary",
@@ -274,19 +263,8 @@ const ManageNameserversSearchPanel = ({
   ] as const;
 
   return (
-    <div className={`${tokens.cardBase} rounded-[28px] border border-[var(--color-card-border)] p-6 shadow-sm transition-colors`}>
-      <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="mt-6 text-3xl font-semibold tracking-tight lg:text-4xl">
-            Register Domain
-          </h1>
-          <p className={`mt-2 max-w-2xl text-sm leading-relaxed ${tokens.subtleText}`}>
-            Search for and register a new domain name for your website.
-          </p>
-        </div>
-      </div>
-
-      <div className="mt-8 flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
+    <div className={`${tokens.cardBase} rounded-[28px] border border-[var(--color-card-border)] px-6 py-4 transition-colors`}>
+      <div className="mt-4 flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
         <div className={`flex h-12 flex-1 items-center gap-3 rounded-full border ${tokens.divider} bg-[var(--color-search-bg)] px-4 text-[var(--color-search-text)] transition-colors`}>
           <SearchIcon className="h-5 w-5 text-[var(--color-search-placeholder)]" />
           <input
@@ -296,10 +274,11 @@ const ManageNameserversSearchPanel = ({
             className="flex-1 bg-transparent text-sm text-[var(--color-search-text)] placeholder:text-[var(--color-search-placeholder)] focus:outline-none"
           />
         </div>
-        <div className="flex h-12 items-center gap-2 rounded-full border border-[var(--color-border-divider)] bg-[var(--color-card-bg)] px-4 text-sm transition-colors">
+        {/* Domain TLD */}
+        <div className="flex h-12 w-64 items-center gap-2 rounded-full border border-[var(--color-border-divider)] bg-[var(--color-card-bg)] px-4 text-sm transition-colors">
           <select
             defaultValue={manageNameserversData.tld}
-            className="bg-transparent text-sm text-[var(--color-page-text)] focus:outline-none"
+            className="w-full bg-transparent text-sm text-[var(--color-page-text)] focus:outline-none"
           >
             <option value=".com">.com</option>
             <option value=".net">.net</option>
@@ -314,7 +293,7 @@ const ManageNameserversSearchPanel = ({
         </button>
       </div>
 
-      <div className="mt-10 flex flex-col gap-6">
+      <div className="mt-6 flex flex-col gap-6">
         {sections.map((section) => (
           <div key={section.id} className="flex flex-col gap-4">
             {section.id === "suggestions" ? (

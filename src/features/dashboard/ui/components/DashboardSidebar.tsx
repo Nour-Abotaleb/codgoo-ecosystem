@@ -8,7 +8,9 @@ import {
   HostIcon,
   ServerIcon,
   WebsitesIcon,
-  SettingsIcon
+  SettingsIcon,
+  SupportIcon,
+  Logout
 } from "@utilities/icons";
 
 import navBackground from "@assets/images/cloud/nav-bg.svg";
@@ -95,6 +97,8 @@ export const DashboardSidebar = ({
   const navActiveColorClass = `text-[${navActiveColorHex}]`;
   const navIdleColorClass = `text-[${navIdleColorHex}]`;
 
+  const hoverColorClass = tokens.isDark ? "text-[#FEFEFE]" : "text-[#584ABC]";
+
   return (
     <aside
       className={`dashboard__sidebar fixed inset-y-0 left-0 z-20 hidden min-h-screen w-64 pe-1 flex-col py-14 lg:flex ${tokens.sidebarClass}`}
@@ -160,7 +164,6 @@ export const DashboardSidebar = ({
           const isActive = item.id === activeNavId;
           const Icon = item.icon ? iconMap[item.icon] : undefined;
 
-          const hoverColorClass = tokens.isDark ? "text-[#FEFEFE]" : "text-[#584ABC]";
           const iconColorClass = isActive
             ? navActiveColorClass
             : `${navIdleColorClass} group-hover:${hoverColorClass}`;
@@ -201,6 +204,26 @@ export const DashboardSidebar = ({
           );
         })}
       </nav>
+
+      <div className="mt-auto flex flex-row items-center justify-between border-t border-[color:var(--color-sidebar-divider)] px-2 pt-4">
+        <button
+          type="button"
+          className="group flex cursor-pointer items-center justify-center rounded-full bg-white w-11 h-11 transition-colors"
+        >
+          <Logout className={`h-5 w-5 transition-colors ${navIdleColorClass} group-hover:${hoverColorClass}`} />
+        </button>
+        <button
+          type="button"
+          className="group flex px-12 cursor-pointer items-center justify-center gap-1 rounded-full bg-[#7469C7] py-2.5 text-base font-semibold transition-colors"
+        >
+          <span className="relative flex items-center justify-center">
+            <SupportIcon className="h-5 w-5 transition-colors text-white" />
+          </span>
+          <span className="relative transition-colors font-light text-white">
+            Support
+          </span>
+        </button>
+      </div>
     </aside>
   );
 };

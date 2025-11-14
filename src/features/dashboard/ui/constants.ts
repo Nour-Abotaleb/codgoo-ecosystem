@@ -43,7 +43,7 @@ export const serverServices: readonly ServerService[] = [
     plan: "(Starter cPanel)",
     pricing: "$30.00 USD",
     billingCycle: "Monthly",
-    nextDueDate: "2024-03-17",
+    nextDueDate: "2026-03-17",
     status: "Pending"
   },
   {
@@ -52,7 +52,7 @@ export const serverServices: readonly ServerService[] = [
     plan: "(Pro)",
     pricing: "$30.00 USD",
     billingCycle: "Quarterly",
-    nextDueDate: "2024-03-17",
+    nextDueDate: "2026-03-17",
     status: "Active"
   },
   {
@@ -61,7 +61,7 @@ export const serverServices: readonly ServerService[] = [
     plan: "(Pro)",
     pricing: "$30.00 USD",
     billingCycle: "Triennially",
-    nextDueDate: "2024-03-17",
+    nextDueDate: "2026-03-17",
     status: "Pending"
   },
   {
@@ -70,7 +70,7 @@ export const serverServices: readonly ServerService[] = [
     plan: "(Pro)",
     pricing: "$30.00 USD",
     billingCycle: "Monthly",
-    nextDueDate: "2024-03-17",
+    nextDueDate: "2026-03-17",
     status: "Active"
   },
   {
@@ -79,7 +79,7 @@ export const serverServices: readonly ServerService[] = [
     plan: "(Pro)",
     pricing: "$30.00 USD",
     billingCycle: "Monthly",
-    nextDueDate: "2024-03-17",
+    nextDueDate: "2026-03-17",
     status: "Active"
   },
   {
@@ -88,7 +88,7 @@ export const serverServices: readonly ServerService[] = [
     plan: "(Pro)",
     pricing: "$30.00 USD",
     billingCycle: "Monthly",
-    nextDueDate: "2024-03-17",
+    nextDueDate: "2026-03-17",
     status: "Pending"
   },
   {
@@ -97,7 +97,7 @@ export const serverServices: readonly ServerService[] = [
     plan: "(Pro)",
     pricing: "$30.00 USD",
     billingCycle: "Monthly",
-    nextDueDate: "2024-03-17",
+    nextDueDate: "2026-03-17",
     status: "Pending"
   },
   {
@@ -106,7 +106,7 @@ export const serverServices: readonly ServerService[] = [
     plan: "(Pro)",
     pricing: "$30.00 USD",
     billingCycle: "Monthly",
-    nextDueDate: "2024-03-17",
+    nextDueDate: "2026-03-17",
     status: "Pending"
   },
   {
@@ -115,7 +115,7 @@ export const serverServices: readonly ServerService[] = [
     plan: "(Pro)",
     pricing: "$30.00 USD",
     billingCycle: "Monthly",
-    nextDueDate: "2024-03-17",
+    nextDueDate: "2026-03-17",
     status: "Pending"
   },
   {
@@ -124,7 +124,7 @@ export const serverServices: readonly ServerService[] = [
     plan: "(Pro)",
     pricing: "$30.00 USD",
     billingCycle: "Monthly",
-    nextDueDate: "2024-03-17",
+    nextDueDate: "2026-03-17",
     status: "Active"
   }
 ] as const;
@@ -258,80 +258,80 @@ export const dashboardContent: Record<DashboardAppId, DashboardDataset> = {
       {
         id: "domain-001",
         name: "Codgoo UI.com",
-        registrationDate: "2024-03-17",
-        nextDueDate: "2024-03-17",
+        registrationDate: "2026-03-17",
+        nextDueDate: "2026-03-17",
         autoRenew: true,
         status: "Active"
       },
       {
         id: "domain-002",
         name: "Codgoo Dashboard.com",
-        registrationDate: "2024-03-17",
-        nextDueDate: "2024-03-17",
+        registrationDate: "2026-03-17",
+        nextDueDate: "2026-03-17",
         autoRenew: true,
         status: "Pending"
       },
       {
         id: "domain-003",
         name: "Marketplace.com",
-        registrationDate: "2024-03-17",
-        nextDueDate: "2024-03-17",
+        registrationDate: "2026-03-17",
+        nextDueDate: "2026-03-17",
         autoRenew: true,
         status: "Fraud"
       },
       {
         id: "domain-004",
         name: "Weekly Updates.com",
-        registrationDate: "2024-03-17",
-        nextDueDate: "2024-03-17",
+        registrationDate: "2026-03-17",
+        nextDueDate: "2026-03-17",
         autoRenew: true,
         status: "Pending"
       },
       {
         id: "domain-005",
         name: "codgoo.dev",
-        registrationDate: "2024-03-17",
-        nextDueDate: "2024-03-17",
+        registrationDate: "2026-03-17",
+        nextDueDate: "2026-03-17",
         autoRenew: true,
         status: "Pending"
       },
       {
         id: "domain-006",
         name: "codgoo.app",
-        registrationDate: "2024-03-17",
-        nextDueDate: "2024-03-17",
+        registrationDate: "2026-03-17",
+        nextDueDate: "2026-03-17",
         autoRenew: true,
         status: "Pending"
       },
       {
         id: "domain-007",
         name: "codgoo.software",
-        registrationDate: "2024-03-17",
-        nextDueDate: "2024-03-17",
+        registrationDate: "2026-03-17",
+        nextDueDate: "2026-03-17",
         autoRenew: true,
         status: "Pending"
       },
       {
         id: "domain-008",
         name: "codgoo-suite.com",
-        registrationDate: "2024-03-17",
-        nextDueDate: "2024-03-17",
+        registrationDate: "2026-03-17",
+        nextDueDate: "2026-03-17",
         autoRenew: true,
         status: "Pending"
       },
       {
         id: "domain-009",
         name: "codgoo-labs.com",
-        registrationDate: "2024-03-17",
-        nextDueDate: "2024-03-17",
+        registrationDate: "2026-03-17",
+        nextDueDate: "2026-03-17",
         autoRenew: true,
         status: "Pending"
       },
       {
         id: "domain-010",
         name: "codgoo-beta.com",
-        registrationDate: "2024-03-17",
-        nextDueDate: "2024-03-17",
+        registrationDate: "2026-03-17",
+        nextDueDate: "2026-03-17",
         autoRenew: true,
         status: "Pending"
       }

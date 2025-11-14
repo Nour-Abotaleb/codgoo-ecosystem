@@ -179,7 +179,7 @@ export const ManageServerView = ({ service, tokens }: ManageServerViewProps) => 
             {service.status}
           </span>
         </div>
-        <div className={`${summaryCardClass} mt-8`}>
+        <div className={`${summaryCardClass} mt-6`}>
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
             {summaryItems.map((item) => (
               <div key={item.label} className="flex flex-col gap-1">
@@ -193,7 +193,7 @@ export const ManageServerView = ({ service, tokens }: ManageServerViewProps) => 
         </div>
       </div>
 
-      <div className="mt-2 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {managementActions.map((action) => {
           const showArrow = action.badge === null;
 

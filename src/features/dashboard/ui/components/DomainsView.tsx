@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 
 import {
   DotsSwitcher,
-  BackupIcon,
   PendingIcon,
   ActiveIcon,
   UnpaidIcon,
@@ -44,33 +43,48 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
   const totalCount = domains.length;
   const pageSize = hasDomains ? Math.min(20, totalCount) : 0;
   const totalRecords = hasDomains ? Math.max(100, totalCount) : 0;
-  const [isActionsOpen, setIsActionsOpen] = useState(false);
-  const actionsRef = useRef<HTMLDivElement>(null);
+  const [openActionsId, setOpenActionsId] = useState<string | null>(null);
+  const actionsRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const [autoRenewStatus, setAutoRenewStatus] = useState<Record<string, boolean>>(() => {
+    const initialStatus: Record<string, boolean> = {};
+    domains.forEach((domain) => {
+      initialStatus[domain.id] = domain.autoRenew;
+    });
+    return initialStatus;
+  });
+
+  useEffect(() => {
+    const newStatus: Record<string, boolean> = {};
+    domains.forEach((domain) => {
+      newStatus[domain.id] = autoRenewStatus[domain.id] ?? domain.autoRenew;
+    });
+    setAutoRenewStatus(newStatus);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [domains]);
 
   const actions = useMemo(
     () => [
-      { id: "contact-info", label: "Edit Contact Information" },
-      { id: "renew", label: "Renew Domains" },
-      { id: "auto-renewal", label: "Auto Renewal Status" },
-      { id: "lock-status", label: "Registrar Lock Status" }
+      { id: "contact-info", label: "Change Contact Details" },
+      { id: "renew", label: "Edit DNS zone" },
     ] as const,
     []
   );
 
   useEffect(() => {
-    if (!isActionsOpen) {
+    if (!openActionsId) {
       return;
     }
 
     const handleClickOutside = (event: MouseEvent) => {
-      if (!actionsRef.current?.contains(event.target as Node)) {
-        setIsActionsOpen(false);
+      const ref = actionsRefs.current[openActionsId];
+      if (ref && !ref.contains(event.target as Node)) {
+        setOpenActionsId(null);
       }
     };
 
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setIsActionsOpen(false);
+        setOpenActionsId(null);
       }
     };
 
@@ -80,11 +94,18 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("keydown", handleEscape);
     };
-  }, [isActionsOpen]);
+  }, [openActionsId]);
 
-  const handleSelectAction = (_actionId: (typeof actions)[number]["id"]) => {
+  const handleSelectAction = () => {
     // Handle action selection
-    setIsActionsOpen(false);
+    setOpenActionsId(null);
+  };
+
+  const handleToggleAutoRenew = (domainId: string) => {
+    setAutoRenewStatus((prev) => ({
+      ...prev,
+      [domainId]: !prev[domainId],
+    }));
   };
 
   const handleOpenDomainOverview = (domain: DomainItem) => {
@@ -114,7 +135,7 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
       <div className={`${tokens.cardBase} rounded-[28px] border border-[var(--color-card-border)] py-4 px-6 transition-colors`}>
           <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
             <div>
-              <h2 className="text-3xl font-semibold md:text-4xl">
+              <h2 className={`text-2xl font-semibold md:text-3xl ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
                 All Domains
               </h2>
             </div>
@@ -132,51 +153,13 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
               <button
                 type="button"
                 onClick={() => navigate("/dashboard/manage-nameservers")}
-                className={`${filledButtonClass} gap-2 py-2`}
+                className={`${filledButtonClass} gap-2 py-2.5 cursor-pointer`}
               >
                 <span className="inline-flex h-6 w-6 items-center justify-center text-sm rounded-full bg-white text-[#584ABC]">
                   +
                 </span>
                 Register Domain
               </button>
-              <div className="relative" ref={actionsRef}>
-                <button
-                  type="button"
-                  aria-haspopup="menu"
-                  aria-expanded={isActionsOpen}
-                  onClick={() => setIsActionsOpen((prev) => !prev)}
-                  className={`${tokens.buttonGhost} flex h-10 w-10 items-center justify-center rounded-full transition-colors duration-200 hover:opacity-90`}
-                >
-                  <DotsSwitcher className="h-4 w-4" />
-                </button>
-                {isActionsOpen ? (
-                  <div
-                    className={`absolute right-0 z-20 mt-3 w-56 rounded-2xl border p-1 text-left shadow-xl ${
-                      tokens.isDark
-                        ? "border-white/10 bg-white/10"
-                        : "border-gray-200 bg-white"
-                    }`}
-                  >
-                    <ul className="flex flex-col">
-                      {actions.map((action) => (
-                        <li key={action.id}>
-                          <button
-                            type="button"
-                            className={`w-full rounded-xl px-4 py-2 text-left text-sm font-medium transition ${
-                              tokens.isDark
-                                ? "text-slate-100 hover:bg-white/10 hover:text-white"
-                                : "text-black hover:bg-gray-100 hover:text-black"
-                            }`}
-                            onClick={() => handleSelectAction(action.id)}
-                          >
-                            {action.label}
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ) : null}
-              </div>
             </div>
           </div>
 
@@ -192,16 +175,8 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
                 type="button"
                 className={`${tokens.buttonGhost} rounded-full px-4 py-2 text-sm font-medium`}
               >
-                Auto Renew ({domains.filter((domain) => domain.autoRenew).length})
+                Auto Renew ({Object.values(autoRenewStatus).filter(Boolean).length})
               </button>
-            </div>
-
-            <div className={`flex items-center gap-3 text-xs ${tokens.subtleText}`}>
-              <span>Auto Renew</span>
-              <label className="relative inline-flex cursor-pointer items-center">
-                <input type="checkbox" className="peer sr-only" defaultChecked />
-                <span className="peer h-6 w-11 rounded-full bg-white/10 transition peer-checked:bg-[#7469C7] after:absolute after:start-[4px] after:top-1/2 after:h-4 after:w-4 after:-translate-y-1/2 after:rounded-full after:bg-white after:transition peer-checked:after:translate-x-5" />
-              </label>
             </div>
           </div>
 
@@ -269,7 +244,7 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
                             className={`inline-flex items-center gap-2 rounded-full px-2 py-1 text-sm font-semibold}`}
                           >
                             
-                            {domain.autoRenew ? "Enabled" : "Disabled"}
+                            {(autoRenewStatus[domain.id] ?? domain.autoRenew) ? "Enabled" : "Disabled"}
                           </span>
                         </td>
                         <td className="bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
@@ -288,19 +263,66 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
                               type="button"
                               className={manageButtonClass}
                               aria-label={`Manage ${domain.name}`}
-                          onClick={() => handleOpenDomainOverview(domain)}
+                              onClick={() => handleOpenDomainOverview(domain)}
                             >
                               <SettingsIcon className="h-4 w-4" />
                             </button>
-                            <button
-                              type="button"
-                              className={manageButtonClass}
-                              aria-label={`More actions for ${domain.name}`}
-                            >
-                              <BackupIcon 
-                                className={`h-4 w-4 ${tokens.isDark ? "" : "[&_path]:fill-[#584ABC]"}`}
-                              />
-                            </button>
+                            <div className="relative" ref={(el) => { actionsRefs.current[domain.id] = el; }}>
+                              <button
+                                type="button"
+                                aria-haspopup="menu"
+                                aria-expanded={openActionsId === domain.id}
+                                onClick={() => setOpenActionsId(openActionsId === domain.id ? null : domain.id)}
+                                className={`${tokens.buttonGhost} flex h-9 w-9 items-center cursor-pointer justify-center rounded-full transition-colors duration-200 hover:opacity-90`}
+                              >
+                                <DotsSwitcher className="h-4 w-4" />
+                              </button>
+                              {openActionsId === domain.id ? (
+                                <div
+                                  className={`absolute right-0 z-20 mt-2 w-56 rounded-2xl border p-1 text-left ${
+                                    tokens.isDark
+                                      ? "border-white/10 bg-[#141325]"
+                                      : "border-gray-200 bg-white"
+                                  }`}
+                                >
+                                  <ul className="flex flex-col">
+                                    {actions.map((action) => (
+                                      <li key={action.id}>
+                                        <button
+                                          type="button"
+                                          className={`w-full rounded-xl px-4 py-2 cursor-pointer text-left text-sm font-medium transition ${
+                                            tokens.isDark
+                                              ? "text-slate-100 hover:bg-white/10 hover:text-white"
+                                              : "text-black hover:bg-gray-100 hover:text-black"
+                                          }`}
+                                          onClick={() => handleSelectAction()}
+                                        >
+                                          {action.label}
+                                        </button>
+                                      </li>
+                                    ))}
+                                    <li className="border-t border-[var(--color-border-divider)] mt-1 pt-1">
+                                      <div className="flex items-center justify-between px-4 py-2">
+                                        <span className={`text-sm font-medium ${
+                                          tokens.isDark ? "text-slate-100" : "text-black"
+                                        }`}>
+                                          Auto Renew
+                                        </span>
+                                        <label className="relative inline-flex cursor-pointer items-center">
+                                          <input
+                                            type="checkbox"
+                                            className="peer sr-only"
+                                            checked={autoRenewStatus[domain.id] ?? domain.autoRenew}
+                                            onChange={() => handleToggleAutoRenew(domain.id)}
+                                          />
+                                          <span className="peer h-5 w-10 rounded-full bg-white/10 transition peer-checked:bg-[#7469C7] after:absolute after:start-[2px] after:top-1/2 after:h-3.5 after:w-3.5 after:-translate-y-1/2 after:rounded-full after:bg-white after:transition peer-checked:after:translate-x-5" />
+                                        </label>
+                                      </div>
+                                    </li>
+                                  </ul>
+                                </div>
+                              ) : null}
+                            </div>
                           </div>
                         </td>
                       </tr>

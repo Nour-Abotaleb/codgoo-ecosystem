@@ -44,7 +44,7 @@ export const ServerServicesView = ({
       <div className={`${tokens.cardBase} rounded-[20px] py-4 px-6 border border-[var(--color-card-border)] transition-colors`}>
         <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
           <div>
-            <h2 className="text-3xl font-semibold md:text-4xl">All Servers</h2>
+            <h2 className={`text-2xl font-semibold md:text-3xl ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>All Servers</h2>
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">

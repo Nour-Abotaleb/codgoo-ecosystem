@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { DomainsIcon, DotsSwitcher, ArrowRightIcon } from "@utilities/icons";
+import { TechIcon, DotsSwitcher, ArrowUpIcon } from "@utilities/icons";
 
 import type { DashboardTokens, SiteItem } from "../types";
 
@@ -56,20 +56,20 @@ const WebsiteCard = ({
   ] as const;
 
   return (
-    <div className="relative rounded-[24px] border border-[var(--color-border-divider)] bg-[var(--color-card-bg)] p-6 transition-colors hover:border-[#7469C7]">
+    <div className={`"relative rounded-[24px] p-6 transition-colors hover:border-[#7469C7] ${tokens.isDark ? "bg-[#F4F4FF11]" : "bg-[#F4F4FF]"}`}>
       {/* Kebab Menu */}
       <div className="absolute right-4 top-4" ref={menuRef}>
         <button
           type="button"
           onClick={onMenuToggle}
-          className={`${tokens.buttonGhost} flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-200 hover:opacity-90`}
+          className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-200 hover:opacity-90`}
           aria-label={`Menu for ${site.name}`}
         >
-          <DotsSwitcher className="h-4 w-4" />
+          <DotsSwitcher className="h-6 w-6" />
         </button>
         {isMenuOpen ? (
           <div
-            className={`absolute right-0 z-20 mt-2 w-56 rounded-2xl border p-1 text-left shadow-xl ${
+            className={`absolute right-0 z-20 w-56 rounded-2xl border p-1 text-left shadow-xl ${
               tokens.isDark
                 ? "border-white/10 bg-white/10"
                 : "border-gray-200 bg-white"
@@ -96,7 +96,7 @@ const WebsiteCard = ({
       </div>
 
       {/* Domain Name */}
-      <div className="mb-4">
+      <div className="mb-1">
         <h3 className="text-lg font-semibold text-[var(--color-page-text)]">
           {site.name}
         </h3>
@@ -104,30 +104,25 @@ const WebsiteCard = ({
 
       {/* Technology Type */}
       <div className="mb-6 flex items-center gap-2">
-        <DomainsIcon 
+        <TechIcon 
           className={`h-4 w-4 ${tokens.isDark ? "" : "[&_path]:fill-[#584ABC]"}`}
         />
-        <span className={`text-sm ${tokens.subtleText}`}>{site.type}</span>
+        <span className={`text-sm font-semibold ${tokens.subtleText} ${tokens.isDark ? "text-white/70" : "!text-[#3E3484]"}`}>{site.type}</span>
       </div>
 
       {/* Action Buttons */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-end cursor-pointer w-full" onClick={() => navigate(`/dashboard/manage-website/${site.id}`)}>
         <button
           type="button"
-          className={`${tokens.buttonGhost} rounded-full px-4 py-2 text-sm font-semibold`}
+          className={`${tokens.isDark ? "bg-white/20 hover:bg-white/10 text-white" : "bg-white hover:bg-gray-100"} transition text-[#584ABC] w-[90%] flex justify-center cursor-pointer flex items-center gap-2 rounded-full px-8 py-3 text-sm md:text-base font-semibold`}
         >
           Dashboard
         </button>
-        <button
-          type="button"
-          onClick={() => navigate(`/dashboard/manage-website/${site.id}`)}
-          className={`${tokens.buttonFilled} flex h-10 w-10 items-center justify-center rounded-full`}
-          aria-label={`Open ${site.name}`}
-        >
-          <ArrowRightIcon className="h-5 w-5" />
-        </button>
+        <div className={`w-11 h-11 bg-white rounded-full flex items-center justify-center text-center -ms-2 transition ${tokens.isDark ? "bg-white/20 hover:bg-white/10 text-white" : "bg-white hover:bg-gray-100"}`}>
+            <ArrowUpIcon className="w-6 h-6 p-1 bg-gradient-to-b from-[#8A72FC] to-[#4318FF] rounded-full" />
+        </div>
+        </div>
       </div>
-    </div>
   );
 };
 
@@ -263,7 +258,7 @@ export const WebsitesView = ({ sites, tokens }: WebsitesViewProps) => {
       <div className={`${tokens.cardBase} rounded-[28px] border border-[var(--color-card-border)] py-4 px-6 transition-colors`}>
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
-            <h2 className="text-3xl font-semibold md:text-4xl">
+            <h2 className={`text-2xl font-semibold md:text-3xl ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
               WebSites
             </h2>
             <p className={`mt-1 text-sm ${tokens.subtleText}`}>

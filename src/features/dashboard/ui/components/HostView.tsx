@@ -189,8 +189,8 @@ export const HostView = ({ tokens }: HostViewProps) => {
     <div className="flex flex-col gap-6">
       <div className={`${tokens.cardBase} rounded-[28px] border border-[var(--color-card-border)] py-4 px-6 transition-colors`}>
         {/* Title */}
-        <div className="mb-6">
-          <h2 className="text-3xl font-semibold md:text-4xl">
+        <div className="mb-3">
+          <h2 className={`text-2xl font-semibold md:text-3xl ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
             My Invoices
           </h2>
         </div>
@@ -230,7 +230,7 @@ export const HostView = ({ tokens }: HostViewProps) => {
             </div>
             <button
               type="button"
-              className={`${filledButtonClass} gap-2`}
+              className={`${filledButtonClass} gap-2 py-2.5`}
             >
               <PayAllIcon className="h-5 w-5" />
               Pay All
@@ -241,7 +241,7 @@ export const HostView = ({ tokens }: HostViewProps) => {
         {/* Invoice Table */}
         {activeTab === "invoices" && (
           <>
-            <div className="mt-6 overflow-x-auto">
+            <div className="mt-2 overflow-x-auto">
               <table className="min-w-full table-auto border-separate border-spacing-y-2">
                 <thead className={tokens.isDark ? "" : "bg-[#F7F6FF]"}>
                   <tr className="[&>th]:border-y [&>th]:border-[var(--color-border-divider)]">
@@ -346,7 +346,7 @@ export const HostView = ({ tokens }: HostViewProps) => {
 
         {/* Other tabs content */}
         {activeTab === "quotes" && (
-          <div className="mt-6 rounded-xl bg-[var(--color-table-row-bg)] px-6 py-12 text-center text-sm transition-colors">
+          <div className="mt-3 rounded-xl bg-[var(--color-table-row-bg)] px-6 py-12 text-center text-sm transition-colors">
             <p className="text-base font-semibold">My Qoutes</p>
             <p className={`mt-2 ${tokens.subtleText}`}>
               No quotes available at this time.
@@ -355,7 +355,7 @@ export const HostView = ({ tokens }: HostViewProps) => {
         )}
 
         {activeTab === "mass-payment" && (
-          <div className="mt-6 rounded-xl bg-[var(--color-table-row-bg)] px-6 py-12 text-center text-sm transition-colors">
+          <div className="mt-3 rounded-xl bg-[var(--color-table-row-bg)] px-6 py-12 text-center text-sm transition-colors">
             <p className="text-base font-semibold">Mass Payment</p>
             <p className={`mt-2 ${tokens.subtleText}`}>
               Select invoices from "My Invoices" tab to pay multiple invoices at once.
@@ -364,7 +364,7 @@ export const HostView = ({ tokens }: HostViewProps) => {
         )}
 
         {activeTab === "add-funds" && (
-          <div className="mt-6 rounded-xl bg-[var(--color-table-row-bg)] px-6 py-12 text-center text-sm transition-colors">
+          <div className="mt-3 rounded-xl bg-[var(--color-table-row-bg)] px-6 py-12 text-center text-sm transition-colors">
             <p className="text-base font-semibold">Add Funds</p>
             <p className={`mt-2 ${tokens.subtleText}`}>
               Add funds to your account balance.
