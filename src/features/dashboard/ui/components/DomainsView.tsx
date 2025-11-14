@@ -315,7 +315,7 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
                                             checked={autoRenewStatus[domain.id] ?? domain.autoRenew}
                                             onChange={() => handleToggleAutoRenew(domain.id)}
                                           />
-                                          <span className="peer h-5 w-10 rounded-full bg-white/10 transition peer-checked:bg-[#7469C7] after:absolute after:start-[2px] after:top-1/2 after:h-3.5 after:w-3.5 after:-translate-y-1/2 after:rounded-full after:bg-white after:transition peer-checked:after:translate-x-5" />
+                                          <span className={`peer h-5 w-10 rounded-full ${tokens.isDark ? "bg-white/10" : "bg-black/30"} transition peer-checked:bg-[#7469C7] after:absolute after:start-[2px] after:top-1/2 after:h-3.5 after:w-3.5 after:-translate-y-1/2 after:rounded-full after:bg-white after:transition peer-checked:after:translate-x-5`} />
                                         </label>
                                       </div>
                                     </li>
