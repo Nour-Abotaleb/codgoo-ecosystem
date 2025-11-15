@@ -4,7 +4,7 @@ import recentOne from "@assets/images/cloud/recent-1.png";
 import recentTwo from "@assets/images/cloud/recent-2.png";
 import logoApp from "@assets/logos/logo-app.svg";
 import logoCloudLight from "@assets/logos/logo-cloud-light.svg";
-import logoCloudPng from "@assets/logos/logo-cloud.png";
+import logoSoftwareLight from "@assets/logos/logo-software-light.svg";
 import logoCloudSvg from "@assets/logos/logo-cloud.svg";
 
 import type {
@@ -155,13 +155,13 @@ export const dashboardApps: readonly DashboardApp[] = [
 export const dashboardAppLogos: Record<DashboardAppId, string> = {
   cloud: logoCloudSvg,
   app: logoApp,
-  software: logoCloudPng
+  software: logoSoftwareLight
 };
 
 export const dashboardAppLogosLight: Record<DashboardAppId, string> = {
   cloud: logoCloudLight,
   app: logoApp,
-  software: logoCloudPng
+  software: logoSoftwareLight
 };
 
 const createStats = (values: [string, string, string, string]): StatItem[] => [
