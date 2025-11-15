@@ -70,13 +70,6 @@ export const DashboardSidebar = ({
     "bg-[var(--color-popover-active-bg)] text-[color:var(--color-popover-active-text)]";
   const popoverIdleClass =
     "text-[color:var(--color-popover-idle-text)] hover:bg-[var(--color-popover-hover-bg)]";
-  const getInitials = (name: string) =>
-    name
-      .split(" ")
-      .filter(Boolean)
-      .map((part) => part[0]?.toUpperCase() ?? "")
-      .join("")
-      .slice(0, 2) || name.slice(0, 2).toUpperCase();
 
   const activeLogo = tokens.isDark
     ? dashboardAppLogos[activeAppId] ?? dashboardAppLogos.cloud
@@ -104,7 +97,7 @@ export const DashboardSidebar = ({
       className={`dashboard__sidebar fixed inset-y-0 left-0 z-20 hidden min-h-screen w-64 pe-1 flex-col py-10 lg:flex ${tokens.sidebarClass}`}
     >
       <div className="relative flex justify-center gap-6 border-b border-[color:var(--color-sidebar-divider)] pb-4">
-        <img src={activeLogo} alt={`${activeAppId} logo`} className="h-10 md:h-auto w-auto" />
+        <img src={activeLogo} alt={`${activeAppId} logo`} className="h-10 w-auto object-contain" />
         <div ref={switcherRef} className="relative">
           <button
             type="button"
@@ -125,7 +118,7 @@ export const DashboardSidebar = ({
             <div
               className={`absolute left-0 mt-3 w-64 rounded-xl p-2 shadow-2xl ring-1 backdrop-blur ${popoverBaseClass}`}
             >
-              <ul className="space-y-1">
+              <ul className="space-y-2">
                 {apps.map((app) => {
                   const isActive = app.id === activeAppId;
 
@@ -137,18 +130,19 @@ export const DashboardSidebar = ({
                           onSelectApp(app.id);
                           setSwitcherOpen(false);
                         }}
-                        className={`flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-left transition ${
+                        className={`flex w-full items-center rounded-xl cursor-pointer px-3 py-2.5 transition ${
                           isActive ? popoverActiveClass : popoverIdleClass
                         }`}
                       >
-                        <div
-                          className={`flex h-9 w-9 items-center justify-center rounded-2xl ${tokens.surfaceMuted}`}
-                        >
-                          <span className="text-xs font-semibold uppercase tracking-wide">
-                            {getInitials(app.name)}
-                          </span>
-                        </div>
-                        <span className="text-sm font-semibold">{app.name}</span>
+                        <img
+                          src={
+                            tokens.isDark
+                              ? dashboardAppLogos[app.id] ?? dashboardAppLogos.cloud
+                              : dashboardAppLogosLight[app.id] ?? dashboardAppLogosLight.cloud
+                          }
+                          alt={`${app.id} logo`}
+                          className="h-6 w-auto object-contain"
+                        />
                       </button>
                     </li>
                   );

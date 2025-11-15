@@ -1,8 +1,14 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 import { AuthTemplate, LoginForm } from "@features/auth";
 
-export const LoginRoute = () => (
+export const LoginRoute = () => {
+  useEffect(() => {
+    document.title = "Codgoo Ecosystem";
+  }, []);
+
+  return (
   <AuthTemplate
     title="Welcome Back to Codgoo"
     bottomSlot={
@@ -19,6 +25,7 @@ export const LoginRoute = () => (
   >
     <LoginForm />
   </AuthTemplate>
-);
+  );
+};
 
 

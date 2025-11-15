@@ -1,8 +1,14 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 import { AuthTemplate, RegisterForm } from "@features/auth";
 
-export const RegisterRoute = () => (
+export const RegisterRoute = () => {
+  useEffect(() => {
+    document.title = "Codgoo Ecosystem";
+  }, []);
+
+  return (
   <AuthTemplate
     title="Create an account"
     // subtitle="Please enter your data to create an account."
@@ -20,6 +26,7 @@ export const RegisterRoute = () => (
   >
     <RegisterForm />
   </AuthTemplate>
-);
+  );
+};
 
 

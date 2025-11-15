@@ -2,10 +2,12 @@ import heroTexture from "@assets/images/cloud/widget2.png";
 import heroWave from "@assets/images/cloud/bg.png";
 import recentOne from "@assets/images/cloud/recent-1.png";
 import recentTwo from "@assets/images/cloud/recent-2.png";
-import logoApp from "@assets/logos/logo-app.svg";
-import logoCloudLight from "@assets/logos/logo-cloud-light.svg";
-import logoSoftwareLight from "@assets/logos/logo-software-light.svg";
-import logoCloudSvg from "@assets/logos/logo-cloud.svg";
+import logoAppDark from "@assets/logos/logo-app-dark.svg";
+import logoAppWhite from "@assets/logos/logo-app-white.svg";
+import logoCloudDark from "@assets/logos/logo-cloud-dark.svg";
+import logoCloudWhite from "@assets/logos/logo-cloud-white.svg";
+import logoSoftwareDark from "@assets/logos/logo-software-dark.svg";
+import logoSoftwareWhite from "@assets/logos/logo-software-white.svg";
 
 import type {
   DashboardApp,
@@ -153,15 +155,15 @@ export const dashboardApps: readonly DashboardApp[] = [
 ] as const;
 
 export const dashboardAppLogos: Record<DashboardAppId, string> = {
-  cloud: logoCloudSvg,
-  app: logoApp,
-  software: logoSoftwareLight
+  cloud: logoCloudWhite,
+  app: logoAppWhite,
+  software: logoSoftwareWhite
 };
 
 export const dashboardAppLogosLight: Record<DashboardAppId, string> = {
-  cloud: logoCloudLight,
-  app: logoApp,
-  software: logoSoftwareLight
+  cloud: logoCloudDark,
+  app: logoAppDark,
+  software: logoSoftwareDark
 };
 
 const createStats = (values: [string, string, string, string]): StatItem[] => [
