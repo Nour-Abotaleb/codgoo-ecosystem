@@ -22,6 +22,7 @@ import { WebsitesView } from "./components/WebsitesView";
 import { ManageWebsiteView } from "./components/ManageWebsiteView";
 import { HostView } from "./components/HostView";
 import { ManageHostView } from "./components/ManageHostView";
+import { OrderView } from "./components/OrderView";
 import type { DashboardAppId, DashboardTokens } from "./types";
 
 export const DashboardPage = () => {
@@ -41,6 +42,7 @@ export const DashboardPage = () => {
   const manageNameserversMatch = useMatch("/dashboard/manage-nameservers");
   const manageWebsiteMatch = useMatch("/dashboard/manage-website/:websiteId");
   const manageHostMatch = useMatch("/dashboard/manage-host/:hostId");
+  const orderMatch = useMatch("/dashboard/order");
   const dataset = dashboardContent[activeApp.id];
   const navigationItems = dataset.navigation;
   const [activeNavId, setActiveNavId] = useState(() => navigationItems[0]?.id ?? "");
@@ -184,6 +186,11 @@ export const DashboardPage = () => {
   useEffect(() => {
     const path = location.pathname;
     
+    // Handle order route - don't change activeNavId
+    if (path.includes("/order")) {
+      return;
+    }
+    
     // Handle manage-server route
     if (path.includes("/manage-server/")) {
       if (activeNavId !== "server") {
@@ -319,14 +326,17 @@ export const DashboardPage = () => {
       />
 
       <section className="flex min-h-screen flex-1 flex-col lg:ms-64 bg-[var(--color-shell-bg)] rounded-[32px] m-6 transition-colors duration-300">
-        <div className="flex flex-col gap-8 px-6 py-4">
+        <div className="flex flex-col gap-4 px-6 py-4">
           <DashboardHeader
             tokens={tokens}
             activeApp={activeApp}
-            activeNavigationLabel={activeNavigationItem?.label}
+            activeNavigationLabel={orderMatch ? "Order" : activeNavigationItem?.label}
             onToggleTheme={handleToggleTheme}
+            onCartClick={() => navigate("/dashboard/order")}
           />
-          {activeNavId === "dashboard" ? (
+          {orderMatch ? (
+            <OrderView tokens={tokens} />
+          ) : activeNavId === "dashboard" ? (
             <DashboardOverview
               dataset={dataset}
               tokens={tokens}

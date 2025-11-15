@@ -56,50 +56,50 @@ const WebsiteCard = ({
   ] as const;
 
   return (
-    <div className={`"relative rounded-[24px] p-6 transition-colors hover:border-[#7469C7] ${tokens.isDark ? "bg-[#F4F4FF11]" : "bg-[#F4F4FF]"}`}>
-      {/* Kebab Menu */}
-      <div className="absolute right-4 top-4" ref={menuRef}>
-        <button
-          type="button"
-          onClick={onMenuToggle}
-          className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-200 hover:opacity-90`}
-          aria-label={`Menu for ${site.name}`}
-        >
-          <DotsSwitcher className="h-6 w-6" />
-        </button>
-        {isMenuOpen ? (
-          <div
-            className={`absolute right-0 z-20 w-56 rounded-2xl border p-1 text-left shadow-xl ${
-              tokens.isDark
-                ? "border-white/10 bg-white/10"
-                : "border-gray-200 bg-white"
-            }`}
-          >
-            <ul className="flex flex-col">
-              {menuActions.map((action) => (
-                <li key={action.id}>
-                  <button
-                    type="button"
-                    className={`w-full rounded-xl px-4 py-2 text-left text-sm font-medium transition ${
-                      tokens.isDark
-                        ? "text-slate-100 hover:bg-white/10 hover:text-white"
-                        : "text-black hover:bg-gray-100 hover:text-black"
-                    }`}
-                  >
-                    {action.label}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
-      </div>
+    <div className={`relative rounded-[24px] px-6 py-4 transition-colors hover:border-[#7469C7] ${tokens.isDark ? "bg-[#F4F4FF11]" : "bg-[#F4F4FF]"}`}>
 
       {/* Domain Name */}
-      <div className="mb-1">
+      <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold text-[var(--color-page-text)]">
           {site.name}
         </h3>
+        {/* Kebab Menu */}
+        <div className="relative" ref={menuRef}>
+          <button
+            type="button"
+            onClick={onMenuToggle}
+            className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-200 hover:opacity-90 ${tokens.isDark ? "text-white/70 hover:text-white" : "text-[#584ABC] hover:text-[#7469C7]"}`}
+            aria-label={`Menu for ${site.name}`}
+          >
+            <DotsSwitcher className="h-6 w-6" />
+          </button>
+          {isMenuOpen ? (
+            <div
+              className={`absolute right-0 top-full z-20 w-56 rounded-2xl border p-1 text-left shadow-xl ${
+                tokens.isDark
+                  ? "border-white/10 bg-[#141325]"
+                  : "border-gray-200 bg-white"
+              }`}
+            >
+              <ul className="flex flex-col">
+                {menuActions.map((action) => (
+                  <li key={action.id}>
+                    <button
+                      type="button"
+                      className={`w-full rounded-xl px-4 py-2 text-left text-sm font-medium transition ${
+                        tokens.isDark
+                          ? "text-slate-100 hover:bg-white/10 hover:text-white"
+                          : "text-black hover:bg-gray-100 hover:text-black"
+                      }`}
+                    >
+                      {action.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+        </div>
       </div>
 
       {/* Technology Type */}
@@ -111,7 +111,7 @@ const WebsiteCard = ({
       </div>
 
       {/* Action Buttons */}
-      <div className="flex items-center justify-end cursor-pointer w-full" onClick={() => navigate(`/dashboard/manage-website/${site.id}`)}>
+      <div className="flex items-center justify-end cursor-pointer w-full pt-4 pb-2" onClick={() => navigate(`/dashboard/manage-website/${site.id}`)}>
         <button
           type="button"
           className={`${tokens.isDark ? "bg-white/20 hover:bg-white/10 text-white" : "bg-white hover:bg-gray-100"} transition text-[#584ABC] w-[90%] flex justify-center cursor-pointer flex items-center gap-2 rounded-full px-8 py-3 text-sm md:text-base font-semibold`}
@@ -259,11 +259,8 @@ export const WebsitesView = ({ sites, tokens }: WebsitesViewProps) => {
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
             <h2 className={`text-2xl font-semibold md:text-3xl ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
-              WebSites
-            </h2>
-            <p className={`mt-1 text-sm ${tokens.subtleText}`}>
               Managed Sites
-            </p>
+            </h2>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <button
