@@ -1,4 +1,5 @@
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 
 import {
   ActiveIcon,
@@ -19,13 +20,26 @@ type ServerServicesViewProps = {
   readonly onOpenService?: (serviceId: string) => void;
 };
 
+type ServerTab = "all" | "uninstalled";
+
 export const ServerServicesView = ({
   services,
   tokens,
   onOpenService
 }: ServerServicesViewProps) => {
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<ServerTab>("all");
+
+  const filteredServices = useMemo(() => {
+    if (activeTab === "uninstalled") {
+      // Filter uninstalled services (Pending status indicates uninstalled)
+      return services.filter((service) => service.status === "Pending");
+    }
+    return services;
+  }, [services, activeTab]);
+
   const allCount = services.length;
-  const uninstalledCount = 0;
+  const uninstalledCount = services.filter((service) => service.status === "Pending").length;
 
   const manageButtonClass = useMemo(
     () =>
@@ -41,12 +55,37 @@ export const ServerServicesView = ({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className={`${tokens.cardBase} rounded-[20px] py-4 px-6 border border-[var(--color-card-border)] transition-colors`}>
-        <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+      <div className={`${tokens.cardBase} rounded-[28px] py-4 px-6 border border-[var(--color-card-border)] transition-colors`}>
+        {/* <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
           <div>
             <h2 className={`text-2xl font-semibold md:text-3xl ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>All Servers</h2>
           </div>
-
+        </div> */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-4 rounded-full p-1">
+            <button
+              type="button"
+              onClick={() => setActiveTab("all")}
+              className={
+                activeTab === "all"
+                  ? `${tokens.buttonFilled} rounded-full px-5 py-2 text-sm font-semibold`
+                  : `${tokens.buttonGhost} rounded-full px-4 py-2 text-sm font-medium tracking-[0.05em]`
+              }
+            >
+              All ({allCount})
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("uninstalled")}
+              className={
+                activeTab === "uninstalled"
+                  ? `${tokens.buttonFilled} rounded-full px-5 py-2 text-sm font-semibold`
+                  : `${tokens.buttonGhost} rounded-full px-4 py-2 text-sm font-medium tracking-[0.05em]`
+              }
+            >
+              Uninstalled ({uninstalledCount})
+            </button>
+          </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <div
               className={`flex h-11 w-full items-center gap-3 rounded-full px-4 sm:w-68 border ${tokens.divider} bg-[var(--color-search-bg)] text-[var(--color-search-text)] transition-colors`}
@@ -60,28 +99,13 @@ export const ServerServicesView = ({
             </div>
             <button
               type="button"
-              className={`${tokens.buttonFilled} inline-flex items-center justify-center gap-1 rounded-full px-3 py-2 text-sm font-semibold`}
+              onClick={() => navigate("/dashboard/order")}
+              className={`${tokens.buttonFilled} inline-flex items-center justify-center gap-1 cursor-pointer rounded-full px-3 py-2 text-sm font-semibold`}
             >
                <span className="inline-flex h-6 w-6 items-center justify-center text-sm rounded-full bg-white text-[#584ABC]">
                   +
                 </span>
               Order New Server
-            </button>
-          </div>
-        </div>
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mt-2">
-          <div className="flex items-center gap-6 rounded-full p-1">
-            <button
-              type="button"
-              className={`${tokens.buttonFilled} rounded-full px-5 py-2 text-sm font-semibold`}
-            >
-              All ({allCount})
-            </button>
-            <button
-              type="button"
-              className={`${tokens.buttonGhost} rounded-full px-4 py-2 text-sm font-medium tracking-[0.05em]`}
-            >
-              Uninstalled ({uninstalledCount})
             </button>
           </div>
         </div>
@@ -108,7 +132,7 @@ export const ServerServicesView = ({
               </tr>
             </thead>
             <tbody>
-              {services.map((service) => {
+              {filteredServices.map((service) => {
                 return (
                   <tr key={service.id} className="text-sm">
                     <td className="whitespace-nowrap px-6 py-3 pe-6 rounded-l-xl bg-[var(--color-table-row-bg)] transition-colors">
@@ -193,7 +217,7 @@ export const ServerServicesView = ({
           </div>
 
           <p className="text-[var(--color-page-text)]">
-            Showing {Math.min(20, allCount)} of {allCount}
+            Showing {Math.min(20, filteredServices.length)} of {filteredServices.length}
           </p>
         </div>
       </div>

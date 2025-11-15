@@ -17,6 +17,8 @@ type DomainsViewProps = {
   readonly tokens: DashboardTokens;
 };
 
+type DomainTab = "all" | "auto-renew";
+
 
 const renderStatusIcon = (status: DomainItem["status"]) => {
   if (status === "Active") {
@@ -39,10 +41,7 @@ const renderStatusIcon = (status: DomainItem["status"]) => {
 
 export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
   const navigate = useNavigate();
-  const hasDomains = domains.length > 0;
-  const totalCount = domains.length;
-  const pageSize = hasDomains ? Math.min(20, totalCount) : 0;
-  const totalRecords = hasDomains ? Math.max(100, totalCount) : 0;
+  const [activeTab, setActiveTab] = useState<DomainTab>("all");
   const [openActionsId, setOpenActionsId] = useState<string | null>(null);
   const actionsRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [autoRenewStatus, setAutoRenewStatus] = useState<Record<string, boolean>>(() => {
@@ -52,6 +51,19 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
     });
     return initialStatus;
   });
+
+  const filteredDomains = useMemo(() => {
+    if (activeTab === "auto-renew") {
+      return domains.filter((domain) => autoRenewStatus[domain.id] ?? domain.autoRenew);
+    }
+    return domains;
+  }, [domains, activeTab, autoRenewStatus]);
+
+  const hasDomains = filteredDomains.length > 0;
+  const totalCount = domains.length;
+  const autoRenewCount = Object.values(autoRenewStatus).filter(Boolean).length;
+  const pageSize = hasDomains ? Math.min(20, filteredDomains.length) : 0;
+  const totalRecords = hasDomains ? Math.max(100, filteredDomains.length) : 0;
 
   useEffect(() => {
     const newStatus: Record<string, boolean> = {};
@@ -134,11 +146,38 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
     <div className="flex flex-col gap-6">
       <div className={`${tokens.cardBase} rounded-[28px] border border-[var(--color-card-border)] py-4 px-6 transition-colors`}>
           <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-            <div>
+            {/* <div>
               <h2 className={`text-2xl font-semibold md:text-3xl ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
                 All Domains
               </h2>
+            </div> */}
+            
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-3 text-sm font-medium">
+              <button
+                type="button"
+                onClick={() => setActiveTab("all")}
+                className={
+                  activeTab === "all"
+                    ? `${filledButtonClass} px-5 py-2 text-sm font-semibold`
+                    : `${tokens.buttonGhost} rounded-full px-4 py-2 text-sm font-medium`
+                }
+              >
+                All Domains ({totalCount})
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("auto-renew")}
+                className={
+                  activeTab === "auto-renew"
+                    ? `${filledButtonClass} px-5 py-2 text-sm font-semibold`
+                    : `${tokens.buttonGhost} rounded-full px-4 py-2 text-sm font-medium`
+                }
+              >
+                Auto Renew ({autoRenewCount})
+              </button>
             </div>
+          </div>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <div
                 className={`flex h-11 w-full items-center gap-3 rounded-full border ${tokens.divider} bg-[var(--color-search-bg)] px-4 text-[var(--color-search-text)] transition-colors sm:w-72`}
@@ -163,24 +202,7 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
             </div>
           </div>
 
-          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3 text-sm font-medium">
-              <button
-                type="button"
-                className={`${filledButtonClass} px-5 py-2 text-sm font-semibold`}
-              >
-                All Domains ({totalCount})
-              </button>
-              <button
-                type="button"
-                className={`${tokens.buttonGhost} rounded-full px-4 py-2 text-sm font-medium`}
-              >
-                Auto Renew ({Object.values(autoRenewStatus).filter(Boolean).length})
-              </button>
-            </div>
-          </div>
-
-          <div className="mt-3 overflow-x-auto">
+          <div className="mt-3 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             <table className="min-w-full table-auto border-separate border-spacing-y-2">
               <thead className={tokens.isDark ? "" : "bg-[#F7F6FF]"}>
                 <tr className="[&>th]:border-y [&>th]:border-[var(--color-border-divider)]">
@@ -206,7 +228,7 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
               </thead>
               <tbody>
                 {hasDomains ? (
-                  domains.map((domain) => {
+                  filteredDomains.map((domain) => {
                     return (
                       <tr
                         key={domain.id}

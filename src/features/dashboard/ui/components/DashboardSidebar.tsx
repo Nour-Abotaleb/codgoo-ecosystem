@@ -101,7 +101,7 @@ export const DashboardSidebar = ({
 
   return (
     <aside
-      className={`dashboard__sidebar fixed inset-y-0 left-0 z-20 hidden min-h-screen w-64 pe-1 flex-col py-14 lg:flex ${tokens.sidebarClass}`}
+      className={`dashboard__sidebar fixed inset-y-0 left-0 z-20 hidden min-h-screen w-64 pe-1 flex-col py-10 lg:flex ${tokens.sidebarClass}`}
     >
       <div className="relative flex justify-center gap-6 border-b border-[color:var(--color-sidebar-divider)] pb-4">
         <img src={activeLogo} alt={`${activeAppId} logo`} className="h-10 md:h-auto w-auto" />
@@ -159,7 +159,7 @@ export const DashboardSidebar = ({
         </div>
       </div>
 
-      <nav className="mt-12 flex flex-col px-2">
+      <nav className="mt-4 flex flex-col px-2">
         {navigationItems.map((item) => {
           const isActive = item.id === activeNavId;
           const Icon = item.icon ? iconMap[item.icon] : undefined;
@@ -177,7 +177,7 @@ export const DashboardSidebar = ({
               type="button"
               onClick={() => onSelectNav(item.id)}
               aria-current={isActive ? "page" : undefined}
-              className="group relative flex cursor-pointer items-center gap-2 overflow-hidden rounded-xl px-2 py-3 text-lg font-semibold transition-colors"
+              className="group relative flex cursor-pointer items-center gap-2 overflow-hidden rounded-xl px-2 py-1.5 text-lg font-semibold transition-colors"
             >
               {isActive && (
                 <span className="absolute inset-0">
@@ -205,7 +205,7 @@ export const DashboardSidebar = ({
         })}
       </nav>
 
-      <div className="mt-auto flex flex-row items-center justify-between border-t border-[color:var(--color-sidebar-divider)] px-2 pt-4">
+      <div className="mt-auto flex flex-row items-center justify-between border-t border-[color:var(--color-sidebar-divider)] px-2 pt-6 pb-2">
         <button
           type="button"
           className="group flex cursor-pointer items-center justify-center rounded-full bg-white w-11 h-11 transition-colors"

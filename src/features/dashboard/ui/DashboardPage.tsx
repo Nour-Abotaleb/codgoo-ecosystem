@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, useCallback } from "react";
 import { useMatch, useNavigate, useLocation } from "react-router-dom";
 
 import { useAppDispatch, useAppSelector } from "@store/hooks";
-import { selectTheme, setTheme, toggleTheme } from "@store/theme/theme-slice";
+import { selectTheme, toggleTheme } from "@store/theme/theme-slice";
 
 import {
   dashboardApps,
@@ -148,9 +148,27 @@ export const DashboardPage = () => {
     root.dataset.theme = theme;
   }, [theme, themeVariables]);
 
+  // Update document title and favicon when switching apps
   useEffect(() => {
-    dispatch(setTheme(activeApp.theme));
-  }, [dispatch, activeApp.theme]);
+    // Update document title
+    document.title = activeApp.name;
+
+    // Update favicon
+    const faviconLink = document.querySelector("link[rel='icon']") as HTMLLinkElement;
+    if (faviconLink) {
+      const faviconMap: Record<DashboardAppId, string> = {
+        cloud: "/logo-cloud.svg",
+        app: "/logo-app.svg",
+        software: "/logo-software.svg"
+      };
+      faviconLink.href = faviconMap[activeAppId] ?? "/logo-cloud.svg";
+    }
+  }, [activeApp.name, activeAppId]);
+
+  // Removed automatic theme switching - preserve user's theme preference when switching apps
+  // useEffect(() => {
+  //   dispatch(setTheme(activeApp.theme));
+  // }, [dispatch, activeApp.theme]);
 
   useEffect(() => {
     if (!navigationItems.some((item) => item.id === activeNavId)) {
@@ -326,7 +344,7 @@ export const DashboardPage = () => {
       />
 
       <section className="flex min-h-screen flex-1 flex-col lg:ms-64 bg-[var(--color-shell-bg)] rounded-[32px] m-6 transition-colors duration-300">
-        <div className="flex flex-col gap-4 px-6 py-4">
+        <div className="flex flex-col gap-4 px-6 py-3">
           <DashboardHeader
             tokens={tokens}
             activeApp={activeApp}

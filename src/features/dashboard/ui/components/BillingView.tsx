@@ -212,7 +212,7 @@ const QuotesTable = ({ tokens }: { readonly tokens: DashboardTokens }) => {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      {/* <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div
           className={`flex h-12 flex-1 items-center gap-3 rounded-full border ${tokens.divider} bg-[var(--color-search-bg)] px-4 text-[var(--color-search-text)] transition-colors sm:max-w-xs`}
         >
@@ -223,8 +223,7 @@ const QuotesTable = ({ tokens }: { readonly tokens: DashboardTokens }) => {
             className="flex-1 bg-transparent text-sm text-[var(--color-search-text)] placeholder:text-[var(--color-search-placeholder)] focus:outline-none"
           />
         </div>
-      </div>
-
+      </div> */}
       <div className="overflow-x-auto">
         <table className="min-w-full table-auto border-separate border-spacing-y-2">
           <thead className={tokens.isDark ? "" : "bg-[#F7F6FF]"}>
@@ -432,9 +431,29 @@ export const BillingView = ({ tokens }: BillingViewProps) => {
     <div className={`${tokens.cardBase} rounded-[28px] border border-[var(--color-card-border)] px-6 py-4 transition-colors`}>
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <h2 className={`text-2xl font-semibold md:text-3xl ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
+          {/* <h2 className={`text-2xl font-semibold md:text-3xl ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
             {tabs.find((tab) => tab.id === activeTab)?.label ?? "Billing"}
-          </h2>
+          </h2> */}
+          
+          <div className="flex flex-wrap items-center gap-2">
+            {tabs.map((tab) => {
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
+                    isActive
+                      ? `${tokens.buttonFilled}`
+                      : `${tokens.buttonGhost} hover:opacity-90`
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
               <div
@@ -457,27 +476,6 @@ export const BillingView = ({ tokens }: BillingViewProps) => {
             </div>
           </div>
         </div>
-
-        <div className="flex flex-wrap items-center gap-2">
-          {tabs.map((tab) => {
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => setActiveTab(tab.id)}
-                className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
-                  isActive
-                    ? `${tokens.buttonFilled}`
-                    : `${tokens.buttonGhost} hover:opacity-90`
-                }`}
-              >
-                {tab.label}
-              </button>
-            );
-          })}
-        </div>
-
         <div className="">{renderTabContent()}</div>
       </div>
     </div>

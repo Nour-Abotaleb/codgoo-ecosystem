@@ -35,7 +35,7 @@ export const AuthTemplate = ({
           {bottomSlot}
         </div>
       </div>
-      <div className="order-2 hidden w-full items-center justify-center md:flex">
+      <div className="order-2 hidden w-full items-center justify-center lg:flex">
         <div className="flex w-full max-w-xl items-center justify-center">
           <img
             src={signInIllustration}

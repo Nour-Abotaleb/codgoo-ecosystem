@@ -32,7 +32,7 @@ export const DashboardHeader = ({
   const [activeIcon, setActiveIcon] = useState<ActiveIcon>(null);
   const actionBarClass = useMemo(
     () =>
-      `${tokens.cardBase} flex items-center gap-3 rounded-full px-5 py-2 backdrop-blur`,
+      `${tokens.cardBase} flex items-center gap-2 rounded-full px-5 py-2 backdrop-blur`,
     [tokens.cardBase]
   );
 
@@ -57,11 +57,16 @@ export const DashboardHeader = ({
     }
   };
 
-  const getIconColorClass = () => {
+  const getIconColorClass = (iconId: ActiveIcon) => {
+    const isActive = activeIcon === iconId;
+    
     if (tokens.isDark) {
       return "text-white";
     } else {
-      return "text-[#584ABC]";
+      if (isActive) {
+        return "text-[#584ABC]";
+      }
+      return "text-[#A3AED0]";
     }
   };
 
@@ -71,7 +76,7 @@ export const DashboardHeader = ({
     <header className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
       <div>
         <h1
-          className={`text-3xl font-semibold md:text-4xl ${
+          className={`text-2xl font-semibold md:text-3xl ${
             tokens.isDark ? "" : "text-[#584ABC]"
           }`}
         >
@@ -81,7 +86,7 @@ export const DashboardHeader = ({
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
         <div className={actionBarClass}>
-          <div className={`flex h-11 flex-1 items-center gap-3 rounded-full px-4 ${searchFieldClass}`}>
+          <div className={`flex h-10.5 flex-1 items-center gap-3 rounded-full px-4 ${searchFieldClass}`}>
             <SearchIcon className="h-4 w-4 opacity-70" />
             <input
               type="search"
@@ -96,7 +101,7 @@ export const DashboardHeader = ({
             className={getIconButtonClass("notification")}
             aria-label="Notifications"
           >
-            <NotificationIcon className={`h-5 w-5 ${getIconColorClass()}`} />
+            <NotificationIcon className={`h-5 w-5 ${getIconColorClass("notification")}`} />
           </button>
 
           <button
@@ -108,7 +113,7 @@ export const DashboardHeader = ({
             className={getIconButtonClass("theme")}
             aria-label="Toggle theme"
           >
-            <DarkModeIcon className={`h-5 w-5 ${getIconColorClass()}`} />
+            <DarkModeIcon className={`h-5 w-5 ${getIconColorClass("theme")}`} />
           </button>
 
           <button
@@ -120,7 +125,7 @@ export const DashboardHeader = ({
             className={getIconButtonClass("cart")}
             aria-label="Cart"
           >
-            <CartIcon className={`h-5 w-5 ${getIconColorClass()}`} />
+            <CartIcon className={`h-5 w-5 ${getIconColorClass("cart")}`} />
           </button>
 
           <img

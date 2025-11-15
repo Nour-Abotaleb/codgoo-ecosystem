@@ -7,7 +7,7 @@ type HostViewProps = {
   readonly tokens: DashboardTokens;
 };
 
-type HostTab = "invoices" | "quotes" | "mass-payment" | "add-funds";
+type HostTab = "all" | "uninstalled";
 
 type InvoiceItem = {
   readonly id: string;
@@ -45,28 +45,21 @@ const renderStatusIcon = (status: InvoiceItem["status"]) => {
 
 export const HostView = ({ tokens }: HostViewProps) => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<HostTab>("invoices");
+  const [activeTab, setActiveTab] = useState<HostTab>("all");
   const [selectedInvoices, setSelectedInvoices] = useState<Set<string>>(new Set(["inv-297"]));
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 20;
   const totalRecords = 100;
   const totalPages = Math.ceil(totalRecords / pageSize);
 
+  const allCount = totalRecords;
+  const uninstalledCount = 0;
+
   const paginatedInvoices = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
     const end = start + pageSize;
     return invoicesData.slice(start, end);
   }, [currentPage, pageSize]);
-
-  const tabs = useMemo(
-    () => [
-      { id: "invoices" as const, label: "My Invoices" },
-      { id: "quotes" as const, label: "My Qoutes" },
-      { id: "mass-payment" as const, label: "Mass Payment" },
-      { id: "add-funds" as const, label: "Add Funds" }
-    ],
-    []
-  );
 
   const toggleInvoice = (id: string) => {
     setSelectedInvoices((prev) => {
@@ -85,11 +78,6 @@ export const HostView = ({ tokens }: HostViewProps) => {
   };
 
   const tableHeaderClass = `text-sm uppercase font-semibold ${tokens.subtleText}`;
-  const filledButtonClass = useMemo(
-    () =>
-      `rounded-full px-4 py-1.5 text-sm font-semibold inline-flex items-center bg-[#7469C7] text-white`,
-    []
-  );
 
   const renderPagination = () => {
     const pages: (number | string)[] = [];
@@ -189,32 +177,37 @@ export const HostView = ({ tokens }: HostViewProps) => {
     <div className="flex flex-col gap-6">
       <div className={`${tokens.cardBase} rounded-[28px] border border-[var(--color-card-border)] py-4 px-6 transition-colors`}>
         {/* Title */}
-        <div className="mb-3">
+        {/* <div className="mb-3">
           <h2 className={`text-2xl font-semibold md:text-3xl ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
             My Invoices
           </h2>
-        </div>
+        </div> */}
 
         {/* Tabs and Actions */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex flex-wrap items-center gap-2">
-            {tabs.map((tab) => {
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
-                    isActive
-                      ? filledButtonClass
-                      : `${tokens.buttonGhost} hover:opacity-90`
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              );
-            })}
+          <div className="flex items-center gap-4 rounded-full p-1">
+            <button
+              type="button"
+              onClick={() => setActiveTab("all")}
+              className={
+                activeTab === "all"
+                  ? `${tokens.buttonFilled} rounded-full px-5 py-2 text-sm font-semibold`
+                  : `${tokens.buttonGhost} rounded-full px-4 py-2 text-sm font-medium tracking-[0.05em]`
+              }
+            >
+              All ({allCount})
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("uninstalled")}
+              className={
+                activeTab === "uninstalled"
+                  ? `${tokens.buttonFilled} rounded-full px-5 py-2 text-sm font-semibold`
+                  : `${tokens.buttonGhost} rounded-full px-4 py-2 text-sm font-medium tracking-[0.05em]`
+              }
+            >
+              Uninstalled ({uninstalledCount})
+            </button>
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -230,7 +223,7 @@ export const HostView = ({ tokens }: HostViewProps) => {
             </div>
             <button
               type="button"
-              className={`${filledButtonClass} gap-2 py-2.5`}
+              className={`${tokens.buttonFilled} inline-flex items-center justify-center gap-2 rounded-full px-3 py-2 text-sm font-semibold`}
             >
               <PayAllIcon className="h-5 w-5" />
               Pay All
@@ -239,138 +232,106 @@ export const HostView = ({ tokens }: HostViewProps) => {
         </div>
 
         {/* Invoice Table */}
-        {activeTab === "invoices" && (
-          <>
-            <div className="mt-2 overflow-x-auto">
-              <table className="min-w-full table-auto border-separate border-spacing-y-2">
-                <thead className={tokens.isDark ? "" : "bg-[#F7F6FF]"}>
-                  <tr className="[&>th]:border-y [&>th]:border-[var(--color-border-divider)]">
-                    <th className="whitespace-nowrap py-3 pe-6 text-left">
-                      <span className={tableHeaderClass}>#Invoice</span>
-                    </th>
-                    <th className="whitespace-nowrap py-3 pe-6 text-left">
-                      <span className={tableHeaderClass}>Invoice Date</span>
-                    </th>
-                    <th className="whitespace-nowrap py-3 pe-6 text-left">
-                      <span className={tableHeaderClass}>Total</span>
-                    </th>
-                    <th className="whitespace-nowrap py-3 pe-6 text-left">
-                      <span className={tableHeaderClass}>Status</span>
-                    </th>
-                    <th className="whitespace-nowrap py-3 text-left">
-                      <span className={tableHeaderClass}>Actions</span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {paginatedInvoices.map((invoice) => {
-                    const isSelected = selectedInvoices.has(invoice.id);
-                    return (
-                      <tr
-                        key={invoice.id}
-                        className="text-sm cursor-pointer hover:opacity-80 transition-opacity"
-                        onClick={(e) => {
-                          // Don't navigate if clicking on checkbox or delete button
-                          const target = e.target as HTMLElement;
-                          if (target.closest('input[type="checkbox"]') || target.closest('button')) {
-                            return;
-                          }
-                          navigate(`/dashboard/manage-host/${invoice.id}`);
-                        }}
+        <div className="mt-2 overflow-x-auto">
+          <table className="min-w-full table-auto border-separate border-spacing-y-2">
+            <thead className={tokens.isDark ? "" : "bg-[#F7F6FF]"}>
+              <tr className="[&>th]:border-y [&>th]:border-[var(--color-border-divider)]">
+                <th className="whitespace-nowrap py-3 pe-6 text-left">
+                  <span className={tableHeaderClass}>#Invoice</span>
+                </th>
+                <th className="whitespace-nowrap py-3 pe-6 text-left">
+                  <span className={tableHeaderClass}>Invoice Date</span>
+                </th>
+                <th className="whitespace-nowrap py-3 pe-6 text-left">
+                  <span className={tableHeaderClass}>Total</span>
+                </th>
+                <th className="whitespace-nowrap py-3 pe-6 text-left">
+                  <span className={tableHeaderClass}>Status</span>
+                </th>
+                <th className="whitespace-nowrap py-3 text-left">
+                  <span className={tableHeaderClass}>Actions</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {paginatedInvoices.map((invoice) => {
+                const isSelected = selectedInvoices.has(invoice.id);
+                return (
+                  <tr
+                    key={invoice.id}
+                    className="text-sm cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={(e) => {
+                      // Don't navigate if clicking on checkbox or delete button
+                      const target = e.target as HTMLElement;
+                      if (target.closest('input[type="checkbox"]') || target.closest('button')) {
+                        return;
+                      }
+                      navigate(`/dashboard/manage-host/${invoice.id}`);
+                    }}
+                  >
+                    <td className="rounded-l-xl bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={(e) => {
+                            e.stopPropagation();
+                            toggleInvoice(invoice.id);
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                          className="h-4 w-4 rounded border-[var(--color-border-divider)] bg-transparent accent-[#584ABC] transition-colors"
+                          aria-label={`Select invoice ${invoice.invoiceNumber}`}
+                        />
+                        <span className="text-base font-semibold">{invoice.invoiceNumber}</span>
+                      </div>
+                    </td>
+                    <td className="bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
+                      <p className="font-medium">{invoice.date}</p>
+                    </td>
+                    <td className="bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
+                      <p className="font-medium">{invoice.total}</p>
+                    </td>
+                    <td className="bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
+                      <span
+                        className={`inline-flex items-center gap-1 text-sm font-medium ${
+                          tokens.isDark ? "text-white" : "text-[#2B3674]"
+                        }`}
                       >
-                        <td className="rounded-l-xl bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
-                          <div className="flex items-center gap-3">
-                            <input
-                              type="checkbox"
-                              checked={isSelected}
-                              onChange={(e) => {
-                                e.stopPropagation();
-                                toggleInvoice(invoice.id);
-                              }}
-                              onClick={(e) => e.stopPropagation()}
-                              className="h-4 w-4 rounded border-[var(--color-border-divider)] bg-transparent accent-[#584ABC] transition-colors"
-                              aria-label={`Select invoice ${invoice.invoiceNumber}`}
-                            />
-                            <span className="text-base font-semibold">{invoice.invoiceNumber}</span>
-                          </div>
-                        </td>
-                        <td className="bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
-                          <p className="font-medium">{invoice.date}</p>
-                        </td>
-                        <td className="bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
-                          <p className="font-medium">{invoice.total}</p>
-                        </td>
-                        <td className="bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
-                          <span
-                            className={`inline-flex items-center gap-1 text-sm font-medium ${
-                              tokens.isDark ? "text-white" : "text-[#2B3674]"
-                            }`}
-                          >
-                            {renderStatusIcon(invoice.status)}
-                            {invoice.status}
-                          </span>
-                        </td>
-                        <td className="rounded-r-xl bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
-                          <button
-                            type="button"
-                            onClick={(e) => e.stopPropagation()}
-                            className={`${tokens.buttonGhost} flex h-9 w-9 items-center justify-center rounded-full`}
-                            aria-label={`Delete invoice ${invoice.invoiceNumber}`}
-                          >
-                            <DeleteIcon className={`h-4 w-4 ${tokens.isDark ? "" : "[&_path]:fill-[#584ABC]"}`} />
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                        {renderStatusIcon(invoice.status)}
+                        {invoice.status}
+                      </span>
+                    </td>
+                    <td className="rounded-r-xl bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
+                      <button
+                        type="button"
+                        onClick={(e) => e.stopPropagation()}
+                        className={`${tokens.buttonGhost} flex h-9 w-9 items-center justify-center rounded-full`}
+                        aria-label={`Delete invoice ${invoice.invoiceNumber}`}
+                      >
+                        <DeleteIcon className={`h-4 w-4 ${tokens.isDark ? "" : "[&_path]:fill-[#584ABC]"}`} />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
 
-            {/* Pagination */}
-            <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-[var(--color-border-divider)] pt-4 text-xs text-[var(--color-sidebar-nav-idle-text)] transition-colors sm:flex-row">
-              {renderPagination()}
+        {/* Pagination */}
+        <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-[var(--color-border-divider)] pt-4 text-xs text-[var(--color-sidebar-nav-idle-text)] transition-colors sm:flex-row">
+          {renderPagination()}
 
-              <div className="flex items-center gap-2 text-sm text-[var(--color-page-text)]">
-                <span>Showing</span>
-                <select className="rounded-lg border border-[var(--color-border-divider)] bg-[var(--color-card-bg)] px-2 py-1 text-sm focus:outline-none">
-                  <option value="20">20</option>
-                  <option value="50">50</option>
-                  <option value="100">100</option>
-                </select>
-                <span>of {totalRecords}</span>
-              </div>
-            </div>
-          </>
-        )}
-
-        {/* Other tabs content */}
-        {activeTab === "quotes" && (
-          <div className="mt-3 rounded-xl bg-[var(--color-table-row-bg)] px-6 py-12 text-center text-sm transition-colors">
-            <p className="text-base font-semibold">My Qoutes</p>
-            <p className={`mt-2 ${tokens.subtleText}`}>
-              No quotes available at this time.
-            </p>
+          <div className="flex items-center gap-2 text-sm text-[var(--color-page-text)]">
+            <span>Showing</span>
+            <select className="rounded-lg border border-[var(--color-border-divider)] bg-[var(--color-card-bg)] px-2 py-1 text-sm focus:outline-none">
+              <option value="20">20</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+            <span>of {totalRecords}</span>
           </div>
-        )}
-
-        {activeTab === "mass-payment" && (
-          <div className="mt-3 rounded-xl bg-[var(--color-table-row-bg)] px-6 py-12 text-center text-sm transition-colors">
-            <p className="text-base font-semibold">Mass Payment</p>
-            <p className={`mt-2 ${tokens.subtleText}`}>
-              Select invoices from "My Invoices" tab to pay multiple invoices at once.
-            </p>
-          </div>
-        )}
-
-        {activeTab === "add-funds" && (
-          <div className="mt-3 rounded-xl bg-[var(--color-table-row-bg)] px-6 py-12 text-center text-sm transition-colors">
-            <p className="text-base font-semibold">Add Funds</p>
-            <p className={`mt-2 ${tokens.subtleText}`}>
-              Add funds to your account balance.
-            </p>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );

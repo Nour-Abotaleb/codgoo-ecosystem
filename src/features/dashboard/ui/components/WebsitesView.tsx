@@ -258,7 +258,7 @@ export const WebsitesView = ({ sites, tokens }: WebsitesViewProps) => {
       <div className={`${tokens.cardBase} rounded-[28px] border border-[var(--color-card-border)] py-4 px-6 transition-colors`}>
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
-            <h2 className={`text-2xl font-semibold md:text-3xl ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
+            <h2 className={`text-2xl font-semibold ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
               Managed Sites
             </h2>
           </div>

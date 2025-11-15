@@ -263,7 +263,7 @@ const ManageNameserversSearchPanel = ({
   ] as const;
 
   return (
-    <div className={`${tokens.cardBase} rounded-[28px] border border-[var(--color-card-border)] px-6 py-4 transition-colors`}>
+    <div className={`${tokens.cardBase} rounded-[28px] border border-[var(--color-card-border)] px-6 py-2 transition-colors`}>
       <div className="mt-4 flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
         <div className={`flex h-12 flex-1 items-center gap-3 rounded-full border ${tokens.divider} bg-[var(--color-search-bg)] px-4 text-[var(--color-search-text)] transition-colors`}>
           <SearchIcon className="h-5 w-5 text-[var(--color-search-placeholder)]" />
