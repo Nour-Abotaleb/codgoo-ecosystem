@@ -144,9 +144,8 @@ export const OrderView = ({ tokens }: OrderViewProps) => {
                 {pkg.features.map((feature, index) => (
                   <div key={index} className="flex items-center gap-2">
                     <span className={`h-0.5 w-0.5 rounded-full flex items-center justify-center ${tokens.isDark ? "bg-white/10" : "bg-[#584ABC]"}`}>
-                      
                     </span>
-                     <li key={index} className={`text-sm md:text-base font-semibold ${tokens.subtleText}`}>
+                     <li key={index} className={`text-sm md:text-base font-regular ${tokens.subtleText}`}>
                        {feature.label}
                      </li>
                   </div>
