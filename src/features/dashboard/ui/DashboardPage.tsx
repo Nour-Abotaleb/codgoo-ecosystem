@@ -17,6 +17,8 @@ import { DomainsView } from "./components/DomainsView";
 import { ManageDomainView } from "./components/ManageDomainView";
 import { RegisterDomainView } from "./components/RegisterDomainView";
 import { DashboardOverview } from "./components/DashboardOverview";
+import { SoftwareDashboardOverview } from "./components/SoftwareDashboardOverview";
+import { AppDashboardOverview } from "./components/AppDashboardOverview";
 import { BillingView } from "./components/BillingView";
 import { WebsitesView } from "./components/WebsitesView";
 import { ManageWebsiteView } from "./components/ManageWebsiteView";
@@ -60,7 +62,7 @@ export const DashboardPage = () => {
         "--color-sidebar-nav-active-text": "#A3AED0",
         "--color-sidebar-nav-idle-text": "rgba(255,255,255,0.65)",
         "--color-card-bg": "#232637",
-        "--color-card-border": "rgba(103,114,229,0.18)",
+        "--color-card-border": activeApp.id === "app" ? "rgba(15,103,115,0.18)" : activeApp.id === "software" ? "rgba(7,31,215,0.18)" : "rgba(103,114,229,0.18)",
         "--color-table-row-bg": "#2E3141",
         "--color-section-muted": "rgba(29,32,48,0.85)",
         "--color-progress-track": "rgba(255,255,255,0.12)",
@@ -103,7 +105,7 @@ export const DashboardPage = () => {
         "--color-sidebar-nav-active-text": "#584ABC",
         "--color-sidebar-nav-idle-text": "rgba(88,74,188,0.65)",
         "--color-card-bg": "rgba(255,255,255,0.96)",
-        "--color-card-border": "rgba(99,102,241,0.12)",
+        "--color-card-border": activeApp.id === "app" ? "rgba(15,103,115,0.12)" : activeApp.id === "software" ? "rgba(7,31,215,0.12)" : "rgba(99,102,241,0.12)",
         "--color-table-row-bg": "#FFFFFF",
         "--color-section-muted": "rgba(240,242,255,0.9)",
         "--color-progress-track": "rgba(88,74,188,0.12)",
@@ -136,7 +138,7 @@ export const DashboardPage = () => {
         "--shadow-cta": "rgba(94,86,255,0.45)"
       }
     }),
-    []
+    [activeApp.id, isDark]
   );
 
   useEffect(() => {
@@ -355,11 +357,25 @@ export const DashboardPage = () => {
           {orderMatch ? (
             <OrderView tokens={tokens} />
           ) : activeNavId === "dashboard" ? (
-            <DashboardOverview
-              dataset={dataset}
-              tokens={tokens}
-              onManageDomain={() => handleSelectNav("domains")}
-            />
+            activeApp.id === "software" && dataset.softwareData ? (
+              <SoftwareDashboardOverview
+                data={dataset.softwareData}
+                hero={dataset.hero}
+                tokens={tokens}
+              />
+            ) : activeApp.id === "app" && dataset.appData ? (
+              <AppDashboardOverview
+                data={dataset.appData}
+                hero={dataset.hero}
+                tokens={tokens}
+              />
+            ) : (
+              <DashboardOverview
+                dataset={dataset}
+                tokens={tokens}
+                onManageDomain={() => handleSelectNav("domains")}
+              />
+            )
           ) : activeNavId === "host" ? (
             manageHostMatch ? (
               <ManageHostView hostId={manageHostMatch.params.hostId ?? ""} tokens={tokens} />

@@ -40,6 +40,17 @@ export const DashboardHeader = ({
     ? "bg-[var(--color-search-bg)] text-[color:var(--color-search-text)] placeholder:text-[color:var(--color-search-placeholder)]"
     : "bg-[#F4F7FE] text-[color:var(--color-search-text)] placeholder:text-[color:var(--color-search-placeholder)]";
 
+  const primaryColor = activeApp.id === "software" 
+    ? "#071FD7" 
+    : activeApp.id === "app"
+    ? "#0F6773"
+    : "#584ABC";
+  const primaryBgColor = activeApp.id === "software" 
+    ? "#EEEDF8" 
+    : activeApp.id === "app"
+    ? "#E7F0F1"
+    : "#EEEDF8";
+
   const getIconButtonClass = (iconId: ActiveIcon) => {
     const isActive = activeIcon === iconId;
     const baseClass = "flex h-9 w-9 items-center justify-center rounded-full transition-colors duration-200";
@@ -51,10 +62,18 @@ export const DashboardHeader = ({
       return `${baseClass} hover:opacity-80`;
     } else {
       if (isActive) {
-        return `${baseClass} bg-[#EEEDF8]`;
+        return baseClass;
       }
       return `${baseClass} hover:opacity-90`;
     }
+  };
+
+  const getIconButtonStyle = (iconId: ActiveIcon) => {
+    const isActive = activeIcon === iconId;
+    if (!tokens.isDark && isActive) {
+      return { backgroundColor: primaryBgColor };
+    }
+    return {};
   };
 
   const getIconColorClass = (iconId: ActiveIcon) => {
@@ -64,7 +83,7 @@ export const DashboardHeader = ({
       return "text-white";
     } else {
       if (isActive) {
-        return "text-[#584ABC]";
+        return "";
       }
       return "text-[#A3AED0]";
     }
@@ -77,8 +96,9 @@ export const DashboardHeader = ({
       <div>
         <h1
           className={`text-2xl font-semibold md:text-3xl ${
-            tokens.isDark ? "" : "text-[#584ABC]"
+            tokens.isDark ? "" : ""
           }`}
+          style={tokens.isDark ? {} : { color: primaryColor }}
         >
           {pageLabel}
         </h1>
@@ -99,9 +119,13 @@ export const DashboardHeader = ({
             type="button"
             onClick={() => setActiveIcon(activeIcon === "notification" ? null : "notification")}
             className={getIconButtonClass("notification")}
+            style={getIconButtonStyle("notification")}
             aria-label="Notifications"
           >
-            <NotificationIcon className={`h-5 w-5 ${getIconColorClass("notification")}`} />
+            <NotificationIcon 
+              className={`h-5 w-5 ${getIconColorClass("notification")}`}
+              style={!tokens.isDark && activeIcon === "notification" ? { color: primaryColor } : {}}
+            />
           </button>
 
           <button
@@ -111,9 +135,13 @@ export const DashboardHeader = ({
               onToggleTheme();
             }}
             className={getIconButtonClass("theme")}
+            style={getIconButtonStyle("theme")}
             aria-label="Toggle theme"
           >
-            <DarkModeIcon className={`h-5 w-5 ${getIconColorClass("theme")}`} />
+            <DarkModeIcon 
+              className={`h-5 w-5 ${getIconColorClass("theme")}`}
+              style={!tokens.isDark && activeIcon === "theme" ? { color: primaryColor } : {}}
+            />
           </button>
 
           <button
@@ -123,9 +151,13 @@ export const DashboardHeader = ({
               onCartClick?.();
             }}
             className={getIconButtonClass("cart")}
+            style={getIconButtonStyle("cart")}
             aria-label="Cart"
           >
-            <CartIcon className={`h-5 w-5 ${getIconColorClass("cart")}`} />
+            <CartIcon 
+              className={`h-5 w-5 ${getIconColorClass("cart")}`}
+              style={!tokens.isDark && activeIcon === "cart" ? { color: primaryColor } : {}}
+            />
           </button>
 
           <img

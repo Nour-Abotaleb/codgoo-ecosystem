@@ -10,7 +10,12 @@ import {
   WebsitesIcon,
   SettingsIcon,
   SupportIcon,
-  Logout
+  Logout,
+  CalendarIcon,
+  ApplicationIcon,
+  MarketplaceIcon,
+  ProjectIcon,
+  ProductIcon
 } from "@utilities/icons";
 
 import navBackground from "@assets/images/cloud/nav-bg.svg";
@@ -81,16 +86,29 @@ export const DashboardSidebar = ({
     domains: DomainsIcon,
     websites: WebsitesIcon,
     billing: BillingIcon,
-    settings: SettingsIcon
+    settings: SettingsIcon,
+    projects: ProjectIcon,
+    products: ProductIcon,
+    meetings: CalendarIcon,
+    applications: ApplicationIcon,
+    marketplace: MarketplaceIcon
   };
 
-  const navActiveColorHex = tokens.isDark ? "#FEFEFE" : "#584ABC";
+  const navActiveColorHex = activeAppId === "software" 
+    ? (tokens.isDark ? "#FEFEFE" : "#071FD7")
+    : activeAppId === "app"
+    ? (tokens.isDark ? "#FEFEFE" : "#0F6773")
+    : (tokens.isDark ? "#FEFEFE" : "#584ABC");
   const navIdleColorHex = tokens.isDark ? "#C6CCDF" : "#A3AED0";
 
   const navActiveColorClass = `text-[${navActiveColorHex}]`;
   const navIdleColorClass = `text-[${navIdleColorHex}]`;
 
-  const hoverColorClass = tokens.isDark ? "text-[#FEFEFE]" : "text-[#584ABC]";
+  const hoverColorClass = activeAppId === "software"
+    ? (tokens.isDark ? "text-[#FEFEFE]" : "text-[#071FD7]")
+    : activeAppId === "app"
+    ? (tokens.isDark ? "text-[#FEFEFE]" : "text-[#0F6773]")
+    : (tokens.isDark ? "text-[#FEFEFE]" : "text-[#584ABC]");
 
   return (
     <aside
@@ -109,8 +127,15 @@ export const DashboardSidebar = ({
                 ? activeAppId === "app"
                   ? "text-[color:var(--color-switcher-icon-active)]"
                   : "text-[color:var(--color-switcher-icon-inactive)]"
-                : "text-[#584ABC]"
+                : ""
             }`}
+            style={!tokens.isDark ? { 
+              color: activeAppId === "software" 
+                ? "#071FD7" 
+                : activeAppId === "app"
+                ? "#0F6773"
+                : "#584ABC" 
+            } : {}}
           >
             <DotsSwitcher className="h-6 w-6 cursor-pointer" />
           </button>
@@ -153,7 +178,7 @@ export const DashboardSidebar = ({
         </div>
       </div>
 
-      <nav className="mt-4 flex flex-col px-2">
+      <nav className="mt-4 flex flex-col px-2 mb-35">
         {navigationItems.map((item) => {
           const isActive = item.id === activeNavId;
           const Icon = item.icon ? iconMap[item.icon] : undefined;
@@ -204,11 +229,18 @@ export const DashboardSidebar = ({
           type="button"
           className={`group flex cursor-pointer items-center justify-center rounded-full w-11 h-11 transition-colors ${tokens.isDark ? "bg-white" : "bg-[#FEEFEE]"}`}
         >
-          <Logout className={`h-5 w-5 transition-colors ${navIdleColorClass} group-hover:${hoverColorClass}`} />
+          <Logout className={`h-5 w-5 transition-colors opacity-70 ${navIdleColorClass} group-hover:${hoverColorClass}`} />
         </button>
         <button
           type="button"
-          className="group flex px-12 cursor-pointer items-center justify-center gap-1 rounded-full bg-[#7469C7] py-2.5 text-base font-semibold transition-colors"
+          className="group flex px-12 cursor-pointer items-center justify-center gap-1 rounded-full py-2.5 text-base font-semibold transition-colors"
+          style={{ 
+            backgroundColor: activeAppId === "software" 
+              ? "#071FD7" 
+              : activeAppId === "app"
+              ? "#0F6773"
+              : "#7469C7"
+          }}
         >
           <span className="relative flex items-center justify-center">
             <SupportIcon className="h-5 w-5 transition-colors text-white" />
