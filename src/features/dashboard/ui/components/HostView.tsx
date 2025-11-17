@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { SearchIcon, UnpaidIcon, PendingIcon, ActiveIcon, DeleteIcon, PayAllIcon } from "@utilities/icons";
 import type { DashboardTokens } from "../types";
@@ -48,6 +48,7 @@ export const HostView = ({ tokens }: HostViewProps) => {
   const [activeTab, setActiveTab] = useState<HostTab>("all");
   const [selectedInvoices, setSelectedInvoices] = useState<Set<string>>(new Set(["inv-297"]));
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
   const pageSize = 20;
   const totalRecords = 100;
   const totalPages = Math.ceil(totalRecords / pageSize);
@@ -55,11 +56,30 @@ export const HostView = ({ tokens }: HostViewProps) => {
   const allCount = totalRecords;
   const uninstalledCount = 0;
 
+  const filteredInvoices = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return invoicesData;
+    }
+    const query = searchQuery.toLowerCase();
+    return invoicesData.filter((invoice) => {
+      return (
+        invoice.invoiceNumber.toString().includes(query) ||
+        invoice.date.toLowerCase().includes(query) ||
+        invoice.total.toLowerCase().includes(query) ||
+        invoice.status.toLowerCase().includes(query)
+      );
+    });
+  }, [searchQuery]);
+
   const paginatedInvoices = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
     const end = start + pageSize;
-    return invoicesData.slice(start, end);
-  }, [currentPage, pageSize]);
+    return filteredInvoices.slice(start, end);
+  }, [filteredInvoices, currentPage, pageSize]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
 
   const toggleInvoice = (id: string) => {
     setSelectedInvoices((prev) => {
@@ -218,6 +238,8 @@ export const HostView = ({ tokens }: HostViewProps) => {
               <input
                 type="search"
                 placeholder="Search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="flex-1 bg-transparent text-sm text-[var(--color-search-text)] placeholder:text-[var(--color-search-placeholder)] focus:outline-none"
               />
             </div>

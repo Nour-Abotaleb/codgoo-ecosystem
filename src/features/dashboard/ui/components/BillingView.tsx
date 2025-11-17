@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { SearchIcon, UnpaidIcon, PendingIcon, ActiveIcon, DeleteIcon, PayAllIcon, DownloadIcon } from "@utilities/icons";
 import type { DashboardTokens } from "../types";
 
@@ -64,8 +64,37 @@ const renderStatusIcon = (status: InvoiceItem["status"] | QuoteItem["stage"]) =>
   return null;
 };
 
-const InvoicesTable = ({ tokens }: { readonly tokens: DashboardTokens }) => {
+const InvoicesTable = ({ tokens, searchQuery }: { readonly tokens: DashboardTokens; readonly searchQuery: string }) => {
   const [selectedInvoices, setSelectedInvoices] = useState<Set<string>>(new Set(["inv-297"]));
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 20;
+  const totalRecords = 100;
+  const totalPages = Math.ceil(totalRecords / pageSize);
+
+  const filteredInvoices = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return invoicesData;
+    }
+    const query = searchQuery.toLowerCase();
+    return invoicesData.filter((invoice) => {
+      return (
+        invoice.invoiceNumber.toString().includes(query) ||
+        invoice.date.toLowerCase().includes(query) ||
+        invoice.total.toLowerCase().includes(query) ||
+        invoice.status.toLowerCase().includes(query)
+      );
+    });
+  }, [searchQuery]);
+
+  const paginatedInvoices = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    const end = start + pageSize;
+    return filteredInvoices.slice(start, end);
+  }, [filteredInvoices, currentPage, pageSize]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
 
   const toggleInvoice = (id: string) => {
     setSelectedInvoices((prev) => {
@@ -79,7 +108,105 @@ const InvoicesTable = ({ tokens }: { readonly tokens: DashboardTokens }) => {
     });
   };
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
   const tableHeaderClass = `text-sm uppercase font-semibold ${tokens.subtleText}`;
+
+  const renderPagination = () => {
+    const pages: (number | string)[] = [];
+    
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      pages.push(1);
+      
+      if (currentPage > 3) {
+        pages.push("...");
+      }
+      
+      const start = Math.max(2, currentPage - 1);
+      const end = Math.min(totalPages - 1, currentPage + 1);
+      
+      for (let i = start; i <= end; i++) {
+        if (i !== 1 && i !== totalPages) {
+          pages.push(i);
+        }
+      }
+      
+      if (currentPage < totalPages - 2) {
+        pages.push("...");
+      }
+      
+      pages.push(totalPages);
+    }
+
+    return (
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => handlePageChange(1)}
+          disabled={currentPage === 1}
+          className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
+        >
+          ««
+        </button>
+        <button
+          type="button"
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
+        >
+          «
+        </button>
+        {pages.map((page, index) => {
+          if (page === "...") {
+            return (
+              <span
+                key={`ellipsis-${index}`}
+                className="px-2 py-1 font-semibold text-[var(--color-page-text)]"
+              >
+                …
+              </span>
+            );
+          }
+          const pageNum = page as number;
+          const isCurrent = pageNum === currentPage;
+          return (
+            <button
+              key={pageNum}
+              type="button"
+              onClick={() => handlePageChange(pageNum)}
+              className={`${
+                isCurrent ? tokens.buttonFilled : tokens.buttonGhost
+              } rounded-full px-3 py-1 text-xs font-semibold`}
+            >
+              {pageNum}
+            </button>
+          );
+        })}
+        <button
+          type="button"
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
+        >
+          »
+        </button>
+        <button
+          type="button"
+          onClick={() => handlePageChange(totalPages)}
+          disabled={currentPage === totalPages}
+          className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
+        >
+          »»
+        </button>
+      </div>
+    );
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -105,7 +232,7 @@ const InvoicesTable = ({ tokens }: { readonly tokens: DashboardTokens }) => {
             </tr>
           </thead>
           <tbody>
-            {invoicesData.map((invoice) => {
+            {paginatedInvoices.map((invoice) => {
               const isSelected = selectedInvoices.has(invoice.id);
               return (
                 <tr key={invoice.id} className="text-sm">
@@ -153,48 +280,57 @@ const InvoicesTable = ({ tokens }: { readonly tokens: DashboardTokens }) => {
         </table>
       </div>
 
-      <div className="flex flex-col items-center justify-between gap-4 border-t border-[var(--color-border-divider)] pt-4 text-xs text-[var(--color-sidebar-nav-idle-text)] transition-colors sm:flex-row">
-        <div className="flex items-center gap-2">
-          {["«", "‹", "1", "2", "3", "…", "10", "›", "»"].map((label) => {
-            const isCurrent = label === "1";
-            const isEllipsis = label === "…";
+      {totalPages > 0 && (
+        <div className="flex flex-col items-center justify-between gap-4 border-t border-[var(--color-border-divider)] pt-4 text-xs text-[var(--color-sidebar-nav-idle-text)] transition-colors sm:flex-row">
+          {renderPagination()}
 
-            if (isEllipsis) {
-              return (
-                <span key={label} className="px-2 py-1 font-semibold">
-                  {label}
-                </span>
-              );
-            }
-
-            return (
-              <button
-                key={label}
-                type="button"
-                className={`${isCurrent ? tokens.buttonFilled : tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold`}
-              >
-                {label}
-              </button>
-            );
-          })}
+          <div className="flex items-center gap-2 text-sm text-[var(--color-page-text)]">
+            <span>Showing</span>
+            <select className="rounded-lg border border-[var(--color-border-divider)] bg-[var(--color-card-bg)] px-2 py-1 text-sm focus:outline-none">
+              <option value="20">20</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+            <span>of {totalRecords}</span>
+          </div>
         </div>
-
-        <div className="flex items-center gap-2 text-sm text-[var(--color-page-text)]">
-          <span>Showing</span>
-          <select className="rounded-lg border border-[var(--color-border-divider)] bg-[var(--color-card-bg)] px-2 py-1 text-sm focus:outline-none">
-            <option value="20">20</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-          </select>
-          <span>of 100</span>
-        </div>
-      </div>
+      )}
     </div>
   );
 };
 
-const QuotesTable = ({ tokens }: { readonly tokens: DashboardTokens }) => {
+const QuotesTable = ({ tokens, searchQuery }: { readonly tokens: DashboardTokens; readonly searchQuery: string }) => {
   const [selectedQuotes, setSelectedQuotes] = useState<Set<string>>(new Set(["q-1"]));
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 20;
+  const totalRecords = 100;
+  const totalPages = Math.ceil(totalRecords / pageSize);
+
+  const filteredQuotes = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return quotesData;
+    }
+    const query = searchQuery.toLowerCase();
+    return quotesData.filter((quote) => {
+      return (
+        quote.quoteNumber.toString().includes(query) ||
+        quote.subject.toLowerCase().includes(query) ||
+        quote.dateCreated.toLowerCase().includes(query) ||
+        quote.validUntil.toLowerCase().includes(query) ||
+        quote.stage.toLowerCase().includes(query)
+      );
+    });
+  }, [searchQuery]);
+
+  const paginatedQuotes = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    const end = start + pageSize;
+    return filteredQuotes.slice(start, end);
+  }, [filteredQuotes, currentPage, pageSize]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
 
   const toggleQuote = (id: string) => {
     setSelectedQuotes((prev) => {
@@ -208,7 +344,105 @@ const QuotesTable = ({ tokens }: { readonly tokens: DashboardTokens }) => {
     });
   };
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
   const tableHeaderClass = `text-sm uppercase ${tokens.subtleText}`;
+
+  const renderPagination = () => {
+    const pages: (number | string)[] = [];
+    
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      pages.push(1);
+      
+      if (currentPage > 3) {
+        pages.push("...");
+      }
+      
+      const start = Math.max(2, currentPage - 1);
+      const end = Math.min(totalPages - 1, currentPage + 1);
+      
+      for (let i = start; i <= end; i++) {
+        if (i !== 1 && i !== totalPages) {
+          pages.push(i);
+        }
+      }
+      
+      if (currentPage < totalPages - 2) {
+        pages.push("...");
+      }
+      
+      pages.push(totalPages);
+    }
+
+    return (
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => handlePageChange(1)}
+          disabled={currentPage === 1}
+          className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
+        >
+          ««
+        </button>
+        <button
+          type="button"
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
+        >
+          «
+        </button>
+        {pages.map((page, index) => {
+          if (page === "...") {
+            return (
+              <span
+                key={`ellipsis-${index}`}
+                className="px-2 py-1 font-semibold text-[var(--color-page-text)]"
+              >
+                …
+              </span>
+            );
+          }
+          const pageNum = page as number;
+          const isCurrent = pageNum === currentPage;
+          return (
+            <button
+              key={pageNum}
+              type="button"
+              onClick={() => handlePageChange(pageNum)}
+              className={`${
+                isCurrent ? tokens.buttonFilled : tokens.buttonGhost
+              } rounded-full px-3 py-1 text-xs font-semibold`}
+            >
+              {pageNum}
+            </button>
+          );
+        })}
+        <button
+          type="button"
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
+        >
+          »
+        </button>
+        <button
+          type="button"
+          onClick={() => handlePageChange(totalPages)}
+          disabled={currentPage === totalPages}
+          className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
+        >
+          »»
+        </button>
+      </div>
+    );
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -249,7 +483,7 @@ const QuotesTable = ({ tokens }: { readonly tokens: DashboardTokens }) => {
             </tr>
           </thead>
           <tbody>
-            {quotesData.map((quote) => {
+            {paginatedQuotes.map((quote) => {
               const isSelected = selectedQuotes.has(quote.id);
               return (
                 <tr key={quote.id} className="text-sm">
@@ -300,42 +534,21 @@ const QuotesTable = ({ tokens }: { readonly tokens: DashboardTokens }) => {
         </table>
       </div>
 
-      <div className="flex flex-col items-center justify-between gap-4 border-t border-[var(--color-border-divider)] pt-4 text-xs text-[var(--color-sidebar-nav-idle-text)] transition-colors sm:flex-row">
-        <div className="flex items-center gap-2">
-          {["«", "‹", "1", "2", "3", "…", "10", "›", "»"].map((label) => {
-            const isCurrent = label === "1";
-            const isEllipsis = label === "…";
+      {totalPages > 0 && (
+        <div className="flex flex-col items-center justify-between gap-4 border-t border-[var(--color-border-divider)] pt-4 text-xs text-[var(--color-sidebar-nav-idle-text)] transition-colors sm:flex-row">
+          {renderPagination()}
 
-            if (isEllipsis) {
-              return (
-                <span key={label} className="px-2 py-1 font-semibold">
-                  {label}
-                </span>
-              );
-            }
-
-            return (
-              <button
-                key={label}
-                type="button"
-                className={`${isCurrent ? tokens.buttonFilled : tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold`}
-              >
-                {label}
-              </button>
-            );
-          })}
+          <div className="flex items-center gap-2 text-sm text-[var(--color-page-text)]">
+            <span>Showing</span>
+            <select className="rounded-lg border border-[var(--color-border-divider)] bg-[var(--color-card-bg)] px-2 py-1 text-sm focus:outline-none">
+              <option value="20">20</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+            <span>of {totalRecords}</span>
+          </div>
         </div>
-
-        <div className="flex items-center gap-2 text-sm text-[var(--color-page-text)]">
-          <span>Showing</span>
-          <select className="rounded-lg border border-[var(--color-border-divider)] bg-[var(--color-card-bg)] px-2 py-1 text-sm focus:outline-none">
-            <option value="20">20</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-          </select>
-          <span>of 100</span>
-        </div>
-      </div>
+      )}
     </div>
   );
 };
@@ -401,6 +614,7 @@ const AddFunds = ({ tokens }: { readonly tokens: DashboardTokens }) => {
 
 export const BillingView = ({ tokens }: BillingViewProps) => {
   const [activeTab, setActiveTab] = useState<BillingTab>("invoices");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const tabs = useMemo(
     () => [
@@ -412,12 +626,16 @@ export const BillingView = ({ tokens }: BillingViewProps) => {
     []
   );
 
+  useEffect(() => {
+    setSearchQuery("");
+  }, [activeTab]);
+
   const renderTabContent = () => {
     switch (activeTab) {
       case "invoices":
-        return <InvoicesTable tokens={tokens} />;
+        return <InvoicesTable tokens={tokens} searchQuery={searchQuery} />;
       case "quotes":
-        return <QuotesTable tokens={tokens} />;
+        return <QuotesTable tokens={tokens} searchQuery={searchQuery} />;
       case "mass-payment":
         return <MassPayment tokens={tokens} />;
       case "add-funds":
@@ -463,6 +681,8 @@ export const BillingView = ({ tokens }: BillingViewProps) => {
                 <input
                   type="search"
                   placeholder="Search"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   className="flex-1 bg-transparent text-sm text-[var(--color-search-text)] placeholder:text-[var(--color-search-placeholder)] focus:outline-none"
                 />
               </div>

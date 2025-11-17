@@ -142,10 +142,10 @@ export const ManageWebsiteView = ({ tokens }: ManageWebsiteViewProps) => {
   const statusDotClass = "bg-[#73F593]";
 
   const cardClass =
-    "rounded-[24px] border border-[var(--color-card-border)] p-4 transition-colors";
+    "rounded-[20px] border border-[var(--color-card-border)] p-4 transition-colors";
   const summaryCardClass = `${tokens.isDark ? "bg-[var(--color-table-row-bg)]" : "bg-[#F4F4FF]"} text-[var(--color-card-text)] rounded-2xl p-6 transition-colors`;
   const usageCardClass =
-    "rounded-[24px] border border-[var(--color-card-border)] p-6 transition-colors";
+    "rounded-[20px] border border-[var(--color-card-border)] p-6 transition-colors";
   const labelClass = `text-base font-regular text-[#718EBF]`;
   const statusBadgeClass =
     "inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium";

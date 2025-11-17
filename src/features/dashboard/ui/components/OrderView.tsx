@@ -95,7 +95,7 @@ export const OrderView = ({ tokens }: OrderViewProps) => {
     return `${baseClass} ${tokens.isDark ? tokens.subtleText : "text-[#2B3674]"} hover:${tokens.isDark ? "text-white" : "text-[#584ABC]"}`;
   };
 
-  const cardClass = `${tokens.isDark ? tokens.cardBase : "bg-white"} border ${tokens.isDark ? "border-[var(--color-border-divider)]" : "border-[#EEEDF8]"} rounded-2xl p-6 flex flex-col gap-4`;
+  const cardClass = `${tokens.isDark ? tokens.cardBase : "bg-white"} border ${tokens.isDark ? "border-[var(--color-border-divider)]" : "border-[#EEEDF8]"} rounded-[20px] p-6 flex flex-col gap-4`;
 
   return (
     <div className="flex flex-col gap-4">

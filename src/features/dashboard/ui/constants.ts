@@ -351,7 +351,28 @@ export const dashboardContent: Record<DashboardAppId, DashboardDataset> = {
         tag: "Customer-Reply",
         date: "Sunday, June 22nd, 2025",
         time: "14:10"
-      }
+      },
+      {
+        id: "#162797",
+        title: "One Page Orderform Template Released",
+        tag: "Customer-Reply",
+        date: "Monday, June 23rd, 2025",
+        time: "15:20"
+      },
+      {
+        id: "#162798",
+        title: "One Page Orderform Template Released",
+        tag: "Customer-Reply",
+        date: "Tuesday, June 24th, 2025",
+        time: "16:30"
+      },
+      {
+        id: "#162799",
+        title: "One Page Orderform Template Released",
+        tag: "Customer-Reply",
+        date: "Wednesday, June 25th, 2025",
+        time: "17:40"
+      },
     ]),
     news: createNews([
       {
@@ -370,6 +391,60 @@ export const dashboardContent: Record<DashboardAppId, DashboardDataset> = {
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et.",
         date: "July 4th, 2025",
         time: "07:40",
+        image: recentTwo
+      },
+      {
+        id: "news-3",
+        title: "One Page Orderform Template Released",
+        description:
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et.",
+        date: "July 5th, 2025",
+        time: "09:15",
+        image: recentOne
+      },
+      {
+        id: "news-4",
+        title: "One Page Orderform Template Released",
+        description:
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et.",
+        date: "July 6th, 2025",
+        time: "11:30",
+        image: recentTwo
+      },
+      {
+        id: "news-5",
+        title: "One Page Orderform Template Released",
+        description:
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et.",
+        date: "July 7th, 2025",
+        time: "14:20",
+        image: recentOne
+      },
+      {
+        id: "news-6",
+        title: "One Page Orderform Template Released",
+        description:
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et.",
+        date: "July 8th, 2025",
+        time: "16:45",
+        image: recentTwo
+      },
+      {
+        id: "news-7",
+        title: "One Page Orderform Template Released",
+        description:
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et.",
+        date: "July 9th, 2025",
+        time: "10:00",
+        image: recentOne
+      },
+      {
+        id: "news-8",
+        title: "One Page Orderform Template Released",
+        description:
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et.",
+        date: "July 10th, 2025",
+        time: "13:25",
         image: recentTwo
       }
     ])

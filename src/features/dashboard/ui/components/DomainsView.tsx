@@ -52,18 +52,40 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
     return initialStatus;
   });
 
+  const [searchQuery, setSearchQuery] = useState("");
+
   const filteredDomains = useMemo(() => {
-    if (activeTab === "auto-renew") {
-      return domains.filter((domain) => autoRenewStatus[domain.id] ?? domain.autoRenew);
+    let result = activeTab === "auto-renew"
+      ? domains.filter((domain) => autoRenewStatus[domain.id] ?? domain.autoRenew)
+      : domains;
+
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter((domain) =>
+        domain.name.toLowerCase().includes(query)
+      );
     }
-    return domains;
-  }, [domains, activeTab, autoRenewStatus]);
+
+    return result;
+  }, [domains, activeTab, autoRenewStatus, searchQuery]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab, searchQuery]);
 
   const hasDomains = filteredDomains.length > 0;
   const totalCount = domains.length;
   const autoRenewCount = Object.values(autoRenewStatus).filter(Boolean).length;
-  const pageSize = hasDomains ? Math.min(20, filteredDomains.length) : 0;
-  const totalRecords = hasDomains ? Math.max(100, filteredDomains.length) : 0;
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 20;
+  const totalRecords = 100;
+  const totalPages = Math.ceil(totalRecords / pageSize);
+
+  const paginatedDomains = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    const end = start + pageSize;
+    return filteredDomains.slice(start, end);
+  }, [filteredDomains, currentPage, pageSize]);
 
   useEffect(() => {
     const newStatus: Record<string, boolean> = {};
@@ -122,6 +144,104 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
 
   const handleOpenDomainOverview = (domain: DomainItem) => {
     navigate(`/dashboard/manage-domain/${domain.id}`);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const renderPagination = () => {
+    const pages: (number | string)[] = [];
+    
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      pages.push(1);
+      
+      if (currentPage > 3) {
+        pages.push("...");
+      }
+      
+      const start = Math.max(2, currentPage - 1);
+      const end = Math.min(totalPages - 1, currentPage + 1);
+      
+      for (let i = start; i <= end; i++) {
+        if (i !== 1 && i !== totalPages) {
+          pages.push(i);
+        }
+      }
+      
+      if (currentPage < totalPages - 2) {
+        pages.push("...");
+      }
+      
+      pages.push(totalPages);
+    }
+
+    return (
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => handlePageChange(1)}
+          disabled={currentPage === 1}
+          className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
+        >
+          ««
+        </button>
+        <button
+          type="button"
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
+        >
+          «
+        </button>
+        {pages.map((page, index) => {
+          if (page === "...") {
+            return (
+              <span
+                key={`ellipsis-${index}`}
+                className="px-2 py-1 font-semibold text-[var(--color-page-text)]"
+              >
+                …
+              </span>
+            );
+          }
+          const pageNum = page as number;
+          const isCurrent = pageNum === currentPage;
+          return (
+            <button
+              key={pageNum}
+              type="button"
+              onClick={() => handlePageChange(pageNum)}
+              className={`${
+                isCurrent ? tokens.buttonFilled : tokens.buttonGhost
+              } rounded-full px-3 py-1 text-xs font-semibold`}
+            >
+              {pageNum}
+            </button>
+          );
+        })}
+        <button
+          type="button"
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
+        >
+          »
+        </button>
+        <button
+          type="button"
+          onClick={() => handlePageChange(totalPages)}
+          disabled={currentPage === totalPages}
+          className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
+        >
+          »»
+        </button>
+      </div>
+    );
   };
 
   const manageButtonClass = useMemo(
@@ -186,6 +306,8 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
                 <input
                   type="search"
                   placeholder="Search domains"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   className="flex-1 bg-transparent text-sm text-[var(--color-search-text)] placeholder:text-[var(--color-search-placeholder)] focus:outline-none"
                 />
               </div>
@@ -228,7 +350,7 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
               </thead>
               <tbody>
                 {hasDomains ? (
-                  filteredDomains.map((domain) => {
+                  paginatedDomains.map((domain) => {
                     return (
                       <tr
                         key={domain.id}
@@ -369,39 +491,21 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
             </table>
           </div>
 
-          <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-[var(--color-border-divider)] pt-4 text-xs text-[var(--color-sidebar-nav-idle-text)] transition-colors sm:flex-row">
-            <div className="flex items-center gap-2">
-              {["«", "1", "2", "3", "…", "10", "»"].map((label) => {
-                const isCurrent = label === "1";
-                const isEllipsis = label === "…";
+          {totalPages > 0 && (
+            <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-[var(--color-border-divider)] pt-4 text-xs text-[var(--color-sidebar-nav-idle-text)] transition-colors sm:flex-row">
+              {renderPagination()}
 
-                if (isEllipsis) {
-                  return (
-                    <span
-                      key={label}
-                      className="px-2 py-1 font-semibold"
-                    >
-                      {label}
-                    </span>
-                  );
-                }
-
-                return (
-                  <button
-                    key={label}
-                    type="button"
-                    className={`${isCurrent ? tokens.buttonFilled : tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold`}
-                  >
-                    {label}
-                  </button>
-                );
-              })}
+              <div className="flex items-center gap-2 text-sm text-[var(--color-page-text)]">
+                <span>Showing</span>
+                <select className="rounded-lg border border-[var(--color-border-divider)] bg-[var(--color-card-bg)] px-2 py-1 text-sm focus:outline-none">
+                  <option value="20">20</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+                <span>of {totalRecords}</span>
+              </div>
             </div>
-
-            <p className="text-sm text-[var(--color-page-text)]">
-              Showing {pageSize} of {totalRecords}
-            </p>
-          </div>
+          )}
         </div>
     </div>
   );

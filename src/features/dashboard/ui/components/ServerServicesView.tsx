@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -30,13 +30,40 @@ export const ServerServicesView = ({
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<ServerTab>("all");
 
+  const [searchQuery, setSearchQuery] = useState("");
+
   const filteredServices = useMemo(() => {
-    if (activeTab === "uninstalled") {
-      // Filter uninstalled services (Pending status indicates uninstalled)
-      return services.filter((service) => service.status === "Pending");
+    let result = activeTab === "uninstalled"
+      ? services.filter((service) => service.status === "Pending")
+      : services;
+
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter((service) =>
+        service.product.toLowerCase().includes(query) ||
+        service.plan.toLowerCase().includes(query) ||
+        service.pricing.toLowerCase().includes(query) ||
+        service.status.toLowerCase().includes(query)
+      );
     }
-    return services;
-  }, [services, activeTab]);
+
+    return result;
+  }, [services, activeTab, searchQuery]);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 20;
+  const totalRecords = 100;
+  const totalPages = Math.ceil(totalRecords / pageSize);
+
+  const paginatedServices = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    const end = start + pageSize;
+    return filteredServices.slice(start, end);
+  }, [filteredServices, currentPage, pageSize]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab, searchQuery]);
 
   const allCount = services.length;
   const uninstalledCount = services.filter((service) => service.status === "Pending").length;
@@ -52,6 +79,104 @@ export const ServerServicesView = ({
       `text-sm tracking-widest uppercase ${tokens.subtleText}`,
     [tokens.subtleText]
   );
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const renderPagination = () => {
+    const pages: (number | string)[] = [];
+    
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      pages.push(1);
+      
+      if (currentPage > 3) {
+        pages.push("...");
+      }
+      
+      const start = Math.max(2, currentPage - 1);
+      const end = Math.min(totalPages - 1, currentPage + 1);
+      
+      for (let i = start; i <= end; i++) {
+        if (i !== 1 && i !== totalPages) {
+          pages.push(i);
+        }
+      }
+      
+      if (currentPage < totalPages - 2) {
+        pages.push("...");
+      }
+      
+      pages.push(totalPages);
+    }
+
+    return (
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => handlePageChange(1)}
+          disabled={currentPage === 1}
+          className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
+        >
+          ««
+        </button>
+        <button
+          type="button"
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
+        >
+          «
+        </button>
+        {pages.map((page, index) => {
+          if (page === "...") {
+            return (
+              <span
+                key={`ellipsis-${index}`}
+                className="px-2 py-1 font-semibold text-[var(--color-page-text)]"
+              >
+                …
+              </span>
+            );
+          }
+          const pageNum = page as number;
+          const isCurrent = pageNum === currentPage;
+          return (
+            <button
+              key={pageNum}
+              type="button"
+              onClick={() => handlePageChange(pageNum)}
+              className={`${
+                isCurrent ? tokens.buttonFilled : tokens.buttonGhost
+              } rounded-full px-3 py-1 text-xs font-semibold`}
+            >
+              {pageNum}
+            </button>
+          );
+        })}
+        <button
+          type="button"
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
+        >
+          »
+        </button>
+        <button
+          type="button"
+          onClick={() => handlePageChange(totalPages)}
+          disabled={currentPage === totalPages}
+          className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
+        >
+          »»
+        </button>
+      </div>
+    );
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -94,6 +219,8 @@ export const ServerServicesView = ({
               <input
                 type="search"
                 placeholder="Search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="flex-1 bg-transparent text-sm text-[var(--color-search-text)] placeholder:text-[var(--color-search-placeholder)] focus:outline-none"
               />
             </div>
@@ -132,7 +259,7 @@ export const ServerServicesView = ({
               </tr>
             </thead>
             <tbody>
-              {filteredServices.map((service) => {
+              {paginatedServices.map((service) => {
                 return (
                   <tr key={service.id} className="text-sm">
                     <td className="whitespace-nowrap px-6 py-3 pe-6 rounded-l-xl bg-[var(--color-table-row-bg)] transition-colors">
@@ -197,29 +324,21 @@ export const ServerServicesView = ({
           </table>
         </div>
 
-        <div className="mt-6 flex flex-col items-center justify-between gap-4 border-t border-[var(--color-border-divider)] pt-4 text-xs text-[var(--color-sidebar-nav-idle-text)] transition-colors sm:flex-row">
-          <div className="flex items-center gap-2">
-            <button type="button" className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold`}>
-              &laquo;
-            </button>
-            <button type="button" className={`${tokens.buttonFilled} rounded-full px-3 py-1 text-xs font-semibold`}>
-              1
-            </button>
-            <button type="button" className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold`}>
-              2
-            </button>
-            <button type="button" className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold`}>
-              3
-            </button>
-            <button type="button" className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold`}>
-              &raquo;
-            </button>
-          </div>
+        {totalPages > 0 && (
+          <div className="mt-6 flex flex-col items-center justify-between gap-4 border-t border-[var(--color-border-divider)] pt-4 text-xs text-[var(--color-sidebar-nav-idle-text)] transition-colors sm:flex-row">
+            {renderPagination()}
 
-          <p className="text-[var(--color-page-text)]">
-            Showing {Math.min(20, filteredServices.length)} of {filteredServices.length}
-          </p>
-        </div>
+            <div className="flex items-center gap-2 text-sm text-[var(--color-page-text)]">
+              <span>Showing</span>
+              <select className="rounded-lg border border-[var(--color-border-divider)] bg-[var(--color-card-bg)] px-2 py-1 text-sm focus:outline-none">
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+              <span>of {totalRecords}</span>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

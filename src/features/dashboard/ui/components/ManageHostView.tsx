@@ -119,10 +119,10 @@ export const ManageHostView = ({ hostId: _hostId, tokens }: ManageHostViewProps)
   );
 
   const cardClass =
-    "rounded-[24px] border border-[var(--color-card-border)] p-4 transition-colors";
+    "rounded-[20px] border border-[var(--color-card-border)] p-4 transition-colors";
   const summaryCardClass = `${tokens.isDark ? "bg-[var(--color-table-row-bg)]" : "bg-[#F4F4FF]"} text-[var(--color-card-text)] rounded-2xl p-6 transition-colors`;
   const usageCardClass =
-    "rounded-[24px] border border-[var(--color-card-border)] p-6 transition-colors";
+    "rounded-[20px] border border-[var(--color-card-border)] p-6 transition-colors";
   const labelClass = `text-base font-regular text-[#718EBF]`;
   const sectionTitleClass = "text-lg md:text-xl lg:text-2xl font-semibold";
   const statusBadgeClass =

@@ -202,7 +202,7 @@ export const DashboardSidebar = ({
       <div className="mt-auto flex flex-row items-center justify-between border-t border-[color:var(--color-sidebar-divider)] px-2 pt-6 pb-2">
         <button
           type="button"
-          className="group flex cursor-pointer items-center justify-center rounded-full bg-white w-11 h-11 transition-colors"
+          className={`group flex cursor-pointer items-center justify-center rounded-full w-11 h-11 transition-colors ${tokens.isDark ? "bg-white" : "bg-[#FEEFEE]"}`}
         >
           <Logout className={`h-5 w-5 transition-colors ${navIdleColorClass} group-hover:${hoverColorClass}`} />
         </button>

@@ -114,11 +114,11 @@ const WebsiteCard = ({
       <div className="flex items-center justify-end cursor-pointer w-full pt-4 pb-2" onClick={() => navigate(`/dashboard/manage-website/${site.id}`)}>
         <button
           type="button"
-          className={`${tokens.isDark ? "bg-white/20 hover:bg-white/10 text-white" : "bg-white hover:bg-gray-100"} transition text-[#584ABC] w-[90%] flex justify-center cursor-pointer flex items-center gap-2 rounded-full px-8 py-3 text-sm md:text-base font-semibold`}
+          className={`${tokens.isDark ? "bg-white" : "bg-white"} transition text-[#584ABC] w-[90%] flex justify-center cursor-pointer flex items-center gap-2 rounded-full px-8 py-3 text-sm md:text-base font-semibold`}
         >
           Dashboard
         </button>
-        <div className={`w-11 h-11 bg-white rounded-full flex items-center justify-center text-center -ms-2 transition ${tokens.isDark ? "bg-white/20 hover:bg-white/10 text-white" : "bg-white hover:bg-gray-100"}`}>
+        <div className={`w-11 h-11 bg-white rounded-full flex items-center justify-center text-center -ms-2 transition ${tokens.isDark ? "bg-white" : "bg-white"}`}>
             <ArrowUpIcon className="w-6 h-6 p-1 bg-gradient-to-b from-[#8A72FC] to-[#4318FF] rounded-full" />
         </div>
         </div>
@@ -129,9 +129,9 @@ const WebsiteCard = ({
 export const WebsitesView = ({ sites, tokens }: WebsitesViewProps) => {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const hasSites = sites.length > 0;
-  const totalCount = sites.length;
   const pageSize = 12; // 3 columns x 4 rows
-  const totalPages = Math.ceil(totalCount / pageSize);
+  const totalRecords = 100;
+  const totalPages = Math.ceil(totalRecords / pageSize);
   const [currentPage, setCurrentPage] = useState(1);
 
   const paginatedSites = useMemo(() => {
@@ -190,7 +190,7 @@ export const WebsitesView = ({ sites, tokens }: WebsitesViewProps) => {
     }
 
     return (
-      <div className="flex items-center justify-center gap-2">
+      <div className="flex items-center gap-2">
         <button
           type="button"
           onClick={() => handlePageChange(1)}
@@ -291,9 +291,19 @@ export const WebsitesView = ({ sites, tokens }: WebsitesViewProps) => {
             </div>
 
             {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="mt-8 flex justify-center">
+            {sites.length > pageSize && (
+              <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-[var(--color-border-divider)] pt-4 text-xs text-[var(--color-sidebar-nav-idle-text)] transition-colors sm:flex-row">
                 {renderPagination()}
+
+                <div className="flex items-center gap-2 text-sm text-[var(--color-page-text)]">
+                  <span>Showing</span>
+                  <select className="rounded-lg border border-[var(--color-border-divider)] bg-[var(--color-card-bg)] px-2 py-1 text-sm focus:outline-none">
+                    <option value="12">12</option>
+                    <option value="24">24</option>
+                    <option value="48">48</option>
+                  </select>
+                  <span>of {totalRecords}</span>
+                </div>
               </div>
             )}
           </>
