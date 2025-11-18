@@ -1,7 +1,7 @@
 import heroTexture from "@assets/images/cloud/widget2.png";
 import heroWave from "@assets/images/cloud/bg.png";
-// import heroSoftwareBg from "@assets/images/software/bg.png";
-// import heroAppBg from "@assets/images/app/bg.png";
+import heroSoftwareBg from "@assets/images/software/bg.png";
+import heroAppBg from "@assets/images/app/bg.png";
 import recentOne from "@assets/images/cloud/recent-1.png";
 import recentTwo from "@assets/images/cloud/recent-2.png";
 import logoAppDark from "@assets/logos/logo-app-dark.svg";
@@ -471,7 +471,7 @@ export const dashboardContent: Record<DashboardAppId, DashboardDataset> = {
       ctaLabel: "Discover now",
       gradient:
         "linear-gradient(135deg, #093F46 0%, rgba(56,129,139,0.7) 100%)",
-      backgroundImage: heroWave
+      backgroundImage: heroAppBg
     },
     stats: createStats(["12", "4", "3", "32002"]),
     products: [],
@@ -601,7 +601,7 @@ export const dashboardContent: Record<DashboardAppId, DashboardDataset> = {
       ctaLabel: "Add project",
       gradient:
         "linear-gradient(135deg, rgba(7,31,215,0.6) 0%, rgba(7,31,215,0.7) 100%)",
-      backgroundImage: heroWave
+      backgroundImage: heroSoftwareBg
     },
     stats: [],
     products: [],
@@ -613,8 +613,8 @@ export const dashboardContent: Record<DashboardAppId, DashboardDataset> = {
       proposals: {
         total: "100.00",
         items: [
-          { status: "Pending", percentage: 30, color: "#FFCE20" },
-          { status: "Declined", percentage: 40, color: "#EE5D50" },
+          { status: "Pending", percentage: 30, color: "#F8D20D" },
+          { status: "Declined", percentage: 40, color: "#E00A48" },
           { status: "Accepted", percentage: 20, color: "#000000" }
         ]
       },

@@ -254,11 +254,6 @@ export const AppDashboardOverview = ({
               className="absolute inset-0 w-full h-full object-cover"
             />
           )}
-          {/* Gradient Overlay */}
-          <div
-            className="absolute inset-0 z-[1]"
-            style={{ background: hero.gradient }}
-          />
           <div className="relative z-10 flex flex-col">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight transition-opacity duration-500 max-w-2xl">
               Let's<br />Get Started

@@ -178,7 +178,7 @@ export const DashboardSidebar = ({
         </div>
       </div>
 
-      <nav className="mt-4 flex flex-col px-2 mb-35">
+      <nav className={`mt-4 flex flex-col px-2 ${activeAppId === "cloud" ? "mb-34" : activeAppId === "software" ? "mb-47" : "mb-60"}`}>
         {navigationItems.map((item) => {
           const isActive = item.id === activeNavId;
           const Icon = item.icon ? iconMap[item.icon] : undefined;

@@ -1,5 +1,5 @@
-// useId removed as LineChart is commented out
-import { ArrowRight, ActiveIcon, PendingIcon, UnpaidIcon, EditIcon, DeleteIcon, FileCodeIcon } from "@utilities/icons";
+import { useId } from "react";
+import { ArrowRight, ActiveIcon, PendingIcon, UnpaidIcon, EditIcon, DeleteIcon, FileCodeIcon, CalendarIcon, ClockIcon, PlusCircleIcon } from "@utilities/icons";
 import type { DashboardTokens, SoftwareDashboardData, DashboardHeroContent } from "../types";
 
 type SoftwareDashboardOverviewProps = {
@@ -9,66 +9,66 @@ type SoftwareDashboardOverviewProps = {
 };
 
 // Donut Chart Component
-// DonutChart component commented out - currently unused
-// const DonutChart = ({ 
-//   items, 
-//   total, 
-//   size = 120 
-// }: { 
-//   items: SoftwareDashboardData["proposals"]["items"]; 
-//   total: string;
-//   size?: number;
-// }) => {
-//   const radius = (size - 20) / 2;
-//   const circumference = 2 * Math.PI * radius;
-//   let currentOffset = 0;
+const DonutChart = ({ 
+  items, 
+  size = 140 
+}: { 
+  items: SoftwareDashboardData["proposals"]["items"]; 
+  size?: number;
+}) => {
+  const radius = (size - 30) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const gapSize = 2; // Gap size in pixels between segments (increased for better visibility)
+  const totalGaps = items.length * gapSize;
+  const adjustedCircumference = circumference - totalGaps;
+  let cumulativeOffset = 0;
 
-//   const segments = items.map((item) => {
-//     const percentage = item.percentage / 100;
-//     const segmentLength = percentage * circumference;
-//     const offset = circumference - segmentLength - currentOffset;
-//     currentOffset += segmentLength;
+  const segments = items.map((item) => {
+    const percentage = item.percentage / 100;
+    const segmentLength = percentage * adjustedCircumference;
+    const offset = -cumulativeOffset; // Negative because we're rotating counter-clockwise
+    cumulativeOffset += segmentLength + gapSize; // Add gap after each segment
 
-//     return {
-//       ...item,
-//       offset,
-//       segmentLength,
-//       strokeDasharray: `${segmentLength} ${circumference}`
-//     };
-//   });
+    // Calculate remaining space after this segment and gap
+    const remainingSpace = circumference - segmentLength - gapSize;
 
-//   return (
-//     <div className="flex items-center gap-6">
-//       <div className="relative inline-flex items-center justify-center">
-//         <svg className="transform -rotate-90" width={size} height={size}>
-//           {segments.map((segment, index) => (
-//             <circle
-//               key={index}
-//               cx={size / 2}
-//               cy={size / 2}
-//               r={radius}
-//               fill="none"
-//               stroke={segment.color}
-//               strokeWidth="20"
-//               strokeDasharray={segment.strokeDasharray}
-//               strokeDashoffset={segment.offset}
-//               strokeLinecap="round"
-//               className="transition-all duration-300"
-//             />
-//           ))}
-//         </svg>
-//       </div>
-//       <div>
-//         <p className="text-2xl font-bold text-[#2B3674]">Total Proposal: {total}</p>
-//       </div>
-//     </div>
-//   );
-// };
+    return {
+      ...item,
+      offset,
+      segmentLength,
+      // Pattern: draw segment, gap, then remaining space (as gap to prevent repetition)
+      // This ensures all segments have consistent gaps between them
+      strokeDasharray: `${segmentLength} ${gapSize} ${remainingSpace}`
+    };
+  });
+
+  return (
+    <div className="relative inline-flex items-center justify-center">
+      <svg className="transform -rotate-90" width={size} height={size}>
+        {segments.map((segment, index) => (
+          <circle
+            key={index}
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            stroke={segment.color}
+            strokeWidth="25"
+            strokeDasharray={segment.strokeDasharray}
+            strokeDashoffset={segment.offset}
+            strokeLinecap="round"
+            className="transition-all duration-300"
+          />
+        ))}
+      </svg>
+    </div>
+  );
+};
 
 // Pie Chart Component - 3D style with labels outside each segment
 const PieChart = ({ 
   items, 
-  size = 180,
+  size = 140,
   isDark = false
 }: { 
   items: SoftwareDashboardData["invoices"]; 
@@ -202,123 +202,161 @@ const PieChart = ({
 };
 
 // Line Chart Component - Enhanced with gradient fill and highlight
-// LineChart component commented out - currently unused
-// const LineChart = ({ 
-//   data 
-// }: { 
-//   data: SoftwareDashboardData["clients"]; 
-// }) => {
-//   const gradientId = useId();
-//   const maxValue = Math.max(...data.map(d => d.value));
-//   const minValue = Math.min(...data.map(d => d.value));
-//   const range = maxValue - minValue || 1; // Prevent division by zero
-//   const width = 100;
-//   const height = 80;
-//   const padding = 8;
-//   const chartHeight = height - 20; // Reserve space for labels
+const LineChart = ({ 
+  data 
+}: { 
+  data: SoftwareDashboardData["clients"]; 
+}) => {
+  const gradientId = useId();
+  const maxValue = Math.max(...data.map(d => d.value));
+  const minValue = Math.min(...data.map(d => d.value));
+  const range = maxValue - minValue || 1; // Prevent division by zero
+  const width = 800;
+  const height = 200;
+  const padding = 40;
+  const chartHeight = height - 40; // Reserve space for labels
 
-//   const points = data.map((point, index) => {
-//     const x = padding + (index / (data.length - 1 || 1)) * (width - 2 * padding);
-//     const y = chartHeight - padding - ((point.value - minValue) / range) * (chartHeight - 2 * padding);
-//     return { x, y, ...point };
-//   });
+  const points = data.map((point, index) => {
+    const x = padding + (index / (data.length - 1 || 1)) * (width - 2 * padding);
+    const y = chartHeight - padding - ((point.value - minValue) / range) * (chartHeight - 2 * padding);
+    return { x, y, ...point };
+  });
 
-//   // Create smooth path with curves
-//   const pathData = points
-//     .map((point, index) => {
-//       if (index === 0) return `M ${point.x} ${point.y}`;
-//       const prevPoint = points[index - 1];
-//       const cp1x = prevPoint.x + (point.x - prevPoint.x) / 2;
-//       const cp1y = prevPoint.y;
-//       const cp2x = prevPoint.x + (point.x - prevPoint.x) / 2;
-//       const cp2y = point.y;
-//       return `C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${point.x} ${point.y}`;
-//     })
-//     .join(" ");
+  // Create smooth path with curves
+  const pathData = points
+    .map((point, index) => {
+      if (index === 0) return `M ${point.x} ${point.y}`;
+      const prevPoint = points[index - 1];
+      const cp1x = prevPoint.x + (point.x - prevPoint.x) / 2;
+      const cp1y = prevPoint.y;
+      const cp2x = prevPoint.x + (point.x - prevPoint.x) / 2;
+      const cp2y = point.y;
+      return `C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${point.x} ${point.y}`;
+    })
+    .join(" ");
 
-//   // Create area path for gradient fill
-//   const areaPath = `${pathData} L ${points[points.length - 1].x} ${chartHeight - padding} L ${points[0].x} ${chartHeight - padding} Z`;
+  // Create area path for gradient fill
+  const areaPath = `${pathData} L ${points[points.length - 1].x} ${chartHeight - padding} L ${points[0].x} ${chartHeight - padding} Z`;
 
-//   // Find highlighted point
-//   const highlightedPoint = points.find(p => p.highlight);
+  // Find highlighted point
+  const highlightedPoint = points.find(p => p.highlight);
 
-//   return (
-//     <div className="relative">
-//       <svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} className="overflow-visible">
-//         <defs>
-//           <linearGradient id={gradientId} x1="0%" y1="0%" x2="0%" y2="100%">
-//             <stop offset="0%" stopColor="#071FD7" stopOpacity="0.3" />
-//             <stop offset="100%" stopColor="#071FD7" stopOpacity="0.05" />
-//           </linearGradient>
-//         </defs>
+  return (
+    <div className="relative w-full">
+      <svg width="100%" height="200" viewBox={`0 0 ${width} ${height}`} className="overflow-visible" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id={gradientId} x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#071FD7" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="#071FD7" stopOpacity="0.05" />
+          </linearGradient>
+          <filter id={`shadow-${gradientId}`} x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow dx="0" dy="2" stdDeviation="2" floodOpacity="0.1"/>
+          </filter>
+          <filter id={`line-shadow-${gradientId}`} x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+            <feOffset dx="0" dy="2" result="offsetblur"/>
+            <feComponentTransfer>
+              <feFuncA type="linear" slope="0.3"/>
+            </feComponentTransfer>
+            <feMerge>
+              <feMergeNode/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
         
-//         {/* Gradient fill area */}
-//         <path
-//           d={areaPath}
-//           fill={`url(#${gradientId})`}
-//         />
+        {/* Gradient fill area */}
+        <path
+          d={areaPath}
+          fill={`url(#${gradientId})`}
+        />
         
-//         {/* Main line */}
-//         <path
-//           d={pathData}
-//           fill="none"
-//           stroke="#071FD7"
-//           strokeWidth="3"
-//           strokeLinecap="round"
-//           strokeLinejoin="round"
-//         />
+        {/* Shadow line below the main line */}
+        <path
+          d={pathData}
+          fill="none"
+          stroke="#071FD7"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          opacity="0.2"
+          transform="translate(0, 2)"
+        />
         
-//         {/* Highlighted point with purple line and label */}
-//         {highlightedPoint && (
-//           <g>
-//             {/* Purple vertical line */}
-//             <line
-//               x1={highlightedPoint.x}
-//               y1={highlightedPoint.y}
-//               x2={highlightedPoint.x}
-//               y2={highlightedPoint.y - 25}
-//               stroke="#9333EA"
-//               strokeWidth="2"
-//             />
-//             {/* White circle with blue outline on line */}
-//             <circle
-//               cx={highlightedPoint.x}
-//               cy={highlightedPoint.y}
-//               r="5"
-//               fill="white"
-//               stroke="#071FD7"
-//               strokeWidth="2"
-//             />
-//             {/* White circular label */}
-//             <circle
-//               cx={highlightedPoint.x}
-//               cy={highlightedPoint.y - 25}
-//               r="12"
-//               fill="white"
-//               stroke="#9333EA"
-//               strokeWidth="1"
-//             />
-//             <text
-//               x={highlightedPoint.x}
-//               y={highlightedPoint.y - 25}
-//               textAnchor="middle"
-//               dominantBaseline="middle"
-//               className="text-xs font-semibold"
-//               style={{ fill: "#9333EA" }}
-//             >
-//               {highlightedPoint.highlightLabel || `Client +${highlightedPoint.value}`}
-//             </text>
-//           </g>
-//         )}
-//       </svg>
-//       <div className="flex justify-between mt-2 text-xs text-[#A3AED0] px-1">
-//         {data.map((point, index) => (
-//           <span key={index}>{point.month}</span>
-//         ))}
-//       </div>
-//     </div>
-//   );
-// };
+        {/* Main line */}
+        <path
+          d={pathData}
+          fill="none"
+          stroke="#071FD7"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          filter={`url(#line-shadow-${gradientId})`}
+        />
+        
+        {/* Highlighted point with blue line and label */}
+        {highlightedPoint && (
+          <g>
+            {/* Blue vertical line */}
+            <line
+              x1={highlightedPoint.x}
+              y1={highlightedPoint.y}
+              x2={highlightedPoint.x}
+              y2={highlightedPoint.y - 25}
+              stroke="#071FD7"
+              strokeWidth="2"
+            />
+            {/* White circle with blue outline on line */}
+            <circle
+              cx={highlightedPoint.x}
+              cy={highlightedPoint.y}
+              r="5"
+              fill="white"
+              stroke="#071FD7"
+              strokeWidth="2"
+            />
+            {/* Tooltip circle */}
+            <circle
+              cx={highlightedPoint.x}
+              cy={highlightedPoint.y - 25}
+              r="20"
+              fill="#FFFFFF"
+              stroke=""
+              strokeWidth="1"
+              filter={`url(#shadow-${gradientId})`}
+            />
+            {/* Tooltip text */}
+            <text
+              x={highlightedPoint.x}
+              y={highlightedPoint.y - 30}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              className="text-xs font-semibold"
+              style={{ fill: "#2B3674", fontSize: "10px" }}
+            >
+              Client
+            </text>
+            <text
+              x={highlightedPoint.x}
+              y={highlightedPoint.y - 20}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              className="text-xs font-semibold"
+              style={{ fill: "#2B3674", fontSize: "10px" }}
+            >
+              {highlightedPoint.highlightLabel ? highlightedPoint.highlightLabel.replace("Client ", "") : `+${highlightedPoint.value}`}
+            </text>
+          </g>
+        )}
+      </svg>
+      <div className="flex justify-between mt-2 text-xs text-[#A3AED0] px-1">
+        {data.map((point, index) => (
+          <span key={index}>{point.month}</span>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 export const SoftwareDashboardOverview = ({
   data,
@@ -365,14 +403,9 @@ export const SoftwareDashboardOverview = ({
             <img
               src={hero.backgroundImage}
               alt="Hero background"
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute inset-0 w-full object-cover"
             />
           )}
-          {/* Gradient Overlay */}
-          <div
-            className="absolute inset-0 z-[1]"
-            style={{ background: hero.gradient }}
-          />
           <div className="relative z-10 flex flex-col">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight transition-opacity duration-500 max-w-2xl">
               Let's<br />Get Started
@@ -389,84 +422,175 @@ export const SoftwareDashboardOverview = ({
       </section>
 
       {/* Proposal Summary and Events Section */}
-      <section className="grid gap-6 lg:grid-cols-2 min-h-[350px]">
+      <section className="grid gap-6 lg:grid-cols-[1fr_1.5fr]">
         {/* Proposal Summary */}
         <div className={cardClass}>
-          {/* <div className="flex items-center justify-between gap-2 mb-4">
+          <div className="flex items-center justify-between gap-2 mb-4">
             <h3 className={`text-lg lg:text-xl font-bold ${tokens.isDark ? "text-[var(--color-page-text)]" : "text-[#2B3674]"}`}>
               Proposal Summary
             </h3>
             <div className="flex items-center gap-2 text-sm text-[var(--color-page-text)]/60">
               <CalendarIcon className="h-4 w-4" />
-              <span>{dateRange}</span>
-              <button type="button" className="ml-2">
+              <span>Jun 07 → Jun 13</span>
+              <button type="button" className="ml-1">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
             </div>
           </div>
-          <div className="flex flex-col md:flex-row items-center gap-6">
-            <DonutChart items={data.proposals.items} total={data.proposals.total} />
-            <div className="flex flex-col gap-3">
-              {data.proposals.items.map((item, index) => (
-                <div key={index} className="flex items-center gap-3">
-                  <div
-                    className="w-4 h-4 rounded-full"
-                    style={{ backgroundColor: item.color }}
-                  ></div>
-                  <span className={`text-sm font-medium ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
-                    {item.status} Proposals ({item.percentage}%)
-                  </span>
+          <div className="flex items-center gap-6">
+            <DonutChart items={data.proposals.items} />
+            <div className="flex flex-col gap-4">
+              <div className="">
+                <p className={`text-lg font-medium ${tokens.isDark ? "text-white/70" : "text-[#2B3674]"}`}>Total Proposal : <span className={`text-2xl font-semibold ${tokens.isDark ? "text-white/70" : "text-[#2B3674]"}`}>{data.proposals.total}</span></p>
+              </div>
+              <div className="flex flex-col gap-3">
+                {data.proposals.items.map((item, index) => (
+                  <div key={index} className="flex items-center gap-3">
+                    <div
+                      className="w-4 h-4 rounded-sm"
+                      style={{ backgroundColor: item.color }}
+                    ></div>
+                    <span className={`text-sm font-medium ${tokens.isDark ? "text-white/70" : "text-[#2B3674]"}`}>
+                      {item.status} Proposals ({item.percentage}%)
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Meetings Just For You */}
+        <div className={cardClass}>
+          <div className="mb-2">
+            <h3 className={`text-lg lg:text-xl font-bold ${tokens.isDark ? "text-[var(--color-page-text)]" : "text-[#2B3674]"}`}>
+              Meetings Just For You
+            </h3>
+          </div>
+          
+          {/* Calendar Grid */}
+          <div className="relative">
+            {/* Days Header */}
+            <div className="grid grid-cols-8 mb-2">
+              <div></div> {/* Empty cell for time column */}
+              {["Mon", "Tues", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day, idx) => (
+                <div key={day} className="text-center">
+                  <p className={`text-xs font-medium ${tokens.isDark ? "text-white/70" : "text-[#2B3674]"}`}>{day}</p>
+                  <p className="text-xs text-[#A3AED0]">{String(idx + 1).padStart(2, "0")}</p>
                 </div>
               ))}
             </div>
-          </div> */}
-        </div>
 
-        {/* Events Just For You */}
-        <div className={cardClass}>
-          {/* <div className="flex items-center justify-between gap-2 mb-4">
-            <h3 className={`text-lg lg:text-xl font-bold ${tokens.isDark ? "text-[var(--color-page-text)]" : "text-[#2B3674]"}`}>
-              Events Just For You
-            </h3>
-          </div>
-          <div className="grid grid-cols-7 gap-2 mb-4">
-            {calendarDays.map((day) => (
-              <div key={day} className="text-center">
-                <p className="text-xs text-[#A3AED0]">{day}</p>
-              </div>
-            ))}
-          </div>
-          <div className="space-y-3">
-            {data.events.map((event) => (
-              <div
-                key={event.id}
-                className={`rounded-[12px] p-4 ${tokens.isDark ? "bg-[var(--color-table-row-bg)]" : "bg-[#FCFDFF]"}`}
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold text-[var(--color-page-text)] mb-1">
-                      {event.title}
-                    </p>
-                    <p className="text-xs text-[#A3AED0]">{event.date}</p>
-                    <div className="flex items-center gap-4 mt-2 text-xs text-[#A3AED0]">
-                      <span>{event.location}</span>
-                      <span>{event.time}</span>
+            {/* Calendar Grid with Time Slots */}
+            <div className={`relative border-b overflow-hidden ${tokens.isDark ? "border-white/10" : "border-[#E6E9FB]"}`}>
+              {/* Time Column and Grid */}
+              <div className="grid grid-cols-8">
+                {/* Time Labels */}
+                <div className={`flex flex-col border-r ${tokens.isDark ? "border-white/10" : "border-[#E6E9FB]"}`}>
+                  {["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00"].map((time) => (
+                    <div key={time} className="h-6 flex items-start justify-end pr-1.5 pt-0">
+                      <span className="text-[10px] text-[#A3AED0]">{time}</span>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    {Array.from({ length: event.attendees }).map((_, i) => (
+                  ))}
+                </div>
+
+                {/* Day Columns */}
+                {[0, 1, 2, 3, 4, 5, 6].map((dayIndex) => (
+                  <div key={dayIndex} className="flex flex-col">
+                    {[0, 1, 2, 3, 4, 5, 6].map((timeIndex) => (
                       <div
-                        key={i}
-                        className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 border-2 border-white -ml-2 first:ml-0"
+                        key={timeIndex}
+                        className={`h-6 border-b border-r last:border-b-0 ${tokens.isDark ? "border-white/20" : "border-[#E6E9FB]"}`}
                       ></div>
                     ))}
                   </div>
-                </div>
+                ))}
               </div>
-            ))}
-          </div> */}
+
+              {/* Event Cards positioned absolutely */}
+              <div className="absolute inset-0 pointer-events-none">
+                {data.events.map((event, eventIndex) => {
+                  // Parse day and hour from event data
+                  const dayMatch = event.day?.match(/(\w+)\s+(\d+)/);
+                  const dayName = dayMatch?.[1] || "";
+                  const hourMatch = event.hour?.match(/(\d+):/);
+                  const hour = hourMatch ? parseInt(hourMatch[1]) : 10;
+                  
+                  // Map day names to column indices (Mon=0, Tues=1, etc.)
+                  const dayMap: Record<string, number> = {
+                    "Mon": 0, "Tues": 1, "Wed": 2, "Thu": 3, "Fri": 4, "Sat": 5, "Sun": 6
+                  };
+                  const colIndex = dayMap[dayName] ?? 1;
+                  
+                  // Calculate position (hour 9 = index 0, hour 10 = index 1, etc.)
+                  const rowIndex = hour - 9;
+                  
+                  // Card background colors (yellow, gray, black)
+                  const cardColors = [
+                    tokens.isDark ? "bg-[#FFF9E6] text-black" : "bg-[#FFF9E6] text-[#2B3674]", // Light yellow
+                    tokens.isDark ? "bg-[#F5F5F5] text-black" : "bg-[#F5F5F5] text-[#2B3674]", // Light gray
+                    "bg-[#000000] text-white" // Black
+                  ];
+                  const cardColor = cardColors[eventIndex % cardColors.length];
+                  // Icon color: black card always has yellow icons, light cards have black icons in dark mode
+                  const iconColor = eventIndex === 2 ? "#FFCE20" : (tokens.isDark ? "#000000" : "#2B3674");
+                  
+                  // Calculate position
+                  const left = `calc(${(colIndex + 1) * (100 / 8)}% + 4px)`;
+                  const top = `${rowIndex * 24}px`; // 24px = h-6
+                  
+                  return (
+                    <div
+                      key={event.id}
+                      className={`absolute rounded-md p-1.5 shadow-sm pointer-events-auto ${cardColor}`}
+                      style={{
+                        left,
+                        top,
+                        width: `calc(${(100 / 8) * 1.5}% - 8px)`,
+                        maxWidth: "280px"
+                      }}
+                    >
+                      <h4 className="font-semibold text-[10px] mb-1 leading-tight">{event.title}</h4>
+                      <div className="space-y-0.5 text-[10px]">
+                        <div className="flex items-center gap-1">
+                          <CalendarIcon className="h-2.5 w-2.5" style={{ color: iconColor }} />
+                          <span className="leading-tight">{event.date}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <svg className="h-2.5 w-2.5" viewBox="0 0 16 16" fill="none" style={{ color: iconColor }}>
+                            <rect x="2" y="2" width="4" height="4" rx="1" fill="currentColor"/>
+                            <rect x="10" y="2" width="4" height="4" rx="1" fill="currentColor"/>
+                            <rect x="2" y="10" width="4" height="4" rx="1" fill="currentColor"/>
+                            <rect x="10" y="10" width="4" height="4" rx="1" fill="currentColor"/>
+                          </svg>
+                          <span className="leading-tight">{event.location}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <ClockIcon className="h-2.5 w-2.5" style={{ color: iconColor }} />
+                          <span className="leading-tight">{event.time}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center mt-1">
+                        {Array.from({ length: Math.min(4, event.attendees) }).map((_, i) => (
+                          <div
+                            key={i}
+                            className="w-4 h-4 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 border border-white -ml-1.5 first:ml-0"
+                          ></div>
+                        ))}
+                        {event.attendees > 4 && (
+                          <div className="w-4 h-4 rounded-full bg-gray-300 border border-white -ml-1.5 flex items-center justify-center">
+                            <PlusCircleIcon className="h-3 w-3" style={{ color: "#F4F4F4" }} />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -486,7 +610,7 @@ export const SoftwareDashboardOverview = ({
 
         {/* Clients */}
         <div className={cardClass}>
-          {/* <div className="flex items-center justify-between gap-2 mb-4">
+          <div className="flex items-center justify-between gap-2 mb-4">
             <h3 className={`text-lg lg:text-xl font-bold ${tokens.isDark ? "text-[var(--color-page-text)]" : "text-[#2B3674]"}`}>
               Clients
             </h3>
@@ -498,7 +622,7 @@ export const SoftwareDashboardOverview = ({
               See All <ArrowRight className="h-4 w-4" style={{ stroke: "#A3AED0" }} />
             </button>
           </div>
-          <LineChart data={data.clients} /> */}
+          <LineChart data={data.clients} />
         </div>
       </section>
 

@@ -62,7 +62,7 @@ export const DashboardPage = () => {
         "--color-sidebar-nav-active-text": "#A3AED0",
         "--color-sidebar-nav-idle-text": "rgba(255,255,255,0.65)",
         "--color-card-bg": "#232637",
-        "--color-card-border": activeApp.id === "app" ? "rgba(15,103,115,0.18)" : activeApp.id === "software" ? "rgba(7,31,215,0.18)" : "rgba(103,114,229,0.18)",
+        "--color-card-border": activeApp.id === "app" ? "rgba(15,103,115,0.18)" : activeApp.id === "software" ? "rgba(64, 75, 155, 0.3)" : "rgba(103,114,229,0.18)",
         "--color-table-row-bg": "#2E3141",
         "--color-section-muted": "rgba(29,32,48,0.85)",
         "--color-progress-track": "rgba(255,255,255,0.12)",
