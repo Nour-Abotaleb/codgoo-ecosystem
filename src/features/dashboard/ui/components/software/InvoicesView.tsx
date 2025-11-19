@@ -4,8 +4,8 @@ import {
   UnPaidInvoicesIcon,
   OverdueInvoicesIcon,
   BankTasksIcon,
-  FileManagementIcon,
   DeleteIcon,
+  BillingIcon,
 } from "@utilities/icons";
 import type { DashboardTokens } from "../../types";
 
@@ -162,7 +162,7 @@ export const InvoicesView = ({ tokens }: InvoicesViewProps) => {
             className={`${tokens.cardBase} rounded-2xl border border-[var(--color-card-border)] overflow-hidden transition-colors`}
           >
             {/* Top Section with Background */}
-            <div className="bg-[#F4F5FF]">
+            <div className={tokens.isDark ? "bg-[#25223866]" : "bg-[#F4F5FF]"}>
               <div className="flex flex-col gap-4 p-4">
                 {/* Invoice ID */}
                 <div className="flex items-center justify-between">
@@ -196,14 +196,14 @@ export const InvoicesView = ({ tokens }: InvoicesViewProps) => {
             {/* Dates */}
             <div className="flex flex-col gap-2 p-4 pt-2 border-t border-dashed border-[var(--color-border-divider)]">
               <div className="flex items-center justify-between">
-                <span className={`text-xs ${tokens.subtleText}`}>Created at</span>
-                <span className={`text-xs font-medium ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
+                <span className={`text-sm ${tokens.subtleText}`}>Created at</span>
+                <span className={`text-sm font-medium ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
                   {invoice.createdDate}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className={`text-xs ${tokens.subtleText}`}>Due date</span>
-                <span className={`text-xs font-medium ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
+                <span className={`text-sm ${tokens.subtleText}`}>Due date</span>
+                <span className={`text-sm font-medium ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
                   {invoice.dueDate}
                 </span>
               </div>
@@ -211,14 +211,16 @@ export const InvoicesView = ({ tokens }: InvoicesViewProps) => {
 
             {/* Manage Section */}
             <div className="flex items-center justify-between px-4 pb-4 pt-2">
-              <span className={`text-xs ${tokens.subtleText}`}>Manage</span>
+              <span className={`text-sm ${tokens.subtleText}`}>Manage</span>
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  className="p-1.5 rounded-full transition-colors hover:bg-[var(--color-surface-muted)]"
+                  className={`p-1.5 rounded-full transition-colors ${
+                    tokens.isDark ? "bg-[#071FD7]/20" : "bg-[#F4F5FF]"
+                  } hover:opacity-80`}
                   aria-label={`Manage invoice ${invoice.invoiceNumber}`}
                 >
-                  <FileManagementIcon className={`h-4 w-4 ${tokens.isDark ? "text-white" : "text-[#071FD7]"}`} />
+                  <BillingIcon className={`h-4 w-4 ${tokens.isDark ? "text-white" : "text-[#071FD7]"}`} />
                 </button>
                 <button
                   type="button"
