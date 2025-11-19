@@ -13,6 +13,8 @@ import {
   ActivityTasksIcon
 } from "@utilities/icons";
 import { ProjectCard, type ProjectCardData } from "./ProjectCard";
+import { TasksView } from "./TasksView";
+import { InvoicesView } from "./InvoicesView";
 import type { DashboardTokens } from "../../types";
 
 type ProjectDetailsViewProps = {
@@ -123,13 +125,15 @@ export const ProjectDetailsView = ({
         })}
       </div>
 
-      {/* Main Project Card */}
-      <ProjectCard
-        project={project}
-        tokens={tokens}
-        onViewDetails={undefined}
-        onManage={onManage}
-      />
+      {/* Main Project Card - only show in overview */}
+      {activeTab === "overview" && (
+        <ProjectCard
+          project={project}
+          tokens={tokens}
+          onViewDetails={undefined}
+          onManage={onManage}
+        />
+      )}
 
       {activeTab === "overview" && (
         <>
@@ -262,7 +266,11 @@ export const ProjectDetailsView = ({
         </>
       )}
 
-      {activeTab !== "overview" && (
+      {activeTab === "tasks" && <TasksView tokens={tokens} />}
+
+      {activeTab === "invoices" && <InvoicesView tokens={tokens} />}
+
+      {activeTab !== "overview" && activeTab !== "tasks" && activeTab !== "invoices" && (
         <div
           className={`${tokens.cardBase} rounded-2xl p-10 border border-[var(--color-card-border)]`}
         >

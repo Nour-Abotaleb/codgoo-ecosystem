@@ -631,3 +631,125 @@ export const ActivityTasksIcon = (props: IconProps) => (
   <path d="M6 22H13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>
 );
+
+export const AllTasksIcon = (props: IconProps) => (
+  <svg width="55" height="55" viewBox="0 0 55 55" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+  <path d="M18.334 4.58301V11.458" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M36.666 4.58301V11.458" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M16.041 25.208H34.3743" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M16.041 34.375H27.4993" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M34.375 50.4163H20.625C9.16667 50.4163 6.875 45.6955 6.875 36.2538V22.1143C6.875 11.3434 10.7021 8.45592 18.3333 8.02051H36.6667C44.2979 8.43301 48.125 11.3434 48.125 22.1143V36.6663" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M48.125 36.667L34.375 50.417V43.542C34.375 38.9587 36.6667 36.667 41.25 36.667H48.125Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+);
+
+export const CompletedTasksIcon = (props: IconProps) => (
+  <svg width="55" height="55" viewBox="0 0 55 55" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+  <path d="M21.3359 33.6872L24.7734 37.1247L33.9401 27.958" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M22.9173 13.7497H32.084C36.6673 13.7497 36.6673 11.458 36.6673 9.16634C36.6673 4.58301 34.3757 4.58301 32.084 4.58301H22.9173C20.6257 4.58301 18.334 4.58301 18.334 9.16634C18.334 13.7497 20.6257 13.7497 22.9173 13.7497Z" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M36.6667 9.21289C44.2979 9.62539 48.125 12.4441 48.125 22.9171V36.6671C48.125 45.8337 45.8333 50.4171 34.375 50.4171H20.625C9.16667 50.4171 6.875 45.8337 6.875 36.6671V22.9171C6.875 12.4671 10.7021 9.62539 18.3333 9.21289" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+);
+
+export const InProgressTasksIcon = (props: IconProps) => (
+  <svg width="55" height="55" viewBox="0 0 55 55" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+  <path d="M9.21315 13.6809C6.30273 17.5309 4.58398 22.3205 4.58398 27.4997C4.58398 40.1497 14.8507 50.4163 27.5007 50.4163C40.1507 50.4163 50.4173 40.1497 50.4173 27.4997C50.4173 14.8497 40.1507 4.58301 27.5007 4.58301" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M11.459 27.4997C11.459 36.3684 18.6319 43.5413 27.5007 43.5413C36.3694 43.5413 43.5423 36.3684 43.5423 27.4997C43.5423 18.6309 36.3694 11.458 27.5007 11.458" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M27.5 36.6663C32.5646 36.6663 36.6667 32.5643 36.6667 27.4997C36.6667 22.4351 32.5646 18.333 27.5 18.333" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+);
+
+export const AwaitingFeedbackIcon = (props: IconProps) => (
+  <svg width="55" height="55" viewBox="0 0 55 55" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+  <path d="M50.2568 15.492L42.5338 46.4983C41.9838 48.8129 39.9214 50.417 37.538 50.417H7.4255C3.96508 50.417 1.49012 47.0252 2.52137 43.7022L12.1693 12.7191C12.8338 10.565 14.8276 9.0752 17.0735 9.0752H45.2609C47.438 9.0752 49.2485 10.4044 50.0047 12.2377C50.4401 13.2231 50.5318 14.3461 50.2568 15.492Z" stroke="currentColor" stroke-width="2" stroke-miterlimit="10"/>
+  <path d="M36.666 50.4167H47.6202C50.5764 50.4167 52.891 47.9187 52.6847 44.9625L50.416 13.75" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M22.1836 14.6206L24.5669 4.7207" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M37.5371 14.644L39.6913 4.69824" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M17.6465 27.5H35.9798" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M15.3535 36.667H33.6868" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+);
+
+export const NotStartedTasksIcon = (props: IconProps) => (
+  <svg width="55" height="55" viewBox="0 0 55 55" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+  <path d="M16.041 32.083H27.4993" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M16.041 13.6582L7.44727 5.06445" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M15.9492 5.15625L7.35547 13.75" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M16.041 22.917H34.3743" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M22.916 4.58301H36.666C44.2973 4.99551 48.1243 7.81426 48.1243 18.3101V36.6663" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M6.875 20.6475V36.6204C6.875 45.81 9.16667 50.4162 20.625 50.4162H27.5C27.8896 50.4162 34.0083 50.4162 34.375 50.4162" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M48.125 36.667L34.375 50.417V43.542C34.375 38.9587 36.6667 36.667 41.25 36.667H48.125Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+);
+
+export const PDFIcon = (props: IconProps) => (
+  <svg width="36" height="44" viewBox="0 0 36 44" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+  <path d="M2 0C0.895432 0 0 0.895431 0 2V42C0 43.1046 0.895431 44 2 44H29.7C30.3075 44 30.8 43.5075 30.8 42.9C30.8 42.2925 30.3075 41.8 29.7 41.8H28.6H4.2C3.09543 41.8 2.2 40.9046 2.2 39.8V4.2C2.2 3.09543 3.09543 2.2 4.2 2.2H17.8C18.9046 2.2 19.8 3.09543 19.8 4.2V8.8V9C19.8 10.1046 20.6954 11 21.8 11H26.6C27.7046 11 28.6 11.8954 28.6 13V25.3C28.6 25.9075 29.0925 26.4 29.7 26.4C30.3075 26.4 30.8 25.9075 30.8 25.3V11V9.62843C30.8 9.09799 30.5893 8.58929 30.2142 8.21421L23.5556 1.55564C22.5596 0.55958 21.2086 0 19.8 0H2ZM22 4.18484C22 3.73939 22.5386 3.51631 22.8536 3.83129L26.9687 7.94645C27.2837 8.26143 27.0606 8.8 26.6152 8.8H22.5C22.2239 8.8 22 8.57614 22 8.3V4.18484ZM4.4 28.6V39.6H6.6V35.2H9.9L10.2438 35.1828L10.5875 35.127L10.9184 35.0367L11.2406 34.9121L11.55 34.7574L11.8422 34.5684L12.1086 34.3535L12.3535 34.1086L12.5684 33.8379L12.7574 33.55L12.9121 33.2406L13.0367 32.9184L13.127 32.5875L13.1828 32.2437L13.2 31.9L13.1828 31.5562L13.127 31.2125L13.0367 30.8816L12.9121 30.5594L12.7574 30.25L12.5684 29.9578L12.3535 29.6914L12.1086 29.4465L11.8422 29.2316L11.55 29.0426L11.2406 28.8836L10.9184 28.759L10.5875 28.673L10.2438 28.6172L9.9 28.6H4.4ZM15.4 28.6V39.6H19.8L20.2039 39.5828L20.6078 39.5227L21.0031 39.4324L21.3898 39.3035L21.7637 39.1402L22.116 38.9383L22.4512 38.7105L22.7648 38.4527L23.0527 38.1648L23.3105 37.8512L23.5383 37.516L23.7402 37.1594L23.9035 36.7898L24.0324 36.4031L24.1227 36.0078L24.1828 35.6039L24.2 35.2V33L24.1828 32.5961L24.1227 32.1922L24.0324 31.7926L23.9035 31.4102L23.7402 31.0363L23.5383 30.684L23.3105 30.3488L23.0527 30.0352L22.7648 29.7473L22.4512 29.4895L22.116 29.2574L21.7637 29.0598L21.3898 28.8965L21.0031 28.7676L20.6078 28.673L20.2039 28.6172L19.8 28.6H15.4ZM26.4 28.6V39.6H28.6V35.2H33V33H28.6V30.8H35.2V28.6H26.4ZM6.6 30.8H9.9L10.102 30.8172L10.2953 30.873L10.4801 30.9633L10.6391 31.0879L10.7766 31.2383L10.884 31.4102L10.957 31.5992L10.9957 31.7969V32.0031L10.957 32.2008L10.884 32.3898L10.7766 32.5617L10.6391 32.7121L10.4801 32.8367L10.2953 32.9227L10.102 32.9785L9.9 33H6.6V30.8ZM17.6 30.8H19.8L20.0879 30.8172L20.3715 30.873L20.6422 30.9676L20.9 31.0965L21.1406 31.2555L21.3555 31.4445L21.5445 31.6594L21.7035 31.9L21.8324 32.1578L21.927 32.4285L21.9828 32.7121L22 33V35.2L21.9828 35.4879L21.927 35.7672L21.8324 36.0422L21.7035 36.3L21.5445 36.5363L21.3555 36.7555L21.1406 36.9445L20.9 37.1035L20.6422 37.2324L20.3715 37.3227L20.0879 37.3828L19.8 37.4H17.6V30.8Z" fill="currentColor"/>
+  </svg>
+);
+
+export const ExcelIcon = (props: IconProps) => (
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+  <path d="M9.91602 2.04199H4.08268C2.33268 2.04199 1.16602 2.91699 1.16602 4.95866V9.04199C1.16602 11.0837 2.33268 11.9587 4.08268 11.9587H9.91602C11.666 11.9587 12.8327 11.0837 12.8327 9.04199V4.95866C12.8327 2.91699 11.666 2.04199 9.91602 2.04199ZM10.1902 5.59449L8.36435 7.05283C7.97935 7.36199 7.48935 7.51366 6.99935 7.51366C6.50935 7.51366 6.01352 7.36199 5.63435 7.05283L3.80852 5.59449C3.62185 5.44283 3.59268 5.16283 3.73852 4.97616C3.89018 4.78949 4.16435 4.75449 4.35102 4.90616L6.17685 6.36449C6.62018 6.72033 7.37268 6.72033 7.81602 6.36449L9.64185 4.90616C9.82852 4.75449 10.1085 4.78366 10.2543 4.97616C10.406 5.16283 10.3768 5.44283 10.1902 5.59449Z" fill="currentColor"/>
+  </svg>
+);
+
+export const OngoingTasksIcon = (props: IconProps) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+  <path d="M17.3895 15.67L13.3495 12H10.6395L6.59949 15.67C5.46949 16.69 5.09949 18.26 5.64949 19.68C6.19949 21.09 7.53949 22 9.04949 22H14.9395C16.4595 22 17.7895 21.09 18.3395 19.68C18.8895 18.26 18.5195 16.69 17.3895 15.67ZM13.8195 18.14H10.1795C9.79949 18.14 9.49949 17.83 9.49949 17.46C9.49949 17.09 9.80949 16.78 10.1795 16.78H13.8195C14.1995 16.78 14.4995 17.09 14.4995 17.46C14.4995 17.83 14.1895 18.14 13.8195 18.14Z" fill="currentColor"/>
+  <path d="M18.3506 4.32C17.8006 2.91 16.4606 2 14.9506 2H9.05065C7.54065 2 6.20065 2.91 5.65065 4.32C5.11065 5.74 5.48065 7.31 6.61065 8.33L10.6506 12H13.3606L17.4006 8.33C18.5206 7.31 18.8906 5.74 18.3506 4.32ZM13.8206 7.23H10.1806C9.80065 7.23 9.50065 6.92 9.50065 6.55C9.50065 6.18 9.81065 5.87 10.1806 5.87H13.8206C14.2006 5.87 14.5006 6.18 14.5006 6.55C14.5006 6.92 14.1906 7.23 13.8206 7.23Z" fill="currentColor"/>
+  </svg>
+);
+
+export const BankTasksIcon = (props: IconProps) => (
+  <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+  <path d="M9.79356 1.7018L16.9186 4.55178C17.1956 4.66261 17.4173 4.99511 17.4173 5.28802V7.91636C17.4173 8.35178 17.0611 8.70803 16.6257 8.70803H2.37565C1.94023 8.70803 1.58398 8.35178 1.58398 7.91636V5.28802C1.58398 4.99511 1.80565 4.66261 2.08274 4.55178L9.20774 1.7018C9.36607 1.63846 9.63523 1.63846 9.79356 1.7018Z" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M17.4173 17.4167H1.58398V15.0417C1.58398 14.6062 1.94023 14.25 2.37565 14.25H16.6257C17.0611 14.25 17.4173 14.6062 17.4173 15.0417V17.4167Z" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M3.16602 14.2497V8.70801" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M6.33398 14.2497V8.70801" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M9.5 14.2497V8.70801" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M12.666 14.2497V8.70801" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M15.834 14.2497V8.70801" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M0.791016 17.417H18.2077" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M9.5 6.72949C10.1558 6.72949 10.6875 6.19783 10.6875 5.54199C10.6875 4.88615 10.1558 4.35449 9.5 4.35449C8.84416 4.35449 8.3125 4.88615 8.3125 5.54199C8.3125 6.19783 8.84416 6.72949 9.5 6.72949Z" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+);
+
+export const BillingInvoicesIcon = (props: IconProps) => (
+  <svg width="55" height="55" viewBox="0 0 55 55" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+  <path d="M50.416 13.7497V19.2955C50.416 22.9163 48.1243 25.208 44.5035 25.208H36.666V9.18926C36.666 6.64551 38.7515 4.58301 41.2952 4.58301C43.7931 4.60592 46.0848 5.61426 47.7348 7.26426C49.3848 8.93717 50.416 11.2288 50.416 13.7497Z" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M4.58398 16.0413V48.1247C4.58398 50.0268 6.7381 51.1038 8.2506 49.958L12.1694 47.0247C13.0861 46.3372 14.3694 46.4288 15.1944 47.2538L18.9985 51.0809C19.8923 51.9747 21.359 51.9747 22.2528 51.0809L26.1028 47.2309C26.9049 46.4288 28.1882 46.3372 29.0819 47.0247L33.0007 49.958C34.5132 51.0809 36.6673 50.0038 36.6673 48.1247V9.16634C36.6673 6.64551 38.7298 4.58301 41.2507 4.58301H16.0423H13.7507C6.87565 4.58301 4.58398 8.68509 4.58398 13.7497V16.0413Z" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M13.75 20.625H27.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M15.4688 29.792H25.7813" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+);
+
+export const PaidInvoicesIcon = (props: IconProps) => (
+  <svg width="55" height="55" viewBox="0 0 55 55" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+  <path d="M4.58398 19.4795H30.9381" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M13.75 37.8125H18.3333" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M24.0625 37.8125H33.2292" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M50.4173 25.2768V36.9184C50.4173 44.9622 48.3777 46.9788 40.2423 46.9788H14.759C6.62357 46.9788 4.58398 44.9622 4.58398 36.9184V18.0809C4.58398 10.0372 6.62357 8.02051 14.759 8.02051H30.9382" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M37.8125 13.7497L41.25 17.1872L50.4167 8.02051" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+);
+
+export const UnPaidInvoicesIcon = (props: IconProps) => (
+  <svg width="55" height="55" viewBox="0 0 55 55" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+  <path d="M4.58398 19.4795H30.9381" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M13.75 37.8125H18.3333" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M24.0625 37.8125H33.2292" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M50.4173 27.5684V36.9184C50.4173 44.9622 48.3777 46.9788 40.2423 46.9788H14.759C6.62357 46.9788 4.58398 44.9622 4.58398 36.9184V18.0809C4.58398 10.0372 6.62357 8.02051 14.759 8.02051H30.9382" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M39.666 18.7676L48.5577 9.87598" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M48.5577 18.7676L39.666 9.87598" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+  </svg>
+);
+
+export const OverdueInvoicesIcon = (props: IconProps) => (
+  <svg width="55" height="55" viewBox="0 0 55 55" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+  <path d="M29.791 20.625H16.041" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M50.4163 25.1392V29.8601C50.4163 31.1205 49.408 32.1517 48.1247 32.1975H43.633C41.158 32.1975 38.8893 30.3871 38.683 27.9121C38.5455 26.4684 39.0955 25.1163 40.058 24.1767C40.9059 23.3059 42.0746 22.8018 43.358 22.8018H48.1247C49.408 22.8476 50.4163 23.8787 50.4163 25.1392Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M40.0589 24.1767C39.0964 25.1163 38.5465 26.4684 38.684 27.9122C38.8902 30.3872 41.1589 32.1976 43.6339 32.1976H48.1257V35.5205C48.1257 42.3955 43.5423 46.9788 36.6673 46.9788H16.0423C9.16732 46.9788 4.58398 42.3955 4.58398 35.5205V19.4788C4.58398 13.2455 8.34232 8.89134 14.1861 8.158C14.7819 8.06634 15.4007 8.02051 16.0423 8.02051H36.6673C37.2632 8.02051 37.8361 8.0434 38.3861 8.13506C44.2986 8.82256 48.1257 13.1997 48.1257 19.4788V22.8018H43.3589C42.0756 22.8018 40.9069 23.3059 40.0589 24.1767Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>  
+);
+
