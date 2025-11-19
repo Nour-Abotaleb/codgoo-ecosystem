@@ -488,7 +488,7 @@ export const SoftwareDashboardOverview = ({
               {/* Time Column and Grid */}
               <div className="grid grid-cols-8">
                 {/* Time Labels */}
-                <div className={`flex flex-col border-r ${tokens.isDark ? "border-white/10" : "border-[#E6E9FB]"}`}>
+                <div className={`flex flex-col border-r ${tokens.isDark ? "border-white/5" : "border-[#E6E9FB]"}`}>
                   {["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00"].map((time) => (
                     <div key={time} className="h-6 flex items-start justify-end pr-1.5 pt-0">
                       <span className="text-[10px] text-[#A3AED0]">{time}</span>
@@ -502,7 +502,7 @@ export const SoftwareDashboardOverview = ({
                     {[0, 1, 2, 3, 4, 5, 6].map((timeIndex) => (
                       <div
                         key={timeIndex}
-                        className={`h-6 border-b border-r last:border-b-0 ${tokens.isDark ? "border-white/20" : "border-[#E6E9FB]"}`}
+                        className={`h-6 border-b border-r last:border-b-0 border-dashed p-3 ${tokens.isDark ? "border-white/5" : "border-[#ECECEC]"}`}
                       ></div>
                     ))}
                   </div>
@@ -539,7 +539,10 @@ export const SoftwareDashboardOverview = ({
                   
                   // Calculate position
                   const left = `calc(${(colIndex + 1) * (100 / 8)}% + 4px)`;
-                  const top = `${rowIndex * 24}px`; // 24px = h-6
+                  // Vertical offsets: first card up, second down a bit, third down a bit more
+                  const verticalOffsets = [-12, 8, 16]; // pixels
+                  const offset = verticalOffsets[eventIndex] || 0;
+                  const top = `${rowIndex * 24 + offset}px`; // 24px = h-6
                   
                   return (
                     <div
