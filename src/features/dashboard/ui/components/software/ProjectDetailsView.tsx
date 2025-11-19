@@ -92,7 +92,6 @@ const activities: readonly ActivityItem[] = [
 export const ProjectDetailsView = ({
   project,
   tokens,
-  onBack,
   onManage
 }: ProjectDetailsViewProps) => {
   const [activeTab, setActiveTab] = useState<TabId>("overview");

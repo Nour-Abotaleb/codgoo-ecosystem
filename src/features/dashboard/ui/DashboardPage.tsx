@@ -488,7 +488,7 @@ export const DashboardPage = () => {
                     project={project}
                     tokens={tokens}
                     onBack={() => navigate("/dashboard/projects")}
-                    onManage={(id) => {
+                    onManage={(_id) => {
                       // Handle manage
                     }}
                   />
@@ -503,7 +503,7 @@ export const DashboardPage = () => {
                 onViewDetails={(projectId) => {
                   navigate(`/dashboard/projects/${projectId}`);
                 }}
-                onManage={(projectId) => {
+                onManage={(_projectId) => {
                   // Handle manage
                 }}
               />
