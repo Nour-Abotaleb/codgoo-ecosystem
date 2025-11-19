@@ -18,7 +18,7 @@ import {
   DomainsIcon,
   BackupIcon,
 } from "@utilities/icons";
-import type { DashboardTokens } from "../types";
+import type { DashboardTokens } from "../../types";
 
 type ManageHostViewProps = {
   readonly hostId: string;

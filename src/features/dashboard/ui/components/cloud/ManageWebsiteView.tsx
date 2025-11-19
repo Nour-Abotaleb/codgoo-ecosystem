@@ -20,9 +20,9 @@ import {
 
 import manageWebsiteBg from "@assets/images/cloud/manage-website-bg.png";
 
-import type { DashboardTokens } from "../types";
-import { dashboardContent } from "../constants";
-import { dashboardApps } from "../constants";
+import type { DashboardTokens } from "../../types";
+import { dashboardContent } from "../../constants";
+import { dashboardApps } from "../../constants";
 
 type ManageWebsiteViewProps = {
   readonly tokens: DashboardTokens;

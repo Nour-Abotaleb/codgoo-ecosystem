@@ -5,7 +5,7 @@ import widgetBg from "@assets/images/cloud/widget.png";
 import widget3Bg from "@assets/images/cloud/widget3.png";
 import { SearchIcon, HostIcon, TicketIcon, InvoiceIcon, DomainsIcon, SettingsIcon, ArrowUpIcon, BackupIcon, ActiveIcon, UnpaidIcon, PendingIcon, TechIcon, DateIcon, ClockIcon } from "@utilities/icons";
 
-import type { DashboardDataset, DashboardTokens, DomainItem } from "../types";
+import type { DashboardDataset, DashboardTokens, DomainItem } from "../../types";
 import { DiamondIcon, ArrowRight } from "@utilities/icons";
 
 type DashboardOverviewProps = {

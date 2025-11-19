@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { TechIcon, DotsSwitcher, ArrowUpIcon } from "@utilities/icons";
 
-import type { DashboardTokens, SiteItem } from "../types";
+import type { DashboardTokens, SiteItem } from "../../types";
 
 type WebsitesViewProps = {
   readonly sites: readonly SiteItem[];

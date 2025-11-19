@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { SearchIcon, UnpaidIcon, PendingIcon, ActiveIcon, DeleteIcon, PayAllIcon } from "@utilities/icons";
-import type { DashboardTokens } from "../types";
+import type { DashboardTokens } from "../../types";
 
 type HostViewProps = {
   readonly tokens: DashboardTokens;

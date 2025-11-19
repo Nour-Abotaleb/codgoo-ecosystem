@@ -10,7 +10,7 @@ import {
   SettingsIcon,
 } from "@utilities/icons";
 
-import type { DashboardTokens, DomainItem } from "../types";
+import type { DashboardTokens, DomainItem } from "../../types";
 
 type DomainsViewProps = {
   readonly domains: readonly DomainItem[];

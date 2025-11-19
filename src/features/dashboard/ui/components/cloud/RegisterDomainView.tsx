@@ -9,7 +9,7 @@ import {
   SearchIcon,
 } from "@utilities/icons";
 
-import type { DashboardTokens } from "../types";
+import type { DashboardTokens } from "../../types";
 
 type NameserverOption = {
   readonly id: string;

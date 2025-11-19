@@ -12,7 +12,7 @@ import {
 import type {
   DashboardTokens,
   ServerService
-} from "../types";
+} from "../../types";
 
 type ServerServicesViewProps = {
   readonly services: readonly ServerService[];

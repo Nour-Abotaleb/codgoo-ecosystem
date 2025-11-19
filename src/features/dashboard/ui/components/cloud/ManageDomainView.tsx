@@ -6,9 +6,9 @@ import { DomainsIcon, SettingsIcon, ArrowUpIcon, EditIcon, EmailIcon, PhoneIcon,
 import buildBg from "@assets/images/cloud/build-bg.png";
 import domainsBg from "@assets/images/cloud/domains-bg.png";
 
-import type { DashboardTokens } from "../types";
-import { dashboardContent } from "../constants";
-import { dashboardApps } from "../constants";
+import type { DashboardTokens } from "../../types";
+import { dashboardContent } from "../../constants";
+import { dashboardApps } from "../../constants";
 
 type ManageDomainViewProps = {
   readonly tokens: DashboardTokens;

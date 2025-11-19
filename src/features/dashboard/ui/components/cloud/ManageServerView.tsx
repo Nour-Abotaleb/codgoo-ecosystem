@@ -21,7 +21,7 @@ import {
   UnpaidIcon,
   DomainsIcon,
 } from "@utilities/icons";
-import type { DashboardTokens, ServerService } from "../types";
+import type { DashboardTokens, ServerService } from "../../types";
 
 type ManageServerViewProps = {
   readonly service: ServerService;

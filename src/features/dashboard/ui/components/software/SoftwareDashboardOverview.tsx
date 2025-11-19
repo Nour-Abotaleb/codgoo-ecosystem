@@ -1,6 +1,6 @@
 import { useId } from "react";
 import { ArrowRight, ActiveIcon, PendingIcon, UnpaidIcon, EditIcon, DeleteIcon, FileCodeIcon, CalendarIcon, ClockIcon, PlusCircleIcon } from "@utilities/icons";
-import type { DashboardTokens, SoftwareDashboardData, DashboardHeroContent } from "../types";
+import type { DashboardTokens, SoftwareDashboardData, DashboardHeroContent } from "../../types";
 
 type SoftwareDashboardOverviewProps = {
   readonly data: SoftwareDashboardData;

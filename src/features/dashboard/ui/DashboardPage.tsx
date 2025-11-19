@@ -11,19 +11,21 @@ import {
 } from "./constants";
 import { DashboardHeader } from "./components/DashboardHeader";
 import { DashboardSidebar } from "./components/DashboardSidebar";
-import { ServerServicesView } from "./components/ServerServicesView";
-import { ManageServerView } from "./components/ManageServerView";
-import { DomainsView } from "./components/DomainsView";
-import { ManageDomainView } from "./components/ManageDomainView";
-import { RegisterDomainView } from "./components/RegisterDomainView";
-import { DashboardOverview } from "./components/DashboardOverview";
-import { SoftwareDashboardOverview } from "./components/SoftwareDashboardOverview";
-import { AppDashboardOverview } from "./components/AppDashboardOverview";
+import { ServerServicesView } from "./components/cloud/ServerServicesView";
+import { ManageServerView } from "./components/cloud/ManageServerView";
+import { DomainsView } from "./components/cloud/DomainsView";
+import { ManageDomainView } from "./components/cloud/ManageDomainView";
+import { RegisterDomainView } from "./components/cloud/RegisterDomainView";
+import { DashboardOverview } from "./components/cloud/DashboardOverview";
+import { SoftwareDashboardOverview } from "./components/software/SoftwareDashboardOverview";
+import { ProjectsView } from "./components/software/ProjectsView";
+import { ProjectDetailsView } from "./components/software/ProjectDetailsView";
+import { AppDashboardOverview } from "./components/app/AppDashboardOverview";
 import { BillingView } from "./components/BillingView";
-import { WebsitesView } from "./components/WebsitesView";
-import { ManageWebsiteView } from "./components/ManageWebsiteView";
-import { HostView } from "./components/HostView";
-import { ManageHostView } from "./components/ManageHostView";
+import { WebsitesView } from "./components/cloud/WebsitesView";
+import { ManageWebsiteView } from "./components/cloud/ManageWebsiteView";
+import { HostView } from "./components/cloud/HostView";
+import { ManageHostView } from "./components/cloud/ManageHostView";
 import { OrderView } from "./components/OrderView";
 import type { DashboardAppId, DashboardTokens } from "./types";
 
@@ -44,6 +46,7 @@ export const DashboardPage = () => {
   const manageNameserversMatch = useMatch("/dashboard/manage-nameservers");
   const manageWebsiteMatch = useMatch("/dashboard/manage-website/:websiteId");
   const manageHostMatch = useMatch("/dashboard/manage-host/:hostId");
+  const projectDetailsMatch = useMatch("/dashboard/projects/:projectId");
   const orderMatch = useMatch("/dashboard/order");
   const dataset = dashboardContent[activeApp.id];
   const navigationItems = dataset.navigation;
@@ -251,6 +254,14 @@ export const DashboardPage = () => {
       return;
     }
 
+    // Handle project details route
+    if (path.includes("/projects/") && path.split("/").length > 3) {
+      if (activeNavId !== "projects") {
+        setActiveNavId("projects");
+      }
+      return;
+    }
+
     // Extract navId from path (e.g., /dashboard/domains -> domains)
     const pathParts = path.split("/").filter(Boolean);
     if (pathParts.length >= 2 && pathParts[0] === "dashboard") {
@@ -409,6 +420,93 @@ export const DashboardPage = () => {
               <ManageWebsiteView tokens={tokens} />
             ) : (
               <WebsitesView sites={dataset.sites} tokens={tokens} />
+            )
+          ) : activeNavId === "projects" && activeApp.id === "software" ? (
+            projectDetailsMatch ? (
+              (() => {
+                // Find project from default projects or get from data source
+                const defaultProjects = [
+                  {
+                    id: "proj-1",
+                    name: "FixMate App",
+                    description:
+                      "Updated app interface, changed order and appointment tracking system, improved customer satisfaction",
+                    status: "Active" as const,
+                    team: [
+                      { id: "1", name: "John Doe" },
+                      { id: "2", name: "Jane Smith" },
+                      { id: "3", name: "Bob Wilson" }
+                    ],
+                    startDate: "15 Oct 2023",
+                    deadline: "20 Nov 2023",
+                    budget: "$5,000",
+                    tasks: { completed: 8, total: 10 },
+                    type: "Mobile",
+                    lastUpdate: "2 days ago"
+                  },
+                  {
+                    id: "proj-2",
+                    name: "FixMate App",
+                    description:
+                      "Updated app interface, changed order and appointment tracking system, improved customer satisfaction",
+                    status: "Active" as const,
+                    team: [
+                      { id: "1", name: "John Doe" },
+                      { id: "2", name: "Jane Smith" },
+                      { id: "3", name: "Bob Wilson" }
+                    ],
+                    startDate: "15 Oct 2023",
+                    deadline: "20 Nov 2023",
+                    budget: "$5,000",
+                    tasks: { completed: 8, total: 10 },
+                    type: "Mobile",
+                    lastUpdate: "2 days ago"
+                  },
+                  {
+                    id: "proj-3",
+                    name: "FixMate App",
+                    description:
+                      "Updated app interface, changed order and appointment tracking system, improved customer satisfaction",
+                    status: "Active" as const,
+                    team: [
+                      { id: "1", name: "John Doe" },
+                      { id: "2", name: "Jane Smith" },
+                      { id: "3", name: "Bob Wilson" }
+                    ],
+                    startDate: "15 Oct 2023",
+                    deadline: "20 Nov 2023",
+                    budget: "$5,000",
+                    tasks: { completed: 8, total: 10 },
+                    type: "Mobile",
+                    lastUpdate: "2 days ago"
+                  }
+                ];
+                const projectId = projectDetailsMatch.params.projectId;
+                const project = defaultProjects.find((p) => p.id === projectId) ?? defaultProjects[0];
+                return (
+                  <ProjectDetailsView
+                    project={project}
+                    tokens={tokens}
+                    onBack={() => navigate("/dashboard/projects")}
+                    onManage={(id) => {
+                      // Handle manage
+                    }}
+                  />
+                );
+              })()
+            ) : (
+              <ProjectsView
+                tokens={tokens}
+                onAddProject={() => {
+                  // Handle add project
+                }}
+                onViewDetails={(projectId) => {
+                  navigate(`/dashboard/projects/${projectId}`);
+                }}
+                onManage={(projectId) => {
+                  // Handle manage
+                }}
+              />
             )
           ) : activeNavId === "billing" ? (
             <BillingView tokens={tokens} />

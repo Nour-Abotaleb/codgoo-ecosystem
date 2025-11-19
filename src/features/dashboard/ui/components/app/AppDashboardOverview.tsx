@@ -1,7 +1,7 @@
 import { ArrowRight, SettingsIcon, ProductIcon, DiamondIcon, ApplicationIcon, RevenueIcon, BackupIcon, ChartIcon, ClockIcon, ArrowUpIcon } from "@utilities/icons";
 import appWidget from "@assets/images/app/widget.png";
 import mobileImage from "@assets/images/app/mobile.png";
-import type { DashboardTokens, AppDashboardData, DashboardHeroContent } from "../types";
+import type { DashboardTokens, AppDashboardData, DashboardHeroContent } from "../../types";
 
 type AppDashboardOverviewProps = {
   readonly data: AppDashboardData;
