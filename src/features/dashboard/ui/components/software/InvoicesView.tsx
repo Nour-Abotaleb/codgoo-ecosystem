@@ -117,11 +117,11 @@ const invoicesData: readonly InvoiceItem[] = [
 const getStatusBadgeStyle = (status: InvoiceItem["status"]) => {
   switch (status) {
     case "Paid":
-      return "bg-green-100 text-green-800";
+      return "bg-[#E2FFE9] text-[#34C759]";
     case "Overdue":
-      return "bg-yellow-100 text-yellow-800";
+      return "bg-[#FFF6D5] text-[#B48D00]";
     case "Unpaid":
-      return "bg-gray-100 text-gray-800";
+      return "bg-[#F3F3F3] text-[#767676]";
     default:
       return "bg-gray-100 text-gray-800";
   }
@@ -163,10 +163,10 @@ export const InvoicesView = ({ tokens }: InvoicesViewProps) => {
           >
             {/* Top Section with Background */}
             <div className={tokens.isDark ? "bg-[#25223866]" : "bg-[#F4F5FF]"}>
-              <div className="flex flex-col gap-4 p-4">
+              <div className="flex flex-col gap-1 p-4">
                 {/* Invoice ID */}
                 <div className="flex items-center justify-between">
-                  <span className={`text-base font-semibold ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
+                  <span className={`text-base font-semibold ${tokens.isDark ? "text-white" : "text-[#607DAE]"}`}>
                     #{invoice.invoiceNumber}
                   </span>
                   <span
@@ -179,7 +179,7 @@ export const InvoicesView = ({ tokens }: InvoicesViewProps) => {
                 </div>
 
                 {/* Amount */}
-                <span className={`text-xl font-semibold ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
+                <span className={`text-xl md:text-2xl font-semibold ${tokens.isDark ? "text-white" : "text-black"}`}>
                   {invoice.amount}
                 </span>
 
@@ -194,44 +194,44 @@ export const InvoicesView = ({ tokens }: InvoicesViewProps) => {
             </div>
 
             {/* Dates */}
-            <div className="flex flex-col gap-2 p-4 pt-2 border-t border-dashed border-[var(--color-border-divider)]">
-              <div className="flex items-center justify-between">
-                <span className={`text-sm ${tokens.subtleText}`}>Created at</span>
-                <span className={`text-sm font-medium ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
+            <div className={`flex items-center justify-between px-4 py-2 ${tokens.isDark ? "border-t border-dashed border-[#2E3141]" : "border-t border-dashed border-[#E2E8FF] bg-[#FFFEF7]"}`}>
+              <div className="flex items-start flex-col gap-2">
+                <span className={`text-sm font-medium ${tokens.isDark ? "text-white" : "text-[#071FD7]"}`}>
                   {invoice.createdDate}
                 </span>
+                <span className={`text-sm ${tokens.isDark ? "text-white" : "text-black"}`}>Created at</span>
               </div>
-              <div className="flex items-center justify-between">
-                <span className={`text-sm ${tokens.subtleText}`}>Due date</span>
-                <span className={`text-sm font-medium ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
+              <div className="flex items-start flex-col gap-2">
+                <span className={`text-sm font-medium ${tokens.isDark ? "text-white" : "text-[#071FD7]"}`}>
                   {invoice.dueDate}
                 </span>
+                <span className={`text-sm text-[#718EBF]`}>Due date</span>
+              </div>
+              {/* Manage Section */}
+              <div className="flex flex-col gap-2 items-center">
+                <div className="flex items-start gap-2">
+                  <button
+                    type="button"
+                    className={`p-1.5 rounded-full transition-colors ${
+                      tokens.isDark ? "bg-[#071FD7]" : "bg-[#F4F5FF]"
+                    } hover:opacity-80`}
+                    aria-label={`Manage invoice ${invoice.invoiceNumber}`}
+                  >
+                    <BillingIcon className={`h-4 w-4 ${tokens.isDark ? "text-white" : "text-[#071FD7]"}`} />
+                  </button>
+                  <button
+                    type="button"
+                    className="p-1.5 rounded-full transition-colors"
+                    style={{ backgroundColor: "rgb(255,229,222)" }}
+                    aria-label={`Delete invoice ${invoice.invoiceNumber}`}
+                  >
+                    <DeleteIcon className="h-4 w-4" style={{ color: "#FF0000" }} />
+                  </button>
+                </div>
+                <span className={`text-sm text-[#718EBF]`}>Manage</span>
               </div>
             </div>
 
-            {/* Manage Section */}
-            <div className="flex items-center justify-between px-4 pb-4 pt-2">
-              <span className={`text-sm ${tokens.subtleText}`}>Manage</span>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  className={`p-1.5 rounded-full transition-colors ${
-                    tokens.isDark ? "bg-[#071FD7]/20" : "bg-[#F4F5FF]"
-                  } hover:opacity-80`}
-                  aria-label={`Manage invoice ${invoice.invoiceNumber}`}
-                >
-                  <BillingIcon className={`h-4 w-4 ${tokens.isDark ? "text-white" : "text-[#071FD7]"}`} />
-                </button>
-                <button
-                  type="button"
-                  className="p-1.5 rounded-full transition-colors"
-                  style={{ backgroundColor: "rgb(252,221,191)" }}
-                  aria-label={`Delete invoice ${invoice.invoiceNumber}`}
-                >
-                  <DeleteIcon className="h-4 w-4" style={{ color: "#FF0000" }} />
-                </button>
-              </div>
-            </div>
           </div>
         ))}
       </div>

@@ -118,7 +118,12 @@ export const DashboardSidebar = ({
       className={`dashboard__sidebar fixed inset-y-0 left-0 z-20 hidden min-h-screen w-64 pe-1 flex-col py-10 lg:flex ${tokens.sidebarClass}`}
     >
       <div className="relative flex justify-center gap-6 border-b border-[color:var(--color-sidebar-divider)] pb-4">
-        <img src={activeLogo} alt={`${activeAppId} logo`} className="h-10 w-auto object-contain" />
+        <img 
+          src={activeLogo} 
+          alt={`${activeAppId} logo`} 
+          className="h-10 w-auto object-contain"
+          fetchPriority="high"
+        />
         <div ref={switcherRef} className="relative">
           <button
             type="button"
@@ -170,6 +175,7 @@ export const DashboardSidebar = ({
                           }
                           alt={`${app.id} logo`}
                           className="h-6 w-auto object-contain"
+                          fetchPriority="high"
                         />
                       </button>
                     </li>

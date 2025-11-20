@@ -136,7 +136,7 @@ export const ProjectCard = ({
               type="button"
               onClick={() => onManage?.(project.id)}
               className="p-1.5 rounded-full transition-colors"
-              style={{ backgroundColor: 'rgb(252,221,191)' }}
+              style={{ backgroundColor: 'rgb(255,229,222)' }}
               aria-label="Manage project"
             >
               <DeleteIcon className="h-4 w-4" style={{ color: '#FF0000' }} />

@@ -3,7 +3,6 @@ import {
   OverviewIcon,
   TasksIcon,
   ProjectInvoiceIcon,
-  DiscussionIcon,
   AttachmentsIcon,
   ProposalsIcon,
   AllProjectsIcon,
@@ -15,6 +14,7 @@ import {
 import { ProjectCard, type ProjectCardData } from "./ProjectCard";
 import { TasksView } from "./TasksView";
 import { InvoicesView } from "./InvoicesView";
+import { AttachmentsView } from "./AttachmentsView";
 import type { DashboardTokens } from "../../types";
 
 type ProjectDetailsViewProps = {
@@ -24,13 +24,12 @@ type ProjectDetailsViewProps = {
   readonly onManage?: (projectId: string) => void;
 };
 
-type TabId = "overview" | "tasks" | "invoices" | "discussion" | "attachments" | "proposals";
+type TabId = "overview" | "tasks" | "invoices" | "attachments" | "proposals";
 
 const tabs: readonly { id: TabId; label: string; icon: React.ComponentType<React.SVGProps<SVGSVGElement>> }[] = [
   { id: "overview", label: "OverView", icon: OverviewIcon },
   { id: "tasks", label: "Tasks", icon: TasksIcon },
   { id: "invoices", label: "Invoices", icon: ProjectInvoiceIcon },
-  { id: "discussion", label: "Discussion", icon: DiscussionIcon },
   { id: "attachments", label: "Attachments", icon: AttachmentsIcon },
   { id: "proposals", label: "Proposals", icon: ProposalsIcon }
 ];
@@ -101,7 +100,7 @@ export const ProjectDetailsView = ({
   return (
     <div className="flex flex-col gap-6">
       {/* Tabs Navigation */}
-      <div className="flex gap-6 overflow-x-auto">
+      <div className="flex gap-16 overflow-x-auto">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -270,7 +269,9 @@ export const ProjectDetailsView = ({
 
       {activeTab === "invoices" && <InvoicesView tokens={tokens} />}
 
-      {activeTab !== "overview" && activeTab !== "tasks" && activeTab !== "invoices" && (
+      {activeTab === "attachments" && <AttachmentsView tokens={tokens} />}
+
+      {activeTab !== "overview" && activeTab !== "tasks" && activeTab !== "invoices" && activeTab !== "attachments" && (
         <div
           className={`${tokens.cardBase} rounded-2xl p-10 border border-[var(--color-card-border)]`}
         >
