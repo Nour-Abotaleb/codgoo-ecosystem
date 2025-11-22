@@ -20,6 +20,7 @@ import { DashboardOverview } from "./components/cloud/DashboardOverview";
 import { SoftwareDashboardOverview } from "./components/software/SoftwareDashboardOverview";
 import { ProjectsView } from "./components/software/ProjectsView";
 import { ProjectDetailsView } from "./components/software/ProjectDetailsView";
+import { MeetingsView } from "./components/software/MeetingsView";
 import { AppDashboardOverview } from "./components/app/AppDashboardOverview";
 import { BillingView } from "./components/BillingView";
 import { WebsitesView } from "./components/cloud/WebsitesView";
@@ -141,7 +142,7 @@ export const DashboardPage = () => {
         "--shadow-cta": "rgba(94,86,255,0.45)"
       }
     }),
-    [activeApp.id, isDark]
+    [activeApp.id]
   );
 
   useEffect(() => {
@@ -488,7 +489,7 @@ export const DashboardPage = () => {
                     project={project}
                     tokens={tokens}
                     onBack={() => navigate("/dashboard/projects")}
-                    onManage={(_id) => {
+                    onManage={() => {
                       // Handle manage
                     }}
                   />
@@ -503,13 +504,15 @@ export const DashboardPage = () => {
                 onViewDetails={(projectId) => {
                   navigate(`/dashboard/projects/${projectId}`);
                 }}
-                onManage={(_projectId) => {
+                onManage={() => {
                   // Handle manage
                 }}
               />
             )
           ) : activeNavId === "billing" ? (
             <BillingView tokens={tokens} />
+          ) : activeNavId === "meetings" && activeApp.id === "software" ? (
+            <MeetingsView tokens={tokens} />
           ) : (
             <div className={`${tokens.cardBase} rounded-3xl p-10`}>
               <h2 className="text-2xl font-semibold">

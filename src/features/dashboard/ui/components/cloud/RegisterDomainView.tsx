@@ -247,7 +247,6 @@ const ManageNameserversSearchPanel = ({
   readonly onBack: () => void;
   readonly onOpenCheckout: (option: NameserverOption) => void;
 }) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   void _onBack;
   const sections = [
     {

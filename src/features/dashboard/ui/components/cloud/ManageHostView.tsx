@@ -26,7 +26,6 @@ type ManageHostViewProps = {
 };
 
 export const ManageHostView = ({ hostId: _hostId, tokens }: ManageHostViewProps) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   void _hostId;
   const statusTextClass = "text-[#73F593]";
   const statusDotClass = "bg-[#73F593]";
