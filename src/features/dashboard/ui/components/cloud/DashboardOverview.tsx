@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import heroWave from "@assets/images/cloud/bg.png";
 import widgetBg from "@assets/images/cloud/widget.png";
@@ -78,10 +78,33 @@ export const DashboardOverview = ({
   const [activeNewsPage, setActiveNewsPage] = useState(0);
   const [activeTicketPage, setActiveTicketPage] = useState(0);
   const [domainSearchQuery, setDomainSearchQuery] = useState("");
+  const [imageLoaded, setImageLoaded] = useState(false);
   const cardClass = `${tokens.cardBase} rounded-[20px] border border-[var(--color-card-border)] px-6 py-4 transition-colors`;
   const heroSlides = createHeroSlides(dataset.hero);
   const currentSlide = heroSlides[activeSlide];
   const heroImage = dataset.hero.backgroundImage ?? heroWave;
+
+  // Preload hero image
+  useEffect(() => {
+    // Add preload link to document head
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.as = "image";
+    link.href = heroImage;
+    link.setAttribute("fetchpriority", "high");
+    document.head.appendChild(link);
+
+    // Preload image
+    const img = new Image();
+    img.src = heroImage;
+    img.onload = () => setImageLoaded(true);
+    img.onerror = () => setImageLoaded(true); // Still show content even if image fails
+
+    return () => {
+      // Cleanup: remove preload link when component unmounts
+      document.head.removeChild(link);
+    };
+  }, [heroImage]);
 
   const filteredDomains = useMemo(() => {
     if (!domainSearchQuery.trim()) {
@@ -131,12 +154,18 @@ export const DashboardOverview = ({
       <section>
         <div
           className="relative overflow-hidden rounded-[54px] px-8 py-8 text-white transition-all duration-500"
+          style={currentSlide.gradient ? { background: currentSlide.gradient } : undefined}
         >
           {/* Hero Image */}
           <img
             src={heroImage}
             alt="Hero background"
-            className="absolute inset-0 w-full h-full object-cover"
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
+              imageLoaded ? "opacity-100" : "opacity-0"
+            }`}
+            loading="eager"
+            fetchPriority="high"
+            onLoad={() => setImageLoaded(true)}
           />
           <div className="relative z-10 flex flex-col">
             <div className="flex-1 space-y-4 md:space-y-5 max-w-2xl">

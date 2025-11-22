@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { useId, useEffect, useState } from "react";
 import { ArrowRight, ActiveIcon, PendingIcon, UnpaidIcon, EditIcon, DeleteIcon, FileCodeIcon, CalendarIcon, ClockIcon, PlusCircleIcon } from "@utilities/icons";
 import type { DashboardTokens, SoftwareDashboardData, DashboardHeroContent } from "../../types";
 
@@ -363,7 +363,34 @@ export const SoftwareDashboardOverview = ({
   hero,
   tokens
 }: SoftwareDashboardOverviewProps) => {
+  const [imageLoaded, setImageLoaded] = useState(false);
   const cardClass = `rounded-[20px] border border-[var(--color-card-border)] px-6 py-4 transition-colors ${tokens.isDark ? tokens.cardBase : "bg-[#FCFDFF]"}`;
+
+  // Preload hero image
+  useEffect(() => {
+    if (hero.backgroundImage) {
+      // Add preload link to document head
+      const link = document.createElement("link");
+      link.rel = "preload";
+      link.as = "image";
+      link.href = hero.backgroundImage;
+      link.setAttribute("fetchpriority", "high");
+      document.head.appendChild(link);
+
+      // Preload image
+      const img = new Image();
+      img.src = hero.backgroundImage;
+      img.onload = () => setImageLoaded(true);
+      img.onerror = () => setImageLoaded(true); // Still show content even if image fails
+
+      return () => {
+        // Cleanup: remove preload link when component unmounts
+        document.head.removeChild(link);
+      };
+    } else {
+      setImageLoaded(true);
+    }
+  }, [hero.backgroundImage]);
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -397,13 +424,19 @@ export const SoftwareDashboardOverview = ({
       <section>
         <div
           className="relative overflow-hidden rounded-[54px] px-8 py-8 text-white transition-all duration-500"
+          style={hero.gradient ? { background: hero.gradient } : undefined}
         >
           {/* Hero Image */}
           {hero.backgroundImage && (
             <img
               src={hero.backgroundImage}
               alt="Hero background"
-              className="absolute inset-0 w-full object-cover"
+              className={`absolute inset-0 w-full object-cover transition-opacity duration-500 ${
+                imageLoaded ? "opacity-100" : "opacity-0"
+              }`}
+              loading="eager"
+              fetchPriority="high"
+              onLoad={() => setImageLoaded(true)}
             />
           )}
           <div className="relative z-10 flex flex-col">
