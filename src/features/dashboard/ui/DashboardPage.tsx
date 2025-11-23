@@ -22,6 +22,8 @@ import { ProjectsView } from "./components/software/ProjectsView";
 import { ProjectDetailsView } from "./components/software/ProjectDetailsView";
 import { MeetingsView } from "./components/software/MeetingsView";
 import { AppDashboardOverview } from "./components/app/AppDashboardOverview";
+import { MarketplaceView, marketplaceItems } from "./components/app/MarketplaceView";
+import { MarketplaceDetailView } from "./components/app/MarketplaceDetailView";
 import { BillingView } from "./components/BillingView";
 import { WebsitesView } from "./components/cloud/WebsitesView";
 import { ManageWebsiteView } from "./components/cloud/ManageWebsiteView";
@@ -48,6 +50,7 @@ export const DashboardPage = () => {
   const manageWebsiteMatch = useMatch("/dashboard/manage-website/:websiteId");
   const manageHostMatch = useMatch("/dashboard/manage-host/:hostId");
   const projectDetailsMatch = useMatch("/dashboard/projects/:projectId");
+  const marketplaceDetailMatch = useMatch("/dashboard/marketplace/:itemId");
   const orderMatch = useMatch("/dashboard/order");
   const dataset = dashboardContent[activeApp.id];
   const navigationItems = dataset.navigation;
@@ -263,6 +266,14 @@ export const DashboardPage = () => {
       return;
     }
 
+    // Handle marketplace detail route
+    if (path.includes("/marketplace/") && path.split("/").length > 3) {
+      if (activeNavId !== "marketplace") {
+        setActiveNavId("marketplace");
+      }
+      return;
+    }
+
     // Extract navId from path (e.g., /dashboard/domains -> domains)
     const pathParts = path.split("/").filter(Boolean);
     if (pathParts.length >= 2 && pathParts[0] === "dashboard") {
@@ -380,6 +391,7 @@ export const DashboardPage = () => {
                 data={dataset.appData}
                 hero={dataset.hero}
                 tokens={tokens}
+                onNavigateToMarketplace={() => handleSelectNav("marketplace")}
               />
             ) : (
               <DashboardOverview
@@ -511,6 +523,37 @@ export const DashboardPage = () => {
             )
           ) : activeNavId === "billing" ? (
             <BillingView tokens={tokens} />
+          ) : activeNavId === "marketplace" && activeApp.id === "app" ? (
+            marketplaceDetailMatch ? (() => {
+              const itemId = marketplaceDetailMatch.params.itemId;
+              // Find the base item (remove suffix like -1, -2, etc.)
+              const baseId = itemId?.replace(/-\d+$/, "") || itemId;
+              const selectedItem = marketplaceItems.find(item => item.id === baseId || item.id === itemId);
+              
+              if (!selectedItem) {
+                return (
+                  <div className={`${tokens.cardBase} rounded-3xl p-10`}>
+                    <h2 className="text-2xl font-semibold">Item not found</h2>
+                    <p className={`mt-3 text-sm ${tokens.subtleText}`}>
+                      The marketplace item you're looking for doesn't exist.
+                    </p>
+                  </div>
+                );
+              }
+
+              return (
+                <MarketplaceDetailView
+                  item={selectedItem}
+                  tokens={tokens}
+                  onBack={() => navigate("/dashboard/marketplace")}
+                />
+              );
+            })() : (
+              <MarketplaceView
+                tokens={tokens}
+                onItemClick={(itemId) => navigate(`/dashboard/marketplace/${itemId}`)}
+              />
+            )
           ) : activeNavId === "meetings" && activeApp.id === "software" ? (
             <MeetingsView tokens={tokens} />
           ) : (

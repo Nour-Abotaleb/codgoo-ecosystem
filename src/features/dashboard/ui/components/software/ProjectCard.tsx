@@ -60,6 +60,58 @@ export const ProjectCard = ({
       .slice(0, 2);
   };
 
+  const CircularProgress = ({ percentage, size = 110 }: { percentage: number; size?: number }) => {
+    const radius = (size - 18) / 2;
+    const circumference = 2 * Math.PI * radius;
+    const offset = circumference - (percentage / 100) * circumference;
+    const uniqueId = `progress-${Math.random().toString(36).substr(2, 9)}`;
+
+    const gradientStart = tokens.isDark ? "#3B82F6" : "#071FD7";
+    const gradientEnd = tokens.isDark ? "#1E40AF" : "#041071";
+
+    return (
+      <div className="relative inline-flex items-center justify-center">
+        <svg className="transform -rotate-20" width={size} height={size}>
+          <defs>
+            <linearGradient id={`gradient-${uniqueId}`} x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor={gradientStart} />
+              <stop offset="100%" stopColor={gradientEnd} />
+            </linearGradient>
+          </defs>
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            stroke={tokens.isDark ? "rgba(249, 250, 250, 0.2)" : "#E4E7E9"}
+            strokeWidth="18"
+            fill="none"
+          />
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            stroke={`url(#gradient-${uniqueId})`}
+            strokeWidth="18"
+            fill="none"
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+            strokeLinecap="round"
+            className="transition-all duration-300"
+          />
+        </svg>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className={`text-base font-semibold ${tokens.isDark ? "text-white" : "text-[#292D30]"}`}>
+            {percentage}%
+          </span>
+        </div>
+      </div>
+    );
+  };
+
+  const progressPercentage = project.tasks.total > 0 
+    ? Math.round((project.tasks.completed / project.tasks.total) * 100)
+    : 0;
+
   return (
     <div className={`${tokens.cardBase} rounded-2xl p-6 border border-[var(--color-card-border)]`}>
       <div className="flex flex-col gap-4">
@@ -82,29 +134,32 @@ export const ProjectCard = ({
           </p>
         </div>
 
-        {/* Team Section */}
-        <div className="flex items-center gap-2">
-          <span className={`text-sm md:text-base font-medium ${tokens.subtleText} text-[#718EBF]`}>team:</span>
-          <div className="flex -space-x-2">
-            {project.team.slice(0, 3).map((member, index) => (
-              <div
-                key={member.id}
-                className="relative h-8 w-8 rounded-full border-2 border-[var(--color-card-bg)] flex items-center justify-center text-sm font-semibold text-white"
-                style={{ backgroundColor: getAvatarColor(index) }}
-                title={member.name}
-              >
-                {member.avatar ? (
-                  <img
-                    src={member.avatar}
-                    alt={member.name}
-                    className="h-full w-full rounded-full object-cover"
-                  />
-                ) : (
-                  <span>{getInitials(member.name)}</span>
-                )}
-              </div>
-            ))}
+        {/* Team Section with Chart */}
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <span className={`text-sm md:text-base font-medium ${tokens.subtleText} text-[#718EBF]`}>team:</span>
+            <div className="flex -space-x-2">
+              {project.team.slice(0, 3).map((member, index) => (
+                <div
+                  key={member.id}
+                  className="relative h-8 w-8 rounded-full border-2 border-[var(--color-card-bg)] flex items-center justify-center text-sm font-semibold text-white"
+                  style={{ backgroundColor: getAvatarColor(index) }}
+                  title={member.name}
+                >
+                  {member.avatar ? (
+                    <img
+                      src={member.avatar}
+                      alt={member.name}
+                      className="h-full w-full rounded-full object-cover"
+                    />
+                  ) : (
+                    <span>{getInitials(member.name)}</span>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
+          <CircularProgress percentage={progressPercentage} size={110} />
         </div>
 
         {/* Key Details Row */}
@@ -156,8 +211,8 @@ export const ProjectCard = ({
               onClick={() => onViewDetails(project.id)}
               className={`px-4 py-2.5 rounded-full text-sm md:text-base font-medium transition-colors cursor-pointer ${
                 tokens.isDark
-                  ? "bg-[#071FD7] text-white hover:bg-[#071FD7]/90"
-                  : "bg-[#071FD7] text-white hover:bg-[#071FD7]/90"
+                  ? "border border-[#071FD7] text-[#071FD7] hover:bg-[#071FD7]/90 hover:text-white"
+                  : "border border-[#071FD7] text-[#071FD7] hover:bg-[#071FD7]/90 hover:text-white"
               }`}
             >
               View Details

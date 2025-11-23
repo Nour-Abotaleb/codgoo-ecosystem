@@ -424,7 +424,6 @@ export const SoftwareDashboardOverview = ({
       <section>
         <div
           className="relative overflow-hidden rounded-[54px] px-8 py-8 text-white transition-all duration-500"
-          style={hero.gradient ? { background: hero.gradient } : undefined}
         >
           {/* Hero Image */}
           {hero.backgroundImage && (

@@ -8,6 +8,7 @@ type AppDashboardOverviewProps = {
   readonly data: AppDashboardData;
   readonly hero: DashboardHeroContent;
   readonly tokens: DashboardTokens;
+  readonly onNavigateToMarketplace?: () => void;
 };
 
 // Donut Chart Component for App Categories
@@ -219,7 +220,8 @@ const getActivityIcon = (iconType: string) => {
 export const AppDashboardOverview = ({
   data,
   hero,
-  tokens
+  tokens,
+  onNavigateToMarketplace
 }: AppDashboardOverviewProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const cardClass = `${tokens.cardBase} rounded-[20px] border border-[var(--color-card-border)] px-6 py-4 transition-colors`;
@@ -342,6 +344,7 @@ export const AppDashboardOverview = ({
             </h3>
             <button 
               type="button" 
+              onClick={onNavigateToMarketplace}
               className="px-1 text-sm font-bold flex items-center gap-1 cursor-pointer"
               style={{ color: "#A3AED0" }}
             >

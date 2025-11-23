@@ -4,8 +4,6 @@ import {
   UnPaidInvoicesIcon,
   OverdueInvoicesIcon,
   BankTasksIcon,
-  DeleteIcon,
-  BillingIcon,
 } from "@utilities/icons";
 import type { DashboardTokens } from "../../types";
 
@@ -159,11 +157,10 @@ export const InvoicesView = ({ tokens }: InvoicesViewProps) => {
         {invoicesData.map((invoice) => (
           <div
             key={invoice.id}
-            className={`${tokens.cardBase} rounded-2xl border border-[var(--color-card-border)] overflow-hidden transition-colors`}
+            className={`${tokens.cardBase} rounded-2xl overflow-hidden transition-colors ${tokens.isDark ? "!bg-[#25223866]" : "!bg-[#F4F5FF]"}`}
           >
-            {/* Top Section with Background */}
-            <div className={tokens.isDark ? "bg-[#25223866]" : "bg-[#F4F5FF]"}>
-              <div className="flex flex-col gap-1 p-4">
+            {/* Top Section */}
+            <div className="flex flex-col gap-1 px-4 py-2">
                 {/* Invoice ID */}
                 <div className="flex items-center justify-between">
                   <span className={`text-base font-semibold ${tokens.isDark ? "text-white" : "text-[#607DAE]"}`}>
@@ -190,45 +187,49 @@ export const InvoicesView = ({ tokens }: InvoicesViewProps) => {
                     {invoice.paymentMethod}
                   </span>
                 </div>
-              </div>
             </div>
 
             {/* Dates */}
-            <div className={`flex items-center justify-between px-4 py-2 ${tokens.isDark ? "border-t border-dashed border-[#2E3141]" : "border-t border-dashed border-[#E2E8FF] bg-[#FFFEF7]"}`}>
-              <div className="flex items-start flex-col gap-2">
-                <span className={`text-sm font-medium ${tokens.isDark ? "text-white" : "text-[#071FD7]"}`}>
-                  {invoice.createdDate}
-                </span>
-                <span className={`text-sm ${tokens.isDark ? "text-white" : "text-black"}`}>Created at</span>
-              </div>
-              <div className="flex items-start flex-col gap-2">
-                <span className={`text-sm font-medium ${tokens.isDark ? "text-white" : "text-[#071FD7]"}`}>
-                  {invoice.dueDate}
-                </span>
-                <span className={`text-sm text-[#718EBF]`}>Due date</span>
-              </div>
-              {/* Manage Section */}
-              <div className="flex flex-col gap-2 items-center">
-                <div className="flex items-start gap-2">
-                  <button
-                    type="button"
-                    className={`p-1.5 rounded-full transition-colors ${
-                      tokens.isDark ? "bg-[#071FD7]" : "bg-[#F4F5FF]"
-                    } hover:opacity-80`}
-                    aria-label={`Manage invoice ${invoice.invoiceNumber}`}
-                  >
-                    <BillingIcon className={`h-4 w-4 ${tokens.isDark ? "text-white" : "text-[#071FD7]"}`} />
-                  </button>
-                  <button
-                    type="button"
-                    className="p-1.5 rounded-full transition-colors"
-                    style={{ backgroundColor: "rgb(255,229,222)" }}
-                    aria-label={`Delete invoice ${invoice.invoiceNumber}`}
-                  >
-                    <DeleteIcon className="h-4 w-4" style={{ color: "#FF0000" }} />
-                  </button>
+            <div className="flex flex-col gap-3 px-4">
+              <div className="flex items-center gap-4 pb-4">
+                <div className="flex items-center gap-2">
+                  <span className={`text-sm ${tokens.isDark ? "text-white" : "text-[#718EBF]"}`}>Created at:</span>
+                  <span className={`text-sm font-medium ${tokens.isDark ? "text-white" : "text-[#071FD7]"}`}>
+                    {invoice.createdDate}
+                  </span>
                 </div>
-                <span className={`text-sm text-[#718EBF]`}>Manage</span>
+                <div className="flex items-center gap-2">
+                  <span className={`text-sm text-[#718EBF]`}>Due date:</span>
+                  <span className={`text-sm font-medium ${tokens.isDark ? "text-white" : "text-[#071FD7]"}`}>
+                    {invoice.dueDate}
+                  </span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  className={`flex-1 px-4 py-2.5 rounded-full text-sm font-medium transition-colors ${
+                    tokens.isDark
+                      ? "bg-[#071FD7] text-white hover:bg-[#071FD7]/90"
+                      : "bg-[#071FD7] text-white hover:bg-[#071FD7]/90"
+                  }`}
+                  aria-label={`Pay invoice ${invoice.invoiceNumber}`}
+                >
+                  Pay Now
+                </button>
+                <button
+                  type="button"
+                  className={`flex-1 px-4 py-2.5 rounded-full text-sm font-medium transition-colors ${
+                    tokens.isDark
+                      ? "bg-transparent border border-[#071FD7] text-[#071FD7] hover:bg-[#071FD7]/10"
+                      : "bg-white border border-[#071FD7] text-[#071FD7] hover:bg-[#071FD7]/5"
+                  }`}
+                  aria-label={`View invoice ${invoice.invoiceNumber}`}
+                >
+                  View Invoice
+                </button>
               </div>
             </div>
 

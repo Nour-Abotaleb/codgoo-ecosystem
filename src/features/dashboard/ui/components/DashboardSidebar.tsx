@@ -20,6 +20,7 @@ import {
 
 import cloudNavBackground from "@assets/images/cloud/nav-bg.svg";
 import softwareNavBackground from "@assets/images/software/nav-bg.svg";
+import appNavBackground from "@assets/images/app/nav-bg.svg";
 import { dashboardAppLogos, dashboardAppLogosLight } from "../constants";
 import type {
   DashboardApp,
@@ -111,7 +112,11 @@ export const DashboardSidebar = ({
     ? (tokens.isDark ? "text-[#FEFEFE]" : "text-[#0F6773]")
     : (tokens.isDark ? "text-[#FEFEFE]" : "text-[#584ABC]");
 
-  const navBackground = activeAppId === "software" ? softwareNavBackground : cloudNavBackground;
+  const navBackground = activeAppId === "software" 
+    ? softwareNavBackground 
+    : activeAppId === "app"
+    ? appNavBackground
+    : cloudNavBackground;
 
   return (
     <aside
@@ -207,10 +212,7 @@ export const DashboardSidebar = ({
               aria-current={isActive ? "page" : undefined}
               className="group relative flex cursor-pointer items-center gap-2 overflow-hidden rounded-xl px-2 py-1.5 text-lg font-semibold transition-colors"
             >
-              {isActive && activeAppId === "app" && (
-                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-10 bg-[#0F6773] rounded-r-full z-10" />
-              )}
-              {isActive && activeAppId !== "app" && (
+              {isActive && (
                 <span className="absolute inset-0">
                   <img src={navBackground} alt="" className="h-full w-full object-cover" />
                 </span>
