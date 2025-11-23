@@ -11,7 +11,7 @@ type MarketplaceViewProps = {
 type Category = "All" | "Music" | "Collections" | "Sports";
 
 // Sample marketplace data - in a real app, this would come from an API
-const marketplaceItems: readonly MarketplaceItem[] = [
+export const marketplaceItems: readonly MarketplaceItem[] = [
   {
     id: "snapchat-ads",
     title: "Snapchat Ads",

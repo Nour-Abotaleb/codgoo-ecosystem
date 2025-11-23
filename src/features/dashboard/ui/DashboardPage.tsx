@@ -24,6 +24,7 @@ import { MeetingsView } from "./components/software/MeetingsView";
 import { AppDashboardOverview } from "./components/app/AppDashboardOverview";
 import { MarketplaceView, marketplaceItems } from "./components/app/MarketplaceView";
 import { MarketplaceDetailView } from "./components/app/MarketplaceDetailView";
+import type { MarketplaceItem } from "./components/app/MarketplaceCard";
 import { BillingView } from "./components/BillingView";
 import { WebsitesView } from "./components/cloud/WebsitesView";
 import { ManageWebsiteView } from "./components/cloud/ManageWebsiteView";
@@ -528,7 +529,7 @@ export const DashboardPage = () => {
               const itemId = marketplaceDetailMatch.params.itemId;
               // Find the base item (remove suffix like -1, -2, etc.)
               const baseId = itemId?.replace(/-\d+$/, "") || itemId;
-              const selectedItem = marketplaceItems.find(item => item.id === baseId || item.id === itemId);
+              const selectedItem = marketplaceItems.find((item: MarketplaceItem) => item.id === baseId || item.id === itemId);
               
               if (!selectedItem) {
                 return (
