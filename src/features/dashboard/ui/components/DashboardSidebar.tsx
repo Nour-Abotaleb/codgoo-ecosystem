@@ -154,7 +154,7 @@ export const DashboardSidebar = ({
           </button>
           {isSwitcherOpen && (
             <div
-              className={`absolute left-0 mt-3 w-64 rounded-xl p-2 shadow-2xl ring-1 backdrop-blur ${popoverBaseClass}`}
+              className={`absolute left-0 mt-3 w-64 rounded-xl p-2 shadow-2xl backdrop-blur ${popoverBaseClass}`}
             >
               <ul className="space-y-2">
                 {apps.map((app) => {

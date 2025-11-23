@@ -21,29 +21,29 @@ type MarketplaceCardProps = {
 };
 
 export const MarketplaceCard = ({ item, tokens, onClick, onLearnMore }: MarketplaceCardProps) => {
-  const priceTypeColors = {
-    Free: { bg: "#27B43E", text: "#FFFFFF" },
-    Paid: { bg: "#FF8A0E", text: "#FFFFFF" }
-  };
+  // const priceTypeColors = {
+  //   Free: { bg: "#27B43E", text: "#FFFFFF" },
+  //   Paid: { bg: "#FF8A0E", text: "#FFFFFF" }
+  // };
 
-  const colors = priceTypeColors[item.priceType];
+  // const colors = priceTypeColors[item.priceType];
 
   return (
     <div
-      className={`${tokens.cardBase} rounded-2xl p-4 transition-all cursor-pointer`}
+      className={`${tokens.cardBase} rounded-2xl p-4 transition-all cursor-pointer flex flex-col`}
       onClick={onClick}
     >
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
           {/* Price Type Badge */}
-          <div className="flex items-center gap-3 mb-3">
+          {/* <div className="flex items-center gap-3 mb-3">
             <span
               className="inline-flex items-center justify-center px-5 py-1 rounded-full text-sm font-light"
               style={{ backgroundColor: colors.bg, color: colors.text }}
             >
               {item.priceType}
             </span>
-          </div>
+          </div> */}
 
           {/* Title */}
           <h3 className={`text-lg font-bold mb-2 ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
@@ -72,26 +72,12 @@ export const MarketplaceCard = ({ item, tokens, onClick, onLearnMore }: Marketpl
               ({item.rating}) • {item.reviewCount.toLocaleString()} reviews
             </span>
           </div>
-
-          {/* Learn More Link */}
-          <button
-            type="button"
-            className="flex items-center gap-1 text-sm font-medium transition-colors"
-            style={{ color: tokens.isDark ? "#A3AED0" : "#B70000" }}
-            onClick={(e) => {
-              e.stopPropagation();
-              onLearnMore?.();
-            }}
-          >
-            <span>Learn more</span>
-            <ArrowRight className="h-4 w-4" />
-          </button>
         </div>
 
         {/* Icon */}
         <div className="flex-shrink-0">
           <div
-            className="w-16 h-16 rounded-xl flex items-center justify-center"
+            className="w-16 h-16 rounded-full flex items-center justify-center"
             style={
               item.iconGradient
                 ? { background: item.iconGradient }
@@ -101,6 +87,22 @@ export const MarketplaceCard = ({ item, tokens, onClick, onLearnMore }: Marketpl
             {item.icon}
           </div>
         </div>
+      </div>
+
+      {/* Learn More Link */}
+      <div className="flex justify-end mt-auto">
+        <button
+          type="button"
+          className="flex items-center gap-1 text-sm font-medium transition-colors text-white py-2.5 px-4 rounded-full"
+          style={{ backgroundColor: tokens.isDark ? "#A3AED0" : "#0F6773" }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onLearnMore?.();
+          }}
+        >
+          <span>Learn more</span>
+          <ArrowRight className="h-4 w-4" />
+        </button>
       </div>
     </div>
   );

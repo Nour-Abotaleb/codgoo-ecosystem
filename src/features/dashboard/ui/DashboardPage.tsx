@@ -90,7 +90,7 @@ export const DashboardPage = () => {
         "--color-search-bg": "#2E3141",
         "--color-search-text": "#F8FAFF",
         "--color-search-placeholder": "rgba(203,213,255,0.65)",
-        "--color-popover-bg": "rgba(12,15,38,0.95)",
+        "--color-popover-bg": "rgb(0, 0, 0, 0.95)",
         "--color-popover-text": "#F8FAFF",
         "--color-popover-ring": "rgba(124,77,255,0.35)",
         "--color-popover-active-bg": "rgba(124,77,255,0.14)",

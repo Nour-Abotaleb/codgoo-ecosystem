@@ -129,7 +129,7 @@ export const MarketplaceView = ({ tokens, onItemClick }: MarketplaceViewProps) =
           />
           <input
             type="text"
-            placeholder="Q Search"
+            placeholder="Search"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className={`w-full pl-10 pr-4 py-2.5 rounded-full border transition-colors ${
