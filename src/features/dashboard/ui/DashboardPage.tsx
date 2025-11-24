@@ -523,7 +523,7 @@ export const DashboardPage = () => {
               />
             )
           ) : activeNavId === "billing" ? (
-            <BillingView tokens={tokens} />
+            <BillingView tokens={tokens} activeAppId={activeApp.id} />
           ) : activeNavId === "marketplace" && activeApp.id === "app" ? (
             marketplaceDetailMatch ? (() => {
               const itemId = marketplaceDetailMatch.params.itemId;

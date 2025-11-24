@@ -1,9 +1,10 @@
 import { useState, useMemo, useEffect } from "react";
 import { SearchIcon, UnpaidIcon, PendingIcon, ActiveIcon, DeleteIcon, PayAllIcon, DownloadIcon } from "@utilities/icons";
-import type { DashboardTokens } from "../types";
+import type { DashboardTokens, DashboardAppId } from "../types";
 
 type BillingViewProps = {
   readonly tokens: DashboardTokens;
+  readonly activeAppId: DashboardAppId;
 };
 
 type BillingTab = "invoices" | "quotes" | "mass-payment" | "add-funds";
@@ -64,7 +65,40 @@ const renderStatusIcon = (status: InvoiceItem["status"] | QuoteItem["stage"]) =>
   return null;
 };
 
-const InvoicesTable = ({ tokens, searchQuery }: { readonly tokens: DashboardTokens; readonly searchQuery: string }) => {
+const getAppColors = (activeAppId: DashboardAppId, isDark: boolean) => {
+  if (activeAppId === "app") {
+    return {
+      primary: "#0F6773",
+      lightBg: isDark ? "" : "#E6F4F5",
+      lighterAccent: "#1A8A9A",
+      iconFill: isDark ? "white" : "#0F6773",
+      buttonFilled: "bg-[#0F6773] text-white",
+      buttonGhost: isDark ? "bg-[#9A9B9C22] text-[#E2E8FF]" : "bg-[#0F67731F] text-[#0F6773]"
+    };
+  } else if (activeAppId === "software") {
+    return {
+      primary: "#071FD7",
+      lightBg: isDark ? "" : "#E6E8FF",
+      lighterAccent: "#2B3FE8",
+      iconFill: isDark ? "white" : "#071FD7",
+      buttonFilled: "bg-[#071FD7] text-white",
+      buttonGhost: isDark ? "bg-[#9A9B9C22] text-[#E2E8FF]" : "bg-[#071FD71F] text-[#071FD7]"
+    };
+  } else {
+    // cloud
+    return {
+      primary: "#584ABC",
+      lightBg: isDark ? "" : "#F7F6FF",
+      lighterAccent: "#7469C7",
+      iconFill: isDark ? "white" : "#584ABC",
+      buttonFilled: "bg-[var(--color-button-filled-bg)] text-[var(--color-button-filled-text)]",
+      buttonGhost: "bg-[var(--color-button-ghost-bg)] text-[var(--color-button-ghost-text)]"
+    };
+  }
+};
+
+const InvoicesTable = ({ tokens, searchQuery, activeAppId }: { readonly tokens: DashboardTokens; readonly searchQuery: string; readonly activeAppId: DashboardAppId }) => {
+  const appColors = getAppColors(activeAppId, tokens.isDark);
   const [selectedInvoices, setSelectedInvoices] = useState<Set<string>>(new Set(["inv-297"]));
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 20;
@@ -150,7 +184,7 @@ const InvoicesTable = ({ tokens, searchQuery }: { readonly tokens: DashboardToke
           type="button"
           onClick={() => handlePageChange(1)}
           disabled={currentPage === 1}
-          className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
+          className={`${appColors.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
         >
           ««
         </button>
@@ -158,7 +192,7 @@ const InvoicesTable = ({ tokens, searchQuery }: { readonly tokens: DashboardToke
           type="button"
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
+          className={`${appColors.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
         >
           «
         </button>
@@ -181,7 +215,7 @@ const InvoicesTable = ({ tokens, searchQuery }: { readonly tokens: DashboardToke
               type="button"
               onClick={() => handlePageChange(pageNum)}
               className={`${
-                isCurrent ? tokens.buttonFilled : tokens.buttonGhost
+                isCurrent ? appColors.buttonFilled : appColors.buttonGhost
               } rounded-full px-3 py-1 text-xs font-semibold`}
             >
               {pageNum}
@@ -192,7 +226,7 @@ const InvoicesTable = ({ tokens, searchQuery }: { readonly tokens: DashboardToke
           type="button"
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
+          className={`${appColors.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
         >
           »
         </button>
@@ -200,7 +234,7 @@ const InvoicesTable = ({ tokens, searchQuery }: { readonly tokens: DashboardToke
           type="button"
           onClick={() => handlePageChange(totalPages)}
           disabled={currentPage === totalPages}
-          className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
+          className={`${appColors.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
         >
           »»
         </button>
@@ -212,7 +246,7 @@ const InvoicesTable = ({ tokens, searchQuery }: { readonly tokens: DashboardToke
     <div className="flex flex-col gap-6">
       <div className="overflow-x-auto">
         <table className="min-w-full table-auto border-separate border-spacing-y-2">
-          <thead className={tokens.isDark ? "" : "bg-[#F7F6FF]"}>
+          <thead className={tokens.isDark ? "" : appColors.lightBg}>
             <tr className="[&>th]:border-y [&>th]:border-[var(--color-border-divider)]">
               <th className="whitespace-nowrap py-3 pe-6 text-left">
                 <span className={tableHeaderClass}>#Invoice</span>
@@ -242,7 +276,8 @@ const InvoicesTable = ({ tokens, searchQuery }: { readonly tokens: DashboardToke
                         type="checkbox"
                         checked={isSelected}
                         onChange={() => toggleInvoice(invoice.id)}
-                        className="h-4 w-4 rounded border-[var(--color-border-divider)] bg-transparent accent-[#584ABC] transition-colors"
+                        className={`h-4 w-4 rounded border-[var(--color-border-divider)] bg-transparent transition-colors`}
+                        style={{ accentColor: appColors.primary }}
                         aria-label={`Select invoice ${invoice.invoiceNumber}`}
                       />
                       <span className="text-base font-semibold">{invoice.invoiceNumber}</span>
@@ -270,7 +305,17 @@ const InvoicesTable = ({ tokens, searchQuery }: { readonly tokens: DashboardToke
                       className={`${tokens.buttonGhost} flex h-9 w-9 items-center justify-center rounded-full`}
                       aria-label={`Delete invoice ${invoice.invoiceNumber}`}
                     >
-                      <DeleteIcon className={`h-4 w-4 ${tokens.isDark ? "" : "[&_path]:fill-[#584ABC]"}`} />
+                      <DeleteIcon 
+                        className={`h-4 w-4 ${
+                          tokens.isDark 
+                            ? "" 
+                            : activeAppId === "app" 
+                              ? "[&_path]:fill-[#0F6773]" 
+                              : activeAppId === "software"
+                                ? "[&_path]:fill-[#071FD7]"
+                                : "[&_path]:fill-[#584ABC]"
+                        }`}
+                      />
                     </button>
                   </td>
                 </tr>
@@ -299,7 +344,8 @@ const InvoicesTable = ({ tokens, searchQuery }: { readonly tokens: DashboardToke
   );
 };
 
-const QuotesTable = ({ tokens, searchQuery }: { readonly tokens: DashboardTokens; readonly searchQuery: string }) => {
+const QuotesTable = ({ tokens, searchQuery, activeAppId }: { readonly tokens: DashboardTokens; readonly searchQuery: string; readonly activeAppId: DashboardAppId }) => {
+  const appColors = getAppColors(activeAppId, tokens.isDark);
   const [selectedQuotes, setSelectedQuotes] = useState<Set<string>>(new Set(["q-1"]));
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 20;
@@ -386,7 +432,7 @@ const QuotesTable = ({ tokens, searchQuery }: { readonly tokens: DashboardTokens
           type="button"
           onClick={() => handlePageChange(1)}
           disabled={currentPage === 1}
-          className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
+          className={`${appColors.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
         >
           ««
         </button>
@@ -394,7 +440,7 @@ const QuotesTable = ({ tokens, searchQuery }: { readonly tokens: DashboardTokens
           type="button"
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
+          className={`${appColors.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
         >
           «
         </button>
@@ -417,7 +463,7 @@ const QuotesTable = ({ tokens, searchQuery }: { readonly tokens: DashboardTokens
               type="button"
               onClick={() => handlePageChange(pageNum)}
               className={`${
-                isCurrent ? tokens.buttonFilled : tokens.buttonGhost
+                isCurrent ? appColors.buttonFilled : appColors.buttonGhost
               } rounded-full px-3 py-1 text-xs font-semibold`}
             >
               {pageNum}
@@ -428,7 +474,7 @@ const QuotesTable = ({ tokens, searchQuery }: { readonly tokens: DashboardTokens
           type="button"
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
+          className={`${appColors.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
         >
           »
         </button>
@@ -436,7 +482,7 @@ const QuotesTable = ({ tokens, searchQuery }: { readonly tokens: DashboardTokens
           type="button"
           onClick={() => handlePageChange(totalPages)}
           disabled={currentPage === totalPages}
-          className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
+          className={`${appColors.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
         >
           »»
         </button>
@@ -460,7 +506,7 @@ const QuotesTable = ({ tokens, searchQuery }: { readonly tokens: DashboardTokens
       </div> */}
       <div className="overflow-x-auto">
         <table className="min-w-full table-auto border-separate border-spacing-y-2">
-          <thead className={tokens.isDark ? "" : "bg-[#F7F6FF]"}>
+          <thead className={tokens.isDark ? "" : appColors.lightBg}>
             <tr className="[&>th]:border-y [&>th]:border-[var(--color-border-divider)]">
               <th className="whitespace-nowrap py-3 pe-6 text-left">
                 <span className={tableHeaderClass}>#Quote</span>
@@ -493,7 +539,8 @@ const QuotesTable = ({ tokens, searchQuery }: { readonly tokens: DashboardTokens
                         type="checkbox"
                         checked={isSelected}
                         onChange={() => toggleQuote(quote.id)}
-                        className="h-4 w-4 rounded border-[var(--color-border-divider)] bg-transparent accent-[#584ABC] transition-colors"
+                        className={`h-4 w-4 rounded border-[var(--color-border-divider)] bg-transparent transition-colors`}
+                        style={{ accentColor: appColors.primary }}
                         aria-label={`Select quote ${quote.quoteNumber}`}
                       />
                       <span className="text-base font-semibold">{quote.quoteNumber}</span>
@@ -524,7 +571,17 @@ const QuotesTable = ({ tokens, searchQuery }: { readonly tokens: DashboardTokens
                       className={`${tokens.buttonGhost} flex h-9 w-9 items-center justify-center rounded-full`}
                       aria-label={`Download quote ${quote.quoteNumber}`}
                     >
-                      <DownloadIcon className={`h-4 w-4 ${tokens.isDark ? "[&_path]:fill-white" : "[&_path]:fill-[#584ABC]"}`} />
+                      <DownloadIcon 
+                        className={`h-4 w-4 ${
+                          tokens.isDark 
+                            ? "[&_path]:fill-white" 
+                            : activeAppId === "app" 
+                              ? "[&_path]:fill-[#0F6773]" 
+                              : activeAppId === "software"
+                                ? "[&_path]:fill-[#071FD7]"
+                                : "[&_path]:fill-[#584ABC]"
+                        }`}
+                      />
                     </button>
                   </td>
                 </tr>
@@ -553,7 +610,8 @@ const QuotesTable = ({ tokens, searchQuery }: { readonly tokens: DashboardTokens
   );
 };
 
-const MassPayment = ({ tokens }: { readonly tokens: DashboardTokens }) => {
+const MassPayment = ({ tokens, activeAppId }: { readonly tokens: DashboardTokens; readonly activeAppId: DashboardAppId }) => {
+  const appColors = getAppColors(activeAppId, tokens.isDark);
   return (
     <div className={`${tokens.cardBase} rounded-[28px] border border-[var(--color-card-border)] p-8 transition-colors`}>
       <h3 className="text-2xl font-semibold mb-4">Mass Payment</h3>
@@ -567,7 +625,7 @@ const MassPayment = ({ tokens }: { readonly tokens: DashboardTokens }) => {
         </div>
         <button
           type="button"
-          className={`${tokens.buttonFilled} inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold`}
+          className={`${appColors.buttonFilled} inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold`}
         >
           Proceed to Payment
         </button>
@@ -576,7 +634,8 @@ const MassPayment = ({ tokens }: { readonly tokens: DashboardTokens }) => {
   );
 };
 
-const AddFunds = ({ tokens }: { readonly tokens: DashboardTokens }) => {
+const AddFunds = ({ tokens, activeAppId }: { readonly tokens: DashboardTokens; readonly activeAppId: DashboardAppId }) => {
+  const appColors = getAppColors(activeAppId, tokens.isDark);
   return (
     <div className={`${tokens.cardBase} rounded-[28px] border border-[var(--color-card-border)] p-8 transition-colors`}>
       <h3 className="text-2xl font-semibold mb-4">Add Funds</h3>
@@ -589,12 +648,30 @@ const AddFunds = ({ tokens }: { readonly tokens: DashboardTokens }) => {
           <input
             type="number"
             placeholder="Enter amount"
-            className={`w-full rounded-xl border ${tokens.divider} bg-[var(--color-search-bg)] px-4 py-3 text-[var(--color-search-text)] placeholder:text-[var(--color-search-placeholder)] focus:outline-none focus:ring-2 focus:ring-[#7469C7]`}
+            className={`w-full rounded-xl border ${tokens.divider} bg-[var(--color-search-bg)] px-4 py-3 text-[var(--color-search-text)] placeholder:text-[var(--color-search-placeholder)] focus:outline-none`}
+            style={{ 
+              "--tw-ring-color": appColors.lighterAccent,
+            } as React.CSSProperties & { "--tw-ring-color": string }}
+            onFocus={(e) => {
+              e.currentTarget.style.boxShadow = `0 0 0 2px ${appColors.lighterAccent}`;
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.boxShadow = "";
+            }}
           />
         </div>
         <div>
           <label className="block text-sm font-medium mb-2">Payment Method</label>
-          <select className={`w-full rounded-xl border ${tokens.divider} bg-[var(--color-search-bg)] px-4 py-3 text-[var(--color-search-text)] focus:outline-none focus:ring-2 focus:ring-[#7469C7]`}>
+          <select className={`w-full rounded-xl border ${tokens.divider} bg-[var(--color-search-bg)] px-4 py-3 text-[var(--color-search-text)] focus:outline-none`}
+            style={{ 
+              "--tw-ring-color": appColors.lighterAccent,
+            } as React.CSSProperties & { "--tw-ring-color": string }}
+            onFocus={(e) => {
+              e.currentTarget.style.boxShadow = `0 0 0 2px ${appColors.lighterAccent}`;
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.boxShadow = "";
+            }}>
             <option value="">Select payment method</option>
             <option value="credit-card">Credit Card</option>
             <option value="paypal">PayPal</option>
@@ -603,7 +680,7 @@ const AddFunds = ({ tokens }: { readonly tokens: DashboardTokens }) => {
         </div>
         <button
           type="button"
-          className={`${tokens.buttonFilled} inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold`}
+          className={`${appColors.buttonFilled} inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold`}
         >
           Add Funds
         </button>
@@ -612,7 +689,8 @@ const AddFunds = ({ tokens }: { readonly tokens: DashboardTokens }) => {
   );
 };
 
-export const BillingView = ({ tokens }: BillingViewProps) => {
+export const BillingView = ({ tokens, activeAppId }: BillingViewProps) => {
+  const appColors = getAppColors(activeAppId, tokens.isDark);
   const [activeTab, setActiveTab] = useState<BillingTab>("invoices");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -633,13 +711,13 @@ export const BillingView = ({ tokens }: BillingViewProps) => {
   const renderTabContent = () => {
     switch (activeTab) {
       case "invoices":
-        return <InvoicesTable tokens={tokens} searchQuery={searchQuery} />;
+        return <InvoicesTable tokens={tokens} searchQuery={searchQuery} activeAppId={activeAppId} />;
       case "quotes":
-        return <QuotesTable tokens={tokens} searchQuery={searchQuery} />;
+        return <QuotesTable tokens={tokens} searchQuery={searchQuery} activeAppId={activeAppId} />;
       case "mass-payment":
-        return <MassPayment tokens={tokens} />;
+        return <MassPayment tokens={tokens} activeAppId={activeAppId} />;
       case "add-funds":
-        return <AddFunds tokens={tokens} />;
+        return <AddFunds tokens={tokens} activeAppId={activeAppId} />;
       default:
         return null;
     }
@@ -663,8 +741,8 @@ export const BillingView = ({ tokens }: BillingViewProps) => {
                   onClick={() => setActiveTab(tab.id)}
                   className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
                     isActive
-                      ? `${tokens.buttonFilled}`
-                      : `${tokens.buttonGhost} hover:opacity-90`
+                      ? appColors.buttonFilled
+                      : `${appColors.buttonGhost} hover:opacity-90`
                   }`}
                 >
                   {tab.label}
@@ -688,7 +766,7 @@ export const BillingView = ({ tokens }: BillingViewProps) => {
               </div>
               <button
                 type="button"
-                className={`${tokens.buttonFilled} inline-flex items-center gap-2 rounded-full px-4 py-2 text-base font-bold`}
+                className={`${appColors.buttonFilled} inline-flex items-center gap-2 rounded-full px-4 py-2 text-base font-bold`}
               >
                 <PayAllIcon className="h-6 w-6" />
                 Pay All
