@@ -260,7 +260,7 @@ const TasksCards = ({ tokens, searchQuery }: { readonly tokens: DashboardTokens;
   };
 
   const priorityColors = {
-    High: tokens.isDark ? "text-red-400" : "text-red-600",
+    High: tokens.isDark ? "text-[#68696D]" : "text-[#68696D]",
     Medium: tokens.isDark ? "text-yellow-400" : "text-yellow-600",
     Low: tokens.isDark ? "text-green-400" : "text-green-600"
   };

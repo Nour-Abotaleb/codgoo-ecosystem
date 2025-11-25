@@ -33,6 +33,7 @@ import { HostView } from "./components/cloud/HostView";
 import { ManageHostView } from "./components/cloud/ManageHostView";
 import { OrderView } from "./components/OrderView";
 import type { DashboardAppId, DashboardTokens } from "./types";
+import { getDefaultDashboard } from "./utils/dashboardPreferences";
 
 export const DashboardPage = () => {
   const { t, i18n: i18nInstance } = useTranslation("dashboard");
@@ -41,7 +42,9 @@ export const DashboardPage = () => {
   const location = useLocation();
   const theme = useAppSelector(selectTheme);
   const isDark = theme === "dark";
-  const [activeAppId, setActiveAppId] = useState<DashboardAppId>(dashboardApps[0].id);
+  const [activeAppId, setActiveAppId] = useState<DashboardAppId>(() => {
+    return getDefaultDashboard();
+  });
   const isRTL = i18nInstance.language === "ar";
 
   const activeApp = useMemo(

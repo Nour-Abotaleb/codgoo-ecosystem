@@ -17,7 +17,8 @@ import {
   ApplicationIcon,
   MarketplaceIcon,
   ProjectIcon,
-  ProductIcon
+  ProductIcon,
+  CheckIcon
 } from "@utilities/icons";
 
 import cloudNavBackground from "@assets/images/cloud/nav-bg.svg";
@@ -31,6 +32,7 @@ import type {
   DashboardTokens
 } from "../types";
 import { PlaceholderIcon } from "./PlaceholderIcon";
+import { getDefaultDashboard, setDefaultDashboard } from "../utils/dashboardPreferences";
 
 type DashboardSidebarProps = {
   readonly apps: readonly DashboardApp[];
@@ -52,6 +54,7 @@ export const DashboardSidebar = ({
   tokens
 }: DashboardSidebarProps) => {
   const [isSwitcherOpen, setSwitcherOpen] = useState(false);
+  const [defaultDashboard, setDefaultDashboardState] = useState<DashboardAppId>(() => getDefaultDashboard());
   const switcherRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -164,30 +167,57 @@ export const DashboardSidebar = ({
               <ul className="space-y-2">
                 {apps.map((app) => {
                   const isActive = app.id === activeAppId;
+                  const isDefault = app.id === defaultDashboard;
 
                   return (
                     <li key={app.id}>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          onSelectApp(app.id);
-                          setSwitcherOpen(false);
-                        }}
-                        className={`flex w-full items-center rounded-xl cursor-pointer px-3 py-2.5 transition ${
-                          isActive ? popoverActiveClass : popoverIdleClass
-                        }`}
-                      >
-                        <img
-                          src={
-                            tokens.isDark
-                              ? dashboardAppLogos[app.id] ?? dashboardAppLogos.cloud
-                              : dashboardAppLogosLight[app.id] ?? dashboardAppLogosLight.cloud
-                          }
-                          alt={`${app.id} logo`}
-                          className="h-6 w-auto object-contain"
-                          fetchPriority="high"
-                        />
-                      </button>
+                      <div className={`flex w-full items-center rounded-xl px-3 py-2.5 transition ${
+                        isActive ? popoverActiveClass : popoverIdleClass
+                      }`}>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onSelectApp(app.id);
+                            setSwitcherOpen(false);
+                          }}
+                          className="flex flex-1 items-center cursor-pointer"
+                        >
+                          <img
+                            src={
+                              tokens.isDark
+                                ? dashboardAppLogos[app.id] ?? dashboardAppLogos.cloud
+                                : dashboardAppLogosLight[app.id] ?? dashboardAppLogosLight.cloud
+                            }
+                            alt={`${app.id} logo`}
+                            className="h-6 w-auto object-contain"
+                            fetchPriority="high"
+                          />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDefaultDashboard(app.id);
+                            setDefaultDashboardState(app.id);
+                          }}
+                          className={`ml-2 flex items-center justify-center rounded-full p-1.5 transition-colors ${
+                            isDefault
+                              ? tokens.isDark
+                                ? "bg-black text-white"
+                                : "bg-black/20 text-white"
+                              : tokens.isDark
+                              ? "text-white/50 hover:text-white hover:bg-white/10"
+                              : "text-[#718EBF] hover:text-white hover:bg-black/20"
+                          }`}
+                          title="Set as default dashboard"
+                        >
+                          {isDefault ? (
+                            <CheckIcon className="h-4 w-4" />
+                          ) : (
+                            <SettingsIcon className="h-4 w-4" />
+                          )}
+                        </button>
+                      </div>
                     </li>
                   );
                 })}
