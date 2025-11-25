@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { i18n } from "@shared/config/i18n";
 
 import {
   BillingIcon,
@@ -118,9 +120,12 @@ export const DashboardSidebar = ({
     ? appNavBackground
     : cloudNavBackground;
 
+  const { t } = useTranslation("dashboard");
+  const isRTL = i18n.language === "ar";
+
   return (
     <aside
-      className={`dashboard__sidebar fixed inset-y-0 left-0 z-20 hidden min-h-screen w-64 pe-1 flex-col py-10 lg:flex ${tokens.sidebarClass}`}
+      className={`dashboard__sidebar fixed inset-y-0 ${isRTL ? "right-0" : "left-0"} z-20 hidden min-h-screen w-64 pe-1 flex-col py-10 lg:flex ${tokens.sidebarClass}`}
     >
       <div className="relative flex justify-center gap-6 border-b border-[color:var(--color-sidebar-divider)] pb-4">
         <img 
@@ -154,7 +159,7 @@ export const DashboardSidebar = ({
           </button>
           {isSwitcherOpen && (
             <div
-              className={`absolute left-0 mt-3 w-64 rounded-xl p-2 shadow-2xl backdrop-blur ${popoverBaseClass}`}
+              className={`absolute ${isRTL ? "right-0" : "left-0"} mt-3 w-64 rounded-xl p-2 shadow-2xl backdrop-blur ${popoverBaseClass}`}
             >
               <ul className="space-y-2">
                 {apps.map((app) => {
@@ -222,7 +227,7 @@ export const DashboardSidebar = ({
                   <Icon className={`h-5 w-5 transition-colors ${iconColorClass}`} />
                 ) : (
                   <PlaceholderIcon
-                    label={item.label}
+                    label={t(`navigation.${item.id}`)}
                     isActive={isActive}
                     tokens={tokens}
                     activeClassName={`${navActiveColorClass} bg-transparent`}
@@ -231,7 +236,7 @@ export const DashboardSidebar = ({
                 )}
               </span>
               <span className={`relative transition-colors ${labelColorClass}`}>
-                {item.label}
+                {t(`navigation.${item.id}`)}
               </span>
             </button>
           );

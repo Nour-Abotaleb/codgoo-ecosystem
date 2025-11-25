@@ -1,107 +1,35 @@
 import { useState, useMemo } from "react";
-import { SearchIcon, SnapChatIcon, RedditIcon, PrintIcon } from "@utilities/icons";
+import { useTranslation } from "react-i18next";
+import { i18n } from "@shared/config/i18n";
+import { SearchIcon } from "@utilities/icons";
 import type { DashboardTokens } from "../../types";
 import { MarketplaceCard, type MarketplaceItem } from "./MarketplaceCard";
+import marketplaceAppImage from "@assets/images/app/marketplace-app.svg";
 
 type MarketplaceViewProps = {
   readonly tokens: DashboardTokens;
   readonly onItemClick?: (itemId: string) => void;
 };
 
-type Category = "All" | "Music" | "Collections" | "Sports";
-
 // Sample marketplace data - in a real app, this would come from an API
-export const marketplaceItems: readonly MarketplaceItem[] = [
-  {
-    id: "snapchat-ads",
-    title: "Snapchat Ads",
-    description: "Create and manage Snapchat advertising campaigns with advanced targeting options.",
-    rating: 4.9,
-    reviewCount: 1234,
-    priceType: "Free",
-    icon: <SnapChatIcon className="w-8 h-8" />,
-    iconGradient: "linear-gradient(to left, #DC4BAF, #AB55F3)"
-  },
-  {
-    id: "ai-product-writer",
-    title: "AI Product Writer",
-    description: "Connect your store with Snapchat advertising platform for better reach",
-    rating: 4.8,
-    reviewCount: 856,
-    priceType: "Paid",
-    icon: <RedditIcon className="w-8 h-8" />,
-    iconGradient: "linear-gradient(to right,  #4B4DDC, #55C6F3)"
-  },
-  {
-    id: "print-on-demand",
-    title: "Print on Demand",
-    description: "Generate compelling product descriptions using advanced AI technology",
-    rating: 4.7,
-    reviewCount: 2341,
-    priceType: "Free",
-    icon: <PrintIcon className="w-8 h-8" />,
-    iconGradient: "linear-gradient(to right, #F3AC55, #F9E560)"
-  },
-  // Duplicate items for demonstration
-  ...Array.from({ length: 9 }).map((_, i) => {
-    const baseItems = [
-      {
-        id: "snapchat-ads",
-        title: "Snapchat Ads",
-        description: "Create and manage Snapchat advertising campaigns with advanced targeting options.",
-        rating: 4.9,
-        reviewCount: 1234,
-        priceType: "Free" as const,
-        iconGradient: "linear-gradient(to left, #DC4BAF, #AB55F3)"
-      },
-      {
-        id: "ai-product-writer",
-        title: "AI Product Writer",
-        description: "Generate compelling product descriptions and marketing copy using AI technology.",
-        rating: 4.8,
-        reviewCount: 856,
-        priceType: "Paid" as const,
-        iconGradient: "linear-gradient(to right, #55C6F3, #4B4DDC)"
-      },
-      {
-        id: "print-on-demand",
-        title: "Print on Demand",
-        description: "Create custom products with print-on-demand services for your business.",
-        rating: 4.7,
-        reviewCount: 2341,
-        priceType: "Free" as const,
-        iconGradient: "linear-gradient(to right, #F9E560, #F3AC55)"
-      }
-    ];
-    const item = baseItems[i % 3];
-    return {
-      ...item,
-      id: `${item.id}-${i + 1}`,
-      icon: item.id === "snapchat-ads" ? (
-        <SnapChatIcon className="w-8 h-8" />
-      ) : item.id === "ai-product-writer" ? (
-        <RedditIcon className="w-8 h-8" />
-      ) : (
-        <PrintIcon className="w-8 h-8" />
-      )
-    };
-  })
-];
+export const marketplaceItems: readonly MarketplaceItem[] = Array.from({ length: 9 }).map((_, i) => ({
+  id: `fix-mate-${i + 1}`,
+  title: "Fix Mate",
+  description: "Manage your sales and track orders",
+  ethAmount: "0.91 ETH",
+  chartValue: "1.2K",
+  image: marketplaceAppImage
+}));
 
 export const MarketplaceView = ({ tokens, onItemClick }: MarketplaceViewProps) => {
-  const [activeCategory, setActiveCategory] = useState<Category>("All");
+  const { t } = useTranslation("dashboard");
+  const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-
-  const categories: readonly Category[] = ["All", "Music", "Collections", "Sports"];
+  const itemsPerPage = 9;
+  const isRTL = i18n.language === "ar";
 
   const filteredItems = useMemo(() => {
     let filtered = marketplaceItems;
-
-    // Filter by category
-    if (activeCategory !== "All") {
-      // In a real app, items would have category metadata
-      // For now, we'll just return all items (no filtering needed)
-    }
 
     // Filter by search query
     if (searchQuery.trim()) {
@@ -114,25 +42,140 @@ export const MarketplaceView = ({ tokens, onItemClick }: MarketplaceViewProps) =
     }
 
     return filtered;
-  }, [activeCategory, searchQuery]);
+  }, [searchQuery]);
+
+  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentItems = filteredItems.slice(startIndex, endIndex);
+
+  const renderPagination = () => {
+    const pages: (number | string)[] = [];
+    
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      pages.push(1);
+      
+      if (currentPage > 3) {
+        pages.push("...");
+      }
+      
+      const start = Math.max(2, currentPage - 1);
+      const end = Math.min(totalPages - 1, currentPage + 1);
+      
+      for (let i = start; i <= end; i++) {
+        if (i !== 1 && i !== totalPages) {
+          pages.push(i);
+        }
+      }
+      
+      if (currentPage < totalPages - 2) {
+        pages.push("...");
+      }
+      
+      pages.push(totalPages);
+    }
+
+    return (
+      <div className="flex items-center justify-center gap-2 mt-6">
+        <button
+          type="button"
+          onClick={() => setCurrentPage(1)}
+          disabled={currentPage === 1}
+          className={`px-3 py-1 rounded ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"} ${
+            currentPage === 1 ? "opacity-50 cursor-not-allowed" : "hover:text-[#0F6773]"
+          }`}
+        >
+          &lt;&lt;
+        </button>
+        <button
+          type="button"
+          onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+          disabled={currentPage === 1}
+          className={`px-3 py-1 rounded ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"} ${
+            currentPage === 1 ? "opacity-50 cursor-not-allowed" : "hover:text-[#0F6773]"
+          }`}
+        >
+          &lt;
+        </button>
+        
+        {pages.map((page, index) => {
+          if (page === "...") {
+            return (
+              <span key={`ellipsis-${index}`} className={`px-2 ${tokens.isDark ? "text-white/50" : "text-[#718EBF]"}`}>
+                ...
+              </span>
+            );
+          }
+          
+          const pageNum = page as number;
+          const isActive = pageNum === currentPage;
+          
+          return (
+            <button
+              key={pageNum}
+              type="button"
+              onClick={() => setCurrentPage(pageNum)}
+              className={`px-4 py-1 rounded ${
+                isActive
+                  ? "bg-[#0F6773] text-white"
+                  : tokens.isDark
+                  ? "text-white/70 hover:text-white"
+                  : "text-[#718EBF] hover:text-[#0F6773]"
+              }`}
+            >
+              {pageNum}
+            </button>
+          );
+        })}
+        
+        <button
+          type="button"
+          onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+          disabled={currentPage === totalPages}
+          className={`px-3 py-1 rounded ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"} ${
+            currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "hover:text-[#0F6773]"
+          }`}
+        >
+          &gt;
+        </button>
+        <button
+          type="button"
+          onClick={() => setCurrentPage(totalPages)}
+          disabled={currentPage === totalPages}
+          className={`px-3 py-1 rounded ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"} ${
+            currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "hover:text-[#0F6773]"
+          }`}
+        >
+          &gt;&gt;
+        </button>
+      </div>
+    );
+  };
 
   return (
     <div className="flex flex-col gap-6">
       {/* Header with Search */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-start">
         {/* Search Input */}
         <div className="relative flex-1 max-w-md">
           <SearchIcon
-            className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 ${
+            className={`absolute ${isRTL ? "right-3" : "left-3"} top-1/2 transform -translate-y-1/2 h-5 w-5 ${
               tokens.isDark ? "text-white/50" : "text-[#A3AED0]"
             }`}
           />
           <input
             type="text"
-            placeholder="Search"
+            placeholder={t("marketplace.searchPlaceholder")}
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className={`w-full pl-10 pr-4 py-2.5 rounded-full border transition-colors ${
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
+            className={`w-full ${isRTL ? "pr-10 pl-4" : "pl-10 pr-4"} py-2.5 rounded-full border transition-colors ${
               tokens.isDark
                 ? "bg-[var(--color-card-bg)] border-[var(--color-card-border)] text-white placeholder-white/50"
                 : "bg-white border-[#E6E9FB] text-[#2B3674] placeholder-[#A3AED0]"
@@ -141,31 +184,9 @@ export const MarketplaceView = ({ tokens, onItemClick }: MarketplaceViewProps) =
         </div>
       </div>
 
-      {/* Category Tabs */}
-      <div className="flex items-center gap-2 flex-wrap">
-        {categories.map((category) => (
-          <button
-            key={category}
-            type="button"
-            onClick={() => setActiveCategory(category)}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-              activeCategory === category
-                ? tokens.isDark
-                  ? "bg-[#0F6773] text-white"
-                  : "bg-[#0F6773] text-white"
-                : tokens.isDark
-                ? "bg-[var(--color-card-bg)] text-white/70 hover:text-white"
-                : "bg-white text-[#718EBF] hover:text-[#2B3674]"
-            }`}
-          >
-            {category}
-          </button>
-        ))}
-      </div>
-
       {/* Marketplace Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredItems.map((item) => (
+        {currentItems.map((item) => (
           <MarketplaceCard
             key={item.id}
             item={item}
@@ -176,13 +197,16 @@ export const MarketplaceView = ({ tokens, onItemClick }: MarketplaceViewProps) =
         ))}
       </div>
 
+      {/* Pagination */}
+      {totalPages > 1 && renderPagination()}
+
       {/* Empty State */}
       {filteredItems.length === 0 && (
         <div
           className={`${tokens.cardBase} rounded-2xl border border-[var(--color-card-border)] p-10 text-center`}
         >
           <p className={`text-lg ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"}`}>
-            No items found matching your criteria.
+            <span className="text-start">{t("marketplace.noItemsFound")}</span>
           </p>
         </div>
       )}

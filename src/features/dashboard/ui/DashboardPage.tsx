@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { useMatch, useNavigate, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { useAppDispatch, useAppSelector } from "@store/hooks";
 import { selectTheme, toggleTheme } from "@store/theme/theme-slice";
@@ -34,12 +35,14 @@ import { OrderView } from "./components/OrderView";
 import type { DashboardAppId, DashboardTokens } from "./types";
 
 export const DashboardPage = () => {
+  const { t, i18n: i18nInstance } = useTranslation("dashboard");
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useAppSelector(selectTheme);
   const isDark = theme === "dark";
   const [activeAppId, setActiveAppId] = useState<DashboardAppId>(dashboardApps[0].id);
+  const isRTL = i18nInstance.language === "ar";
 
   const activeApp = useMemo(
     () => dashboardApps.find((app) => app.id === activeAppId) ?? dashboardApps[0],
@@ -369,12 +372,12 @@ export const DashboardPage = () => {
         tokens={tokens}
       />
 
-      <section className="flex min-h-screen flex-1 flex-col lg:ms-64 bg-[var(--color-shell-bg)] rounded-[32px] m-6 transition-colors duration-300">
-        <div className="flex flex-col gap-4 px-6 py-3">
+      <section className={`flex min-h-screen flex-1 flex-col bg-[var(--color-shell-bg)] rounded-[32px] m-6 transition-all duration-300 ${isRTL ? "lg:mr-64" : "lg:ml-64"}`}>
+        <div className="flex flex-col gap-4 px-6 py-3 text-start">
           <DashboardHeader
             tokens={tokens}
             activeApp={activeApp}
-            activeNavigationLabel={orderMatch ? "Order" : activeNavigationItem?.label}
+            activeNavigationLabel={orderMatch ? t("header.order") : activeNavigationItem ? t(`navigation.${activeNavigationItem.id}`) : undefined}
             onToggleTheme={handleToggleTheme}
             onCartClick={() => navigate("/dashboard/order")}
           />
