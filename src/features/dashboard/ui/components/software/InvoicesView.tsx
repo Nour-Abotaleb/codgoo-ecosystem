@@ -207,12 +207,12 @@ export const InvoicesView = ({ tokens }: InvoicesViewProps) => {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 pb-4">
                 <button
                   type="button"
-                  className={`flex-1 px-4 py-2.5 rounded-full text-sm font-medium transition-colors ${
+                  className={`flex-1 px-2 py-2.5 rounded-full text-sm font-medium transition-colors cursor-pointer ${
                     tokens.isDark
-                      ? "bg-[#071FD7] text-white hover:bg-[#071FD7]/90"
+                      ? "bg-white/10 text-white/90 hover:bg-white/20"
                       : "bg-[#071FD7] text-white hover:bg-[#071FD7]/90"
                   }`}
                   aria-label={`Pay invoice ${invoice.invoiceNumber}`}
@@ -221,10 +221,10 @@ export const InvoicesView = ({ tokens }: InvoicesViewProps) => {
                 </button>
                 <button
                   type="button"
-                  className={`flex-1 px-4 py-2.5 rounded-full text-sm font-medium transition-colors ${
+                  className={`flex-1 px-2 py-2.5 rounded-full text-sm font-medium transition-colors cursor-pointer ${
                     tokens.isDark
-                      ? "bg-transparent border border-[#071FD7] text-[#071FD7] hover:bg-[#071FD7]/10"
-                      : "bg-white border border-[#071FD7] text-[#071FD7] hover:bg-[#071FD7]/5"
+                      ? "border border-white/70 text-white/70 hover:bg-white/10"
+                      : "border border-[#071FD7] text-[#071FD7] hover:bg-[#071FD7]/90 hover:text-white"
                   }`}
                   aria-label={`View invoice ${invoice.invoiceNumber}`}
                 >

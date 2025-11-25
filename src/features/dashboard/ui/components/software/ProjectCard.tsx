@@ -163,41 +163,70 @@ export const ProjectCard = ({
         </div>
 
         {/* Key Details Row */}
-        <div className={`rounded-xl p-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 flex items-center ${tokens.isDark ? tokens.surfaceMuted : ''}`} style={tokens.isDark ? {} : { backgroundColor: '#FCF6D4' }}>
-          <div className="flex flex-col gap-2">
-            <span className="text-sm md:text-base ${tokens.isDark ? 'text-[#718EBF]' : 'text-[#232323]'} font-medium">Start</span>
-            <span className="text-sm font-medium text-[#718EBF]">{project.startDate}</span>
+        <div className={`flex flex-col ${!onViewDetails ? 'lg:flex-row' : ''} gap-4`}>
+          <div className={`rounded-xl p-4 flex-1 ${tokens.isDark ? tokens.surfaceMuted : ''}`} style={tokens.isDark ? {} : { backgroundColor: '#FCF6D4' }}>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 items-center">
+              <div className="flex flex-col gap-2">
+                <span className="text-sm md:text-base ${tokens.isDark ? 'text-[#718EBF]' : 'text-[#232323]'} font-medium">Start</span>
+                <span className="text-sm font-medium text-[#718EBF]">{project.startDate}</span>
+              </div>
+              <div className="flex flex-col gap-2">
+                <span className="text-sm md:text-base ${tokens.isDark ? 'text-[#718EBF]' : 'text-[#232323]'} font-medium">Deadline</span>
+                <span className="text-sm font-medium text-[#718EBF]">{project.deadline}</span>
+              </div>
+              <div className="flex flex-col gap-2">
+                <span className="text-sm md:text-base ${tokens.isDark ? 'text-[#718EBF]' : 'text-[#232323]'} font-medium">Budget</span>
+                <span className="text-sm font-medium text-[#718EBF]">{project.budget}</span>
+              </div>
+              <div className="flex flex-col gap-2">
+                <span className="text-sm md:text-base ${tokens.isDark ? 'text-[#718EBF]' : 'text-[#232323]'} font-medium">Tasks</span>
+                <span className="text-sm font-medium text-[#718EBF]">
+                  {project.tasks.completed} / {project.tasks.total}
+                </span>
+              </div>
+              <div className="flex flex-col gap-2">
+                <span className="text-sm md:text-base ${tokens.isDark ? 'text-[#718EBF]' : 'text-[#232323]'} font-medium">Type</span>
+                <span className="text-sm font-medium text-[#718EBF]">{project.type}</span>
+              </div>
+              <div className="flex items-center flex-col gap-2 cursor-pointer">
+                <button
+                  type="button"
+                  onClick={() => onManage?.(project.id)}
+                  className="p-1.5 rounded-full transition-colors"
+                  style={{ backgroundColor: 'rgb(255,229,222)' }}
+                  aria-label="Manage project"
+                >
+                  <DeleteIcon className="h-4 w-4" style={{ color: '#FF0000' }} />
+                </button>
+                <span className="text-sm text-[#718EBF] font-medium">Manage</span>
+              </div>
+            </div>
           </div>
-          <div className="flex flex-col gap-2">
-            <span className="text-sm md:text-base ${tokens.isDark ? 'text-[#718EBF]' : 'text-[#232323]'} font-medium">Deadline</span>
-            <span className="text-sm font-medium text-[#718EBF]">{project.deadline}</span>
-          </div>
-          <div className="flex flex-col gap-2">
-            <span className="text-sm md:text-base ${tokens.isDark ? 'text-[#718EBF]' : 'text-[#232323]'} font-medium">Budget</span>
-            <span className="text-sm font-medium text-[#718EBF]">{project.budget}</span>
-          </div>
-          <div className="flex flex-col gap-2">
-            <span className="text-sm md:text-base ${tokens.isDark ? 'text-[#718EBF]' : 'text-[#232323]'} font-medium">Tasks</span>
-            <span className="text-sm font-medium text-[#718EBF]">
-              {project.tasks.completed} / {project.tasks.total}
-            </span>
-          </div>
-          <div className="flex flex-col gap-2">
-            <span className="text-sm md:text-base ${tokens.isDark ? 'text-[#718EBF]' : 'text-[#232323]'} font-medium">Type</span>
-            <span className="text-sm font-medium text-[#718EBF]">{project.type}</span>
-          </div>
-          <div className="flex items-center flex-col gap-2 cursor-pointer">
-            <button
-              type="button"
-              onClick={() => onManage?.(project.id)}
-              className="p-1.5 rounded-full transition-colors"
-              style={{ backgroundColor: 'rgb(255,229,222)' }}
-              aria-label="Manage project"
-            >
-              <DeleteIcon className="h-4 w-4" style={{ color: '#FF0000' }} />
-            </button>
-            <span className="text-sm text-[#718EBF] font-medium">Manage</span>
-          </div>
+          {/* Contract and Proposals Buttons - Only in overview screen, outside the background */}
+          {!onViewDetails && (
+            <div className="flex flex-row gap-3 items-center">
+              <button
+                type="button"
+                className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-sm md:text-base font-medium transition-colors cursor-pointer ${
+                  tokens.isDark
+                    ? "bg-white/10 text-white/90 hover:bg-white/20"
+                    : "bg-[#071FD7] text-white hover:bg-[#071FD7]/90 hover:text-white"
+                }`}
+              >
+                <span>Contract</span>
+              </button>
+              <button
+                type="button"
+                className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-sm md:text-base font-medium transition-colors cursor-pointer ${
+                  tokens.isDark
+                    ? "border border-white/70 text-white/70 hover:bg-white/10"
+                    : "border border-[#071FD7] text-[#071FD7] hover:bg-[#071FD7]/90 hover:text-white"
+                }`}
+              >
+                <span>Proposals</span>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Footer */}
@@ -211,7 +240,7 @@ export const ProjectCard = ({
               onClick={() => onViewDetails(project.id)}
               className={`px-4 py-2.5 rounded-full text-sm md:text-base font-medium transition-colors cursor-pointer ${
                 tokens.isDark
-                  ? "border border-[#071FD7] text-[#071FD7] hover:bg-[#071FD7]/90 hover:text-white"
+                  ? "border border-white/70 text-white/70 hover:bg-white/10"
                   : "border border-[#071FD7] text-[#071FD7] hover:bg-[#071FD7]/90 hover:text-white"
               }`}
             >

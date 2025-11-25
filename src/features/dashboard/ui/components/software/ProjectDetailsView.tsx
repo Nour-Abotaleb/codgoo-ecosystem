@@ -4,7 +4,7 @@ import {
   TasksIcon,
   ProjectInvoiceIcon,
   AttachmentsIcon,
-  ProposalsIcon,
+  // ProposalsIcon,
   AllProjectsIcon,
   CompletedIcon,
   DayLeftIcon,
@@ -24,14 +24,14 @@ type ProjectDetailsViewProps = {
   readonly onManage?: (projectId: string) => void;
 };
 
-type TabId = "overview" | "tasks" | "invoices" | "attachments" | "proposals";
+type TabId = "overview" | "tasks" | "invoices" | "attachments"; // | "proposals";
 
 const tabs: readonly { id: TabId; label: string; icon: React.ComponentType<React.SVGProps<SVGSVGElement>> }[] = [
   { id: "overview", label: "OverView", icon: OverviewIcon },
   { id: "tasks", label: "Tasks", icon: TasksIcon },
   { id: "invoices", label: "Invoices", icon: ProjectInvoiceIcon },
   { id: "attachments", label: "Attachments", icon: AttachmentsIcon },
-  { id: "proposals", label: "Proposals", icon: ProposalsIcon }
+  // { id: "proposals", label: "Proposals", icon: ProposalsIcon }
 ];
 
 type ProjectStat = {
@@ -96,6 +96,9 @@ export const ProjectDetailsView = ({
   onManage
 }: ProjectDetailsViewProps) => {
   const [activeTab, setActiveTab] = useState<TabId>("overview");
+  const [activeMilestoneTab, setActiveMilestoneTab] = useState(0);
+  
+  const milestoneTabs = ["Milestone", "Milestone", "Milestone", "Milestone", "Milestone"];
 
   return (
     <div className="flex flex-col gap-6">
@@ -112,8 +115,8 @@ export const ProjectDetailsView = ({
               className={`pb-2 px-1 flex items-center gap-2 text-sm md:text-base font-medium transition-colors whitespace-nowrap cursor-pointer ${
                 isActive
                   ? tokens.isDark
-                    ? "text-white border-b-3 border-white"
-                    : "text-[#111111] border-b-3 border-[#071FD7]"
+                    ? "text-white border-b-2 border-white"
+                    : "text-[#111111] border-b-2 border-[#071FD7]"
                   : tokens.subtleText
               }`}
             >
@@ -265,7 +268,15 @@ export const ProjectDetailsView = ({
         </>
       )}
 
-      {activeTab === "tasks" && <TasksView tokens={tokens} />}
+      {activeTab === "tasks" && (
+        <TasksView 
+          tokens={tokens} 
+          project={project}
+          milestoneTabs={milestoneTabs}
+          activeMilestoneTab={activeMilestoneTab}
+          onMilestoneTabChange={setActiveMilestoneTab}
+        />
+      )}
 
       {activeTab === "invoices" && <InvoicesView tokens={tokens} />}
 

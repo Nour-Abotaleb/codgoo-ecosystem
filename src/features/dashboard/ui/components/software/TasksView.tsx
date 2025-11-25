@@ -6,17 +6,19 @@ import {
   InProgressTasksIcon,
   AwaitingFeedbackIcon,
   NotStartedTasksIcon,
-  SettingsIcon,
-  DeleteIcon,
-  OngoingTasksIcon,
-  PendingIcon,
-  UnpaidIcon,
-  ActiveIcon,
 } from "@utilities/icons";
 import type { DashboardTokens } from "../../types";
 
 type TasksViewProps = {
   readonly tokens: DashboardTokens;
+  readonly project?: {
+    readonly startDate: string;
+    readonly deadline: string;
+    readonly budget: string;
+  };
+  readonly milestoneTabs?: readonly string[];
+  readonly activeMilestoneTab?: number;
+  readonly onMilestoneTabChange?: (index: number) => void;
 };
 
 type TaskStat = {
@@ -30,10 +32,24 @@ type TaskItem = {
   readonly id: string;
   readonly code: number;
   readonly name: string;
+  readonly description: string;
+  readonly priority: "High" | "Medium" | "Low";
   readonly startDate: string;
   readonly deadline: string;
+  readonly createdDate: string;
+  readonly dueDate: string;
   readonly assignedTo: string;
-  readonly status: "In Progress" | "Not Started" | "Canceld" | "Completed" | "Ongoing";
+  readonly team: readonly {
+    readonly id: string;
+    readonly name: string;
+    readonly avatar?: string;
+  }[];
+  readonly progress: {
+    readonly completed: number;
+    readonly total: number;
+    readonly percentage: number;
+  };
+  readonly status: "In Progress" | "Not Started" | "Canceld" | "Completed" | "Ongoing" | "Waiting Feedback";
 };
 
 const taskStats: readonly TaskStat[] = [
@@ -73,90 +89,137 @@ const tasksData: readonly TaskItem[] = [
   {
     id: "task-1",
     code: 1,
-    name: "Fix an open issue in our software",
+    name: "Task Name",
+    description: "Lorem Ipsum Is Simply Dummy Text Of The Printing And Typesetting Industry. Lorem Ipsum Has Been The Industry's Standard Dummy.",
+    priority: "High",
     startDate: "2024-03-17",
     deadline: "2024-03-17",
+    createdDate: "5 Nov 2025",
+    dueDate: "30 Nov 2025",
     assignedTo: "Asmaa, Aya",
-    status: "In Progress"
+    team: [
+      { id: "1", name: "John Doe" },
+      { id: "2", name: "Jane Smith" },
+      { id: "3", name: "Bob Wilson" }
+    ],
+    progress: { completed: 7, total: 10, percentage: 70 },
+    status: "Completed"
   },
   {
     id: "task-2",
     code: 2,
-    name: "Fix an open issue in our software",
+    name: "Task Name",
+    description: "Lorem Ipsum Is Simply Dummy Text Of The Printing And Typesetting Industry. Lorem Ipsum Has Been The Industry's Standard Dummy.",
+    priority: "High",
     startDate: "2024-03-17",
     deadline: "2024-03-17",
+    createdDate: "5 Nov 2025",
+    dueDate: "30 Nov 2025",
     assignedTo: "Asmaa, Aya",
-    status: "Not Started"
+    team: [
+      { id: "1", name: "John Doe" },
+      { id: "2", name: "Jane Smith" }
+    ],
+    progress: { completed: 8, total: 10, percentage: 80 },
+    status: "Completed"
   },
   {
     id: "task-3",
     code: 3,
-    name: "Fix an open issue in our software",
+    name: "Task Name",
+    description: "Lorem Ipsum Is Simply Dummy Text Of The Printing And Typesetting Industry. Lorem Ipsum Has Been The Industry's Standard Dummy.",
+    priority: "High",
     startDate: "2024-03-17",
     deadline: "2024-03-17",
+    createdDate: "5 Nov 2025",
+    dueDate: "30 Nov 2025",
     assignedTo: "Asmaa, Aya",
-    status: "Canceld"
-  },
-  {
-    id: "task-4",
-    code: 4,
-    name: "Fix an open issue in our software",
-    startDate: "2024-03-17",
-    deadline: "2024-03-17",
-    assignedTo: "Asmaa, Aya",
-    status: "Completed"
-  },
-  {
-    id: "task-5",
-    code: 5,
-    name: "Fix an open issue in our software",
-    startDate: "2024-03-17",
-    deadline: "2024-03-17",
-    assignedTo: "Asmaa, Aya",
-    status: "Ongoing"
-  },
-  {
-    id: "task-6",
-    code: 6,
-    name: "Fix an open issue in our software",
-    startDate: "2024-03-17",
-    deadline: "2024-03-17",
-    assignedTo: "Asmaa, Aya",
-    status: "Canceld"
-  },
-  {
-    id: "task-7",
-    code: 7,
-    name: "Fix an open issue in our software",
-    startDate: "2024-03-17",
-    deadline: "2024-03-17",
-    assignedTo: "Asmaa, Aya",
-    status: "In Progress"
+    team: [
+      { id: "1", name: "John Doe" },
+      { id: "2", name: "Jane Smith" },
+      { id: "3", name: "Bob Wilson" }
+    ],
+    progress: { completed: 5, total: 10, percentage: 50 },
+    status: "Waiting Feedback"
   }
 ];
 
-const renderStatusIcon = (status: TaskItem["status"]) => {
-  if (status === "Completed") {
-    return <ActiveIcon className="h-5 w-5" />;
-  }
-  if (status === "In Progress" || status === "Ongoing") {
-    return <OngoingTasksIcon className="h-5 w-5" />;
-  }
-  if (status === "Not Started") {
-    return <PendingIcon className="h-5 w-5" />;
-  }
-  if (status === "Canceld") {
-    return <UnpaidIcon className="h-5 w-5" />;
-  }
-  return null;
+
+const CircularProgress = ({ percentage, completed, total, tokens }: { percentage: number; completed: number; total: number; tokens: DashboardTokens }) => {
+  const size = 140;
+  const radius = (size - 18) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (percentage / 100) * circumference;
+  const uniqueId = `progress-${Math.random().toString(36).substr(2, 9)}`;
+
+  const gradientStart = tokens.isDark ? "#3B82F6" : "#071FD7";
+  const gradientEnd = tokens.isDark ? "#1E40AF" : "#041071";
+
+  return (
+    <div className="relative inline-flex items-center justify-center border-8 border-white/20 rounded-full">
+      <svg className="transform -rotate-20" width={size} height={size}>
+        <defs>
+          <linearGradient id={`gradient-${uniqueId}`} x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor={gradientStart} />
+            <stop offset="100%" stopColor={gradientEnd} />
+          </linearGradient>
+        </defs>
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke={tokens.isDark ? "rgba(249, 250, 250, 0.2)" : "#E4E7E9"}
+          strokeWidth="18"
+          fill="none"
+        />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke={`url(#gradient-${uniqueId})`}
+          strokeWidth="18"
+          fill="none"
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          className="transition-all duration-300"
+        />
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span className={`text-base font-semibold ${tokens.isDark ? "text-white" : "text-[#292D30]"}`}>
+          {percentage}%
+        </span>
+        <span className={`text-xs ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"}`}>
+          {completed}/{total} Screens
+        </span>
+      </div>
+    </div>
+  );
 };
 
-const TasksTable = ({ tokens, searchQuery }: { readonly tokens: DashboardTokens; readonly searchQuery: string }) => {
-  const [selectedTasks, setSelectedTasks] = useState<Set<string>>(new Set(["task-1"]));
+const getAvatarColor = (index: number, isDark: boolean) => {
+  const colors = [
+    isDark ? "#4F46E5" : "#6366F1",
+    isDark ? "#DC2626" : "#EF4444",
+    isDark ? "#2563EB" : "#3B82F6"
+  ];
+  return colors[index % colors.length];
+};
+
+const getInitials = (name: string) => {
+  return name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+};
+
+const TasksCards = ({ tokens, searchQuery }: { readonly tokens: DashboardTokens; readonly searchQuery: string }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 20;
-  const totalRecords = 100;
-  const totalPages = Math.ceil(totalRecords / pageSize);
+  const pageSize = 9;
+  // const totalRecords = tasksData.length;
+  // const totalPages = Math.ceil(totalRecords / pageSize);
 
   const filteredTasks = useMemo(() => {
     if (!searchQuery.trim()) {
@@ -167,9 +230,7 @@ const TasksTable = ({ tokens, searchQuery }: { readonly tokens: DashboardTokens;
       return (
         task.code.toString().includes(query) ||
         task.name.toLowerCase().includes(query) ||
-        task.startDate.toLowerCase().includes(query) ||
-        task.deadline.toLowerCase().includes(query) ||
-        task.assignedTo.toLowerCase().includes(query) ||
+        task.description.toLowerCase().includes(query) ||
         task.status.toLowerCase().includes(query)
       );
     });
@@ -185,213 +246,216 @@ const TasksTable = ({ tokens, searchQuery }: { readonly tokens: DashboardTokens;
     setCurrentPage(1);
   }, [searchQuery]);
 
-  const toggleTask = (id: string) => {
-    setSelectedTasks((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      return next;
-    });
+  // const handlePageChange = (page: number) => {
+  //   setCurrentPage(page);
+  // };
+
+  const statusColors = {
+    Completed: tokens.isDark ? "bg-green-500/10 text-green-400" : "bg-green-100 text-green-700",
+    "In Progress": tokens.isDark ? "bg-blue-500/10 text-blue-400" : "bg-blue-100 text-blue-700",
+    "Waiting Feedback": tokens.isDark ? "bg-yellow-500/10 text-yellow-400" : "bg-yellow-100 text-yellow-700",
+    "Not Started": tokens.isDark ? "bg-gray-500/10 text-gray-400" : "bg-gray-100 text-gray-700",
+    Ongoing: tokens.isDark ? "bg-purple-500/10 text-purple-400" : "bg-purple-100 text-purple-700",
+    Canceld: tokens.isDark ? "bg-red-500/10 text-red-400" : "bg-red-100 text-red-700"
   };
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+  const priorityColors = {
+    High: tokens.isDark ? "text-red-400" : "text-red-600",
+    Medium: tokens.isDark ? "text-yellow-400" : "text-yellow-600",
+    Low: tokens.isDark ? "text-green-400" : "text-green-600"
   };
 
-  const tableHeaderClass = `text-sm uppercase font-semibold ${tokens.subtleText}`;
+  // const renderPagination = () => {
+  //   const pages: (number | string)[] = [];
 
-  const renderPagination = () => {
-    const pages: (number | string)[] = [];
+  //   if (totalPages <= 7) {
+  //     for (let i = 1; i <= totalPages; i++) {
+  //       pages.push(i);
+  //     }
+  //   } else {
+  //     pages.push(1);
 
-    if (totalPages <= 7) {
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
-    } else {
-      pages.push(1);
+  //     if (currentPage > 3) {
+  //       pages.push("...");
+  //     }
 
-      if (currentPage > 3) {
-        pages.push("...");
-      }
+  //     const start = Math.max(2, currentPage - 1);
+  //     const end = Math.min(totalPages - 1, currentPage + 1);
 
-      const start = Math.max(2, currentPage - 1);
-      const end = Math.min(totalPages - 1, currentPage + 1);
+  //     for (let i = start; i <= end; i++) {
+  //       if (i !== 1 && i !== totalPages) {
+  //         pages.push(i);
+  //       }
+  //     }
 
-      for (let i = start; i <= end; i++) {
-        if (i !== 1 && i !== totalPages) {
-          pages.push(i);
-        }
-      }
+  //     if (currentPage < totalPages - 2) {
+  //       pages.push("...");
+  //     }
 
-      if (currentPage < totalPages - 2) {
-        pages.push("...");
-      }
+  //     pages.push(totalPages);
+  //   }
 
-      pages.push(totalPages);
-    }
-
-    return (
-      <div className="flex items-center gap-2">
-        <button
-          type="button"
-          onClick={() => handlePageChange(1)}
-          disabled={currentPage === 1}
-          className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
-        >
-          ««
-        </button>
-        <button
-          type="button"
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
-        >
-          «
-        </button>
-        {pages.map((page, index) => {
-          if (page === "...") {
-            return (
-              <span
-                key={`ellipsis-${index}`}
-                className="px-2 py-1 font-semibold text-[var(--color-page-text)]"
-              >
-                …
-              </span>
-            );
-          }
-          const pageNum = page as number;
-          const isCurrent = pageNum === currentPage;
-          return (
-            <button
-              key={pageNum}
-              type="button"
-              onClick={() => handlePageChange(pageNum)}
-              className={`${
-                isCurrent ? tokens.buttonFilled : tokens.buttonGhost
-              } rounded-full px-3 py-1 text-xs font-semibold`}
-            >
-              {pageNum}
-            </button>
-          );
-        })}
-        <button
-          type="button"
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
-        >
-          »
-        </button>
-        <button
-          type="button"
-          onClick={() => handlePageChange(totalPages)}
-          disabled={currentPage === totalPages}
-          className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
-        >
-          »»
-        </button>
-      </div>
-    );
-  };
+  //   return (
+  //     <div className="flex items-center gap-2">
+  //       <button
+  //         type="button"
+  //         onClick={() => handlePageChange(1)}
+  //         disabled={currentPage === 1}
+  //         className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
+  //       >
+  //         ««
+  //       </button>
+  //       <button
+  //         type="button"
+  //         onClick={() => handlePageChange(currentPage - 1)}
+  //         disabled={currentPage === 1}
+  //         className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
+  //       >
+  //         «
+  //       </button>
+  //       {pages.map((page, index) => {
+  //         if (page === "...") {
+  //           return (
+  //             <span
+  //               key={`ellipsis-${index}`}
+  //               className="px-2 py-1 font-semibold text-[var(--color-page-text)]"
+  //             >
+  //               …
+  //             </span>
+  //           );
+  //         }
+  //         const pageNum = page as number;
+  //         const isCurrent = pageNum === currentPage;
+  //         return (
+  //           <button
+  //             key={pageNum}
+  //             type="button"
+  //             onClick={() => handlePageChange(pageNum)}
+  //             className={`${
+  //               isCurrent ? tokens.buttonFilled : tokens.buttonGhost
+  //             } rounded-full px-3 py-1 text-xs font-semibold`}
+  //           >
+  //             {pageNum}
+  //           </button>
+  //         );
+  //       })}
+  //       <button
+  //         type="button"
+  //         onClick={() => handlePageChange(currentPage + 1)}
+  //         disabled={currentPage === totalPages}
+  //         className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
+  //       >
+  //         »
+  //       </button>
+  //       <button
+  //         type="button"
+  //         onClick={() => handlePageChange(totalPages)}
+  //         disabled={currentPage === totalPages}
+  //         className={`${tokens.buttonGhost} rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50`}
+  //       >
+  //         »»
+  //       </button>
+  //     </div>
+  //   );
+  // };
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="overflow-x-auto">
-        <table className="min-w-full table-auto border-separate border-spacing-y-2">
-          <thead className={tokens.isDark ? "" : "bg-[#F7F6FF]"}>
-            <tr className="[&>th]:border-y [&>th]:border-[var(--color-border-divider)]">
-              <th className="whitespace-nowrap py-3 pe-6 text-left">
-                <span className={tableHeaderClass}>Code</span>
-              </th>
-              <th className="whitespace-nowrap py-3 pe-6 text-left">
-                <span className={tableHeaderClass}>Name</span>
-              </th>
-              <th className="whitespace-nowrap py-3 pe-6 text-left">
-                <span className={tableHeaderClass}>Start Date</span>
-              </th>
-              <th className="whitespace-nowrap py-3 pe-6 text-left">
-                <span className={tableHeaderClass}>Deadline</span>
-              </th>
-              <th className="whitespace-nowrap py-3 pe-6 text-left">
-                <span className={tableHeaderClass}>Assigned to</span>
-              </th>
-              <th className="whitespace-nowrap py-3 pe-6 text-left">
-                <span className={tableHeaderClass}>Status</span>
-              </th>
-              <th className="whitespace-nowrap py-3 text-left">
-                <span className={tableHeaderClass}>Manage</span>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedTasks.map((task) => {
-              const isSelected = selectedTasks.has(task.id);
-              return (
-                <tr key={task.id} className="text-sm">
-                  <td className="rounded-l-xl bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
-                    <div className="flex items-center gap-3">
-                      <input
-                        type="checkbox"
-                        checked={isSelected}
-                        onChange={() => toggleTask(task.id)}
-                        className="h-4 w-4 rounded border-[var(--color-border-divider)] bg-transparent accent-[#071FD7] transition-colors"
-                        aria-label={`Select task ${task.code}`}
-                      />
-                      <span className={`text-base font-semibold ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
-                        {task.code}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
-                    <p className={`font-medium ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>{task.name}</p>
-                  </td>
-                  <td className="bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
-                    <p className={`font-medium ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>{task.startDate}</p>
-                  </td>
-                  <td className="bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
-                    <p className={`font-medium ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>{task.deadline}</p>
-                  </td>
-                  <td className="bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
-                    <p className={`font-medium ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>{task.assignedTo}</p>
-                  </td>
-                  <td className="bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
-                    <span
-                      className={`inline-flex items-center gap-1 text-sm font-medium ${
-                        tokens.isDark ? "text-white" : "text-[#2B3674]"
-                      }`}
-                    >
-                      {renderStatusIcon(task.status)}
-                      {task.status}
+      <div className="grid grid-cols-1 gap-4">
+        {paginatedTasks.map((task) => (
+          <div
+            key={task.id}
+            className={`${tokens.cardBase} rounded-2xl overflow-hidden ${tokens.isDark ? "border border-[var(--color-card-border)]" : ""}`}
+          >
+            {/* Top Section with Background Color */}
+            <div className={`p-6 ${tokens.isDark ? "bg-gradient-to-br from-[#071FD7]/10 to-[#071FD7]/5" : "bg-gradient-to-br from-[#071FD7]/10 to-[#071FD7]/5"}`}>
+              <div className="flex flex-col gap-4">
+                {/* Priority and Task Name */}
+                <div className="flex items-start justify-between">
+                  <div className="flex flex-col gap-2">
+                    <span className={`text-sm font-medium ${priorityColors[task.priority]}`}>
+                      #{task.priority}
                     </span>
-                  </td>
-                  <td className="rounded-r-xl bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        className={`${tokens.buttonGhost} flex h-9 w-9 items-center justify-center rounded-full`}
-                        aria-label={`Settings for task ${task.code}`}
-                      >
-                        <SettingsIcon className={`h-4 w-4 ${tokens.isDark ? "" : "[&_path]:fill-[#071FD7]"}`} />
-                      </button>
-                      <button
-                        type="button"
-                        className={`${tokens.buttonGhost} flex h-9 w-9 items-center justify-center rounded-full`}
-                        aria-label={`Delete task ${task.code}`}
-                      >
-                        <DeleteIcon className={`h-4 w-4 ${tokens.isDark ? "" : "[&_path]:fill-[#071FD7]"}`} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+                    <h3 className={`text-lg md:text-xl font-semibold ${
+                      tokens.isDark ? "text-white" : "text-[#2B3674]"
+                    }`}>
+                      {task.name}
+                    </h3>
+                  </div>
+                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${statusColors[task.status]}`}>
+                    {task.status}
+                  </span>
+                </div>
 
+                {/* Description */}
+                <p className={`text-sm md:text-base ${tokens.subtleText} text-[#718EBF]`}>
+                  {task.description}
+                </p>
+
+                {/* Team and Progress */}
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-center gap-2">
+                    <span className={`text-sm md:text-base font-medium ${tokens.subtleText} text-[#718EBF]`}>team:</span>
+                    <div className="flex -space-x-2">
+                      {task.team.slice(0, 3).map((member, index) => (
+                        <div
+                          key={member.id}
+                          className="relative h-8 w-8 rounded-full border-2 border-white flex items-center justify-center text-sm font-semibold text-white"
+                          style={{ backgroundColor: getAvatarColor(index, tokens.isDark) }}
+                          title={member.name}
+                        >
+                          {member.avatar ? (
+                            <img
+                              src={member.avatar}
+                              alt={member.name}
+                              className="h-full w-full rounded-full object-cover"
+                            />
+                          ) : (
+                            <span>{getInitials(member.name)}</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <CircularProgress
+                    percentage={task.progress.percentage}
+                    completed={task.progress.completed}
+                    total={task.progress.total}
+                    tokens={tokens}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Section with Different Background */}
+            <div className={`flex items-center justify-between px-6 py-4 border-t border-dashed ${
+              tokens.isDark ? "border-[#2E3141] bg-[var(--color-card-bg)]" : "border-[#E2E8FF] bg-[#FFFEF7]"
+            }`}>
+              <div className="flex items-center gap-6">
+                <span className={`text-base text-[#718EBF]`}>
+                  Created at: <span className={tokens.isDark ? "text-white" : "text-[#718EBF]"}>
+                    {task.createdDate}
+                  </span>
+                </span>
+                <span className={`text-base text-[#718EBF]`}>
+                  Due date: <span className={tokens.isDark ? "text-white" : "text-black"}>{task.dueDate}</span>
+                </span>
+              </div>
+              <button
+                type="button"
+                className={`px-8 py-2.5 rounded-full text-sm md:text-base font-medium transition-colors cursor-pointer ${
+                  tokens.isDark
+                    ? "bg-[#071FD7] text-white hover:bg-[#071FD7]/90"
+                    : "bg-[#071FD7] text-white hover:bg-[#071FD7]/90"
+                }`}
+              >
+                View Task
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+{/* 
       {totalPages > 0 && (
         <div className="flex flex-col items-center justify-between gap-4 border-t border-[var(--color-border-divider)] pt-4 text-xs text-[var(--color-sidebar-nav-idle-text)] transition-colors sm:flex-row">
           {renderPagination()}
@@ -399,19 +463,25 @@ const TasksTable = ({ tokens, searchQuery }: { readonly tokens: DashboardTokens;
           <div className="flex items-center gap-2 text-sm text-[var(--color-page-text)]">
             <span>Showing</span>
             <select className="rounded-lg border border-[var(--color-border-divider)] bg-[var(--color-card-bg)] px-2 py-1 text-sm focus:outline-none">
-              <option value="20">20</option>
-              <option value="50">50</option>
-              <option value="100">100</option>
+              <option value="9">9</option>
+              <option value="18">18</option>
+              <option value="27">27</option>
             </select>
             <span>of {totalRecords}</span>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 };
 
-export const TasksView = ({ tokens }: TasksViewProps) => {
+export const TasksView = ({ 
+  tokens, 
+  project,
+  milestoneTabs = ["Milestone", "Milestone", "Milestone", "Milestone", "Milestone"],
+  activeMilestoneTab = 0,
+  onMilestoneTabChange
+}: TasksViewProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const iconBaseColor = tokens.isDark ? "#FFFFFF" : "#2B3674";
 
@@ -439,28 +509,138 @@ export const TasksView = ({ tokens }: TasksViewProps) => {
         })}
       </div>
 
-      {/* Tasks Section with Search */}
-      <div className={`${tokens.cardBase} rounded-2xl border border-[var(--color-card-border)] px-6 py-4`}>
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-4">
-          <h2 className={`text-lg md:text-xl font-semibold ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
-            Tasks
-          </h2>
-          <div
-            className={`flex h-11 items-center gap-3 rounded-full border ${tokens.divider} bg-[var(--color-search-bg)] px-4 text-[var(--color-search-text)] transition-colors sm:max-w-xs`}
-          >
-            <SearchIcon className="h-5 w-5 text-[var(--color-search-placeholder)]" />
-            <input
-              type="search"
-              placeholder="Search"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 bg-transparent text-sm text-[var(--color-search-text)] placeholder:text-[var(--color-search-placeholder)] focus:outline-none"
-            />
+      {/* Milestone Section with Tasks - White Background */}
+      {project && (
+        <div className={`${tokens.isDark ? tokens.cardBase : "bg-white"} rounded-2xl p-6 flex flex-col gap-6 border border-[var(--color-card-border)]`}>
+          {/* Milestone Tabs */}
+          <div className="flex gap-4 overflow-x-auto">
+            {milestoneTabs.map((tab, index) => (
+              <button
+                key={index}
+                type="button"
+                onClick={() => onMilestoneTabChange?.(index)}
+                className={`pb-2 px-1 flex items-center gap-2 text-sm md:text-base font-medium transition-colors whitespace-nowrap cursor-pointer ${
+                  activeMilestoneTab === index
+                    ? tokens.isDark
+                      ? "text-white border-b-2 border-white"
+                      : "text-[#111111] border-b-2 border-[#071FD7]"
+                    : tokens.subtleText
+                }`}
+              >
+                <span>{tab}</span>
+              </button>
+            ))}
+          </div>
+
+          {/* Milestone Content with Background */}
+          <div className={`${tokens.isDark ? tokens.surfaceMuted : "bg-[#FFFEF7]"} rounded-2xl p-6 flex flex-col gap-4`}>
+            {/* Milestone Header */}
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex flex-col gap-2 flex-1">
+                <h2 className={`text-2xl md:text-3xl font-bold ${
+                  tokens.isDark ? "text-white" : "text-[#2B3674]"
+                }`}>
+                  Milestone Name
+                </h2>
+                <p className={`text-sm md:text-base ${tokens.subtleText}`}>
+                  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy.
+                </p>
+              </div>
+              <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                tokens.isDark ? "bg-green-500/10 text-green-400" : "bg-green-100 text-green-700"
+              }`}>
+                Completed
+              </span>
+            </div>
+
+            {/* Milestone Details Card */}
+            <div className={`rounded-xl p-4 ${tokens.isDark ? tokens.surfaceMuted : ''}`} style={tokens.isDark ? {} : { backgroundColor: '#FCF6D4' }}>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="flex flex-col gap-2">
+                  <span className={`text-base font-semibold ${
+                    tokens.isDark ? "text-white" : "text-[#232323]"
+                  }`}>
+                    {project.startDate}
+                  </span>
+                  <span className={`text-sm md:text-base font-medium ${
+                    tokens.isDark ? tokens.subtleText : "text-[#718EBF]"
+                  }`}>Start</span>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <span className={`text-base font-semibold ${
+                    tokens.isDark ? "text-white" : "text-[#232323]"
+                  }`}>
+                    {project.deadline}
+                  </span>
+                  <span className={`text-sm md:text-base font-medium ${
+                    tokens.isDark ? tokens.subtleText : "text-[#718EBF]"
+                  }`}>Deadline</span>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <span className={`text-base font-semibold ${
+                    tokens.isDark ? "text-white" : "text-[#232323]"
+                  }`}>
+                    {project.budget}
+                  </span>
+                  <span className={`text-sm md:text-base font-medium ${
+                    tokens.isDark ? tokens.subtleText : "text-[#718EBF]"
+                  }`}>Budget</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Tasks Section with Search */}
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <h2 className={`text-lg md:text-xl font-semibold ${
+                tokens.isDark ? "text-white" : "text-[#2B3674]"
+              }`}>
+                Tasks
+              </h2>
+              {/* <div
+                className={`flex h-11 items-center gap-3 rounded-full border ${tokens.divider} bg-[var(--color-search-bg)] px-4 text-[var(--color-search-text)] transition-colors sm:max-w-xs`}
+              >
+                <SearchIcon className="h-5 w-5 text-[var(--color-search-placeholder)]" />
+                <input
+                  type="search"
+                  placeholder="Search"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="flex-1 bg-transparent text-sm text-[var(--color-search-text)] placeholder:text-[var(--color-search-placeholder)] focus:outline-none"
+                />
+              </div> */}
+            </div>
+            <TasksCards tokens={tokens} searchQuery={searchQuery} />
           </div>
         </div>
-        <TasksTable tokens={tokens} searchQuery={searchQuery} />
-      </div>
+      )}
+
+      {/* Tasks Section with Search - When no project (fallback) */}
+      {!project && (
+        <div className={`${tokens.cardBase} rounded-2xl border border-[var(--color-card-border)] px-6 py-4`}>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-4">
+            <h2 className={`text-lg md:text-xl font-semibold ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
+              Tasks
+            </h2>
+            <div
+              className={`flex h-11 items-center gap-3 rounded-full border ${tokens.divider} bg-[var(--color-search-bg)] px-4 text-[var(--color-search-text)] transition-colors sm:max-w-xs`}
+            >
+              <SearchIcon className="h-5 w-5 text-[var(--color-search-placeholder)]" />
+              <input
+                type="search"
+                placeholder="Search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="flex-1 bg-transparent text-sm text-[var(--color-search-text)] placeholder:text-[var(--color-search-placeholder)] focus:outline-none"
+              />
+            </div>
+          </div>
+          <TasksCards tokens={tokens} searchQuery={searchQuery} />
+        </div>
+      )}
     </div>
   );
 };
+
 

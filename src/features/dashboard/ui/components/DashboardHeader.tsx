@@ -128,7 +128,7 @@ export const DashboardHeader = ({
   const currentLanguage = supportedLanguages.find((lng) => lng === i18nInstance.resolvedLanguage) ?? supportedLanguages[0];
 
   return (
-    <header className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+    <header className="relative z-50 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
       <div className="text-start">
         <h1
           className={`text-2xl font-semibold md:text-3xl ${
@@ -196,8 +196,8 @@ export const DashboardHeader = ({
             />
           </button>
 
-          <div className="relative" ref={languageMenuRef}>
-            {/* <button
+          <div className="relative z-[9999]" ref={languageMenuRef}>
+            <button
               type="button"
               onClick={() => {
                 const newState = activeIcon === "language" ? null : "language";
@@ -212,23 +212,23 @@ export const DashboardHeader = ({
                 className={`h-5 w-5 ${getIconColorClass("language")}`}
                 style={!tokens.isDark && activeIcon === "language" ? { color: primaryColor } : {}}
               />
-            </button> */}
+            </button>
             
             {isLanguageMenuOpen && (
-              <div className={`absolute ${isRTL ? "left-0" : "right-0"} top-full mt-2 w-32 rounded-xl p-2 shadow-2xl backdrop-blur z-50 ${tokens.cardBase} border border-[var(--color-card-border)]`}>
+              <div className={`absolute ${isRTL ? "left-0" : "right-0"} top-full mt-2 w-32 rounded-xl p-2 shadow-2xl backdrop-blur z-[9999] ${tokens.cardBase} border border-[var(--color-card-border)]`}>
                 {supportedLanguages.map((lang) => (
                   <button
                     key={lang}
                     type="button"
                     onClick={() => handleLanguageChange(lang)}
-                    className={`w-full text-start px-3 py-2 rounded-lg text-sm transition-colors ${
+                    className={`w-full text-start px-3 py-2 rounded-lg text-sm transition-colors mt-1 ${
                       currentLanguage === lang
                         ? tokens.isDark
-                          ? "bg-[#0F6773] text-white"
-                          : "bg-[#E7F0F1] text-[#0F6773]"
+                          ? "bg-gray-900 text-white"
+                          : "bg-gray-200 text-gray-900"
                         : tokens.isDark
                         ? "text-white/70 hover:bg-[var(--color-card-bg)] hover:text-white"
-                        : "text-[#718EBF] hover:bg-[#F4F7FE] hover:text-[#2B3674]"
+                        : "text-black hover:bg-gray-200"
                     }`}
                   >
                     {lang === "en" ? "English" : "العربية"}

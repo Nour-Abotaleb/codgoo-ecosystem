@@ -1,14 +1,16 @@
-import { ArrowUpIcon, AppTagIcon, MarketplaceWalletIcon, MarketplaceChartIcon } from "@utilities/icons";
+import { ArrowRight } from "@utilities/icons";
 import type { DashboardTokens } from "../../types";
-import marketplaceAppImage from "@assets/images/app/marketplace-app.svg";
 
 export type MarketplaceItem = {
   readonly id: string;
   readonly title: string;
   readonly description: string;
-  readonly ethAmount?: string;
-  readonly chartValue?: string;
-  readonly image?: string;
+  readonly rating: number;
+  readonly reviewCount: number;
+  readonly priceType: "Free" | "Paid";
+  readonly icon: React.ReactNode;
+  readonly iconColor?: string;
+  readonly iconGradient?: string;
 };
 
 type MarketplaceCardProps = {
@@ -19,77 +21,89 @@ type MarketplaceCardProps = {
 };
 
 export const MarketplaceCard = ({ item, tokens, onClick, onLearnMore }: MarketplaceCardProps) => {
+  // const priceTypeColors = {
+  //   Free: { bg: "#27B43E", text: "#FFFFFF" },
+  //   Paid: { bg: "#FF8A0E", text: "#FFFFFF" }
+  // };
+
+  // const colors = priceTypeColors[item.priceType];
+
   return (
     <div
-      className={`${tokens.cardBase} rounded-2xl overflow-hidden transition-all cursor-pointer flex flex-col relative`}
+      className={`${tokens.cardBase} rounded-2xl p-4 transition-all cursor-pointer flex flex-col`}
       onClick={onClick}
     >
-      {/* Top Image Section */}
-      <div className="relative w-full h-48 bg-gradient-to-br from-purple-100 to-purple-200">
-        <img
-          src={item.image || marketplaceAppImage}
-          alt={item.title}
-          className="w-full h-full object-cover"
-        />
-        {/* Tag Icon */}
-        <div className="absolute top-3 right-3">
-          <div className="w-8 h-8 rounded-full bg-white/90 flex items-center justify-center">
-            <AppTagIcon className="w-5 h-5" />
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex-1 min-w-0">
+          {/* Price Type Badge */}
+          {/* <div className="flex items-center gap-3 mb-3">
+            <span
+              className="inline-flex items-center justify-center px-5 py-1 rounded-full text-sm font-light"
+              style={{ backgroundColor: colors.bg, color: colors.text }}
+            >
+              {item.priceType}
+            </span>
+          </div> */}
+
+          {/* Title */}
+          <h3 className={`text-lg font-bold mb-2 ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
+            {item.title}
+          </h3>
+
+          {/* Description */}
+          <p className={`text-sm mb-2 ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"}`}>
+            {item.description}
+          </p>
+
+          {/* Rating */}
+          <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <span
+                  key={i}
+                  className="text-lg md:text-xl"
+                  style={{ color: i < Math.floor(item.rating) ? "#F8C56B" : "#E0E0E0" }}
+                >
+                  ★
+                </span>
+              ))}
+            </div>
+            <span className={`text-sm ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"}`}>
+              ({item.rating}) • {item.reviewCount.toLocaleString()} reviews
+            </span>
+          </div>
+        </div>
+
+        {/* Icon */}
+        <div className="flex-shrink-0">
+          <div
+            className="w-16 h-16 rounded-full flex items-center justify-center"
+            style={
+              item.iconGradient
+                ? { background: item.iconGradient }
+                : { backgroundColor: item.iconColor || "#E7F0F1" }
+            }
+          >
+            {item.icon}
           </div>
         </div>
       </div>
 
-      {/* Content Section */}
-      <div className="p-4 flex flex-col gap-3 pb-16">
-        {/* Placeholder Circle */}
-        <div className="w-20 h-20 rounded-full bg-[#E7F0F1] flex items-center justify-center mx-auto -mt-10 mb-2 border-4 border-white">
-          {/* Empty circle placeholder */}
-        </div>
-
-        {/* Title */}
-        <h3 className={`text-lg font-bold text-center ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
-          {item.title}
-        </h3>
-
-        {/* Description */}
-        <p className={`text-sm text-center ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"}`}>
-          {item.description}
-        </p>
-
-        {/* Metrics */}
-        <div className="flex items-center justify-center gap-4 mt-2">
-          {item.ethAmount && (
-            <div className="flex items-center gap-1.5">
-              <MarketplaceWalletIcon className="w-4 h-4" />
-              <span className={`text-sm font-medium ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
-                {item.ethAmount}
-              </span>
-            </div>
-          )}
-          {item.chartValue && (
-            <div className="flex items-center gap-1.5">
-              <MarketplaceChartIcon className="w-4 h-4" />
-              <span className={`text-sm font-medium ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
-                {item.chartValue}
-              </span>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Action Icon - Bottom Right */}
-      <div className="absolute bottom-4 right-4">
-        <div 
-          className="w-10 h-10 rounded-full bg-[#0F6773] flex items-center justify-center cursor-pointer hover:bg-[#0d5a65] transition-colors"
+      {/* Learn More Link */}
+      <div className="flex justify-end mt-auto">
+        <button
+          type="button"
+          className="flex items-center gap-1 text-sm font-medium transition-colors text-white py-2.5 px-4 rounded-full"
+          style={{ backgroundColor: tokens.isDark ? "#FFFFFF66" : "#0F6773" }}
           onClick={(e) => {
             e.stopPropagation();
             onLearnMore?.();
           }}
         >
-          <ArrowUpIcon className="w-5 h-5 text-white" />
-        </div>
+          <span>Learn more</span>
+          <ArrowRight className="h-4 w-4" />
+        </button>
       </div>
     </div>
   );
 };
-
