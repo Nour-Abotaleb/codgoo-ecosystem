@@ -21,6 +21,8 @@ import { DashboardOverview } from "./components/cloud/DashboardOverview";
 import { SoftwareDashboardOverview } from "./components/software/SoftwareDashboardOverview";
 import { ProjectsView } from "./components/software/ProjectsView";
 import { ProjectDetailsView } from "./components/software/ProjectDetailsView";
+import { TaskDetailView } from "./components/software/TaskDetailView";
+import { tasksData } from "./components/software/TasksView";
 import { MeetingsView } from "./components/software/MeetingsView";
 import { AppDashboardOverview } from "./components/app/AppDashboardOverview";
 import { MarketplaceView, marketplaceItems } from "./components/app/MarketplaceView";
@@ -59,6 +61,7 @@ export const DashboardPage = () => {
   const projectDetailsMatch = useMatch("/dashboard/projects/:projectId");
   const marketplaceDetailMatch = useMatch("/dashboard/marketplace/:itemId");
   const orderMatch = useMatch("/dashboard/order");
+  const taskDetailMatch = useMatch("/dashboard/software/tasks/:taskId");
   const dataset = dashboardContent[activeApp.id];
   const navigationItems = dataset.navigation;
   const [activeNavId, setActiveNavId] = useState(() => navigationItems[0]?.id ?? "");
@@ -277,6 +280,14 @@ export const DashboardPage = () => {
     if (path.includes("/marketplace/") && path.split("/").length > 3) {
       if (activeNavId !== "marketplace") {
         setActiveNavId("marketplace");
+      }
+      return;
+    }
+
+    // Handle task detail route
+    if (path.includes("/tasks/") && path.split("/").length > 3) {
+      if (activeNavId !== "projects") {
+        setActiveNavId("projects");
       }
       return;
     }
@@ -511,6 +522,18 @@ export const DashboardPage = () => {
                     onManage={() => {
                       // Handle manage
                     }}
+                  />
+                );
+              })()
+            ) : taskDetailMatch ? (
+              (() => {
+                const taskId = taskDetailMatch.params.taskId;
+                const task = tasksData.find((t) => t.id === taskId) ?? tasksData[0];
+                return (
+                  <TaskDetailView
+                    task={task}
+                    tokens={tokens}
+                    onBack={() => navigate("/dashboard/projects")}
                   />
                 );
               })()
