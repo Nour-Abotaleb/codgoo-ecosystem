@@ -16,7 +16,6 @@ type DiscussionDetailScreenProps = {
     }[];
   };
   readonly tokens: DashboardTokens;
-  readonly onBack: () => void;
 };
 
 type ChatMessage = {
@@ -109,7 +108,7 @@ const SendIcon = (props: { className?: string }) => (
   </svg>
 );
 
-export const DiscussionDetailScreen = ({ discussion, tokens, onBack }: DiscussionDetailScreenProps) => {
+export const DiscussionDetailScreen = ({ discussion, tokens }: DiscussionDetailScreenProps) => {
   const [messageText, setMessageText] = useState("");
 
   const handleSendMessage = () => {

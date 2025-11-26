@@ -96,17 +96,12 @@ export const TaskDetailView = ({ task, tokens }: TaskDetailViewProps) => {
     setSelectedDiscussion(discussion);
   };
 
-  const handleBackFromDiscussion = () => {
-    setSelectedDiscussion(null);
-  };
-
   // Show full-screen discussion view if a discussion is selected
   if (selectedDiscussion) {
     return (
       <DiscussionDetailScreen
         discussion={selectedDiscussion}
         tokens={tokens}
-        onBack={handleBackFromDiscussion}
       />
     );
   }
