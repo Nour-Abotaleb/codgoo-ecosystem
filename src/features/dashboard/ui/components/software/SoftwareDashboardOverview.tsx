@@ -1,5 +1,6 @@
-import { useId, useEffect, useState } from "react";
-import { ArrowRight, ActiveIcon, PendingIcon, UnpaidIcon, EditIcon, DeleteIcon, FileCodeIcon, CalendarIcon, ClockIcon, PlusCircleIcon } from "@utilities/icons";
+import { useEffect, useState } from "react";
+import { i18n } from "@shared/config/i18n";
+import { ArrowRight, ActiveIcon, PendingIcon, UnpaidIcon, CalendarIcon, ClockIcon, PlusCircleIcon, SettingsIcon, CloseIcon } from "@utilities/icons";
 import type { DashboardTokens, SoftwareDashboardData, DashboardHeroContent } from "../../types";
 
 type SoftwareDashboardOverviewProps = {
@@ -68,7 +69,7 @@ const DonutChart = ({
 // Pie Chart Component - 3D style with labels outside each segment
 const PieChart = ({ 
   items, 
-  size = 140,
+  size = 180,
   isDark = false
 }: { 
   items: SoftwareDashboardData["invoices"]; 
@@ -201,170 +202,14 @@ const PieChart = ({
   );
 };
 
-// Line Chart Component - Enhanced with gradient fill and highlight
-const LineChart = ({ 
-  data 
-}: { 
-  data: SoftwareDashboardData["clients"]; 
-}) => {
-  const gradientId = useId();
-  const maxValue = Math.max(...data.map(d => d.value));
-  const minValue = Math.min(...data.map(d => d.value));
-  const range = maxValue - minValue || 1; // Prevent division by zero
-  const width = 800;
-  const height = 200;
-  const padding = 40;
-  const chartHeight = height - 40; // Reserve space for labels
-
-  const points = data.map((point, index) => {
-    const x = padding + (index / (data.length - 1 || 1)) * (width - 2 * padding);
-    const y = chartHeight - padding - ((point.value - minValue) / range) * (chartHeight - 2 * padding);
-    return { x, y, ...point };
-  });
-
-  // Create smooth path with curves
-  const pathData = points
-    .map((point, index) => {
-      if (index === 0) return `M ${point.x} ${point.y}`;
-      const prevPoint = points[index - 1];
-      const cp1x = prevPoint.x + (point.x - prevPoint.x) / 2;
-      const cp1y = prevPoint.y;
-      const cp2x = prevPoint.x + (point.x - prevPoint.x) / 2;
-      const cp2y = point.y;
-      return `C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${point.x} ${point.y}`;
-    })
-    .join(" ");
-
-  // Create area path for gradient fill
-  const areaPath = `${pathData} L ${points[points.length - 1].x} ${chartHeight - padding} L ${points[0].x} ${chartHeight - padding} Z`;
-
-  // Find highlighted point
-  const highlightedPoint = points.find(p => p.highlight);
-
-  return (
-    <div className="relative w-full">
-      <svg width="100%" height="200" viewBox={`0 0 ${width} ${height}`} className="overflow-visible" preserveAspectRatio="xMidYMid meet">
-        <defs>
-          <linearGradient id={gradientId} x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#071FD7" stopOpacity="0.3" />
-            <stop offset="100%" stopColor="#071FD7" stopOpacity="0.05" />
-          </linearGradient>
-          <filter id={`shadow-${gradientId}`} x="-50%" y="-50%" width="200%" height="200%">
-            <feDropShadow dx="0" dy="2" stdDeviation="2" floodOpacity="0.1"/>
-          </filter>
-          <filter id={`line-shadow-${gradientId}`} x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
-            <feOffset dx="0" dy="2" result="offsetblur"/>
-            <feComponentTransfer>
-              <feFuncA type="linear" slope="0.3"/>
-            </feComponentTransfer>
-            <feMerge>
-              <feMergeNode/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
-        </defs>
-        
-        {/* Gradient fill area */}
-        <path
-          d={areaPath}
-          fill={`url(#${gradientId})`}
-        />
-        
-        {/* Shadow line below the main line */}
-        <path
-          d={pathData}
-          fill="none"
-          stroke="#071FD7"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          opacity="0.2"
-          transform="translate(0, 2)"
-        />
-        
-        {/* Main line */}
-        <path
-          d={pathData}
-          fill="none"
-          stroke="#071FD7"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          filter={`url(#line-shadow-${gradientId})`}
-        />
-        
-        {/* Highlighted point with blue line and label */}
-        {highlightedPoint && (
-          <g>
-            {/* Blue vertical line */}
-            <line
-              x1={highlightedPoint.x}
-              y1={highlightedPoint.y}
-              x2={highlightedPoint.x}
-              y2={highlightedPoint.y - 25}
-              stroke="#071FD7"
-              strokeWidth="2"
-            />
-            {/* White circle with blue outline on line */}
-            <circle
-              cx={highlightedPoint.x}
-              cy={highlightedPoint.y}
-              r="5"
-              fill="white"
-              stroke="#071FD7"
-              strokeWidth="2"
-            />
-            {/* Tooltip circle */}
-            <circle
-              cx={highlightedPoint.x}
-              cy={highlightedPoint.y - 25}
-              r="20"
-              fill="#FFFFFF"
-              stroke=""
-              strokeWidth="1"
-              filter={`url(#shadow-${gradientId})`}
-            />
-            {/* Tooltip text */}
-            <text
-              x={highlightedPoint.x}
-              y={highlightedPoint.y - 30}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              className="text-xs font-semibold"
-              style={{ fill: "#2B3674", fontSize: "10px" }}
-            >
-              Client
-            </text>
-            <text
-              x={highlightedPoint.x}
-              y={highlightedPoint.y - 20}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              className="text-xs font-semibold"
-              style={{ fill: "#2B3674", fontSize: "10px" }}
-            >
-              {highlightedPoint.highlightLabel ? highlightedPoint.highlightLabel.replace("Client ", "") : `+${highlightedPoint.value}`}
-            </text>
-          </g>
-        )}
-      </svg>
-      <div className="flex justify-between mt-2 text-xs text-[#A3AED0] px-1">
-        {data.map((point, index) => (
-          <span key={index}>{point.month}</span>
-        ))}
-      </div>
-    </div>
-  );
-};
-
 export const SoftwareDashboardOverview = ({
   data,
   hero,
   tokens
 }: SoftwareDashboardOverviewProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
-  const cardClass = `rounded-[20px] border border-[var(--color-card-border)] px-6 py-4 transition-colors ${tokens.isDark ? tokens.cardBase : "bg-[#FCFDFF]"}`;
+  const isRTL = i18n.language === "ar";
+  const cardClass = `rounded-[20px] px-6 py-4 transition-colors ${tokens.isDark ? tokens.cardBase : "bg-[#FCFDFF]"}`;
 
   // Preload hero image
   useEffect(() => {
@@ -447,14 +292,14 @@ export const SoftwareDashboardOverview = ({
               className="inline-flex items-center gap-1 w-fit rounded-full border border-white bg-transparent px-5 md:px-6 py-2.5 text-sm text-white transition hover:opacity-90 whitespace-nowrap mt-6"
             >
               <span>{hero.ctaLabel}</span>
-              <ArrowRight className="h-4 w-4 flex-shrink-0 [&_path]:stroke-white" />
+              <ArrowRight className={`h-4 w-4 flex-shrink-0 [&_path]:stroke-white ${isRTL ? "rotate-180" : ""}`} />
             </button>
           </div>
         </div>
       </section>
 
-      {/* Proposal Summary and Events Section */}
-      <section className="grid gap-6 lg:grid-cols-[1fr_1.5fr]">
+      {/* Proposal Summary and Clients Section */}
+      <section className="grid gap-6 lg:grid-cols-[1fr_1fr]">
         {/* Proposal Summary */}
         <div className={cardClass}>
           <div className="flex items-center justify-between gap-2 mb-4">
@@ -494,6 +339,103 @@ export const SoftwareDashboardOverview = ({
           </div>
         </div>
 
+        {/* Tasks Status */}
+        <div className={cardClass}>
+          <div className="mb-4">
+            <h3 className={`text-lg lg:text-xl font-bold ${tokens.isDark ? "text-[var(--color-page-text)]" : "text-[#2B3674]"}`}>
+              Tasks Status
+            </h3>
+          </div>
+          <div className="flex flex-col gap-4">
+            {/* Completed */}
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <span className={`text-sm md:text-base font-medium ${tokens.isDark ? "text-white" : "text-black"}`}>
+                  Completed
+                </span>
+                <span className={`text-sm ${tokens.isDark ? "text-white/70" : "text-[#AAAAAA]"}`}>
+                  32 Tasks
+                </span>
+              </div>
+              <div className="relative h-5 bg-[#EFEFEF] rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all duration-300"
+                  style={{
+                    width: "95%",
+                    backgroundColor: "#34C759"
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* In Progress */}
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <span className={`text-sm md:text-base font-medium ${tokens.isDark ? "text-white" : "text-black"}`}>
+                  In Progress
+                </span>
+                <span className={`text-sm ${tokens.isDark ? "text-white/70" : "text-[#AAAAAA]"}`}>
+                  54 Tasks
+                </span>
+              </div>
+              <div className="relative h-5 bg-[#EFEFEF] rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all duration-300"
+                  style={{
+                    width: "67%",
+                    backgroundColor: "#0015B4"
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Waiting Feedback */}
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <span className={`text-sm md:text-base font-medium ${tokens.isDark ? "text-white" : "text-black"}`}>
+                  Waiting Feedback
+                </span>
+                <span className={`text-sm ${tokens.isDark ? "text-white/70" : "text-[#AAAAAA]"}`}>
+                  12 Tasks
+                </span>
+              </div>
+              <div className="relative h-5 bg-[#EFEFEF] rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all duration-300"
+                  style={{
+                    width: "33%",
+                    backgroundColor: "#B48D00"
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Canceled */}
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <span className={`text-sm md:text-base font-medium ${tokens.isDark ? "text-white" : "text-black"}`}>
+                  Canceled
+                </span>
+                <span className={`text-sm ${tokens.isDark ? "text-white/70" : "text-[#AAAAAA]"}`}>
+                  0
+                </span>
+              </div>
+              <div className="relative h-5 bg-[#EFEFEF] rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all duration-300"
+                  style={{
+                    width: "0%",
+                    backgroundColor: "#9CA3AF"
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Invoice Status and Meetings Section */}
+      <section className="grid gap-6 lg:grid-cols-[2fr_1fr]">
         {/* Meetings Just For You */}
         <div className={cardClass}>
           <div className="mb-2">
@@ -627,10 +569,6 @@ export const SoftwareDashboardOverview = ({
             </div>
           </div>
         </div>
-      </section>
-
-      {/* Invoice Status and Clients Section */}
-      <section className="grid gap-6 lg:grid-cols-[1fr_2.5fr]">
         {/* Invoice Status */}
         <div className={cardClass}>
           <div className="flex items-center justify-between gap-2 mb-3">
@@ -641,23 +579,6 @@ export const SoftwareDashboardOverview = ({
           <div className="flex items-center justify-center py-2">
             <PieChart items={data.invoices} isDark={tokens.isDark} />
           </div>
-        </div>
-
-        {/* Clients */}
-        <div className={cardClass}>
-          <div className="flex items-center justify-between gap-2 mb-4">
-            <h3 className={`text-lg lg:text-xl font-bold ${tokens.isDark ? "text-[var(--color-page-text)]" : "text-[#2B3674]"}`}>
-              Clients
-            </h3>
-            <button 
-              type="button" 
-              className="px-1 text-sm font-bold flex items-center gap-1 cursor-pointer"
-              style={{ color: "#A3AED0" }}
-            >
-              See All <ArrowRight className="h-4 w-4" style={{ stroke: "#A3AED0" }} />
-            </button>
-          </div>
-          <LineChart data={data.clients} />
         </div>
       </section>
 
@@ -673,73 +594,53 @@ export const SoftwareDashboardOverview = ({
               className="px-1 text-sm font-bold flex items-center gap-1 cursor-pointer"
               style={{ color: "#A3AED0" }}
             >
-              See All <ArrowRight className="h-4 w-4" style={{ stroke: "#A3AED0" }} />
+              See All <ArrowRight className={`h-4 w-4 ${isRTL ? "rotate-180" : ""}`} style={{ stroke: "#A3AED0" }} />
             </button>
           </div>
           <div className="overflow-x-auto">
-            <table className="min-w-full table-auto border-separate border-spacing-y-3 text-sm">
-              <thead className={tokens.isDark ? "" : "bg-[#E6E9FB]"}>
-                <tr className="text-left uppercase text-sm [&>th]:border-b [&>th]:border-[var(--color-border-divider)]">
-                  <th className={`px-4 py-4 ${tokens.isDark ? "text-white/70" : "text-[var(--color-page-text)]/65"}`}>NAME</th>
-                  <th className={`px-4 py-4 ${tokens.isDark ? "text-white/70" : "text-[var(--color-page-text)]/65"}`}>DATE</th>
-                  <th className={`px-4 py-4 ${tokens.isDark ? "text-white/70" : "text-[var(--color-page-text)]/65"}`}>STATUS</th>
-                  <th className={`px-4 py-4 text-right ${tokens.isDark ? "text-white/70" : "text-[var(--color-page-text)]/65"}`}>ACTIONS</th>
+            <table className="w-full">
+              <thead>
+                <tr className={`border-b ${tokens.divider}`}>
+                  <th className="text-left py-3 px-4 text-sm text-[#B6B6B6] font-medium">NAME</th>
+                  <th className="text-left py-3 px-4 text-sm text-[#B6B6B6] font-medium">DATE</th>
+                  <th className="text-left py-3 px-4 text-sm text-[#B6B6B6] font-medium">STATUS</th>
+                  <th className="text-left py-3 px-4 text-sm text-[#B6B6B6] font-medium">ACTIONS</th>
                 </tr>
               </thead>
               <tbody>
                 {data.projects.map((project) => {
                   const StatusIcon = getStatusIcon(project.status);
                   return (
-                    <tr key={project.id} className={tokens.isDark ? "bg-[var(--color-table-row-bg)]" : "bg-[#FCFDFF]"}>
-                      <td className="rounded-l-2xl px-4 py-3 font-medium text-[var(--color-card-text)]">
+                    <tr key={project.id} className={`${tokens.isDark ? "hover:bg-white/5" : "hover:bg-gray-50"}`}>
+                      <td className={`py-3 px-4 text-sm md:text-base ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
                         {project.name}
                       </td>
-                      <td className="px-4 py-3 text-[var(--color-card-text)]">
+                      <td className={`py-3 px-4 text-sm md:text-base ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
                         {project.date}
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="py-3 px-4">
                         <span className={`inline-flex items-center gap-1 text-sm font-medium ${getStatusColor(project.status)}`}>
                           <StatusIcon className="h-5 w-5" />
                           {project.status}
                         </span>
                       </td>
-                      <td className="rounded-r-2xl px-4 py-3">
-                        <div className="flex items-center justify-end gap-2">
+                      <td className="py-3 px-4">
+                        <div className="flex items-center gap-2">
                           <button
                             type="button"
-                            className={`flex h-9 w-9 items-center justify-center rounded-full ${tokens.isDark ? tokens.buttonGhost : ""}`}
+                            className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${tokens.isDark ? tokens.buttonGhost : ""}`}
                             style={tokens.isDark ? {} : { backgroundColor: "#E6E9FB" }}
-                            aria-label={`Edit ${project.name}`}
+                            aria-label={`Settings for ${project.name}`}
                           >
-                            <EditIcon className={`h-4 w-4 ${tokens.isDark ? "" : ""}`} style={tokens.isDark ? {} : { color: "#071FD7" }} />
+                            <SettingsIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: "#071FD7" }} />
                           </button>
                           <button
                             type="button"
-                            className={`flex h-9 w-9 items-center justify-center rounded-full ${tokens.isDark ? tokens.buttonGhost : ""}`}
-                            style={tokens.isDark ? {} : { backgroundColor: "#E6E9FB" }}
-                            aria-label={`View ${project.name}`}
-                          >
-                            <div 
-                              className="h-4 w-4"
-                              style={tokens.isDark ? {} : { color: "#071FD7" }}
-                            >
-                              <FileCodeIcon className="h-4 w-4" />
-                            </div>
-                          </button>
-                          <button
-                            type="button"
-                            className={`flex h-9 w-9 items-center justify-center rounded-full ${tokens.isDark ? tokens.buttonGhost : ""}`}
-                            style={tokens.isDark ? {} : { backgroundColor: "#E6E9FB" }}
+                            className="flex h-9 w-9 items-center justify-center rounded-full transition-colors"
+                            style={{ backgroundColor: tokens.isDark ? "rgba(255, 77, 77, 0.1)" : "rgb(255, 229, 222)" }}
                             aria-label={`Delete ${project.name}`}
                           >
-                            <div 
-                              className="h-4 w-4"
-                              style={tokens.isDark ? {} : { color: "#071FD7" }}
-                            >
-                              <DeleteIcon 
-                                className="h-4 w-4 [&_path]:fill-current"
-                              />
-                            </div>
+                            <CloseIcon className="h-4 w-4" style={{ color: "#FF0000" }} />
                           </button>
                         </div>
                       </td>

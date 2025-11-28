@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { i18n } from "@shared/config/i18n";
 import { ArrowRight, EmailIcon, PhoneIcon, FileCodeIcon, MarketPlaceCartIcon, WoocommerceIcon, SnapchatColoredIcon } from "@utilities/icons";
 import allCustomersImage from "@assets/images/app/all-customers.svg";
 import screenshot1 from "@assets/images/app/screenshot1.svg";
@@ -16,6 +17,7 @@ type Tab = "Overview" | "Features" | "Pricing" | "Screenshots";
 
 export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewProps) => {
   const [activeTab, setActiveTab] = useState<Tab>("Overview");
+  const isRTL = i18n.language === "ar";
 
   const tabs: readonly Tab[] = ["Overview", "Features", "Pricing", "Screenshots"];
 
@@ -106,7 +108,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
                 style={{ color: tokens.isDark ? "#A3AED0" : "#0F6773" }}
               >
                 <span>View All Reviews</span>
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className={`h-4 w-4 ${isRTL ? "rotate-180" : ""}`} />
               </button>
             </div>
           </div>
@@ -456,7 +458,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
                   tokens.isDark ? "hover:bg-white/10" : "hover:bg-gray-100"
                 }`}
               >
-                <ArrowRight className="h-4 w-4 rotate-180 text-white" />
+                <ArrowRight className={`h-4 w-4 ${isRTL ? "" : "rotate-180"} text-white`} />
               </button>
               <button
                 type="button"
@@ -464,7 +466,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
                   tokens.isDark ? "hover:bg-white/10" : "hover:bg-gray-100"
                 }`}
               >
-                <ArrowRight className="h-4 w-4 text-white" />
+                <ArrowRight className={`h-4 w-4 ${isRTL ? "rotate-180" : ""} text-white`} />
               </button>
             </div>
           </div>

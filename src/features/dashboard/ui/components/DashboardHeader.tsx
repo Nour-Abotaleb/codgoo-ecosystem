@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { i18n } from "@shared/config/i18n";
 
@@ -10,7 +10,6 @@ import {
   SearchIcon,
   LanguageIcon
 } from "@utilities/icons";
-import { supportedLanguages } from "@shared/config/i18n";
 
 import type { DashboardApp, DashboardTokens } from "../types";
 
@@ -35,29 +34,7 @@ export const DashboardHeader = ({
 }: DashboardHeaderProps) => {
   const { i18n: i18nInstance, t } = useTranslation("dashboard");
   const [activeIcon, setActiveIcon] = useState<ActiveIcon>(null);
-  const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
-  const languageMenuRef = useRef<HTMLDivElement>(null);
   const isRTL = i18n.language === "ar";
-
-  useEffect(() => {
-    if (!isLanguageMenuOpen) {
-      return undefined;
-    }
-
-    const handleClick = (event: MouseEvent) => {
-      if (
-        languageMenuRef.current &&
-        event.target instanceof Node &&
-        !languageMenuRef.current.contains(event.target)
-      ) {
-        setIsLanguageMenuOpen(false);
-        setActiveIcon(null);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, [isLanguageMenuOpen]);
   const actionBarClass = useMemo(
     () =>
       `${tokens.cardBase} flex items-center gap-2 rounded-full px-5 py-2 backdrop-blur`,
@@ -119,13 +96,11 @@ export const DashboardHeader = ({
 
   const pageLabel = activeNavigationLabel ?? t(`apps.${activeApp.id}`);
 
-  const handleLanguageChange = (lang: string) => {
-    void i18nInstance.changeLanguage(lang);
-    setIsLanguageMenuOpen(false);
-    setActiveIcon(null);
+  const handleLanguageToggle = () => {
+    const currentLang = i18nInstance.resolvedLanguage ?? "en";
+    const newLang = currentLang === "en" ? "ar" : "en";
+    void i18nInstance.changeLanguage(newLang);
   };
-
-  const currentLanguage = supportedLanguages.find((lng) => lng === i18nInstance.resolvedLanguage) ?? supportedLanguages[0];
 
   return (
     <header className="relative z-50 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
@@ -196,47 +171,18 @@ export const DashboardHeader = ({
             />
           </button>
 
-          <div className="relative z-[9999]" ref={languageMenuRef}>
-            <button
-              type="button"
-              onClick={() => {
-                const newState = activeIcon === "language" ? null : "language";
-                setActiveIcon(newState);
-                setIsLanguageMenuOpen(newState === "language");
-              }}
-              className={getIconButtonClass("language")}
-              style={getIconButtonStyle("language")}
-              aria-label="Language"
-            >
-              <LanguageIcon 
-                className={`h-5 w-5 ${getIconColorClass("language")}`}
-                style={!tokens.isDark && activeIcon === "language" ? { color: primaryColor } : {}}
-              />
-            </button>
-            
-            {isLanguageMenuOpen && (
-              <div className={`absolute ${isRTL ? "left-0" : "right-0"} top-full mt-2 w-32 rounded-xl p-2 shadow-2xl backdrop-blur z-[9999] ${tokens.cardBase} border border-[var(--color-card-border)]`}>
-                {supportedLanguages.map((lang) => (
-                  <button
-                    key={lang}
-                    type="button"
-                    onClick={() => handleLanguageChange(lang)}
-                    className={`w-full text-start px-3 py-2 rounded-lg text-sm transition-colors mt-1 ${
-                      currentLanguage === lang
-                        ? tokens.isDark
-                          ? "bg-gray-900 text-white"
-                          : "bg-gray-200 text-gray-900"
-                        : tokens.isDark
-                        ? "text-white/70 hover:bg-[var(--color-card-bg)] hover:text-white"
-                        : "text-black hover:bg-gray-200"
-                    }`}
-                  >
-                    {lang === "en" ? "English" : "العربية"}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          <button
+            type="button"
+            onClick={handleLanguageToggle}
+            className={getIconButtonClass("language")}
+            style={getIconButtonStyle("language")}
+            aria-label="Toggle Language"
+          >
+            <LanguageIcon 
+              className={`h-5 w-5 ${getIconColorClass("language")}`}
+              style={!tokens.isDark && activeIcon === "language" ? { color: primaryColor } : {}}
+            />
+          </button>
 
           <img
             src={userAvatar}

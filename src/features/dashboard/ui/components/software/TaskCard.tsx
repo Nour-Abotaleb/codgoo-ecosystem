@@ -120,7 +120,7 @@ export const TaskCard = ({ task, tokens, onViewTask, showViewButton = true, cust
 
   return (
     <div
-      className={`${tokens.cardBase} rounded-2xl overflow-hidden ${tokens.isDark ? "border border-[var(--color-card-border)]" : ""}`}
+      className={`${tokens.cardBase} rounded-2xl overflow-hidden`}
     >
       {/* Top Section with Background Color */}
       <div className={`p-6 ${tokens.isDark ? "bg-gradient-to-br from-[#071FD7]/10 to-[#071FD7]/5" : "bg-gradient-to-br from-[#071FD7]/10 to-[#071FD7]/5"}`}>

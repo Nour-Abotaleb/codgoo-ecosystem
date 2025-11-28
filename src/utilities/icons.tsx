@@ -918,3 +918,47 @@ export const EmojiIcon = (props: IconProps) => (
   <path d="M15 11V10" stroke="black" stroke-linecap="round"/>
   </svg>
 );
+
+export const CloseIcon = (props: IconProps) => (
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+  <path d="M6.99935 1.16602C3.78518 1.16602 1.16602 3.78518 1.16602 6.99935C1.16602 10.2135 3.78518 12.8327 6.99935 12.8327C10.2135 12.8327 12.8327 10.2135 12.8327 6.99935C12.8327 3.78518 10.2135 1.16602 6.99935 1.16602ZM8.95935 8.34102C9.12852 8.51018 9.12852 8.79018 8.95935 8.95935C8.87185 9.04685 8.76102 9.08768 8.65018 9.08768C8.53935 9.08768 8.42852 9.04685 8.34102 8.95935L6.99935 7.61768L5.65768 8.95935C5.57018 9.04685 5.45935 9.08768 5.34852 9.08768C5.23768 9.08768 5.12685 9.04685 5.03935 8.95935C4.87018 8.79018 4.87018 8.51018 5.03935 8.34102L6.38102 6.99935L5.03935 5.65768C4.87018 5.48852 4.87018 5.20852 5.03935 5.03935C5.20852 4.87018 5.48852 4.87018 5.65768 5.03935L6.99935 6.38102L8.34102 5.03935C8.51018 4.87018 8.79018 4.87018 8.95935 5.03935C9.12852 5.20852 9.12852 5.48852 8.95935 5.65768L7.61768 6.99935L8.95935 8.34102Z" fill="#FF0000"/>
+  </svg>
+);
+
+export const RefreshIcon = (props: IconProps) => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+  <path d="M16.5 9C16.5 13.14 13.14 16.5 9 16.5C4.86 16.5 2.3325 12.33 2.3325 12.33M2.3325 12.33H5.7225M2.3325 12.33V16.08M1.5 9C1.5 4.86 4.83 1.5 9 1.5C14.0025 1.5 16.5 5.67 16.5 5.67M16.5 5.67V1.92M16.5 5.67H13.17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+);
+
+export const FilterIcon = (props: IconProps) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+  <path d="M20.7206 18.24L19.7806 17.3C20.2706 16.56 20.5606 15.67 20.5606 14.71C20.5606 12.11 18.4506 10 15.8506 10C13.2506 10 11.1406 12.11 11.1406 14.71C11.1406 17.31 13.2506 19.42 15.8506 19.42C16.8106 19.42 17.6906 19.13 18.4406 18.64L19.3806 19.58C19.5706 19.77 19.8106 19.86 20.0606 19.86C20.3106 19.86 20.5506 19.77 20.7406 19.58C21.0906 19.22 21.0906 18.62 20.7206 18.24Z" fill="currentColor"/>
+  <path d="M19.5799 4.02V6.24C19.5799 7.05 19.0799 8.06 18.5799 8.57L18.3999 8.73C18.2599 8.86 18.0499 8.89 17.8699 8.83C17.6699 8.76 17.4699 8.71 17.2699 8.66C16.8299 8.55 16.3599 8.5 15.8799 8.5C12.4299 8.5 9.62992 11.3 9.62992 14.75C9.62992 15.89 9.93992 17.01 10.5299 17.97C11.0299 18.81 11.7299 19.51 12.4899 19.98C12.7199 20.13 12.8099 20.45 12.6099 20.63C12.5399 20.69 12.4699 20.74 12.3999 20.79L10.9999 21.7C9.69992 22.51 7.90992 21.6 7.90992 19.98V14.63C7.90992 13.92 7.50992 13.01 7.10992 12.51L3.31992 8.47C2.81992 7.96 2.41992 7.05 2.41992 6.45V4.12C2.41992 2.91 3.31992 2 4.40992 2H17.5899C18.6799 2 19.5799 2.91 19.5799 4.02Z" fill="currentColor"/>
+  </svg>
+);
+
+export const DashboardAllProjectsIcon = (props: IconProps) => (
+  <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+<g clip-path="url(#clip0_1356_17418)">
+<mask id="mask0_1356_17418" maskUnits="userSpaceOnUse" x="0" y="0" width="44" height="44">
+<path d="M44 0H0V44H44V0Z" fill="white"/>
+</mask>
+<g mask="url(#mask0_1356_17418)">
+<path d="M3.66602 15.5837C3.66602 9.16699 7.33268 6.41699 12.8327 6.41699H31.166C36.666 6.41699 40.3327 9.16699 40.3327 15.5837V28.417C40.3327 34.8337 36.666 37.5837 31.166 37.5837H12.8327C7.33268 37.5837 3.66602 34.8337 3.66602 28.417V23.082" stroke="white" stroke-width="1.3" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M11 14.667V29.3337" stroke="white" stroke-width="1.3" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M16.5 14.667V22.0003" stroke="white" stroke-width="1.3" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M16.5 27.5V29.3333" stroke="white" stroke-width="1.3" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M27.5 14.667V16.5003" stroke="white" stroke-width="1.3" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M22 14.667V29.3337" stroke="white" stroke-width="1.3" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M27.5 22V29.3333" stroke="white" stroke-width="1.3" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M33 14.667V29.3337" stroke="white" stroke-width="1.3" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_1356_17418">
+<rect width="44" height="44" fill="white"/>
+</clipPath>
+</defs>
+</svg>
+);

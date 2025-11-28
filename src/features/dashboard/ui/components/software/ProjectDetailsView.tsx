@@ -181,7 +181,7 @@ export const ProjectDetailsView = ({
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {/* Progress Timeline */}
             <div
-              className={`${tokens.cardBase} rounded-2xl p-6 border border-[var(--color-card-border)]`}
+              className={`${tokens.cardBase} rounded-2xl p-6`}
             >
               <h3
                 className={`text-lg md:text-xl font-semibold mb-4 ${
@@ -221,7 +221,7 @@ export const ProjectDetailsView = ({
 
             {/* Activity & Notes */}
             <div
-              className={`${tokens.cardBase} rounded-2xl p-6 border border-[var(--color-card-border)]`}
+              className={`${tokens.cardBase} rounded-2xl p-6`}
             >
               <div className="flex items-center justify-between mb-4">
                 <h3
@@ -284,7 +284,7 @@ export const ProjectDetailsView = ({
 
       {activeTab !== "overview" && activeTab !== "tasks" && activeTab !== "invoices" && activeTab !== "attachments" && (
         <div
-          className={`${tokens.cardBase} rounded-2xl p-10 border border-[var(--color-card-border)]`}
+          className={`${tokens.cardBase} rounded-2xl p-10`}
         >
           <p className={`text-center ${tokens.subtleText}`}>
             {tabs.find((t) => t.id === activeTab)?.label} content coming soon...

@@ -135,7 +135,7 @@ const ManageNameserverCheckoutPanel = ({
   const formatPrice = (value: number) => `${value} SAR`;
 
   return (
-    <div className={`${tokens.cardBase} rounded-[32px] border border-[var(--color-card-border)] px-6 py-4`}>
+    <div className={`${tokens.cardBase} rounded-[32px] px-6 py-4`}>
       <div>
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between border-b border-dashed border-[var(--color-border-divider)] pb-6">
           <div className="flex items-center gap-4">
@@ -262,7 +262,7 @@ const ManageNameserversSearchPanel = ({
   ] as const;
 
   return (
-    <div className={`${tokens.cardBase} rounded-[28px] border border-[var(--color-card-border)] px-6 py-2 transition-colors`}>
+    <div className={`${tokens.cardBase} rounded-[28px] px-6 py-2 transition-colors`}>
       <div className="mt-4 flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
         <div className={`flex h-12 flex-1 items-center gap-3 rounded-full border ${tokens.divider} bg-[var(--color-search-bg)] px-4 text-[var(--color-search-text)] transition-colors`}>
           <SearchIcon className="h-5 w-5 text-[var(--color-search-placeholder)]" />

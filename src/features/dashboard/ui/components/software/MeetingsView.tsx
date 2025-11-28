@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from "react";
-import { PlusCircleIcon, SearchIcon, DotsSwitcher, MeetingsIcon, MeetingSummaryIcon, ArrowRightIcon, MeetingCalendarIcon, MeetingClockIcon, MeetingReasonIcon } from "@utilities/icons";
+import { PlusCircleIcon, SearchIcon, DotsSwitcher, MeetingsIcon, MeetingSummaryIcon, ArrowRightIcon, MeetingCalendarIcon, MeetingClockIcon, MeetingReasonIcon, CloseIcon, EditIcon } from "@utilities/icons";
 import type { DashboardTokens } from "../../types";
 
 type MeetingsViewProps = {
@@ -156,7 +156,7 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
             onChange={(e) => setSearchQuery(e.target.value)}
             className={`w-full pl-10 pr-4 py-2.5 rounded-full border transition-colors ${
               tokens.isDark
-                ? "bg-[var(--color-card-bg)] border-[var(--color-card-border)] text-white placeholder-white/50"
+                ? "bg-[var(--color-card-bg)] text-white placeholder-white/50"
                 : "bg-white border-[#E6E9FB] text-[#2B3674] placeholder-[#A3AED0]"
             } focus:outline-none focus:ring-1 focus:ring-[#071FD7]/20`}
           />
@@ -170,7 +170,7 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
               onChange={(e) => setStatusFilter(e.target.value as MeetingStatus | "All")}
               className={`appearance-none pl-4 pr-10 py-2.5 rounded-full border transition-colors cursor-pointer ${
                 tokens.isDark
-                  ? "bg-[var(--color-card-bg)] border-[var(--color-card-border)] text-white"
+                  ? "bg-[var(--color-card-bg)] text-white"
                   : "bg-white border-[#E6E9FB] text-[#2B3674]"
               } focus:outline-none focus:ring-1 focus:ring-[#071FD7]/20`}
             >
@@ -207,7 +207,7 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
         {filteredMeetings.map((meeting, index) => (
           <div key={meeting.id}>
             <div
-              className={`${tokens.cardBase} rounded-2xl border border-[var(--color-card-border)] overflow-hidden transition-colors`}
+              className={`${tokens.cardBase} rounded-2xl overflow-hidden transition-colors`}
             >
               {/* Top Section - Gradient Background */}
               <div className={`p-6 ${tokens.isDark ? "bg-gradient-to-br from-[#071FD7]/10 to-[#071FD7]/5" : "bg-[#F4F5FF]"}`}>
@@ -247,7 +247,7 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
                             </span>
                           </div>
                         </div>
-                        <div className="flex items-center gap-8">
+                        <div className="flex items-center gap-4">
                           <span
                             className={`inline-flex items-center justify-center px-3 py-2 rounded-full text-sm font-medium ${getStatusBadgeStyle(
                               meeting.status
@@ -256,75 +256,63 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
                             {meeting.status}
                           </span>
 
-                          {/* Ellipsis Menu */}
-                          <div
-                            className="relative flex-shrink-0"
-                            ref={(el) => {
-                              if (el) {
-                                menuRefs.current.set(meeting.id, el);
-                              } else {
-                                menuRefs.current.delete(meeting.id);
-                              }
-                            }}
-                          >
-                            <button
-                              type="button"
-                              onClick={() => toggleMenu(meeting.id)}
-                              className={`p-2 rounded-full transition-colors ${
-                                tokens.isDark ? "hover:bg-white/10" : "hover:bg-gray-100"
-                              }`}
-                              aria-label="Meeting options"
-                            >
-                              <DotsSwitcher
-                                className={`h-5 w-5 ${tokens.isDark ? "text-white/70" : "text-[#071FD7]"}`}
-                              />
-                            </button>
-
-                            {/* Dropdown Menu */}
-                            {openMenuId === meeting.id && (
-                              <div
-                                className={`absolute right-0 top-full mt-2 w-48 rounded-lg shadow-sm z-10 ${
-                                  tokens.isDark
-                                    ? "bg-[var(--color-card-bg)] border border-[var(--color-card-border)]"
-                                    : "bg-white border border-[#E6E9FB]"
-                                }`}
+                          {/* Action Icons */}
+                          <div className="relative flex-shrink-0">
+                            {meeting.status === "Completed" || meeting.status === "Canceled" ? (
+                              // Close Icon for Completed and Canceled
+                              <button
+                                type="button"
+                                className="flex h-9 w-9 items-center justify-center rounded-full transition-colors"
+                                style={{ backgroundColor: tokens.isDark ? "rgba(255, 77, 77, 0.1)" : "rgb(255, 229, 222)" }}
+                                aria-label={`Close ${meeting.title}`}
                               >
-                                <div className="py-1">
-                                  {meeting.status === "Canceled" ? (
-                                    <>
-                                      <button
-                                        type="button"
-                                        className={`w-full text-left px-4 py-2 text-sm transition-colors ${
-                                          tokens.isDark
-                                            ? "text-white/70 hover:bg-white/10"
-                                            : "text-[#2B3674] hover:bg-gray-100"
-                                        }`}
-                                      >
-                                        Reschedule
-                                      </button>
-                                      <button
-                                        type="button"
-                                        className={`w-full text-left px-4 py-2 text-sm transition-colors ${
-                                          tokens.isDark
-                                            ? "text-white/70 hover:bg-white/10"
-                                            : "text-[#2B3674] hover:bg-gray-100"
-                                        }`}
-                                      >
-                                        Send Update
-                                      </button>
-                                      <button
-                                        type="button"
-                                        className={`w-full text-left px-4 py-2 text-sm transition-colors ${
-                                          tokens.isDark
-                                            ? "text-red-400 hover:bg-white/10"
-                                            : "text-red-600 hover:bg-gray-100"
-                                        }`}
-                                      >
-                                        Delete Record
-                                      </button>
-                                    </>
-                                  ) : meeting.status === "Confirmed" ? (
-                                    <>
+                                <CloseIcon className="h-4 w-4" style={{ color: "#FF0000" }} />
+                              </button>
+                            ) : meeting.status === "Waiting" ? (
+                              // Edit Icon for Waiting
+                              <button
+                                type="button"
+                                className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${tokens.isDark ? tokens.buttonGhost : ""}`}
+                                style={tokens.isDark ? {} : { backgroundColor: "#E6E9FB" }}
+                                aria-label={`Edit ${meeting.title}`}
+                              >
+                                <EditIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: "#071FD7" }} />
+                              </button>
+                            ) : meeting.status === "Confirmed" ? (
+                              // DotsSwitcher with popup for Confirmed
+                              <div
+                                className="relative"
+                                ref={(el) => {
+                                  if (el) {
+                                    menuRefs.current.set(meeting.id, el);
+                                  } else {
+                                    menuRefs.current.delete(meeting.id);
+                                  }
+                                }}
+                              >
+                                <button
+                                  type="button"
+                                  onClick={() => toggleMenu(meeting.id)}
+                                  className={`p-2 rounded-full transition-colors ${
+                                    tokens.isDark ? "hover:bg-white/10" : "hover:bg-gray-100"
+                                  }`}
+                                  aria-label="Meeting options"
+                                >
+                                  <DotsSwitcher
+                                    className={`h-5 w-5 ${tokens.isDark ? "text-white/70" : "text-[#071FD7]"}`}
+                                  />
+                                </button>
+
+                                {/* Dropdown Menu */}
+                                {openMenuId === meeting.id && (
+                                  <div
+                                    className={`absolute right-0 top-full mt-2 w-48 rounded-lg shadow-sm z-10 ${
+                                      tokens.isDark
+                                        ? "bg-[var(--color-card-bg)]"
+                                        : "bg-white border border-[#E6E9FB]"
+                                    }`}
+                                  >
+                                    <div className="py-1">
                                       <button
                                         type="button"
                                         className={`w-full text-left px-4 py-2 text-sm transition-colors ${
@@ -345,44 +333,11 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
                                       >
                                         Cancel Meeting
                                       </button>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <button
-                                        type="button"
-                                        className={`w-full text-left px-4 py-2 text-sm transition-colors ${
-                                          tokens.isDark
-                                            ? "text-white/70 hover:bg-white/10"
-                                            : "text-[#2B3674] hover:bg-gray-100"
-                                        }`}
-                                      >
-                                        Reschedule
-                                      </button>
-                                      <button
-                                        type="button"
-                                        className={`w-full text-left px-4 py-2 text-sm transition-colors ${
-                                          tokens.isDark
-                                            ? "text-white/70 hover:bg-white/10"
-                                            : "text-[#2B3674] hover:bg-gray-100"
-                                        }`}
-                                      >
-                                        Send Update
-                                      </button>
-                                      <button
-                                        type="button"
-                                        className={`w-full text-left px-4 py-2 text-sm transition-colors ${
-                                          tokens.isDark
-                                            ? "text-red-400 hover:bg-white/10"
-                                            : "text-red-600 hover:bg-gray-100"
-                                        }`}
-                                      >
-                                        Delete Record
-                                      </button>
-                                    </>
-                                  )}
-                                </div>
+                                    </div>
+                                  </div>
+                                )}
                               </div>
-                            )}
+                            ) : null}
                           </div>
                         </div>
                       </div>
@@ -540,7 +495,7 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
 
         {filteredMeetings.length === 0 && (
           <div
-            className={`${tokens.cardBase} rounded-2xl border border-[var(--color-card-border)] p-10 text-center`}
+            className={`${tokens.cardBase} rounded-2xl p-10 text-center`}
           >
             <p className={`text-lg ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"}`}>
               No meetings found matching your criteria.

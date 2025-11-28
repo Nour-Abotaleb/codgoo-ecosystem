@@ -24,6 +24,9 @@ import { ProjectDetailsView } from "./components/software/ProjectDetailsView";
 import { TaskDetailView } from "./components/software/TaskDetailView";
 import { tasksData } from "./components/software/TasksView";
 import { MeetingsView } from "./components/software/MeetingsView";
+import { SettingsView } from "./components/software/SettingsView";
+import { ProductsView } from "./components/software/ProductsView";
+import { ProductDetailsView } from "./components/software/ProductDetailsView";
 import { AppDashboardOverview } from "./components/app/AppDashboardOverview";
 import { MarketplaceView, marketplaceItems } from "./components/app/MarketplaceView";
 import { MarketplaceDetailView } from "./components/app/MarketplaceDetailView";
@@ -55,6 +58,7 @@ export const DashboardPage = () => {
   );
   const manageMatch = useMatch("/dashboard/manage-server/:serviceId");
   const manageDomainMatch = useMatch("/dashboard/manage-domain/:domainId");
+  const productDetailsMatch = useMatch("/dashboard/products/:productId");
   const manageNameserversMatch = useMatch("/dashboard/manage-nameservers");
   const manageWebsiteMatch = useMatch("/dashboard/manage-website/:websiteId");
   const manageHostMatch = useMatch("/dashboard/manage-host/:hostId");
@@ -586,6 +590,18 @@ export const DashboardPage = () => {
             )
           ) : activeNavId === "meetings" && activeApp.id === "software" ? (
             <MeetingsView tokens={tokens} />
+          ) : activeNavId === "products" && activeApp.id === "software" ? (
+            productDetailsMatch ? (
+              <ProductDetailsView
+                productId={productDetailsMatch.params.productId ?? ""}
+                tokens={tokens}
+                onBack={() => navigate("/dashboard/products")}
+              />
+            ) : (
+              <ProductsView tokens={tokens} />
+            )
+          ) : activeNavId === "settings" && activeApp.id === "software" ? (
+            <SettingsView tokens={tokens} />
           ) : (
             <div className={`${tokens.cardBase} rounded-3xl p-10`}>
               <h2 className="text-2xl font-semibold">

@@ -113,7 +113,7 @@ export const ProjectCard = ({
     : 0;
 
   return (
-    <div className={`${tokens.cardBase} rounded-2xl p-6 border border-[var(--color-card-border)]`}>
+    <div className={`${tokens.cardBase} rounded-2xl p-6`}>
       <div className="flex flex-col gap-4">
         {/* Title and Description */}
         <div className="flex flex-col gap-2">

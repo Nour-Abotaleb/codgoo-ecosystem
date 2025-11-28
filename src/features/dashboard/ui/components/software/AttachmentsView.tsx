@@ -111,7 +111,7 @@ export const AttachmentsView = ({ tokens }: AttachmentsViewProps) => {
           return (
             <div
               key={attachment.id}
-              className={`${tokens.cardBase} rounded-2xl border border-[var(--color-card-border)] overflow-hidden transition-colors`}
+              className={`${tokens.cardBase} rounded-2xl overflow-hidden transition-colors`}
             >
               {/* Preview Area */}
               <div className="h-48 bg-gradient-to-br from-[#071FD7]/10 to-[#071FD7]/5 flex items-center justify-center relative">

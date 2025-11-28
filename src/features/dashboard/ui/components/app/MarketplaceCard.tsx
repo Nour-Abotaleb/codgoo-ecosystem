@@ -1,3 +1,4 @@
+import { i18n } from "@shared/config/i18n";
 import { ArrowRight } from "@utilities/icons";
 import type { DashboardTokens } from "../../types";
 
@@ -21,6 +22,7 @@ type MarketplaceCardProps = {
 };
 
 export const MarketplaceCard = ({ item, tokens, onClick, onLearnMore }: MarketplaceCardProps) => {
+  const isRTL = i18n.language === "ar";
   // const priceTypeColors = {
   //   Free: { bg: "#27B43E", text: "#FFFFFF" },
   //   Paid: { bg: "#FF8A0E", text: "#FFFFFF" }
@@ -101,7 +103,7 @@ export const MarketplaceCard = ({ item, tokens, onClick, onLearnMore }: Marketpl
           }}
         >
           <span>Learn more</span>
-          <ArrowRight className="h-4 w-4" />
+          <ArrowRight className={`h-4 w-4 ${isRTL ? "rotate-180" : ""}`} />
         </button>
       </div>
     </div>

@@ -134,7 +134,7 @@ export const MarketplaceView = ({ tokens, onItemClick }: MarketplaceViewProps) =
             onChange={(e) => setSearchQuery(e.target.value)}
             className={`w-full pl-10 pr-4 py-2.5 rounded-full border transition-colors ${
               tokens.isDark
-                ? "bg-[var(--color-card-bg)] border-[var(--color-card-border)] text-white placeholder-white/50"
+                ? "bg-[var(--color-card-bg)] text-white placeholder-white/50"
                 : "bg-white border-[#E6E9FB] text-[#2B3674] placeholder-[#A3AED0]"
             } focus:outline-none focus:ring-1 focus:ring-[#071FD7]/20`}
           />
@@ -179,7 +179,7 @@ export const MarketplaceView = ({ tokens, onItemClick }: MarketplaceViewProps) =
       {/* Empty State */}
       {filteredItems.length === 0 && (
         <div
-          className={`${tokens.cardBase} rounded-2xl border border-[var(--color-card-border)] p-10 text-center`}
+          className={`${tokens.cardBase} rounded-2xl p-10 text-center`}
         >
           <p className={`text-lg ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"}`}>
             No items found matching your criteria.

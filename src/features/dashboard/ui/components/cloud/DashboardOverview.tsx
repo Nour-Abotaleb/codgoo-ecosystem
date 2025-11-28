@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { i18n } from "@shared/config/i18n";
 import heroWave from "@assets/images/cloud/bg.png";
 import widgetBg from "@assets/images/cloud/widget.png";
 import widget3Bg from "@assets/images/cloud/widget3.png";
@@ -79,7 +80,8 @@ export const DashboardOverview = ({
   const [activeTicketPage, setActiveTicketPage] = useState(0);
   const [domainSearchQuery, setDomainSearchQuery] = useState("");
   const [imageLoaded, setImageLoaded] = useState(false);
-  const cardClass = `${tokens.cardBase} rounded-[20px] border border-[var(--color-card-border)] px-6 py-4 transition-colors`;
+  const isRTL = i18n.language === "ar";
+  const cardClass = `${tokens.cardBase} rounded-[20px] px-6 py-4 transition-colors`;
   const heroSlides = createHeroSlides(dataset.hero);
   const currentSlide = heroSlides[activeSlide];
   const heroImage = dataset.hero.backgroundImage ?? heroWave;
@@ -187,7 +189,7 @@ export const DashboardOverview = ({
                 className="inline-flex items-center gap-1 rounded-full border border-white bg-transparent px-5 md:px-6 py-2.5 md:py-3 text-sm text-white transition hover:opacity-90 whitespace-nowrap"
               >
                 <span>{currentSlide.priceLabel} {currentSlide.price}</span>
-                <ArrowRight className="h-4 w-4 flex-shrink-0 [&_path]:stroke-white" />
+                <ArrowRight className={`h-4 w-4 flex-shrink-0 [&_path]:stroke-white ${isRTL ? "rotate-180" : ""}`} />
               </button>
             </div>
           </div>
@@ -241,7 +243,7 @@ export const DashboardOverview = ({
               Your Active Products/Services
             </h3>
             <button type="button" className="px-1 text-sm font-bold text-[#A3AED0] flex items-center gap-1 cursor-pointer">
-              See All <ArrowRight className="h-4 w-4 [&_path]:stroke-[#A3AED0]" />
+              See All <ArrowRight className={`h-4 w-4 [&_path]:stroke-[#A3AED0] ${isRTL ? "rotate-180" : ""}`} />
             </button>
           </div>
           <div className="mt-4 flex flex-col gap-4">
@@ -357,7 +359,7 @@ export const DashboardOverview = ({
                 />
               </div>
               <button type="button" className="px-1 text-sm font-bold text-[#A3AED0] flex items-center gap-1 cursor-pointer">
-                See All <ArrowRight className="h-4 w-4 [&_path]:stroke-[#A3AED0]" />
+                See All <ArrowRight className={`h-4 w-4 [&_path]:stroke-[#A3AED0] ${isRTL ? "rotate-180" : ""}`} />
               </button>
             </div>
           </div>
@@ -433,7 +435,7 @@ export const DashboardOverview = ({
           <div className="flex items-center justify-between">
             <h3 className={`text-lg lg:text-xl font-bold ${tokens.isDark ? "text-[var(--color-page-text)]" : "text-[#2B3674]"}`}>Managed Sites</h3>
             <button type="button" className="px-1 text-sm font-bold text-[#A3AED0] flex items-center gap-1 cursor-pointer">
-              See All <ArrowRight className="h-4 w-4 [&_path]:stroke-[#A3AED0]" />
+              See All <ArrowRight className={`h-4 w-4 [&_path]:stroke-[#A3AED0] ${isRTL ? "rotate-180" : ""}`} />
             </button>
           </div>
           <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -461,6 +463,10 @@ export const DashboardOverview = ({
                 <div className="flex items-center justify-end cursor-pointer w-full pt-4 pb-2" onClick={() => navigate(`/dashboard/manage-website/${site.id}`)}>
                   <button
                     type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/dashboard/manage-website/${site.id}`);
+                    }}
                     className={`${tokens.isDark ? "bg-white" : "bg-white"} transition text-[#584ABC] w-[85%] flex justify-center cursor-pointer flex items-center gap-2 rounded-full px-8 py-2.5 text-sm md:text-base font-semibold`}
                   >
                     Manage Site
@@ -480,7 +486,7 @@ export const DashboardOverview = ({
           <div className="flex items-center justify-between">
             <h3 className={`text-lg lg:text-xl font-bold ${tokens.isDark ? "text-[var(--color-page-text)]" : "text-[#2B3674]"}`}>Recent Support Tickets</h3>
             <button type="button" className="px-1 text-sm font-bold text-[#A3AED0] flex items-center gap-1 cursor-pointer">
-              See All <ArrowRight className="h-4 w-4 [&_path]:stroke-[#A3AED0]" />
+              See All <ArrowRight className={`h-4 w-4 [&_path]:stroke-[#A3AED0] ${isRTL ? "rotate-180" : ""}`} />
             </button>
           </div>
           <div className="mt-4 space-y-4">
@@ -546,7 +552,7 @@ export const DashboardOverview = ({
           <div className="flex items-center justify-between">
             <h3 className={`text-lg lg:text-xl font-bold ${tokens.isDark ? "text-[var(--color-page-text)]" : "text-[#2B3674]"}`}>Recent News</h3>
             <button type="button" className="px-1 text-sm font-bold text-[#A3AED0] flex items-center gap-1 cursor-pointer">
-              See All <ArrowRight className="h-4 w-4 [&_path]:stroke-[#A3AED0]" />
+              See All <ArrowRight className={`h-4 w-4 [&_path]:stroke-[#A3AED0] ${isRTL ? "rotate-180" : ""}`} />
             </button>
           </div>
           <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">

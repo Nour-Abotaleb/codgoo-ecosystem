@@ -114,15 +114,19 @@ const WebsiteCard = ({
       <div className="flex items-center justify-end cursor-pointer w-full pt-4 pb-2" onClick={() => navigate(`/dashboard/manage-website/${site.id}`)}>
         <button
           type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/dashboard/manage-website/${site.id}`);
+          }}
           className={`${tokens.isDark ? "bg-white" : "bg-white"} transition text-[#584ABC] w-[90%] flex justify-center cursor-pointer flex items-center gap-2 rounded-full px-8 py-3 text-sm md:text-base font-semibold`}
         >
           Dashboard
         </button>
         <div className={`w-11 h-11 bg-white rounded-full flex items-center justify-center text-center -ms-2 transition ${tokens.isDark ? "bg-white" : "bg-white"}`}>
-            <ArrowUpIcon className="w-6 h-6 p-1 bg-gradient-to-b from-[#8A72FC] to-[#4318FF] rounded-full" />
-        </div>
+          <ArrowUpIcon className="w-6 h-6 p-1 bg-gradient-to-b from-[#8A72FC] to-[#4318FF] rounded-full" />
         </div>
       </div>
+    </div>
   );
 };
 
@@ -255,7 +259,7 @@ export const WebsitesView = ({ sites, tokens }: WebsitesViewProps) => {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className={`${tokens.cardBase} rounded-[28px] border border-[var(--color-card-border)] py-4 px-6 transition-colors`}>
+      <div className={`${tokens.cardBase} rounded-[28px] py-4 px-6 transition-colors`}>
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
             <h2 className={`text-2xl font-semibold ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>

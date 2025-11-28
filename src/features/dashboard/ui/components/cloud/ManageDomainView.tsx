@@ -71,7 +71,7 @@ export const ManageDomainView = ({ tokens }: ManageDomainViewProps) => {
 
   if (!domain || dataset.domains.length === 0) {
     return (
-      <div className={`${tokens.cardBase} rounded-[32px] border border-[var(--color-card-border)] px-6 py-4 transition-colors`}>
+      <div className={`${tokens.cardBase} rounded-[32px] px-6 py-4 transition-colors`}>
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <h1 className="mt-6 text-3xl font-semibold tracking-tight lg:text-4xl">

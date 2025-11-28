@@ -166,8 +166,15 @@ export const DashboardSidebar = ({
             >
               <ul className="space-y-2">
                 {apps.map((app) => {
-                  const isActive = app.id === activeAppId;
-                  const isDefault = app.id === defaultDashboard;
+                  // Map to correct dashboard based on label
+                  const targetAppId = app.id === "cloud"
+                    ? "cloud"  // "Codgoo App" -> opens cloud dashboard
+                    : app.id === "app"
+                    ? "software"  // "Codgoo Software" -> opens software dashboard
+                    : "app";  // "Codgoo App" -> opens app dashboard
+                  
+                  const isActive = targetAppId === activeAppId;
+                  const isDefault = targetAppId === defaultDashboard;
 
                   return (
                     <li key={app.id}>
@@ -177,28 +184,37 @@ export const DashboardSidebar = ({
                         <button
                           type="button"
                           onClick={() => {
-                            onSelectApp(app.id);
+                            onSelectApp(targetAppId);
                             setSwitcherOpen(false);
                           }}
-                          className="flex flex-1 items-center cursor-pointer"
+                          className="flex flex-1 items-center gap-2 cursor-pointer"
                         >
                           <img
                             src={
-                              tokens.isDark
-                                ? dashboardAppLogos[app.id] ?? dashboardAppLogos.cloud
-                                : dashboardAppLogosLight[app.id] ?? dashboardAppLogosLight.cloud
+                              app.id === "cloud"
+                                ? "/logo-cloud.svg"
+                                : app.id === "app"
+                                ? "/logo-software.svg"
+                                : "/logo-app.svg"
                             }
                             alt={`${app.id} logo`}
                             className="h-6 w-auto object-contain"
                             fetchPriority="high"
                           />
+                          <span className="text-sm font-medium">
+                            {app.id === "cloud"
+                              ? "Codgoo App"
+                              : app.id === "app"
+                              ? "Codgoo Software"
+                              : "Codgoo App"}
+                          </span>
                         </button>
                         <button
                           type="button"
                           onClick={(e) => {
                             e.stopPropagation();
-                            setDefaultDashboard(app.id);
-                            setDefaultDashboardState(app.id);
+                            setDefaultDashboard(targetAppId);
+                            setDefaultDashboardState(targetAppId);
                           }}
                           className={`ml-2 flex items-center justify-center rounded-full p-1.5 transition-colors ${
                             isDefault
@@ -211,11 +227,7 @@ export const DashboardSidebar = ({
                           }`}
                           title="Set as default dashboard"
                         >
-                          {isDefault ? (
-                            <CheckIcon className="h-4 w-4" />
-                          ) : (
-                            <SettingsIcon className="h-4 w-4" />
-                          )}
+                          <CheckIcon className={`h-4 w-4 ${isDefault ? "" : "opacity-50"}`} />
                         </button>
                       </div>
                     </li>
@@ -236,7 +248,7 @@ export const DashboardSidebar = ({
             ? navActiveColorClass
             : `${navIdleColorClass} group-hover:${hoverColorClass}`;
           const labelColorClass = isActive
-            ? `font-bold ${navActiveColorClass}`
+            ? `font-medium ${navActiveColorClass}`
             : `font-light ${navIdleColorClass} group-hover:${hoverColorClass}`;
 
           return (

@@ -312,7 +312,7 @@ export const TasksView = ({
 
       {/* Milestone Section with Tasks - White Background */}
       {project && (
-        <div className={`${tokens.isDark ? tokens.cardBase : "bg-white"} rounded-2xl p-6 flex flex-col gap-6 border border-[var(--color-card-border)]`}>
+        <div className={`${tokens.isDark ? tokens.cardBase : "bg-white"} rounded-2xl p-6 flex flex-col gap-6`}>
           {/* Milestone Tabs */}
           <div className="flex gap-4 overflow-x-auto">
             {milestoneTabs.map((tab, index) => (
@@ -419,7 +419,7 @@ export const TasksView = ({
 
       {/* Tasks Section with Search - When no project (fallback) */}
       {!project && (
-        <div className={`${tokens.cardBase} rounded-2xl border border-[var(--color-card-border)] px-6 py-4`}>
+        <div className={`${tokens.cardBase} rounded-2xl px-6 py-4`}>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-4">
             <h2 className={`text-lg md:text-xl font-semibold ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
               Tasks

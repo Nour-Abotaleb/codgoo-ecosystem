@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { i18n } from "@shared/config/i18n";
 
 import {
   SettingsIcon,
@@ -117,11 +118,12 @@ export const ManageHostView = ({ hostId: _hostId, tokens }: ManageHostViewProps)
     []
   );
 
+  const isRTL = i18n.language === "ar";
   const cardClass =
-    "rounded-[20px] border border-[var(--color-card-border)] p-4 transition-colors";
+    "rounded-[20px] p-4 transition-colors";
   const summaryCardClass = `${tokens.isDark ? "bg-[var(--color-table-row-bg)]" : "bg-[#F4F4FF]"} text-[var(--color-card-text)] rounded-2xl p-6 transition-colors`;
   const usageCardClass =
-    "rounded-[20px] border border-[var(--color-card-border)] p-6 transition-colors";
+    "rounded-[20px] p-6 transition-colors";
   const labelClass = `text-base font-regular text-[#718EBF]`;
   const sectionTitleClass = "text-lg md:text-xl lg:text-2xl font-semibold";
   const statusBadgeClass =
@@ -218,7 +220,7 @@ export const ManageHostView = ({ hostId: _hostId, tokens }: ManageHostViewProps)
                   <span
                     className={`inline-flex h-8 w-8 items-center justify-center rounded-full`}
                   >
-                    <ArrowRightIcon className={`h-4 w-4 md:h-5 md:w-5 ${tokens.isDark ? "" : "[&_path]:stroke-[#584ABC]"}`} />
+                    <ArrowRightIcon className={`h-4 w-4 md:h-5 md:w-5 ${tokens.isDark ? "" : "[&_path]:stroke-[#584ABC]"} ${isRTL ? "rotate-180" : ""}`} />
                   </span>
                 ) : null}
               </div>

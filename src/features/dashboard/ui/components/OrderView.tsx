@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { i18n } from "@shared/config/i18n";
 import { DiamondIcon, ArrowRight } from "@utilities/icons";
 import type { DashboardTokens } from "../types";
 
@@ -85,6 +86,7 @@ const serviceTabs: { id: ServiceTab; label: string }[] = [
 ];
 
 export const OrderView = ({ tokens }: OrderViewProps) => {
+  const isRTL = i18n.language === "ar";
   const [activeTab, setActiveTab] = useState<ServiceTab>("domains");
 
   const tabButtonClass = (tabId: ServiceTab) => {
@@ -159,7 +161,7 @@ export const OrderView = ({ tokens }: OrderViewProps) => {
                 >
                   View All
                   <ArrowRight
-                    className="h-4 w-4 md:h-5 md:w-5" 
+                    className={`h-4 w-4 md:h-5 md:w-5 ${isRTL ? "rotate-180" : ""}`}
                     style={{ stroke: tokens.isDark ? "white" : "#584ABC" }}
                   />
                 </button>

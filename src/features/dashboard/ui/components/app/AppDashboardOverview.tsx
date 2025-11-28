@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { i18n } from "@shared/config/i18n";
 import { ArrowRight, SettingsIcon, ProductIcon, DiamondIcon, ApplicationIcon, RevenueIcon, BackupIcon, ChartIcon, ClockIcon, ArrowUpIcon } from "@utilities/icons";
 import appWidget from "@assets/images/app/widget.png";
 import mobileImage from "@assets/images/app/mobile.png";
@@ -224,7 +225,8 @@ export const AppDashboardOverview = ({
   onNavigateToMarketplace
 }: AppDashboardOverviewProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
-  const cardClass = `${tokens.cardBase} rounded-[20px] border border-[var(--color-card-border)] px-6 py-4 transition-colors`;
+  const isRTL = i18n.language === "ar";
+  const cardClass = `${tokens.cardBase} rounded-[20px] px-6 py-4 transition-colors`;
   const primaryColor = "#0F6773";
   const bgColor = "#E7F0F1";
 
@@ -299,7 +301,7 @@ export const AppDashboardOverview = ({
               className="inline-flex items-center gap-1 w-fit rounded-full border border-white bg-transparent px-5 md:px-6 py-2.5 text-sm text-white transition hover:opacity-90 whitespace-nowrap mt-6"
             >
               <span>{hero.ctaLabel}</span>
-              <ArrowRight className="h-4 w-4 flex-shrink-0 [&_path]:stroke-white" />
+              <ArrowRight className={`h-4 w-4 flex-shrink-0 [&_path]:stroke-white ${isRTL ? "rotate-180" : ""}`} />
             </button>
           </div>
         </div>
@@ -348,7 +350,7 @@ export const AppDashboardOverview = ({
               className="px-1 text-sm font-bold flex items-center gap-1 cursor-pointer"
               style={{ color: "#A3AED0" }}
             >
-              See All <ArrowRight className="h-4 w-4" style={{ stroke: "#A3AED0" }} />
+              See All <ArrowRight className={`h-4 w-4 ${isRTL ? "rotate-180" : ""}`} style={{ stroke: "#A3AED0" }} />
             </button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -425,7 +427,7 @@ export const AppDashboardOverview = ({
               className="px-1 text-sm font-bold flex items-center gap-1 cursor-pointer"
               style={{ color: "#A3AED0" }}
             >
-              See All <ArrowRight className="h-4 w-4" style={{ stroke: "#A3AED0" }} />
+              See All <ArrowRight className={`h-4 w-4 ${isRTL ? "rotate-180" : ""}`} style={{ stroke: "#A3AED0" }} />
             </button>
           </div>
           <div className="mt-4 flex flex-col gap-4">
@@ -519,7 +521,7 @@ export const AppDashboardOverview = ({
               className="px-1 text-sm font-bold flex items-center gap-1 cursor-pointer"
               style={{ color: "#A3AED0" }}
             >
-              See All <ArrowRight className="h-4 w-4" style={{ stroke: "#A3AED0" }} />
+              See All <ArrowRight className={`h-4 w-4 ${isRTL ? "rotate-180" : ""}`} style={{ stroke: "#A3AED0" }} />
             </button>
           </div>
           <div className="space-y-4">

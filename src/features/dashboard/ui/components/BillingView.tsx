@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { SearchIcon, UnpaidIcon, PendingIcon, ActiveIcon, DeleteIcon, PayAllIcon, DownloadIcon } from "@utilities/icons";
 import type { DashboardTokens, DashboardAppId } from "../types";
+import { SoftwareStatisticsCards, SoftwareBillingView } from "./software/SoftwareBillingView";
 
 type BillingViewProps = {
   readonly tokens: DashboardTokens;
@@ -613,7 +614,7 @@ const QuotesTable = ({ tokens, searchQuery, activeAppId }: { readonly tokens: Da
 const MassPayment = ({ tokens, activeAppId }: { readonly tokens: DashboardTokens; readonly activeAppId: DashboardAppId }) => {
   const appColors = getAppColors(activeAppId, tokens.isDark);
   return (
-    <div className={`${tokens.cardBase} rounded-[28px] border border-[var(--color-card-border)] p-8 transition-colors`}>
+    <div className={`${tokens.cardBase} rounded-[28px] p-8 transition-colors`}>
       <h3 className="text-2xl font-semibold mb-4">Mass Payment</h3>
       <p className={`text-sm ${tokens.subtleText} mb-6`}>
         Pay multiple invoices at once using this feature. Select the invoices you want to pay and proceed with a single payment.
@@ -637,7 +638,7 @@ const MassPayment = ({ tokens, activeAppId }: { readonly tokens: DashboardTokens
 const AddFunds = ({ tokens, activeAppId }: { readonly tokens: DashboardTokens; readonly activeAppId: DashboardAppId }) => {
   const appColors = getAppColors(activeAppId, tokens.isDark);
   return (
-    <div className={`${tokens.cardBase} rounded-[28px] border border-[var(--color-card-border)] p-8 transition-colors`}>
+    <div className={`${tokens.cardBase} rounded-[28px] p-8 transition-colors`}>
       <h3 className="text-2xl font-semibold mb-4">Add Funds</h3>
       <p className={`text-sm ${tokens.subtleText} mb-6`}>
         Add funds to your account balance to pay for invoices automatically or use for future purchases.
@@ -723,8 +724,21 @@ export const BillingView = ({ tokens, activeAppId }: BillingViewProps) => {
     }
   };
 
+  // For software, show the card-based billing view directly without tabs
+  if (activeAppId === "software") {
+    return (
+      <>
+        <SoftwareStatisticsCards tokens={tokens} />
+        <div className={`${tokens.cardBase} rounded-[28px] p-6 transition-colors`}>
+          <SoftwareBillingView tokens={tokens} searchQuery={searchQuery} onSearchChange={setSearchQuery} />
+        </div>
+      </>
+    );
+  }
+
+  // For cloud and app, show the tabbed interface
   return (
-    <div className={`${tokens.cardBase} rounded-[28px] border border-[var(--color-card-border)] px-6 py-4 transition-colors`}>
+    <div className={`${tokens.cardBase} rounded-[28px] px-6 py-4 transition-colors`}>
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           {/* <h2 className={`text-2xl font-semibold md:text-3xl ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>

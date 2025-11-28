@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useMemo } from "react";
+import { i18n } from "@shared/config/i18n";
 
 import {
   KeyIcon,
@@ -69,8 +70,10 @@ const CircularProgress = ({ percentage, size = 120, isDark = false }: { percenta
 };
 
 export const ManageWebsiteView = ({ tokens }: ManageWebsiteViewProps) => {
+  const isRTL = i18n.language === "ar";
   const { websiteId } = useParams<{ websiteId: string }>();
-  const activeAppId = dashboardApps[0].id;
+  // Websites are only available in cloud dashboard
+  const activeAppId = dashboardApps.find(app => app.id === "cloud")?.id ?? dashboardApps[0].id;
   const dataset = dashboardContent[activeAppId];
 
   const website = useMemo(() => {
@@ -123,7 +126,7 @@ export const ManageWebsiteView = ({ tokens }: ManageWebsiteViewProps) => {
 
   if (!website || dataset.sites.length === 0) {
     return (
-      <div className={`${tokens.cardBase} rounded-[32px] border border-[var(--color-card-border)] p-6 shadow-sm transition-colors lg:p-8`}>
+      <div className={`${tokens.cardBase} rounded-[32px] p-6 shadow-sm transition-colors lg:p-8`}>
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <h1 className="mt-6 text-3xl font-semibold tracking-tight lg:text-4xl">
@@ -142,10 +145,10 @@ export const ManageWebsiteView = ({ tokens }: ManageWebsiteViewProps) => {
   const statusDotClass = "bg-[#73F593]";
 
   const cardClass =
-    "rounded-[20px] border border-[var(--color-card-border)] p-4 transition-colors";
+    "rounded-[20px] p-4 transition-colors";
   const summaryCardClass = `${tokens.isDark ? "bg-[var(--color-table-row-bg)]" : "bg-[#F4F4FF]"} text-[var(--color-card-text)] rounded-2xl p-6 transition-colors`;
   const usageCardClass =
-    "rounded-[20px] border border-[var(--color-card-border)] p-6 transition-colors";
+    "rounded-[20px] p-6 transition-colors";
   const labelClass = `text-base font-regular text-[#718EBF]`;
   const statusBadgeClass =
     "inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium";
@@ -222,7 +225,7 @@ export const ManageWebsiteView = ({ tokens }: ManageWebsiteViewProps) => {
                   <span
                     className={`inline-flex h-8 w-8 items-center justify-center rounded-full`}
                   >
-                    <ArrowRightIcon className={`h-4 w-4 md:h-5 md:w-5 ${tokens.isDark ? "" : "[&_path]:stroke-[#584ABC]"}`} />
+                    <ArrowRightIcon className={`h-4 w-4 md:h-5 md:w-5 ${tokens.isDark ? "" : "[&_path]:stroke-[#584ABC]"} ${isRTL ? "rotate-180" : ""}`} />
                   </span>
                 ) : null}
               </div>
@@ -234,7 +237,7 @@ export const ManageWebsiteView = ({ tokens }: ManageWebsiteViewProps) => {
       {/* PageSpeed Insights and Resource Usage */}
       <div className="grid gap-4 lg:grid-cols-2">
         {/* PageSpeed Insights */}
-        <div className={`${tokens.cardBase} rounded-[28px] border border-[var(--color-card-border)] px-6 py-4`}>
+        <div className={`${tokens.cardBase} rounded-[28px] px-6 py-4`}>
           <div className="flex items-center gap-3 mb-6">
             <span className={`flex h-10 w-10 items-center justify-center rounded-full ${
               tokens.isDark ? "bg-white/10" : "bg-[#E6E3FF]"
@@ -339,7 +342,7 @@ export const ManageWebsiteView = ({ tokens }: ManageWebsiteViewProps) => {
         </div>
 
         {/* Website Status */}
-        <div className={`${tokens.cardBase} rounded-[28px] border border-[var(--color-card-border)] p-6 flex items-center justify-center min-h-full`}>
+        <div className={`${tokens.cardBase} rounded-[28px] p-6 flex items-center justify-center min-h-full`}>
           <div className="flex flex-col items-center justify-center gap-4 text-center">
             <div className="flex h-16 w-16 lg:h-18 lg:w-18 items-center justify-center">
               <SuccessIcon className="" />
