@@ -51,6 +51,7 @@ export const TaskDetailView = ({ task, tokens }: TaskDetailViewProps) => {
   const [activeTab, setActiveTab] = useState<ScreenTab>("completed");
   const [isDiscussionsModalOpen, setIsDiscussionsModalOpen] = useState(false);
   const [selectedDiscussion, setSelectedDiscussion] = useState<DiscussionItem | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const filteredScreens = useMemo(() => {
     if (activeTab === "completed") {
@@ -157,7 +158,16 @@ export const TaskDetailView = ({ task, tokens }: TaskDetailViewProps) => {
               className={`${tokens.cardBase} rounded-lg overflow-hidden group cursor-pointer transition-transform ${tokens.isDark ? "" : "!bg-[#F4F5FF]"} p-4`}
             >
               {/* Screen Image */}
-              <div className={`relative ${tokens.isDark ? "bg-[#1A1D29]" : "bg-[#E9ECFF]"} overflow-hidden rounded-lg group/image`}>
+              <div 
+                className={`relative ${tokens.isDark ? "bg-[#1A1D29]" : "bg-[#E9ECFF]"} overflow-hidden rounded-lg group/image ${
+                  screen.status === "completed" && screen.image ? "cursor-pointer" : ""
+                }`}
+                onClick={() => {
+                  if (screen.status === "completed" && screen.image) {
+                    setPreviewImage(screen.image);
+                  }
+                }}
+              >
                 {screen.image ? (
                   <>
                     <img
@@ -207,7 +217,9 @@ export const TaskDetailView = ({ task, tokens }: TaskDetailViewProps) => {
                 )}
                 {/* Overlay - Only for completed screens with hover, static for in-progress */}
                 {screen.status === "completed" && screen.image ? (
-                  <div className="absolute inset-0 bg-black/25 opacity-0 group-hover/image:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                  <div 
+                    className="absolute inset-0 bg-black/25 opacity-0 group-hover/image:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none"
+                  >
                     <EyeIcon className="h-8 w-8 text-white" />
                   </div>
                 ) : screen.status === "in-progress" && screen.image ? (
@@ -234,6 +246,37 @@ export const TaskDetailView = ({ task, tokens }: TaskDetailViewProps) => {
         onClose={() => setIsDiscussionsModalOpen(false)}
         onJoinDiscussion={handleJoinDiscussion}
       />
+
+      {/* Image Preview Modal */}
+      {previewImage && (
+        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/75"
+            onClick={() => setPreviewImage(null)}
+          />
+
+          {/* Modal */}
+          <div className="relative max-w-5xl max-h-[90vh] flex items-center justify-center">
+            <button
+              type="button"
+              onClick={() => setPreviewImage(null)}
+              className={`absolute -top-10 -right-10 z-10 flex items-center justify-center w-8 h-8 rounded-full transition-colors ${
+                tokens.isDark
+                  ? "bg-white/90 text-black"
+                  : "bg-white/90 text-gray-800"
+              }`}
+            >
+              <span className="text-2xl leading-none">×</span>
+            </button>
+            <img
+              src={previewImage}
+              alt="Preview"
+              className="max-w-full max-h-[90vh] object-contain rounded-lg"
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 };
