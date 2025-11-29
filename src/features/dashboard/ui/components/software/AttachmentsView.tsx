@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { PlusCircleIcon, PDFIcon, DeleteIcon, FileCodeIcon, MessageIcon } from "@utilities/icons";
+import { PlusCircleIcon, PDFIcon, FileCodeIcon, CopyIcon, EyeFilledIcon, DocstIcon, FilePDFIcon, ImgIcon, EyeIcon } from "@utilities/icons";
+import screenshotImage from "@assets/images/software/screenshot.svg";
 import type { DashboardTokens } from "../../types";
 
 type AttachmentsViewProps = {
@@ -69,21 +70,19 @@ const attachmentsData: readonly AttachmentItem[] = [
 
 const getFileIcon = (fileType: AttachmentItem["fileType"]) => {
   if (fileType === "pdf") {
-    return PDFIcon;
+    return FilePDFIcon;
+  }
+  if (fileType === "png" || fileType === "jpg") {
+    return ImgIcon;
+  }
+  if (fileType === "docx") {
+    return DocstIcon;
   }
   return FileCodeIcon;
 };
 
 export const AttachmentsView = ({ tokens }: AttachmentsViewProps) => {
-  const [attachments, setAttachments] = useState<AttachmentItem[]>([...attachmentsData]);
-
-  const toggleVisibility = (id: string) => {
-    setAttachments((prev) =>
-      prev.map((attachment) =>
-        attachment.id === id ? { ...attachment, isVisible: !attachment.isVisible } : attachment
-      )
-    );
-  };
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   return (
     <div className="flex flex-col gap-6">
@@ -104,9 +103,11 @@ export const AttachmentsView = ({ tokens }: AttachmentsViewProps) => {
 
       {/* Attachments Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {attachments.map((attachment) => {
+        {attachmentsData.map((attachment) => {
           const FileIcon = getFileIcon(attachment.fileType);
           const isImage = attachment.fileType === "png" || attachment.fileType === "jpg";
+          const isDocx = attachment.fileType === "docx";
+          const isPdf = attachment.fileType === "pdf";
 
           return (
             <div
@@ -114,72 +115,83 @@ export const AttachmentsView = ({ tokens }: AttachmentsViewProps) => {
               className={`${tokens.cardBase} rounded-2xl overflow-hidden transition-colors`}
             >
               {/* Preview Area */}
-              <div className="h-48 bg-gradient-to-br from-[#071FD7]/10 to-[#071FD7]/5 flex items-center justify-center relative">
-                {isImage ? (
-                  <div className="w-full h-full bg-white flex items-center justify-center">
-                    {/* Placeholder for image - in real app this would be an img tag */}
-                    {/* <div className="text-center p-4">
-                      <div className="text-4xl font-bold text-[#071FD7]/30 mb-2">254</div>
-                      <div className="text-2xl font-semibold text-[#071FD7]/30 mb-1">2545</div>
-                      <div className="text-xl text-[#071FD7]/30 mb-2">330</div>
-                      <div className="text-lg text-[#071FD7]/30">60%</div>
-                    </div> */}
-                  </div>
-                ) : (
-                  <PDFIcon
-                    className={`h-16 w-16 ${tokens.isDark ? "text-white/20" : "text-[#071FD7]/30"}`}
-                  />
-                )}
-              </div>
-
-              {/* Content Area */}
-              <div className={`p-4 flex flex-col gap-3 ${tokens.isDark ? "border-t border-dashed border-[#2E3141]" : "border-t border-dashed border-[#E2E8FF] bg-[#FFFEF7]"}`}>
-                {/* File Name with Toggle */}
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <FileIcon
-                      className={`h-4 w-4 flex-shrink-0 ${tokens.isDark ? "text-white" : "text-[#071FD7]"}`}
-                    />
-                    <span
-                      className={`text-sm font-semibold truncate ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}
-                    >
-                      {attachment.fileName}
-                    </span>
-                  </div>
-                  {/* Toggle Switch */}
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={attachment.isVisible}
-                      onChange={() => toggleVisibility(attachment.id)}
-                      className="sr-only peer"
-                    />
-                    <div
-                      className={`relative w-9 h-5 rounded-full transition-colors ${
-                        attachment.isVisible
-                          ? "bg-[#071FD7]"
-                          : tokens.isDark
-                            ? "bg-gray-600"
-                            : "bg-gray-300"
-                      }`}
-                    >
-                      <div
-                        className={`absolute top-[2px] left-[2px] bg-white rounded-full h-4 w-4 transition-transform ${
-                          attachment.isVisible ? "translate-x-4" : "translate-x-0"
-                        }`}
+              <div className="h-48 bg-gradient-to-br from-[#071FD7]/10 to-[#071FD7]/5 flex flex-col relative group/image">
+                <div className="flex-1 flex items-center justify-center relative overflow-hidden">
+                  {isImage ? (
+                    <div className="w-full h-full flex items-center justify-center relative">
+                      <img 
+                        src={screenshotImage} 
+                        alt="Screenshot" 
+                        className="w-full object-contain"
                       />
+                      {/* Hover Overlay with Eye Icon */}
+                      <div 
+                        className="absolute inset-0 bg-black/25 opacity-0 group-hover/image:opacity-100 rounded-2xl transition-opacity duration-300 flex items-center justify-center cursor-pointer"
+                        onClick={() => setPreviewImage(screenshotImage)}
+                      >
+                        <EyeIcon className="h-8 w-8 text-white" />
+                      </div>
                     </div>
-                  </label>
+                  ) : isDocx ? (
+                    <DocstIcon
+                      className={`h-14 w-14 ${tokens.isDark ? "text-white/40" : "text-[#071FD7]"}`}
+                    />
+                  ) : isPdf ? (
+                    <PDFIcon
+                      className={`h-14 w-14 ${tokens.isDark ? "text-white/40" : "text-[#071FD7]"}`}
+                    />
+                  ) : null}
+                </div>
+                
+                {/* Content Area */}
+                <div className={`p-4 flex flex-col gap-3 ${tokens.isDark ? "border-b border-dashed border-[#2E3141]" : "border-b border-dashed border-[#E2E8FF]"}`}>
+                  {/* File Name with Toggle */}
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                      <FileIcon
+                        className={`h-4 w-4 flex-shrink-0 ${tokens.isDark ? "text-white" : "text-[#071FD7]"}`}
+                      />
+                      <span
+                        className={`text-sm md:text-lg font-semibold truncate ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}
+                      >
+                        {attachment.fileName}
+                      </span>
+                    </div>
+                    {/* Toggle Switch */}
+                    {/* <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={attachment.isVisible}
+                        onChange={() => toggleVisibility(attachment.id)}
+                        className="sr-only peer"
+                      />
+                      <div
+                        className={`relative w-9 h-5 rounded-full transition-colors ${
+                          attachment.isVisible
+                            ? "bg-[#071FD7]"
+                            : tokens.isDark
+                              ? "bg-gray-600"
+                              : "bg-gray-300"
+                        }`}
+                      >
+                        <div
+                          className={`absolute top-[2px] left-[2px] bg-white rounded-full h-4 w-4 transition-transform ${
+                            attachment.isVisible ? "translate-x-4" : "translate-x-0"
+                          }`}
+                        />
+                      </div>
+                    </label> */}
+                  </div>
                 </div>
               </div>
 
             {/* Metadata */}
-            <div className="flex items-center justify-between px-4 py-2">
+            <div className={`flex items-center justify-between px-4 py-2 ${tokens.isDark ? "" : "bg-[#FFFEF7]"}`}>
               <div className="flex items-start flex-col gap-2">
                 <span className={`text-sm font-medium ${tokens.isDark ? "text-white" : "text-[#071FD7]"}`}>
                   {attachment.uploadedBy}
                 </span>
-                <span className={`text-sm ${tokens.isDark ? "text-white" : "text-black"}`}>Uploaded by</span>
+                <span className="text-sm text-[#718EBF]">Uploaded by</span>
               </div>
               <div className="flex items-start flex-col gap-2">
                 <span className={`text-sm font-medium ${tokens.isDark ? "text-white" : "text-[#071FD7]"}`}>
@@ -192,20 +204,19 @@ export const AttachmentsView = ({ tokens }: AttachmentsViewProps) => {
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
-                    className={`p-1.5 rounded-full transition-colors ${
-                      tokens.isDark ? "bg-[#071FD7]" : "bg-[#F4F5FF]"
-                    } hover:opacity-80`}
-                    aria-label={`Email attachment ${attachment.fileName}`}
+                    className="p-1.5 rounded-full transition-colors"
+                    style={{ backgroundColor: "rgb(236,238,248)" }}
+                    aria-label={`Delete attachment ${attachment.fileName}`}
                   >
-                    <MessageIcon className={`h-4 w-4 ${tokens.isDark ? "text-white" : "text-[#071FD7]"}`} />
+                    <EyeFilledIcon className={`h-5 w-5 ${tokens.isDark ? "text-white" : "text-[#455BFF]"}`} />
                   </button>
                   <button
                     type="button"
-                    className="p-1.5 rounded-full transition-colors"
-                    style={{ backgroundColor: "rgb(255,229,222)" }}
-                    aria-label={`Delete attachment ${attachment.fileName}`}
+                    className={`p-2 rounded-full transition-colors hover:opacity-80`}
+                    style={{ backgroundColor: "rgb(236,238,248)" }}
+                    aria-label={`Email attachment ${attachment.fileName}`}
                   >
-                    <DeleteIcon className="h-4 w-4" style={{ color: "#FF0000" }} />
+                    <CopyIcon className="h-4 w-4 text-[#718EBF]" />
                   </button>
                 </div>
                 <span className={`text-sm text-[#718EBF]`}>Manage</span>
@@ -215,6 +226,37 @@ export const AttachmentsView = ({ tokens }: AttachmentsViewProps) => {
           );
         })}
       </div>
+
+      {/* Image Preview Modal */}
+      {previewImage && (
+        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/75"
+            onClick={() => setPreviewImage(null)}
+          />
+
+          {/* Modal */}
+          <div className="relative max-w-5xl max-h-[90vh] flex items-center justify-center">
+            <button
+              type="button"
+              onClick={() => setPreviewImage(null)}
+              className={`absolute -top-10 -right-10 z-10 flex items-center justify-center w-8 h-8 rounded-full transition-colors ${
+                tokens.isDark
+                  ? "bg-white/90 text-black"
+                  : "bg-white/90 text-gray-800"
+              }`}
+            >
+              <span className="text-2xl leading-none">×</span>
+            </button>
+            <img
+              src={previewImage}
+              alt="Preview"
+              className="max-w-full max-h-[90vh] object-contain rounded-lg"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

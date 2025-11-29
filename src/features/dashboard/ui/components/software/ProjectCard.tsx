@@ -70,7 +70,7 @@ export const ProjectCard = ({
     const gradientEnd = tokens.isDark ? "#1E40AF" : "#041071";
 
     return (
-      <div className="relative inline-flex items-center justify-center">
+      <div className="relative inline-flex items-center justify-center border-8 border-white/20 rounded-full">
         <svg className="transform -rotate-20" width={size} height={size}>
           <defs>
             <linearGradient id={`gradient-${uniqueId}`} x1="0%" y1="0%" x2="0%" y2="100%">
@@ -115,51 +115,55 @@ export const ProjectCard = ({
   return (
     <div className={`${tokens.cardBase} rounded-2xl p-6`}>
       <div className="flex flex-col gap-4">
-        {/* Title and Description */}
-        <div className="flex flex-col gap-2">
-          <div className="flex items-start justify-between gap-4">
-            <h3 className={`text-lg md:text-xl font-semibold ${
-                  tokens.isDark ? "text-white" : "text-[#2B3674]"
-                }`}>
-              {project.name}
-            </h3>
-            <span
-              className={`px-3 py-1 rounded-full text-sm font-medium ${statusColors[project.status]}`}
-            >
-              {project.status}
-            </span>
-          </div>
-          <p className={`text-sm md:text-base ${tokens.subtleText} line-clamp-2 text-[#718EBF]`}>
-            {project.description}
-          </p>
-        </div>
-
-        {/* Team Section with Chart */}
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <span className={`text-sm md:text-base font-medium ${tokens.subtleText} text-[#718EBF]`}>team:</span>
-            <div className="flex -space-x-2">
-              {project.team.slice(0, 3).map((member, index) => (
-                <div
-                  key={member.id}
-                  className="relative h-8 w-8 rounded-full border-2 border-[var(--color-card-bg)] flex items-center justify-center text-sm font-semibold text-white"
-                  style={{ backgroundColor: getAvatarColor(index) }}
-                  title={member.name}
+        {/* Title, Description, Team Section with Chart */}
+        <div className="flex items-center justify-between gap-6">
+          <div className="flex flex-col gap-4 flex-1">
+            {/* Title and Description Section */}
+            <div className="flex flex-col gap-2">
+              <div className="flex items-start justify-between gap-4">
+                <h3 className={`text-lg md:text-xl font-semibold ${
+                      tokens.isDark ? "text-white" : "text-[#2B3674]"
+                    }`}>
+                  {project.name}
+                </h3>
+                <span
+                  className={`px-3 py-1 rounded-full text-sm font-medium ${statusColors[project.status]}`}
                 >
-                  {member.avatar ? (
-                    <img
-                      src={member.avatar}
-                      alt={member.name}
-                      className="h-full w-full rounded-full object-cover"
-                    />
-                  ) : (
-                    <span>{getInitials(member.name)}</span>
-                  )}
-                </div>
-              ))}
+                  {project.status}
+                </span>
+              </div>
+              <p className={`text-sm md:text-base ${tokens.subtleText} line-clamp-2 text-[#718EBF]`}>
+                {project.description}
+              </p>
+            </div>
+            {/* Team Section */}
+            <div className="flex items-center gap-2">
+              <span className={`text-sm md:text-base font-medium ${tokens.subtleText} text-[#718EBF]`}>team:</span>
+              <div className="flex -space-x-2">
+                {project.team.slice(0, 3).map((member, index) => (
+                  <div
+                    key={member.id}
+                    className="relative h-8 w-8 rounded-full border-2 border-[var(--color-card-bg)] flex items-center justify-center text-sm font-semibold text-white"
+                    style={{ backgroundColor: getAvatarColor(index) }}
+                    title={member.name}
+                  >
+                    {member.avatar ? (
+                      <img
+                        src={member.avatar}
+                        alt={member.name}
+                        className="h-full w-full rounded-full object-cover"
+                      />
+                    ) : (
+                      <span>{getInitials(member.name)}</span>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-          <CircularProgress percentage={progressPercentage} size={110} />
+          <div className="flex items-center justify-center flex-shrink-0">
+            <CircularProgress percentage={progressPercentage} size={130} />
+          </div>
         </div>
 
         {/* Key Details Row */}

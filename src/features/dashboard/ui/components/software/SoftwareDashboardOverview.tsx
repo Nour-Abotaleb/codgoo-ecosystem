@@ -1,69 +1,13 @@
 import { useEffect, useState } from "react";
 import { i18n } from "@shared/config/i18n";
-import { ArrowRight, ActiveIcon, PendingIcon, UnpaidIcon, CalendarIcon, ClockIcon, PlusCircleIcon, SettingsIcon, CloseIcon } from "@utilities/icons";
+import { ArrowRight, ActiveIcon, PendingIcon, UnpaidIcon, CalendarIcon, ClockIcon, PlusCircleIcon, SettingsIcon, CloseIcon, AllProjectsIcon, CompletedIcon, ProjectPendingIcon } from "@utilities/icons";
 import type { DashboardTokens, SoftwareDashboardData, DashboardHeroContent } from "../../types";
+import chartImg from "@assets/images/software/chart.svg";
 
 type SoftwareDashboardOverviewProps = {
   readonly data: SoftwareDashboardData;
   readonly hero: DashboardHeroContent;
   readonly tokens: DashboardTokens;
-};
-
-// Donut Chart Component
-const DonutChart = ({ 
-  items, 
-  size = 140 
-}: { 
-  items: SoftwareDashboardData["proposals"]["items"]; 
-  size?: number;
-}) => {
-  const radius = (size - 30) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const gapSize = 2; // Gap size in pixels between segments (increased for better visibility)
-  const totalGaps = items.length * gapSize;
-  const adjustedCircumference = circumference - totalGaps;
-  let cumulativeOffset = 0;
-
-  const segments = items.map((item) => {
-    const percentage = item.percentage / 100;
-    const segmentLength = percentage * adjustedCircumference;
-    const offset = -cumulativeOffset; // Negative because we're rotating counter-clockwise
-    cumulativeOffset += segmentLength + gapSize; // Add gap after each segment
-
-    // Calculate remaining space after this segment and gap
-    const remainingSpace = circumference - segmentLength - gapSize;
-
-    return {
-      ...item,
-      offset,
-      segmentLength,
-      // Pattern: draw segment, gap, then remaining space (as gap to prevent repetition)
-      // This ensures all segments have consistent gaps between them
-      strokeDasharray: `${segmentLength} ${gapSize} ${remainingSpace}`
-    };
-  });
-
-  return (
-    <div className="relative inline-flex items-center justify-center">
-      <svg className="transform -rotate-90" width={size} height={size}>
-        {segments.map((segment, index) => (
-          <circle
-            key={index}
-            cx={size / 2}
-            cy={size / 2}
-            r={radius}
-            fill="none"
-            stroke={segment.color}
-            strokeWidth="25"
-            strokeDasharray={segment.strokeDasharray}
-            strokeDashoffset={segment.offset}
-            strokeLinecap="round"
-            className="transition-all duration-300"
-          />
-        ))}
-      </svg>
-    </div>
-  );
 };
 
 // Pie Chart Component - 3D style with labels outside each segment
@@ -298,45 +242,44 @@ export const SoftwareDashboardOverview = ({
         </div>
       </section>
 
-      {/* Proposal Summary and Clients Section */}
+      {/* Statistics Cards and Tasks Status Section */}
       <section className="grid gap-6 lg:grid-cols-[1fr_1fr]">
-        {/* Proposal Summary */}
-        <div className={cardClass}>
-          <div className="flex items-center justify-between gap-2 mb-4">
-            <h3 className={`text-lg lg:text-xl font-bold ${tokens.isDark ? "text-[var(--color-page-text)]" : "text-[#2B3674]"}`}>
-              Proposal Summary
-            </h3>
-            <div className="flex items-center gap-2 text-sm text-[var(--color-page-text)]/60">
-              <CalendarIcon className="h-4 w-4" />
-              <span>Jun 07 → Jun 13</span>
-              <button type="button" className="ml-1">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-            </div>
+        {/* Statistics Cards - 2 columns, 2 rows */}
+        <div className="grid grid-cols-2 gap-4">
+          {/* First Card - Chart Image */}
+          <div>
+            <img src={chartImg} alt="Chart" className="w-full object-contain" />
           </div>
-          <div className="flex items-center gap-6">
-            <DonutChart items={data.proposals.items} />
-            <div className="flex flex-col gap-4">
-              <div className="">
-                <p className={`text-lg font-medium ${tokens.isDark ? "text-white/70" : "text-[#2B3674]"}`}>Total Proposal : <span className={`text-2xl font-semibold ${tokens.isDark ? "text-white/70" : "text-[#2B3674]"}`}>{data.proposals.total}</span></p>
-              </div>
-              <div className="flex flex-col gap-3">
-                {data.proposals.items.map((item, index) => (
-                  <div key={index} className="flex items-center gap-3">
-                    <div
-                      className="w-4 h-4 rounded-sm"
-                      style={{ backgroundColor: item.color }}
-                    ></div>
-                    <span className={`text-sm font-medium ${tokens.isDark ? "text-white/70" : "text-[#2B3674]"}`}>
-                      {item.status} Proposals ({item.percentage}%)
-                    </span>
+          
+          {/* Other Statistics Cards */}
+          {[
+            { id: "completed", label: "Completed", value: "10 Tasks", icon: CompletedIcon },
+            { id: "ongoing", label: "Ongoing", value: "10 Tasks", icon: AllProjectsIcon },
+            { id: "pending", label: "Pending", value: "6 Tasks", icon: ProjectPendingIcon }
+          ].map((stat) => {
+            const Icon = stat.icon;
+            const iconBaseColor = tokens.isDark ? "#FFFFFF" : "#2B3674";
+            
+            return (
+              <div
+                key={stat.id}
+                className={`${tokens.cardBase} rounded-3xl p-6`}
+              >
+                <div className="flex items-start flex-col gap-4">
+                  <div
+                    className="flex items-center justify-center"
+                    style={{ color: iconBaseColor }}
+                  >
+                    <Icon className="h-7 w-7 md:h-10 md:w-10" />
                   </div>
-                ))}
+                  <div className="flex flex-col">
+                    <span className={`text-sm md:text-lg lg:text-2xl font-semibold ${tokens.isDark ? 'text-white' : 'text-[#2B3674]'}`}>{stat.label}</span>
+                    <span className={`text-sm md:text-base font-medium mt-2 ${tokens.isDark ? 'text-white' : 'text-[#A3AED0]'}`}>{stat.value}</span>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            );
+          })}
         </div>
 
         {/* Tasks Status */}

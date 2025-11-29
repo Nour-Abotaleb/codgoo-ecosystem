@@ -33,7 +33,7 @@ type TaskCardProps = {
 };
 
 const CircularProgress = ({ percentage, completed, total, tokens }: { percentage: number; completed: number; total: number; tokens: DashboardTokens }) => {
-  const size = 140;
+  const size = 130;
   const radius = (size - 18) / 2;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (percentage / 100) * circumference;
@@ -125,8 +125,8 @@ export const TaskCard = ({ task, tokens, onViewTask, showViewButton = true, cust
       {/* Top Section with Background Color */}
       <div className={`p-6 ${tokens.isDark ? "bg-gradient-to-br from-[#071FD7]/10 to-[#071FD7]/5" : "bg-gradient-to-br from-[#071FD7]/10 to-[#071FD7]/5"}`}>
         <div className="flex flex-col gap-4">
-          {/* Priority and Task Name */}
-          <div className="flex items-start justify-between">
+          {/* Priority, Task Name and Status */}
+          <div className="flex items-start justify-between gap-4">
             <div className="flex flex-col gap-2">
               <span className={`text-sm font-medium ${priorityColors[task.priority]}`}>
                 #{task.priority}
@@ -137,47 +137,51 @@ export const TaskCard = ({ task, tokens, onViewTask, showViewButton = true, cust
                 {task.name}
               </h3>
             </div>
-            <span className={`px-3 py-1 rounded-full text-sm font-medium ${statusColors[task.status]}`}>
+            <span className={`px-3 py-1 rounded-full text-sm font-medium flex-shrink-0 ${statusColors[task.status]}`}>
               {task.status}
             </span>
           </div>
 
-          {/* Description */}
-          <p className={`text-sm md:text-base break-words ${tokens.subtleText} text-[#718EBF]`}>
-            {task.description}
-          </p>
-
-          {/* Team and Progress */}
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <span className={`text-sm md:text-base font-medium ${tokens.subtleText} text-[#718EBF]`}>team:</span>
-              <div className="flex -space-x-2">
-                {task.team.slice(0, 3).map((member, index) => (
-                  <div
-                    key={member.id}
-                    className="relative h-8 w-8 rounded-full border-2 border-white flex items-center justify-center text-sm font-semibold text-white"
-                    style={{ backgroundColor: getAvatarColor(index, tokens.isDark) }}
-                    title={member.name}
-                  >
-                    {member.avatar ? (
-                      <img
-                        src={member.avatar}
-                        alt={member.name}
-                        className="h-full w-full rounded-full object-cover"
-                      />
-                    ) : (
-                      <span>{getInitials(member.name)}</span>
-                    )}
-                  </div>
-                ))}
+          {/* Description, Team and Progress */}
+          <div className="flex items-start justify-between gap-6">
+            <div className="flex flex-col gap-4 flex-1">
+              {/* Description */}
+              <p className={`text-sm md:text-base break-words ${tokens.subtleText} text-[#68696D]`}>
+                {task.description}
+              </p>
+              {/* Team Section */}
+              <div className="flex items-center gap-2">
+                <span className={`text-sm md:text-base font-medium ${tokens.subtleText} text-[#718EBF]`}>team:</span>
+                <div className="flex -space-x-2">
+                  {task.team.slice(0, 3).map((member, index) => (
+                    <div
+                      key={member.id}
+                      className="relative h-8 w-8 rounded-full border-2 border-white flex items-center justify-center text-sm font-semibold text-white"
+                      style={{ backgroundColor: getAvatarColor(index, tokens.isDark) }}
+                      title={member.name}
+                    >
+                      {member.avatar ? (
+                        <img
+                          src={member.avatar}
+                          alt={member.name}
+                          className="h-full w-full rounded-full object-cover"
+                        />
+                      ) : (
+                        <span>{getInitials(member.name)}</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-            <CircularProgress
-              percentage={task.progress.percentage}
-              completed={task.progress.completed}
-              total={task.progress.total}
-              tokens={tokens}
-            />
+            <div className="flex items-center justify-center flex-shrink-0">
+              <CircularProgress
+                percentage={task.progress.percentage}
+                completed={task.progress.completed}
+                total={task.progress.total}
+                tokens={tokens}
+              />
+            </div>
           </div>
         </div>
       </div>
