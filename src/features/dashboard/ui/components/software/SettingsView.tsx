@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { EditIcon, EmailIcon, PhoneIcon, SettingsIcon, CloseIcon, RefreshIcon, KeyIcon, PlusCircleIcon } from "@utilities/icons";
 import type { DashboardTokens } from "../../types";
+import { TwoFactorAuthModal } from "../modals/TwoFactorAuthModal";
 
 type SettingsViewProps = {
   readonly tokens: DashboardTokens;
@@ -50,11 +51,12 @@ const ToggleSwitch = ({
 
 export const SettingsView = ({ tokens }: SettingsViewProps) => {
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(true);
-  const [twoFactorMethod] = useState("Email");
-  const [currentEmail] = useState("a----@g----.com");
-  const [currentPhone] = useState("+20 10*******");
+  const [twoFactorMethod, setTwoFactorMethod] = useState("Email");
+  const [currentEmail, setCurrentEmail] = useState("a----@g----.com");
+  const [currentPhone, setCurrentPhone] = useState("+20 10*******");
   const [currentPassword] = useState("************");
   const [currentLanguage] = useState({ code: "en", name: "English", flag: "US" });
+  const [isTwoFactorModalOpen, setIsTwoFactorModalOpen] = useState(false);
 
   const cardClass = `${tokens.cardBase} rounded-[28px] p-6 transition-colors`;
   const sectionTitleClass = `text-xl font-bold ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`;
@@ -71,6 +73,7 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
             <h2 className={sectionTitleClass}>Two-Factor Authentication (2FA)</h2>
             <button
               type="button"
+              onClick={() => setIsTwoFactorModalOpen(true)}
               className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${tokens.isDark ? tokens.buttonGhost : ""}`}
               style={tokens.isDark ? {} : { backgroundColor: "#E6E9FB" }}
               aria-label="Edit 2FA settings"
@@ -268,6 +271,23 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
           </table>
         </div>
       </div>
+
+      {/* Two-Factor Authentication Modal */}
+      <TwoFactorAuthModal
+        tokens={tokens}
+        isOpen={isTwoFactorModalOpen}
+        onClose={() => setIsTwoFactorModalOpen(false)}
+        initialStatus={twoFactorEnabled}
+        initialMethod={twoFactorMethod}
+        initialEmail={currentEmail}
+        initialPhone={currentPhone}
+        onSave={(data) => {
+          setTwoFactorEnabled(data.status);
+          setTwoFactorMethod(data.method);
+          setCurrentEmail(data.email);
+          setCurrentPhone(data.phone);
+        }}
+      />
     </div>
   );
 };
