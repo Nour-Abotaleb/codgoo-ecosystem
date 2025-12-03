@@ -11,7 +11,6 @@ export const RegisterRoute = () => {
   return (
   <AuthTemplate
     title="Create an account"
-    // subtitle="Please enter your data to create an account."
     bottomSlot={
       <span className="text-base md:text-lg text-black text-center">
         You already have an account?{" "}

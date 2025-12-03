@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom";
 
 import { AppFooter } from "@shared/components/AppFooter";
 import { AppHeader } from "@shared/components/AppHeader";
+import { ThemeManager } from "@shared/theme";
 
 type AppLayoutProps = {
   readonly children: ReactNode;
@@ -34,11 +35,13 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
   }, [location.pathname]);
 
   return (
-    <div className={`flex min-h-screen flex-col transition-colors ${containerClass}`}>
-      {!isAuthRoute && !isDashboardRoute && <AppHeader />}
-      <main className={mainClass}>{children}</main>
-      {!isAuthRoute && !isDashboardRoute && <AppFooter />}
-    </div>
+    <ThemeManager>
+      <div className={`flex min-h-screen flex-col transition-colors ${containerClass}`}>
+        {!isAuthRoute && !isDashboardRoute && <AppHeader />}
+        <main className={mainClass}>{children}</main>
+        {!isAuthRoute && !isDashboardRoute && <AppFooter />}
+      </div>
+    </ThemeManager>
   );
 };
 

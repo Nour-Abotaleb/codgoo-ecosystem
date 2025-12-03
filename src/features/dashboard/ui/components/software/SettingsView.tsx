@@ -64,9 +64,9 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
   const valueClass = `text-sm md:text-base ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`;
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       {/* Main Grid: First card in left column, Second and Third cards in right column */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Left Column: Two-Factor Authentication Section */}
         <div className={cardClass}>
           <div className="flex items-center justify-between mb-4">
@@ -125,7 +125,7 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
         </div>
 
         {/* Right Column: Account Security and Current Language Sections */}
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-4">
         {/* Account Security Section */}
         <div className={cardClass}>
           <h2 className={`${sectionTitleClass} mb-6`}>Account Security</h2>

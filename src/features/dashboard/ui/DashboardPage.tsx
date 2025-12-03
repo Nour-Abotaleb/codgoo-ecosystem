@@ -39,6 +39,7 @@ import { ManageHostView } from "./components/cloud/ManageHostView";
 import { OrderView } from "./components/OrderView";
 import type { DashboardAppId, DashboardTokens } from "./types";
 import { getDefaultDashboard } from "./utils/dashboardPreferences";
+import { setDashboardAppId } from "@shared/theme";
 
 export const DashboardPage = () => {
   const { t, i18n: i18nInstance } = useTranslation("dashboard");
@@ -70,106 +71,14 @@ export const DashboardPage = () => {
   const navigationItems = dataset.navigation;
   const [activeNavId, setActiveNavId] = useState(() => navigationItems[0]?.id ?? "");
   const activeNavigationItem = navigationItems.find((item) => item.id === activeNavId);
-  const themeVariables = useMemo(
-    () => ({
-      dark: {
-        "--color-page-bg": "#0D0D15",
-        "--color-page-text": "#F4F5FF",
-        "--color-shell-bg": "#171926",
-        "--color-sidebar-bg": "#0D0D15",
-        "--color-sidebar-border": "#232637",
-        "--color-sidebar-text": "#A3AED0",
-        "--color-sidebar-divider": "rgba(148,163,255,0.18)",
-        "--color-sidebar-nav-active-text": "#A3AED0",
-        "--color-sidebar-nav-idle-text": "rgba(255,255,255,0.65)",
-        "--color-card-bg": "#232637",
-        "--color-card-border": activeApp.id === "app" ? "rgba(15,103,115,0.18)" : activeApp.id === "software" ? "rgba(64, 75, 155, 0.3)" : "rgba(103,114,229,0.18)",
-        "--color-table-row-bg": "#2E3141",
-        "--color-section-muted": "rgba(29,32,48,0.85)",
-        "--color-progress-track": "rgba(255,255,255,0.12)",
-        "--color-card-text": "#F5F6FF",
-        "--color-text-subtle": "rgba(203,213,255,0.7)",
-        "--color-border-divider": "#2E3141",
-        "--color-button-filled-bg": "#7469C7",
-        "--color-button-filled-text": "#FFFFFF",
-        "--color-button-ghost-bg": "#9A9B9C22",
-        "--color-button-ghost-text": "#E2E8FF",
-        "--color-surface-muted": "rgba(11,15,36,0.75)",
-        "--color-icon-active": "#FFFFFF",
-        "--color-icon-idle": "rgba(203,213,255,0.65)",
-        "--color-icon-muted": "#FFFFFF",
-        "--color-icon-surface": "rgba(255,255,255,0.12)",
-        "--color-accent-secondary": "#A78BFA",
-        "--color-search-bg": "#2E3141",
-        "--color-search-text": "#F8FAFF",
-        "--color-search-placeholder": "rgba(203,213,255,0.65)",
-        "--color-popover-bg": "rgb(0, 0, 0, 0.95)",
-        "--color-popover-text": "#F8FAFF",
-        "--color-popover-ring": "rgba(124,77,255,0.35)",
-        "--color-popover-active-bg": "rgba(124,77,255,0.14)",
-        "--color-popover-active-text": "#FFFFFF",
-        "--color-popover-idle-text": "rgba(229,231,255,0.85)",
-        "--color-popover-hover-bg": "rgba(124,77,255,0.1)",
-        "--color-switcher-icon-active": "#FFFFFF",
-        "--color-switcher-icon-inactive": "rgba(229,231,255,0.7)",
-        "--color-button-shadow": "0 12px 30px -10px rgba(124,77,255,0.55)",
-        "--shadow-cta": "rgba(124,77,255,0.4)"
-      },
-      light: {
-        "--color-page-bg": "#FFFFFF",
-        "--color-page-text": "#111539",
-        "--color-shell-bg": "#F9FAFC",
-        "--color-sidebar-bg": "#FFFFFF",
-        "--color-sidebar-border": "rgba(99,102,241,0.1)",
-        "--color-sidebar-text": "#111539",
-        "--color-sidebar-divider": "rgba(99,102,241,0.12)",
-        "--color-sidebar-nav-active-text": "#584ABC",
-        "--color-sidebar-nav-idle-text": "rgba(88,74,188,0.65)",
-        "--color-card-bg": "rgba(255,255,255,0.96)",
-        "--color-card-border": activeApp.id === "app" ? "rgba(15,103,115,0.12)" : activeApp.id === "software" ? "rgba(7,31,215,0.12)" : "rgba(99,102,241,0.12)",
-        "--color-table-row-bg": "#FFFFFF",
-        "--color-section-muted": "rgba(240,242,255,0.9)",
-        "--color-progress-track": "rgba(88,74,188,0.12)",
-        "--color-card-text": "#111539",
-        "--color-text-subtle": "rgba(30,41,109,0.6)",
-        "--color-border-divider": "rgba(99,102,241,0.18)",
-        "--color-button-filled-bg": "#7469C7",
-        "--color-button-filled-text": "#FFFFFF",
-        "--color-button-ghost-bg": "rgba(116,97,255,0.12)",
-        "--color-button-ghost-text": "#4C1D95",
-        "--color-surface-muted": "rgba(243,244,255,0.8)",
-        "--color-icon-active": "#4C1D95",
-        "--color-icon-idle": "rgba(76,29,149,0.55)",
-        "--color-icon-muted": "#FFFFFF",
-        "--color-icon-surface": "rgba(116,97,255,0.18)",
-        "--color-accent-secondary": "#6D28D9",
-        "--color-search-bg": "rgba(255,255,255,0.9)",
-        "--color-search-text": "#0F172A",
-        "--color-search-placeholder": "rgba(88,28,135,0.55)",
-        "--color-popover-bg": "rgba(255,255,255,0.95)",
-        "--color-popover-text": "#1E293B",
-        "--color-popover-ring": "rgba(99,102,241,0.25)",
-        "--color-popover-active-bg": "rgba(116,97,255,0.15)",
-        "--color-popover-active-text": "#1E293B",
-        "--color-popover-idle-text": "rgba(30,41,109,0.7)",
-        "--color-popover-hover-bg": "rgba(116,97,255,0.18)",
-        "--color-switcher-icon-active": "#4C1D95",
-        "--color-switcher-icon-inactive": "rgba(76,29,149,0.5)",
-        "--color-button-shadow": "0 18px 40px -18px rgba(94,86,255,0.45)",
-        "--shadow-cta": "rgba(94,86,255,0.45)"
-      }
-    }),
-    [activeApp.id]
-  );
 
+  // Update dashboard app ID for theme system
   useEffect(() => {
-    const root = document.documentElement;
-    const palette = themeVariables[theme] ?? themeVariables.dark;
-    Object.entries(palette).forEach(([token, value]) => {
-      root.style.setProperty(token, value);
-    });
-    root.dataset.theme = theme;
-  }, [theme, themeVariables]);
+    setDashboardAppId(activeApp.id);
+    return () => {
+      setDashboardAppId(undefined);
+    };
+  }, [activeApp.id]);
 
   // Update document title and favicon when switching apps
   useEffect(() => {
@@ -380,17 +289,17 @@ export const DashboardPage = () => {
 
   return (
     <div className={`dashboard flex w-full ${tokens.rootClass}`}>
-      <DashboardSidebar
-        apps={dashboardApps}
-        activeAppId={activeApp.id}
-        onSelectApp={handleSelectApp}
-        navigationItems={navigationItems}
-        activeNavId={activeNavId}
-        onSelectNav={handleSelectNav}
-        tokens={tokens}
-      />
+        <DashboardSidebar
+          apps={dashboardApps}
+          activeAppId={activeApp.id}
+          onSelectApp={handleSelectApp}
+          navigationItems={navigationItems}
+          activeNavId={activeNavId}
+          onSelectNav={handleSelectNav}
+          tokens={tokens}
+        />
 
-      <section className={`flex min-h-screen flex-1 flex-col bg-[var(--color-shell-bg)] rounded-[32px] m-6 transition-all duration-300 ${isRTL ? "lg:mr-64" : "lg:ml-64"}`}>
+        <section className={`flex min-h-screen flex-1 flex-col bg-[var(--color-shell-bg)] rounded-[32px] m-6 transition-all duration-300 ${isRTL ? "lg:mr-64" : "lg:ml-64"}`}>
         <div className="flex flex-col gap-4 px-6 py-3 text-start">
           <DashboardHeader
             tokens={tokens}
