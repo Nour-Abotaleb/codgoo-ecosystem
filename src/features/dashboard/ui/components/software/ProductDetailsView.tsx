@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { CheckIcon } from "@utilities/icons";
 import type { DashboardTokens } from "../../types";
+import { StartProjectModal } from "../modals/StartProjectModal";
 import prDetailsImg from "@assets/images/software/pr-details1.svg";
 import productImg1 from "@assets/images/software/product-img1.svg";
 import productImg2 from "@assets/images/software/product-img2.svg";
@@ -40,6 +41,7 @@ export const ProductDetailsView = ({ productId, tokens, onBack }: ProductDetails
   void onBack;
   const [selectedThumbnail, setSelectedThumbnail] = useState(4); // 5th thumbnail (index 4) is selected
   const [features, setFeatures] = useState<FeatureOption[]>(defaultFeatures);
+  const [isStartProjectModalOpen, setIsStartProjectModalOpen] = useState(false);
 
   const toggleFeature = (id: string) => {
     setFeatures((prev) =>
@@ -124,7 +126,7 @@ export const ProductDetailsView = ({ productId, tokens, onBack }: ProductDetails
                   key={feature.id}
                   type="button"
                   onClick={() => toggleFeature(feature.id)}
-                  className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all text-left max-w-[450px] ${
+                  className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all text-left max-w-[450px] ${
                     feature.selected
                       ? tokens.isDark
                         ? "border-[#071FD7] bg-[#071FD7]/10"
@@ -169,6 +171,7 @@ export const ProductDetailsView = ({ productId, tokens, onBack }: ProductDetails
             <div className="flex justify-end">
               <button
                 type="button"
+                onClick={() => setIsStartProjectModalOpen(true)}
                 className="inline-flex items-center gap-2 rounded-full bg-[#071FD7] text-white px-12 py-3 text-base font-medium cursor-pointer hover:bg-[#071FD7]/90 transition-colors"
               >
                 Start Project
@@ -177,6 +180,17 @@ export const ProductDetailsView = ({ productId, tokens, onBack }: ProductDetails
           </div>
         </div>
       </div>
+
+      {/* Start Project Modal */}
+      <StartProjectModal
+        tokens={tokens}
+        isOpen={isStartProjectModalOpen}
+        onClose={() => setIsStartProjectModalOpen(false)}
+        onSave={(data) => {
+          console.log("Project data:", data);
+          // Handle project submission here
+        }}
+      />
     </div>
   );
 };

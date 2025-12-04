@@ -2,6 +2,9 @@ import { useState } from "react";
 import { EditIcon, EmailIcon, PhoneIcon, SettingsIcon, CloseIcon, RefreshIcon, KeyIcon, PlusCircleIcon } from "@utilities/icons";
 import type { DashboardTokens } from "../../types";
 import { TwoFactorAuthModal } from "../modals/TwoFactorAuthModal";
+import { AddNewEmailModal } from "../modals/AddNewEmailModal";
+import { ChangeEmailModal } from "../modals/ChangeEmailModal";
+import { ChangePasswordModal } from "../modals/ChangePasswordModal";
 
 type SettingsViewProps = {
   readonly tokens: DashboardTokens;
@@ -15,7 +18,7 @@ type AccountSharingItem = {
   readonly cloudServices: string;
 };
 
-const accountSharingData: readonly AccountSharingItem[] = [
+const initialAccountSharingData: readonly AccountSharingItem[] = [
   { id: "1", email: "Test@gmail.com", softwareServices: "A, C", appsServices: "A, C", cloudServices: "A, C" },
   { id: "2", email: "Test@gmail.com", softwareServices: "B", appsServices: "B", cloudServices: "B" },
   { id: "3", email: "Test@gmail.com", softwareServices: "A, B", appsServices: "A, B", cloudServices: "A, B" },
@@ -57,6 +60,10 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
   const [currentPassword] = useState("************");
   const [currentLanguage] = useState({ code: "en", name: "English", flag: "US" });
   const [isTwoFactorModalOpen, setIsTwoFactorModalOpen] = useState(false);
+  const [isAddNewEmailModalOpen, setIsAddNewEmailModalOpen] = useState(false);
+  const [isChangeEmailModalOpen, setIsChangeEmailModalOpen] = useState(false);
+  const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
+  const [accountSharingData, setAccountSharingData] = useState<readonly AccountSharingItem[]>(initialAccountSharingData);
 
   const cardClass = `${tokens.cardBase} rounded-[28px] p-6 transition-colors`;
   const sectionTitleClass = `text-xl font-bold ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`;
@@ -144,6 +151,7 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
               </div>
               <button
                 type="button"
+                onClick={() => setIsChangeEmailModalOpen(true)}
                 className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${tokens.isDark ? tokens.buttonGhost : ""}`}
                 style={tokens.isDark ? {} : { backgroundColor: "#E6E9FB" }}
                 aria-label="Edit email"
@@ -165,6 +173,7 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
               </div>
               <button
                 type="button"
+                onClick={() => setIsChangePasswordModalOpen(true)}
                 className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${tokens.isDark ? tokens.buttonGhost : ""}`}
                 style={tokens.isDark ? {} : { backgroundColor: "#E6E9FB" }}
                 aria-label="Edit password"
@@ -219,6 +228,7 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
           <h2 className={sectionTitleClass}>Account Sharing</h2>
           <button
             type="button"
+            onClick={() => setIsAddNewEmailModalOpen(true)}
             className="px-4 py-2.5 bg-[#4318FF] text-white text-sm font-semibold rounded-full flex items-center gap-2"
           >
             <PlusCircleIcon className="h-5 w-5 text-white" />
@@ -286,6 +296,58 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
           setTwoFactorMethod(data.method);
           setCurrentEmail(data.email);
           setCurrentPhone(data.phone);
+        }}
+      />
+
+      {/* Add New Email Modal */}
+      <AddNewEmailModal
+        tokens={tokens}
+        isOpen={isAddNewEmailModalOpen}
+        onClose={() => setIsAddNewEmailModalOpen(false)}
+        onAdd={(data) => {
+          // Format services for display
+          const formatServices = (serviceIds: string[]) => {
+            if (serviceIds.length === 0) return "-";
+            return serviceIds
+              .map((id) => {
+                // Map service IDs to display names (service-a -> A, service-b -> B)
+                const match = id.match(/service-([a-z])/i);
+                return match ? match[1].toUpperCase() : id;
+              })
+              .join(", ");
+          };
+
+          const newItem: AccountSharingItem = {
+            id: Date.now().toString(),
+            email: data.email,
+            softwareServices: formatServices(data.softwareServices),
+            appsServices: formatServices(data.appsServices),
+            cloudServices: formatServices(data.cloudServices)
+          };
+
+          setAccountSharingData([...accountSharingData, newItem]);
+        }}
+      />
+
+      {/* Change Email Modal */}
+      <ChangeEmailModal
+        tokens={tokens}
+        isOpen={isChangeEmailModalOpen}
+        onClose={() => setIsChangeEmailModalOpen(false)}
+        currentEmail={currentEmail}
+        onSave={(data) => {
+          setCurrentEmail(data.newEmail);
+        }}
+      />
+
+      {/* Change Password Modal */}
+      <ChangePasswordModal
+        tokens={tokens}
+        isOpen={isChangePasswordModalOpen}
+        onClose={() => setIsChangePasswordModalOpen(false)}
+        onSave={(data) => {
+          // Handle password change
+          console.log("Password changed", data);
         }}
       />
     </div>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { CloseModalIcon, TwoFactorAuthIcon } from "@utilities/icons";
 import type { DashboardTokens } from "../../types";
+import { getModalInputClass } from "../../utils/modalStyles";
 import { EmailVerificationSuccessModal } from "./EmailVerificationSuccessModal";
 
 type AddEmailModalProps = {
@@ -40,11 +41,7 @@ export const AddEmailModal = ({
     onClose();
   };
 
-  const inputClass = `w-full bg-transparent px-4 py-3 rounded-[16px] border placeholder:text-sm ${
-    tokens.isDark
-      ? "border-white/20 text-white"
-      : "border-[#E6E6E6] text-[#2B3674] placeholder:text-black"
-  } focus:outline-none`;
+  const inputClass = getModalInputClass(tokens, { paddingY: "py-3", textColor: "text-[#2B3674]" });
 
   return (
     <>
@@ -58,9 +55,11 @@ export const AddEmailModal = ({
           />
 
           {/* Modal */}
-          <div className={`relative w-full max-w-xl ${tokens.cardBase} rounded-2xl p-6 max-h-[90vh] overflow-hidden flex flex-col`}>
+          <div className={`relative w-full max-w-xl ${tokens.cardBase} ${tokens.isDark ? "bg-[#232637]" : "bg-white"} rounded-2xl max-h-[90vh] overflow-hidden flex flex-col`}>
             {/* Header */}
-            <div className="flex items-center justify-between mb-6 flex-shrink-0">
+            <div className={`flex items-center justify-between px-6 pt-6 pb-4 flex-shrink-0 rounded-t-2xl ${
+              tokens.isDark ? "bg-[#232637]" : "bg-[#FFFEF7]"
+            }`}>
               <div className="flex items-center gap-3">
                 <div
                   className={`flex h-10 w-10 items-center justify-center rounded-full ${
@@ -73,20 +72,21 @@ export const AddEmailModal = ({
                     style={tokens.isDark ? {} : { color: "#071FD7" }}
                   />
                 </div>
-                <h2 className={`text-lg md:text-xl font-bold ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
+                <h2 className={`text-lg md:text-xl font-semibold ${tokens.isDark ? "text-white" : "text-black"}`}>
                   Enable Two-Factor Authentication
                 </h2>
               </div>
               <button
                 type="button"
                 onClick={handleClose}
+                className="flex h-8 w-8 items-center justify-center transition-colors"
               >
                 <CloseModalIcon className="h-6 w-6 md:h-7 md:w-7" />
               </button>
             </div>
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto scrollbar-hide">
+            <div className="flex-1 overflow-y-auto scrollbar-hide pt-4 px-6">
               <div className="flex flex-col gap-6">
                 {/* Add Email Section */}
                 <div className="flex flex-col gap-4">
@@ -100,7 +100,7 @@ export const AddEmailModal = ({
                       className={`absolute left-4 -top-2.5 px-2 text-sm font-medium z-10 ${
                         tokens.isDark 
                           ? "text-white/70 bg-[#232637]" 
-                          : "text-black bg-white"
+                          : "text-black bg-[var(--color-card-bg)]"
                       }`}
                     >
                       your Email
@@ -123,7 +123,7 @@ export const AddEmailModal = ({
             </div>
 
             {/* Action Buttons */}
-            <div className={`flex flex-col gap-3 mt-10 flex-shrink-0 border-t ${tokens.isDark ? "border-white/20" : "border-[#E6E6E6]"} pt-2`}>
+            <div className={`flex flex-col gap-3 mt-6 flex-shrink-0 border-t mx-6 ${tokens.isDark ? "border-white/20" : "border-[#E6E6E6]"} pt-2 pb-6`}>
               <button
                 type="button"
                 onClick={handleAddEmail}
