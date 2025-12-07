@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { CloseModalIcon, StartProjectIcon, UploadIcon } from "@utilities/icons";
 import type { DashboardTokens } from "../../types";
 import { getModalInputClass } from "../../utils/modalStyles";
+import { AddMeetingModal } from "./AddMeetingModal";
 
 type StartProjectModalProps = {
   readonly tokens: DashboardTokens;
@@ -29,6 +30,7 @@ export const StartProjectModal = ({
   const [attachments, setAttachments] = useState<File[]>([]);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [isFeaturesOpen, setIsFeaturesOpen] = useState(false);
+  const [isAddMeetingModalOpen, setIsAddMeetingModalOpen] = useState(false);
   const categoryRef = useRef<HTMLDivElement>(null);
   const featuresRef = useRef<HTMLDivElement>(null);
 
@@ -67,6 +69,7 @@ export const StartProjectModal = ({
         });
       }
       handleClose();
+      setIsAddMeetingModalOpen(true);
     }
   };
 
@@ -354,7 +357,18 @@ export const StartProjectModal = ({
           </div>
         </div>
       )}
+
+      {/* Add Meeting Modal */}
+      <AddMeetingModal
+        tokens={tokens}
+        isOpen={isAddMeetingModalOpen}
+        onClose={() => setIsAddMeetingModalOpen(false)}
+        showProjectAndNote={false}
+        onAddMeeting={(data) => {
+          console.log("Meeting data:", data);
+          // Handle meeting submission here
+        }}
+      />
     </>
   );
 };
-

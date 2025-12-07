@@ -27,13 +27,15 @@ type ProjectCardProps = {
   readonly tokens: DashboardTokens;
   readonly onViewDetails?: (projectId: string) => void;
   readonly onManage?: (projectId: string) => void;
+  readonly onProposals?: (projectId: string) => void;
 };
 
 export const ProjectCard = ({
   project,
   tokens,
   onViewDetails,
-  onManage
+  onManage,
+  onProposals
 }: ProjectCardProps) => {
   const statusColors = {
     Active: tokens.isDark ? "bg-green-500/10 text-green-400" : "bg-green-100 text-green-700",
@@ -221,6 +223,7 @@ export const ProjectCard = ({
               </button>
               <button
                 type="button"
+                onClick={() => onProposals?.(project.id)}
                 className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-sm md:text-base font-medium transition-colors cursor-pointer ${
                   tokens.isDark
                     ? "border border-white/70 text-white/70 hover:bg-white/10"

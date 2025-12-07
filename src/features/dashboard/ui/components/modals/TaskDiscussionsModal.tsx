@@ -350,4 +350,3 @@ export const TaskDiscussionsModal = ({ tokens, isOpen, onClose, onJoinDiscussion
     </div>
   );
 };
-

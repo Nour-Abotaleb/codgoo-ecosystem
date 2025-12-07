@@ -14,12 +14,12 @@ export const getModalInputClass = (
   }
 ): string => {
   const paddingY = options?.paddingY ?? "py-3.5";
-  const lightTextColor = options?.textColor ?? "text-black";
+  const lightTextColor = options?.textColor ?? "!text-black";
 
   return `w-full px-4 ${paddingY} rounded-[16px] border placeholder:text-sm ${
     tokens.isDark
-      ? "bg-transparent border-white/20 text-white"
-      : `bg-transparent border-[#E6E6E6] ${lightTextColor} placeholder:text-black`
+      ? "bg-transparent border-white/20 text-white placeholder:text-white/50"
+      : `bg-transparent border-[#E6E6E6] ${lightTextColor} !placeholder:text-black`
   } focus:outline-none`;
 };
 

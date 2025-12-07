@@ -1,6 +1,10 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import { PlusCircleIcon, SearchIcon, DotsSwitcher, MeetingsIcon, MeetingSummaryIcon, ArrowRightIcon, MeetingCalendarIcon, MeetingClockIcon, MeetingReasonIcon, CloseIcon, EditIcon } from "@utilities/icons";
 import type { DashboardTokens } from "../../types";
+import { AddMeetingModal } from "../modals/AddMeetingModal";
+import { EditMeetingModal } from "../modals/EditMeetingModal";
+import { DeleteRecordModal } from "../modals/DeleteRecordModal";
+import { ViewSummaryModal } from "../modals/ViewSummaryModal";
 
 type MeetingsViewProps = {
   readonly tokens: DashboardTokens;
@@ -104,6 +108,13 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<MeetingStatus | "All">("All");
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [isAddMeetingModalOpen, setIsAddMeetingModalOpen] = useState(false);
+  const [isEditMeetingModalOpen, setIsEditMeetingModalOpen] = useState(false);
+  const [isDeleteRecordModalOpen, setIsDeleteRecordModalOpen] = useState(false);
+  const [isViewSummaryModalOpen, setIsViewSummaryModalOpen] = useState(false);
+  const [selectedMeeting, setSelectedMeeting] = useState<MeetingItem | null>(null);
+  const [meetingToDelete, setMeetingToDelete] = useState<MeetingItem | null>(null);
+  const [meetingToView, setMeetingToView] = useState<MeetingItem | null>(null);
   const menuRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
   // Close menu when clicking outside
@@ -163,6 +174,20 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
         </div>
 
         <div className="flex items-center gap-3">
+          
+          {/* Create Meeting Button */}
+          <button
+            type="button"
+            onClick={() => setIsAddMeetingModalOpen(true)}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-full font-medium transition-colors cursor-pointer ${
+              tokens.isDark
+                ? "bg-[#071FD7] text-white hover:bg-[#071FD7]/90"
+                : "bg-[#071FD7] text-white hover:bg-[#071FD7]/90"
+            }`}
+          >
+            {/* <PlusCircleIcon className="h-5 w-5 text-white" /> */}
+            <span>Create a meeting</span>
+          </button>
           {/* Status Filter Dropdown */}
           <div className="relative">
             <select
@@ -186,19 +211,6 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
               }`}
             />
           </div>
-
-          {/* Create Meeting Button */}
-          <button
-            type="button"
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-full font-medium transition-colors cursor-pointer ${
-              tokens.isDark
-                ? "bg-[#071FD7] text-white hover:bg-[#071FD7]/90"
-                : "bg-[#071FD7] text-white hover:bg-[#071FD7]/90"
-            }`}
-          >
-            <PlusCircleIcon className="h-5 w-5 text-white" />
-            <span>Create a meeting</span>
-          </button>
         </div>
       </div>
 
@@ -262,9 +274,13 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
                               // Close Icon for Completed and Canceled
                               <button
                                 type="button"
-                                className="flex h-9 w-9 items-center justify-center rounded-full transition-colors"
+                                onClick={() => {
+                                  setMeetingToDelete(meeting);
+                                  setIsDeleteRecordModalOpen(true);
+                                }}
+                                className="flex h-9 w-9 items-center justify-center rounded-full transition-colors curso"
                                 style={{ backgroundColor: tokens.isDark ? "rgba(255, 77, 77, 0.1)" : "rgb(255, 229, 222)" }}
-                                aria-label={`Close ${meeting.title}`}
+                                aria-label={`Delete ${meeting.title}`}
                               >
                                 <CloseIcon className="h-4 w-4" style={{ color: "#FF0000" }} />
                               </button>
@@ -272,6 +288,10 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
                               // Edit Icon for Waiting
                               <button
                                 type="button"
+                                onClick={() => {
+                                  setSelectedMeeting(meeting);
+                                  setIsEditMeetingModalOpen(true);
+                                }}
                                 className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${tokens.isDark ? tokens.buttonGhost : ""}`}
                                 style={tokens.isDark ? {} : { backgroundColor: "#E6E9FB" }}
                                 aria-label={`Edit ${meeting.title}`}
@@ -315,6 +335,11 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
                                     <div className="py-1">
                                       <button
                                         type="button"
+                                        onClick={() => {
+                                          setSelectedMeeting(meeting);
+                                          setIsEditMeetingModalOpen(true);
+                                          setOpenMenuId(null);
+                                        }}
                                         className={`w-full text-left px-4 py-2 text-sm transition-colors ${
                                           tokens.isDark
                                             ? "text-white/70 hover:bg-white/10"
@@ -472,6 +497,15 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
                   {/* Action Button */}
                    <button
                      type="button"
+                     onClick={() => {
+                       if (meeting.status === "Completed") {
+                         setMeetingToView(meeting);
+                         setIsViewSummaryModalOpen(true);
+                       } else if (meeting.status === "Canceled" || meeting.status === "Confirmed") {
+                         setSelectedMeeting(meeting);
+                         setIsEditMeetingModalOpen(true);
+                       }
+                     }}
                      className={`px-4 py-2 min-w-[120px] rounded-full border font-medium transition-colors cursor-pointer ${
                        tokens.isDark
                          ? "border-white text-white hover:bg-white/10"
@@ -503,6 +537,85 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
           </div>
         )}
       </div>
+
+      {/* Add Meeting Modal */}
+      <AddMeetingModal
+        tokens={tokens}
+        isOpen={isAddMeetingModalOpen}
+        onClose={() => setIsAddMeetingModalOpen(false)}
+        onAddMeeting={(data) => {
+          console.log("Meeting data:", data);
+          // Handle meeting submission here
+        }}
+      />
+
+      {/* Edit Meeting Modal */}
+      <EditMeetingModal
+        tokens={tokens}
+        isOpen={isEditMeetingModalOpen}
+        onClose={() => {
+          setIsEditMeetingModalOpen(false);
+          setSelectedMeeting(null);
+        }}
+        meeting={selectedMeeting ? {
+          title: selectedMeeting.title,
+          date: selectedMeeting.date,
+          time: selectedMeeting.time,
+          note: selectedMeeting.note
+        } : undefined}
+        onSave={(data) => {
+          console.log("Updated meeting data:", data);
+          // Handle meeting update here
+        }}
+      />
+
+      {/* Delete Record Modal */}
+      <DeleteRecordModal
+        tokens={tokens}
+        isOpen={isDeleteRecordModalOpen}
+        onClose={() => {
+          setIsDeleteRecordModalOpen(false);
+          setMeetingToDelete(null);
+        }}
+        recordName={meetingToDelete ? `${meetingToDelete.title} (${meetingToDelete.project})` : undefined}
+        onConfirm={() => {
+          console.log("Deleting meeting:", meetingToDelete?.id);
+          // Handle meeting deletion here
+        }}
+      />
+
+      {/* View Summary Modal */}
+      <ViewSummaryModal
+        tokens={tokens}
+        isOpen={isViewSummaryModalOpen}
+        onClose={() => {
+          setIsViewSummaryModalOpen(false);
+          setMeetingToView(null);
+        }}
+        meeting={meetingToView ? {
+          title: meetingToView.title,
+          project: meetingToView.project,
+          date: meetingToView.date,
+          time: meetingToView.time,
+          duration: "45 min",
+          platform: "Zoom",
+          attendees: Array.from({ length: meetingToView.attendees || 3 }).map((_, i) => ({
+            id: `${i + 1}`,
+            name: ["Aml Atef", "Ahmed Nasser", "Assmaa Hassan"][i] || `Attendee ${i + 1}`
+          })),
+          notes: undefined, 
+          actionLog: [
+            { date: "8 Nov", action: "Meeting created" },
+            { date: "10 Nov", action: "Meeting marked as Completed" },
+            { date: "10 Nov", action: "Summary added", by: "Aml Atef" }
+          ]
+        } : undefined}
+        onAddMeeting={() => {
+          setIsViewSummaryModalOpen(false);
+          setMeetingToView(null);
+          setIsAddMeetingModalOpen(true);
+        }}
+      />
     </div>
   );
 };

@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { PlusCircleIcon, AllProjectsIcon, CompletedIcon, OngoingIcon, ProjectPendingIcon } from "@utilities/icons";
 import type { DashboardTokens } from "../../types";
 import { ProjectCard, type ProjectCardData } from "./ProjectCard";
+import { AddNewProjectModal } from "../modals/AddNewProjectModal";
 
 type ProjectsViewProps = {
   readonly tokens: DashboardTokens;
@@ -102,9 +104,11 @@ export const ProjectsView = ({
   onManage
 }: ProjectsViewProps) => {
   const iconBaseColor = tokens.isDark ? "#FFFFFF" : "#2B3674";
+  const [isAddNewProjectModalOpen, setIsAddNewProjectModalOpen] = useState(false);
 
   return (
-    <div className="flex flex-col gap-6">
+    <>
+      <div className="flex flex-col gap-6">
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {projectStats.map((stat) => {
@@ -135,7 +139,7 @@ export const ProjectsView = ({
       <div className="flex justify-end">
         <button
           type="button"
-          onClick={onAddProject}
+          onClick={() => setIsAddNewProjectModalOpen(true)}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-full font-medium transition-colors cursor-pointer ${
             tokens.isDark
               ? "bg-[#071FD7] text-white hover:bg-[#071FD7]/90"
@@ -160,6 +164,21 @@ export const ProjectsView = ({
         ))}
       </div>
     </div>
+
+    {/* Add New Project Modal */}
+    <AddNewProjectModal
+      tokens={tokens}
+      isOpen={isAddNewProjectModalOpen}
+      onClose={() => setIsAddNewProjectModalOpen(false)}
+      onAdd={(data) => {
+        console.log("New project data:", data);
+        if (onAddProject) {
+          onAddProject();
+        }
+        // Handle project creation here
+      }}
+    />
+    </>
   );
 };
 

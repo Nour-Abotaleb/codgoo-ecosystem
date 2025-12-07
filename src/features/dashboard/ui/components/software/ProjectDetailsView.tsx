@@ -1,10 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   OverviewIcon,
   TasksIcon,
   ProjectInvoiceIcon,
   AttachmentsIcon,
-  // ProposalsIcon,
   AllProjectsIcon,
   CompletedIcon,
   DayLeftIcon,
@@ -24,14 +24,13 @@ type ProjectDetailsViewProps = {
   readonly onManage?: (projectId: string) => void;
 };
 
-type TabId = "overview" | "tasks" | "invoices" | "attachments"; // | "proposals";
+type TabId = "overview" | "tasks" | "invoices" | "attachments";
 
 const tabs: readonly { id: TabId; label: string; icon: React.ComponentType<React.SVGProps<SVGSVGElement>> }[] = [
   { id: "overview", label: "OverView", icon: OverviewIcon },
   { id: "tasks", label: "Tasks", icon: TasksIcon },
   { id: "invoices", label: "Invoices", icon: ProjectInvoiceIcon },
-  { id: "attachments", label: "Attachments", icon: AttachmentsIcon },
-  // { id: "proposals", label: "Proposals", icon: ProposalsIcon }
+  { id: "attachments", label: "Attachments", icon: AttachmentsIcon }
 ];
 
 type ProjectStat = {
@@ -95,10 +94,15 @@ export const ProjectDetailsView = ({
   tokens,
   onManage
 }: ProjectDetailsViewProps) => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<TabId>("overview");
   const [activeMilestoneTab, setActiveMilestoneTab] = useState(0);
   
   const milestoneTabs = ["Milestone", "Milestone", "Milestone", "Milestone", "Milestone"];
+
+  const handleProposalsClick = () => {
+    navigate(`/dashboard/projects/${project.id}/proposals`);
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -134,6 +138,7 @@ export const ProjectDetailsView = ({
           tokens={tokens}
           onViewDetails={undefined}
           onManage={onManage}
+          onProposals={handleProposalsClick}
         />
       )}
 

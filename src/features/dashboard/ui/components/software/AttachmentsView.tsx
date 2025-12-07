@@ -2,6 +2,7 @@ import { useState } from "react";
 import { PlusCircleIcon, PDFIcon, FileCodeIcon, CopyIcon, EyeFilledIcon, DocstIcon, FilePDFIcon, ImgIcon, EyeIcon } from "@utilities/icons";
 import screenshotImage from "@assets/images/software/screenshot.svg";
 import type { DashboardTokens } from "../../types";
+import { AddAttachmentsModal } from "../modals/AddAttachmentsModal";
 
 type AttachmentsViewProps = {
   readonly tokens: DashboardTokens;
@@ -83,6 +84,7 @@ const getFileIcon = (fileType: AttachmentItem["fileType"]) => {
 
 export const AttachmentsView = ({ tokens }: AttachmentsViewProps) => {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [isAddAttachmentsModalOpen, setIsAddAttachmentsModalOpen] = useState(false);
 
   return (
     <div className="flex flex-col gap-6">
@@ -90,6 +92,7 @@ export const AttachmentsView = ({ tokens }: AttachmentsViewProps) => {
       <div className="flex items-center justify-end">
         <button
           type="button"
+          onClick={() => setIsAddAttachmentsModalOpen(true)}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-full font-medium transition-colors cursor-pointer ${
             tokens.isDark
               ? "bg-[#071FD7] text-white hover:bg-[#071FD7]/90"
@@ -257,6 +260,17 @@ export const AttachmentsView = ({ tokens }: AttachmentsViewProps) => {
           </div>
         </div>
       )}
+
+      {/* Add Attachments Modal */}
+      <AddAttachmentsModal
+        tokens={tokens}
+        isOpen={isAddAttachmentsModalOpen}
+        onClose={() => setIsAddAttachmentsModalOpen(false)}
+        onUpload={(files) => {
+          console.log("Uploaded files:", files);
+          // Handle file upload here
+        }}
+      />
     </div>
   );
 };

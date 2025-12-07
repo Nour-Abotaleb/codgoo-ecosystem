@@ -21,6 +21,7 @@ import { DashboardOverview } from "./components/cloud/DashboardOverview";
 import { SoftwareDashboardOverview } from "./components/software/SoftwareDashboardOverview";
 import { ProjectsView } from "./components/software/ProjectsView";
 import { ProjectDetailsView } from "./components/software/ProjectDetailsView";
+import { ProposalsView } from "./components/software/ProposalsView";
 import { TaskDetailView } from "./components/software/TaskDetailView";
 import { tasksData } from "./components/software/TasksView";
 import { MeetingsView } from "./components/software/MeetingsView";
@@ -64,6 +65,7 @@ export const DashboardPage = () => {
   const manageWebsiteMatch = useMatch("/dashboard/manage-website/:websiteId");
   const manageHostMatch = useMatch("/dashboard/manage-host/:hostId");
   const projectDetailsMatch = useMatch("/dashboard/projects/:projectId");
+  const proposalsMatch = useMatch("/dashboard/projects/:projectId/proposals");
   const marketplaceDetailMatch = useMatch("/dashboard/marketplace/:itemId");
   const orderMatch = useMatch("/dashboard/order");
   const taskDetailMatch = useMatch("/dashboard/software/tasks/:taskId");
@@ -366,7 +368,75 @@ export const DashboardPage = () => {
               <WebsitesView sites={dataset.sites} tokens={tokens} />
             )
           ) : activeNavId === "projects" && activeApp.id === "software" ? (
-            projectDetailsMatch ? (
+            proposalsMatch ? (
+              (() => {
+                // Find project from default projects or get from data source
+                const defaultProjects = [
+                  {
+                    id: "proj-1",
+                    name: "FixMate App",
+                    description:
+                      "Updated app interface, changed order and appointment tracking system, improved customer satisfaction",
+                    status: "Active" as const,
+                    team: [
+                      { id: "1", name: "John Doe" },
+                      { id: "2", name: "Jane Smith" },
+                      { id: "3", name: "Bob Wilson" }
+                    ],
+                    startDate: "15 Oct 2023",
+                    deadline: "20 Nov 2023",
+                    budget: "$5,000",
+                    tasks: { completed: 8, total: 10 },
+                    type: "Mobile",
+                    lastUpdate: "2 days ago"
+                  },
+                  {
+                    id: "proj-2",
+                    name: "FixMate App",
+                    description:
+                      "Updated app interface, changed order and appointment tracking system, improved customer satisfaction",
+                    status: "Active" as const,
+                    team: [
+                      { id: "1", name: "John Doe" },
+                      { id: "2", name: "Jane Smith" },
+                      { id: "3", name: "Bob Wilson" }
+                    ],
+                    startDate: "15 Oct 2023",
+                    deadline: "20 Nov 2023",
+                    budget: "$5,000",
+                    tasks: { completed: 8, total: 10 },
+                    type: "Mobile",
+                    lastUpdate: "2 days ago"
+                  },
+                  {
+                    id: "proj-3",
+                    name: "FixMate App",
+                    description:
+                      "Updated app interface, changed order and appointment tracking system, improved customer satisfaction",
+                    status: "Active" as const,
+                    team: [
+                      { id: "1", name: "John Doe" },
+                      { id: "2", name: "Jane Smith" },
+                      { id: "3", name: "Bob Wilson" }
+                    ],
+                    startDate: "15 Oct 2023",
+                    deadline: "20 Nov 2023",
+                    budget: "$5,000",
+                    tasks: { completed: 8, total: 10 },
+                    type: "Mobile",
+                    lastUpdate: "2 days ago"
+                  }
+                ];
+                const projectId = proposalsMatch.params.projectId;
+                const project = defaultProjects.find((p) => p.id === projectId) ?? defaultProjects[0];
+                return (
+                  <ProposalsView
+                    project={project}
+                    tokens={tokens}
+                  />
+                );
+              })()
+            ) : projectDetailsMatch ? (
               (() => {
                 // Find project from default projects or get from data source
                 const defaultProjects = [
