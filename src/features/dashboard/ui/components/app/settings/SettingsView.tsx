@@ -76,9 +76,9 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
   return (
     <div className="flex flex-col gap-4">
       {/* Main Grid: First card in left column, Second and Third cards in right column */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
         {/* Left Column: Two-Factor Authentication Section */}
-        <div className={cardClass}>
+        <div className={`${cardClass} flex flex-col h-full`}>
           <div className="flex items-center justify-between">
             <h2 className={sectionTitleClass}>Two-Factor Authentication (2FA)</h2>
             <button
@@ -135,10 +135,10 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
           </div>
         </div>
 
-        {/* Right Column: Account Security and Current Language Sections */}
-        <div className="flex flex-col gap-4">
+        {/* Right Column: Account Security and Payment Methods Sections */}
+        <div className="flex flex-col gap-4 h-full">
         {/* Account Security Section */}
-        <div className={cardClass}>
+        <div className={`${cardClass} flex-1`}>
           <h2 className={`${sectionTitleClass} mb-6`}>Account Security</h2>
 
           <div className="flex flex-col gap-6">
