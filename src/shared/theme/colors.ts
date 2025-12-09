@@ -134,6 +134,7 @@ const getDashboardColors = (
  * Auth-specific colors
  * Note: Auth colors are static and don't vary by theme mode
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getAuthColors = (_mode: ThemeMode): ThemeColors => {
   return {
     "--color-auth-border": "#e2e8f0",

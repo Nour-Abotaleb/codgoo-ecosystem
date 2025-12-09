@@ -490,7 +490,7 @@ export const dashboardContent: Record<DashboardAppId, DashboardDataset> = {
         {
           id: "sub-1",
           name: "Codgoo Hosting",
-          plan: "Premium",
+          plan: "master",
           expiryDate: "10 Nov 2025",
           status: "Active",
           amount: "$7,098.00"
@@ -498,7 +498,7 @@ export const dashboardContent: Record<DashboardAppId, DashboardDataset> = {
         {
           id: "sub-2",
           name: "Codgoo Hosting",
-          plan: "Premium",
+          plan: "master",
           expiryDate: "10 Nov 2025",
           status: "Expiring Soon",
           amount: "$7,098.00"
@@ -506,7 +506,7 @@ export const dashboardContent: Record<DashboardAppId, DashboardDataset> = {
         {
           id: "sub-3",
           name: "Codgoo Hosting",
-          plan: "Premium",
+          plan: "general",
           expiryDate: "10 Nov 2025",
           status: "Expired",
           amount: "$7,098.00"
@@ -514,7 +514,7 @@ export const dashboardContent: Record<DashboardAppId, DashboardDataset> = {
         {
           id: "sub-4",
           name: "Codgoo Hosting",
-          plan: "Premium",
+          plan: "general",
           expiryDate: "10 Nov 2025",
           status: "Active",
           amount: "$7,098.00"
@@ -546,8 +546,8 @@ export const dashboardContent: Record<DashboardAppId, DashboardDataset> = {
       categories: {
         total: "12 Total Apps",
         items: [
-          { name: "Mobile", percentage: 40, color: "#0F6773" },
-          { name: "Web", percentage: 10, color: "url(#web-gradient)", gradient: { from: "#34D8D6", to: "#76E6E5" } },
+          { name: "Hr", percentage: 40, color: "#0F6773" },
+          { name: "CRM", percentage: 10, color: "url(#web-gradient)", gradient: { from: "#34D8D6", to: "#76E6E5" } },
           { name: "AI", percentage: 30, color: "#D3D3D3" },
           { name: "Marketing", percentage: 20, color: "url(#marketing-gradient)", gradient: { from: "rgba(15, 103, 115, 0.16)", to: "#0F6773" } }
         ]

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   OverviewIcon,
   TasksIcon,
@@ -95,10 +95,18 @@ export const ProjectDetailsView = ({
   onManage
 }: ProjectDetailsViewProps) => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState<TabId>("overview");
   const [activeMilestoneTab, setActiveMilestoneTab] = useState(0);
   
   const milestoneTabs = ["Milestone", "Milestone", "Milestone", "Milestone", "Milestone"];
+
+  useEffect(() => {
+    const tabParam = searchParams.get("tab");
+    if (tabParam && ["overview", "tasks", "invoices", "attachments"].includes(tabParam)) {
+      setActiveTab(tabParam as TabId);
+    }
+  }, [searchParams]);
 
   const handleProposalsClick = () => {
     navigate(`/dashboard/projects/${project.id}/proposals`);
@@ -119,8 +127,8 @@ export const ProjectDetailsView = ({
               className={`pb-2 px-1 flex items-center gap-2 text-sm md:text-base font-medium transition-colors whitespace-nowrap cursor-pointer ${
                 isActive
                   ? tokens.isDark
-                    ? "text-white border-b-2 border-white"
-                    : "text-[#111111] border-b-2 border-[#071FD7]"
+                    ? "text-white border-b-3 border-white"
+                    : "text-[#111111] border-b-3 border-[#071FD7]"
                   : tokens.subtleText
               }`}
             >

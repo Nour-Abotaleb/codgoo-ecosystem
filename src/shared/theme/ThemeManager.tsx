@@ -14,6 +14,7 @@ type ThemeManagerProps = {
 
 let currentDashboardAppId: DashboardAppId | undefined;
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const setDashboardAppId = (appId: DashboardAppId | undefined): void => {
   currentDashboardAppId = appId;
 };

@@ -11,6 +11,7 @@ type MarketplaceViewProps = {
 type Category = "All" | "Music" | "Collections" | "Sports";
 
 // Sample marketplace data - in a real app, this would come from an API
+// eslint-disable-next-line react-refresh/only-export-components
 export const marketplaceItems: readonly MarketplaceItem[] = [
   {
     id: "snapchat-ads",

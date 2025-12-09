@@ -210,7 +210,7 @@ export const TaskDiscussionsModal = ({ tokens, isOpen, onClose, onJoinDiscussion
                         return (
                           <span key={index}>
                             {index > 0 && " "}
-                            {isMonth ? <span className="text-black">{part}</span> : part}
+                            {isMonth ? <span className={`${tokens.isDark ? "text-white" : "text-black"}`}>{part}</span> : part}
                           </span>
                         );
                       })}
@@ -220,7 +220,7 @@ export const TaskDiscussionsModal = ({ tokens, isOpen, onClose, onJoinDiscussion
                         return (
                           <span key={index}>
                             {index > 0 && " "}
-                            {isAmPm ? <span className="text-black">{part}</span> : part}
+                            {isAmPm ? <span className={`${tokens.isDark ? "text-white" : "text-black"}`}>{part}</span> : part}
                           </span>
                         );
                       })}

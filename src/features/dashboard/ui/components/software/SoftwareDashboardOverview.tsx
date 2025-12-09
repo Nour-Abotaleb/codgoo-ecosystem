@@ -1,13 +1,193 @@
 import { useEffect, useState } from "react";
 import { i18n } from "@shared/config/i18n";
-import { ArrowRight, ActiveIcon, PendingIcon, UnpaidIcon, CalendarIcon, ClockIcon, PlusCircleIcon, SettingsIcon, CloseIcon, AllProjectsIcon, CompletedIcon, ProjectPendingIcon } from "@utilities/icons";
+import { ArrowRight, ActiveIcon, PendingIcon, UnpaidIcon, CalendarIcon, ClockIcon, PlusCircleIcon, SettingsIcon, CloseIcon, AllProjectsIcon, CompletedIcon, ProjectPendingIcon, DashboardAllProjectsIcon } from "@utilities/icons";
 import type { DashboardTokens, SoftwareDashboardData, DashboardHeroContent } from "../../types";
-import chartImg from "@assets/images/software/chart.svg";
 
 type SoftwareDashboardOverviewProps = {
   readonly data: SoftwareDashboardData;
   readonly hero: DashboardHeroContent;
   readonly tokens: DashboardTokens;
+};
+
+// Area Chart Component for Projects Overview
+const ProjectsAreaChart = ({ 
+  isDark = false 
+}: { 
+  isDark?: boolean;
+}) => {
+  const width = 450;
+  const height = 100;
+  const padding = { top: 20, right: 0, bottom: 30, left: 0 };
+  const chartWidth = width - padding.left - padding.right;
+  const chartHeight = height - padding.top - padding.bottom;
+
+  // Sample data points for the week (Monday to Saturday)
+  const days = ["M", "T", "W", "T", "F", "S"];
+  // Data points that overlap - sometimes yellow is higher, sometimes blue is higher
+  const yellowData = [15, 55, 30, 55, 35, 55]; // Yellow area values
+  const blueData = [30, 45, 25, 40, 25, 40]; // Blue area values - overlaps with yellow
+
+  // Normalize data to fit chart height
+  const maxValue = Math.max(...yellowData, ...blueData);
+  const normalize = (value: number) => (value / maxValue) * chartHeight;
+
+  // Calculate x positions for chart data
+  const xStep = chartWidth / (days.length - 1);
+  const getX = (index: number) => padding.left + index * xStep;
+  
+  // Calculate x positions for labels (closer together)
+  const labelSpacing = chartWidth * 0.8; // Use 60% of chart width for labels
+  const labelStartX = padding.left + (chartWidth - labelSpacing) / 2; // Center the labels
+  const labelStep = labelSpacing / (days.length - 1);
+  const getLabelX = (index: number) => labelStartX + index * labelStep;
+  
+  const cornerRadius = 4; // Radius for rounded corners
+
+  // Helper function to create smooth line path (for stroke)
+  const createSmoothLinePath = (data: number[]) => {
+    const points = data.map((value, index) => ({
+      x: getX(index),
+      y: padding.top + chartHeight - normalize(value)
+    }));
+
+    let path = `M ${points[0].x} ${points[0].y}`;
+
+    // Create smooth curves between points using cubic bezier
+    for (let i = 0; i < points.length - 1; i++) {
+      const current = points[i];
+      const next = points[i + 1];
+      const controlPoint1X = current.x + (next.x - current.x) * 0.5;
+      const controlPoint1Y = current.y;
+      const controlPoint2X = current.x + (next.x - current.x) * 0.5;
+      const controlPoint2Y = next.y;
+      
+      path += ` C ${controlPoint1X} ${controlPoint1Y}, ${controlPoint2X} ${controlPoint2Y}, ${next.x} ${next.y}`;
+    }
+
+    return path;
+  };
+
+  // Helper function to create smooth curve path with rounded corners (for filled area)
+  const createSmoothAreaPath = (data: number[]) => {
+    const linePath = createSmoothLinePath(data);
+    const lastX = getX(days.length - 1);
+    const firstX = getX(0);
+    const bottomY = padding.top + chartHeight;
+    const lastPoint = data.map((value, index) => ({
+      x: getX(index),
+      y: padding.top + chartHeight - normalize(value)
+    }))[data.length - 1];
+    const firstPoint = data.map((value, index) => ({
+      x: getX(index),
+      y: padding.top + chartHeight - normalize(value)
+    }))[0];
+
+    // Close path with rounded corners at bottom
+    let path = linePath;
+    // Go to bottom right (before corner)
+    path += ` L ${lastX} ${lastPoint.y}`;
+    // Rounded bottom right corner
+    path += ` Q ${lastX} ${bottomY}, ${lastX - cornerRadius} ${bottomY}`;
+    // Bottom line
+    path += ` L ${firstX + cornerRadius} ${bottomY}`;
+    // Rounded bottom left corner
+    path += ` Q ${firstX} ${bottomY}, ${firstX} ${firstPoint.y}`;
+    path += ` Z`;
+
+    return path;
+  };
+
+  // Create paths with smooth curves and rounded corners
+  const yellowAreaPath = createSmoothAreaPath(yellowData);
+  const blueAreaPath = createSmoothAreaPath(blueData);
+  const yellowLinePath = createSmoothLinePath(yellowData);
+  const blueLinePath = createSmoothLinePath(blueData);
+
+  return (
+    <div className={`${isDark ? "bg-black" : "bg-black"} rounded-3xl pt-2 flex flex-col h-full`}>
+      {/* Header */}
+      <div className="flex items-center justify-between px-4">
+        <div className="flex flex-col gap-1">
+          <div>
+            <DashboardAllProjectsIcon  />
+          </div>
+          <div className="flex flex-col">
+            <h3 className={`text-lg font-semibold ${isDark ? "text-white" : "text-white"}`}>
+              All Projects
+            </h3>
+            <p className={`text-sm mb-2 ${isDark ? "text-white/70" : "text-white/70"}`}>
+              6 Projects
+            </p>
+          </div>
+        </div>
+        <ArrowRight className={`h-5 w-5 ${isDark ? "text-white/60" : "text-white/60"}`} />
+      </div>
+
+      {/* Chart */}
+      <div className="flex-1 flex items-end w-full bg-[#262628] rounded-b-3xl">
+        <svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none" className="w-full h-full">
+          <defs>
+            {/* Gradient for yellow area */}
+            <linearGradient id="yellowGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#E6C310" stopOpacity="1" />
+              <stop offset="100%" stopColor="#1C2EBF" stopOpacity="1" />
+            </linearGradient>
+            {/* Gradient for blue area */}
+            <linearGradient id="blueGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#1C2EBF" stopOpacity="0.6" />
+              <stop offset="100%" stopColor="#1C2EBF" stopOpacity="0.2" />
+            </linearGradient>
+          </defs>
+          
+          {/* Blue area (bottom layer) */}
+          <path
+            d={blueAreaPath}
+            fill="url(#blueGradient)"
+            className="transition-all duration-300"
+          />
+          
+          {/* Yellow area (top layer) */}
+          <path
+            d={yellowAreaPath}
+            fill="url(#yellowGradient)"
+            className="transition-all duration-300"
+          />
+
+          {/* Blue line on top of blue area */}
+          <path
+            d={blueLinePath}
+            fill="none"
+            stroke="#1C2EBF"
+            strokeWidth="4"
+            className="transition-all duration-300"
+          />
+
+          {/* Yellow line on top of yellow area */}
+          <path
+            d={yellowLinePath}
+            fill="none"
+            stroke="#E6C310"
+            strokeWidth="4"
+            className="transition-all duration-300"
+          />
+
+          {/* Day labels */}
+          {days.map((day, index) => (
+            <text
+              key={index}
+              x={getLabelX(index)}
+              y={height - padding.bottom + 15}
+              textAnchor="middle"
+              className={`text-[10px] ${isDark ? "fill-white/90" : "fill-white/90"}`}
+              style={{ fontSize: "10px" }}
+            >
+              {day}
+            </text>
+          ))}
+        </svg>
+      </div>
+    </div>
+  );
 };
 
 // Pie Chart Component - 3D style with labels outside each segment
@@ -246,10 +426,8 @@ export const SoftwareDashboardOverview = ({
       <section className="grid gap-6 lg:grid-cols-[1fr_1fr]">
         {/* Statistics Cards - 2 columns, 2 rows */}
         <div className="grid grid-cols-2 gap-4">
-          {/* First Card - Chart Image */}
-          <div>
-            <img src={chartImg} alt="Chart" className="w-full object-contain" />
-          </div>
+          {/* First Card - Dynamic Area Chart */}
+          <ProjectsAreaChart isDark={tokens.isDark} />
           
           {/* Other Statistics Cards */}
           {[

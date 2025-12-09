@@ -26,6 +26,7 @@ import { TaskDetailView } from "./components/software/TaskDetailView";
 import { tasksData } from "./components/software/TasksView";
 import { MeetingsView } from "./components/software/MeetingsView";
 import { SettingsView } from "./components/software/SettingsView";
+import { SettingsView as AppSettingsView } from "./components/app/settings/SettingsView";
 import { ProductsView } from "./components/software/ProductsView";
 import { ProductDetailsView } from "./components/software/ProductDetailsView";
 import { AppDashboardOverview } from "./components/app/AppDashboardOverview";
@@ -581,6 +582,8 @@ export const DashboardPage = () => {
             )
           ) : activeNavId === "settings" && activeApp.id === "software" ? (
             <SettingsView tokens={tokens} />
+          ) : activeNavId === "settings" && activeApp.id === "app" ? (
+            <AppSettingsView tokens={tokens} />
           ) : (
             <div className={`${tokens.cardBase} rounded-3xl p-10`}>
               <h2 className="text-2xl font-semibold">

@@ -1,7 +1,8 @@
 import { useState } from "react";
-import type { DashboardTokens } from "../../types";
+import type { DashboardTokens } from "../../../../types";
 import { EditIcon } from "@utilities/icons";
 import { AddEmailModal } from "./AddEmailModal";
+import { APP_COLORS } from "../../../../styles/app/colors";
 
 type TwoFactorAuthModalProps = {
   readonly tokens: DashboardTokens;
@@ -33,8 +34,9 @@ const ToggleSwitch = ({
       aria-checked={checked}
       onClick={() => onChange(!checked)}
       className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${
-        checked ? "bg-[#4318FF]" : "bg-gray-300"
+        checked ? "" : "bg-gray-300"
       }`}
+      style={checked ? { backgroundColor: APP_COLORS.primary } : {}}
     >
       <span
         className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${
@@ -88,10 +90,10 @@ export const TwoFactorAuthModal = ({
                     setIsAddEmailModalOpen(true);
                   }}
                   className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${tokens.isDark ? tokens.buttonGhost : ""}`}
-                  style={tokens.isDark ? {} : { backgroundColor: "#E6E9FB" }}
+                  style={tokens.isDark ? {} : { backgroundColor: APP_COLORS.buttonBackground }}
                   aria-label="Add email for 2FA"
                 >
-                  <EditIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: "#071FD7" }} />
+                  <EditIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: APP_COLORS.primary }} />
                 </button>
             </div>
 
@@ -112,7 +114,7 @@ export const TwoFactorAuthModal = ({
                 <div className="pb-16">
                   <div className="flex items-center justify-between">
                     <span className={labelClass}>Security Level</span>
-                    <span className="px-4 py-1.5 text-[#718EBF] text-sm font-medium rounded-full bg-[#EFEFFE] !text-[#071FD7] rounded-full">
+                    <span className="px-4 py-1.5 text-sm font-medium rounded-full" style={{ backgroundColor: APP_COLORS.primaryLight, color: APP_COLORS.primary }}>
                       {status ? "High" : "Low"}
                     </span>
                   </div>

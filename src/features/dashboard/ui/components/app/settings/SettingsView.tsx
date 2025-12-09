@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { EditIcon, EmailIcon, PhoneIcon, SettingsIcon, CloseIcon, RefreshIcon, KeyIcon, PlusCircleIcon } from "@utilities/icons";
-import type { DashboardTokens } from "../../types";
-import { TwoFactorAuthModal } from "../modals/TwoFactorAuthModal";
-import { AddNewEmailModal } from "../modals/AddNewEmailModal";
-import { ChangeEmailModal } from "../modals/ChangeEmailModal";
-import { ChangePasswordModal } from "../modals/ChangePasswordModal";
+import { EditIcon, EmailIcon, PhoneIcon, SettingsIcon, CloseIcon, KeyIcon, PlusCircleIcon, CardIcon } from "@utilities/icons";
+import type { DashboardTokens } from "../../../types";
+import { TwoFactorAuthModal } from "./modals/TwoFactorAuthModal";
+import { AddNewEmailModal } from "./modals/AddNewEmailModal";
+import { ChangeEmailModal } from "./modals/ChangeEmailModal";
+import { ChangePasswordModal } from "./modals/ChangePasswordModal";
+import { PaymentMethodsModal } from "./modals/PaymentMethodsModal";
+import { APP_COLORS } from "../../../styles/app/colors";
 
 type SettingsViewProps = {
   readonly tokens: DashboardTokens;
@@ -40,8 +42,9 @@ const ToggleSwitch = ({
       aria-checked={checked}
       onClick={() => onChange(!checked)}
       className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${
-        checked ? "bg-[#4318FF]" : "bg-gray-300"
+        checked ? "" : "bg-gray-300"
       }`}
+      style={checked ? { backgroundColor: APP_COLORS.primary } : {}}
     >
       <span
         className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${
@@ -58,17 +61,17 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
   const [currentEmail, setCurrentEmail] = useState("a----@g----.com");
   const [currentPhone, setCurrentPhone] = useState("+20 10*******");
   const [currentPassword] = useState("************");
-  const [currentLanguage] = useState({ code: "en", name: "English", flag: "US" });
   const [isTwoFactorModalOpen, setIsTwoFactorModalOpen] = useState(false);
   const [isAddNewEmailModalOpen, setIsAddNewEmailModalOpen] = useState(false);
   const [isChangeEmailModalOpen, setIsChangeEmailModalOpen] = useState(false);
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
+  const [isPaymentMethodsModalOpen, setIsPaymentMethodsModalOpen] = useState(false);
   const [accountSharingData, setAccountSharingData] = useState<readonly AccountSharingItem[]>(initialAccountSharingData);
 
   const cardClass = `${tokens.cardBase} rounded-[28px] p-6 transition-colors`;
-  const sectionTitleClass = `text-xl font-bold ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`;
-  const labelClass = `text-sm font-medium ${tokens.isDark ? "text-white/70" : "text-[#2B3674]"}`;
-  const valueClass = `text-sm md:text-base ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`;
+  const sectionTitleClass = `text-xl font-bold ${tokens.isDark ? "text-white" : "text-black"}`;
+  const labelClass = `text-sm font-medium ${tokens.isDark ? "text-white/70" : "text-black"}`;
+  const valueClass = `text-sm md:text-base ${tokens.isDark ? "text-white" : "text-black"}`;
 
   return (
     <div className="flex flex-col gap-4">
@@ -82,10 +85,10 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
               type="button"
               onClick={() => setIsTwoFactorModalOpen(true)}
               className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${tokens.isDark ? tokens.buttonGhost : ""}`}
-              style={tokens.isDark ? {} : { backgroundColor: "#E6E9FB" }}
+              style={tokens.isDark ? {} : { backgroundColor: APP_COLORS.buttonBackground }}
               aria-label="Edit 2FA settings"
             >
-              <EditIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: "#071FD7" }} />
+              <EditIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: APP_COLORS.primary }} />
             </button>
           </div>
           <p className={`text-sm mb-6 ${tokens.subtleText}`}>
@@ -104,7 +107,8 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
               <span className={labelClass}>Method</span>
               <button
                 type="button"
-                className="px-6 py-2 bg-[#EFEFFE] text-[#071FD7] text-sm font-semibold rounded-full"
+                className="px-6 py-2 text-sm font-semibold rounded-full"
+                style={{ backgroundColor: APP_COLORS.primaryLight, color: APP_COLORS.primary }}
               >
                 {twoFactorMethod}
               </button>
@@ -116,14 +120,14 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
                 <h2 className={sectionTitleClass}>Contact Information</h2>
               </div>
               <div className="flex items-center gap-3">
-                <div className={`flex h-9 w-9 items-center justify-center rounded-full ${tokens.isDark ? tokens.buttonGhost : ""}`} style={tokens.isDark ? {} : { backgroundColor: "#E6E9FB" }}>
-                  <EmailIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: "#071FD7" }} />
+                <div className={`flex h-9 w-9 items-center justify-center rounded-full ${tokens.isDark ? tokens.buttonGhost : ""}`} style={tokens.isDark ? {} : { backgroundColor: APP_COLORS.buttonBackground }}>
+                  <EmailIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: APP_COLORS.primary }} />
                 </div>
                 <span className={valueClass}>{currentEmail}</span>
               </div>
               <div className="flex items-center gap-3">
-                <div className={`flex h-9 w-9 items-center justify-center rounded-full ${tokens.isDark ? tokens.buttonGhost : ""}`} style={tokens.isDark ? {} : { backgroundColor: "#E6E9FB" }}>
-                  <PhoneIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: "#071FD7" }} />
+                <div className={`flex h-9 w-9 items-center justify-center rounded-full ${tokens.isDark ? tokens.buttonGhost : ""}`} style={tokens.isDark ? {} : { backgroundColor: APP_COLORS.buttonBackground }}>
+                  <PhoneIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: APP_COLORS.primary }} />
                 </div>
                 <span className={valueClass}>{currentPhone}</span>
               </div>
@@ -141,8 +145,8 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
             {/* Current Email */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className={`flex h-9 w-9 items-center justify-center rounded-full ${tokens.isDark ? tokens.buttonGhost : ""}`} style={tokens.isDark ? {} : { backgroundColor: "#E6E9FB" }}>
-                  <EmailIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: "#071FD7" }} />
+                <div className={`flex h-9 w-9 items-center justify-center rounded-full ${tokens.isDark ? tokens.buttonGhost : ""}`} style={tokens.isDark ? {} : { backgroundColor: APP_COLORS.buttonBackground }}>
+                  <EmailIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: APP_COLORS.primary }} />
                 </div>
                 <div className="flex flex-col gap-1">
                   <span className={labelClass}>Current Email</span>
@@ -153,18 +157,18 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
                 type="button"
                 onClick={() => setIsChangeEmailModalOpen(true)}
                 className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${tokens.isDark ? tokens.buttonGhost : ""}`}
-                style={tokens.isDark ? {} : { backgroundColor: "#E6E9FB" }}
+                style={tokens.isDark ? {} : { backgroundColor: APP_COLORS.buttonBackground }}
                 aria-label="Edit email"
               >
-                <EditIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: "#071FD7" }} />
+                <EditIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: APP_COLORS.primary }} />
               </button>
             </div>
 
             {/* Password */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className={`flex h-9 w-9 items-center justify-center rounded-full ${tokens.isDark ? tokens.buttonGhost : ""}`} style={tokens.isDark ? {} : { backgroundColor: "#E6E9FB" }}>
-                  <KeyIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: "#071FD7" }} />
+                <div className={`flex h-9 w-9 items-center justify-center rounded-full ${tokens.isDark ? tokens.buttonGhost : ""}`} style={tokens.isDark ? {} : { backgroundColor: APP_COLORS.buttonBackground }}>
+                  <KeyIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: APP_COLORS.primary }} />
                 </div>
                 <div className="flex flex-col gap-1">
                   <span className={labelClass}>Password</span>
@@ -175,48 +179,40 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
                 type="button"
                 onClick={() => setIsChangePasswordModalOpen(true)}
                 className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${tokens.isDark ? tokens.buttonGhost : ""}`}
-                style={tokens.isDark ? {} : { backgroundColor: "#E6E9FB" }}
+                style={tokens.isDark ? {} : { backgroundColor: APP_COLORS.buttonBackground }}
                 aria-label="Edit password"
               >
-                <EditIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: "#071FD7" }} />
+                <EditIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: APP_COLORS.primary }} />
               </button>
             </div>
           </div>
         </div>
 
-        {/* Current Language Section */}
+        {/* Payment Methods Section */}
         <div className={cardClass}>
         <div className="flex items-center justify-between mb-4">
-          <h2 className={sectionTitleClass}>Current Language</h2>
+          <h2 className={sectionTitleClass}>Payment Methods</h2>
           <button
             type="button"
+            onClick={() => setIsPaymentMethodsModalOpen(true)}
             className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${tokens.isDark ? tokens.buttonGhost : ""}`}
-            style={tokens.isDark ? {} : { backgroundColor: "#E6E9FB" }}
-            aria-label="Refresh language"
+            style={tokens.isDark ? {} : { backgroundColor: APP_COLORS.buttonBackground }}
+            aria-label="Edit payment methods"
           >
-            <RefreshIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: "#071FD7" }} />
+            <EditIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: APP_COLORS.primary }} />
           </button>
         </div>
-        <p className={`text-sm mb-6 ${tokens.subtleText}`}>
-          Your interface is displayed in this language
-        </p>
 
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 w-8 h-8 flex items-center justify-center bg-[#EFEFFE] text-[#071FD7] text-sm font-semibold rounded-full">
-              {currentLanguage.flag}
-            </div>
-            <div className="flex flex-col">
-              <span className={`font-semibold ${valueClass}`}>{currentLanguage.name}</span>
-              <span className={`text-sm ${tokens.isDark ? "text-white/70" : "text-black"}`}>{currentLanguage.name}</span>
-            </div>
+        <div className="flex items-center gap-3">
+          <div className={`flex h-9 w-9 items-center justify-center rounded-full ${tokens.isDark ? tokens.buttonGhost : ""}`} style={tokens.isDark ? {} : { backgroundColor: APP_COLORS.buttonBackground }}>
+            <CardIcon className={`h-5 w-5`} style={tokens.isDark ? {} : { color: APP_COLORS.primary }} />
           </div>
-          <button
-            type="button"
-            className="px-4 py-1.5 bg-[#E2FFE9] text-[#34C759] text-sm font-semibold rounded-full"
-          >
-            Active
-          </button>
+          <div>
+            <span className={valueClass}>Mastercard .... 5555</span>
+          </div>
+          <span className="px-3 py-1.5 text-sm font-medium rounded-full ms-10" style={{ backgroundColor: APP_COLORS.primaryLight, color: APP_COLORS.primary }}>
+            Default
+          </span>
         </div>
         </div>
         </div>
@@ -229,7 +225,8 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
           <button
             type="button"
             onClick={() => setIsAddNewEmailModalOpen(true)}
-            className="px-4 py-2.5 bg-[#4318FF] text-white text-sm font-semibold rounded-full flex items-center gap-2"
+            className="px-4 py-2.5 text-white text-sm font-semibold rounded-full flex items-center gap-2"
+            style={{ backgroundColor: APP_COLORS.primary }}
           >
             <PlusCircleIcon className="h-5 w-5 text-white" />
             <span>Add New Email</span>
@@ -260,18 +257,18 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
                       <button
                         type="button"
                         className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${tokens.isDark ? tokens.buttonGhost : ""}`}
-                        style={tokens.isDark ? {} : { backgroundColor: "#E6E9FB" }}
+                        style={tokens.isDark ? {} : { backgroundColor: APP_COLORS.buttonBackground }}
                         aria-label="Settings"
                       >
-                        <SettingsIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: "#071FD7" }} />
+                        <SettingsIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: APP_COLORS.primary }} />
                       </button>
                       <button
                         type="button"
                         className="flex h-9 w-9 items-center justify-center rounded-full transition-colors"
-                        style={{ backgroundColor: tokens.isDark ? "rgba(255, 77, 77, 0.1)" : "rgb(255, 229, 222)" }}
+                        style={{ backgroundColor: tokens.isDark ? "rgba(255, 77, 77, 0.1)" : APP_COLORS.errorBackground }}
                         aria-label="Delete"
                       >
-                        <CloseIcon className="h-4 w-4" style={{ color: "#FF0000" }} />
+                        <CloseIcon className="h-4 w-4" style={{ color: APP_COLORS.error }} />
                       </button>
                     </div>
                   </td>
@@ -348,6 +345,17 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
         onSave={(data) => {
           // Handle password change
           console.log("Password changed", data);
+        }}
+      />
+
+      {/* Payment Methods Modal */}
+      <PaymentMethodsModal
+        tokens={tokens}
+        isOpen={isPaymentMethodsModalOpen}
+        onClose={() => setIsPaymentMethodsModalOpen(false)}
+        onAdd={(email) => {
+          // Handle adding payment method
+          console.log("Payment method added", email);
         }}
       />
     </div>

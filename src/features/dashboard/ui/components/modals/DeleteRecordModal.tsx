@@ -15,8 +15,7 @@ export const DeleteRecordModal = ({
   tokens,
   isOpen,
   onClose,
-  onConfirm,
-  recordName: _recordName
+  onConfirm
 }: DeleteRecordModalProps) => {
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);

@@ -14,11 +14,15 @@ import {
   SupportIcon,
   Logout,
   CalendarIcon,
-  ApplicationIcon,
   MarketplaceIcon,
   ProjectIcon,
   ProductIcon,
-  CheckIcon
+  CheckIcon,
+  AppHomeIcon,
+  AppApplicationsIcon,
+  AppMarketplaceIcon,
+  AppBillingIcon,
+  AppSettingsIcon
 } from "@utilities/icons";
 
 import cloudNavBackground from "@assets/images/cloud/nav-bg.svg";
@@ -86,7 +90,22 @@ export const DashboardSidebar = ({
   const activeLogo = tokens.isDark
     ? dashboardAppLogos[activeAppId] ?? dashboardAppLogos.cloud
     : dashboardAppLogosLight[activeAppId] ?? dashboardAppLogos[activeAppId] ?? dashboardAppLogos.cloud;
-  const iconMap = {
+  
+  // Use App-specific icons when activeAppId is "app"
+  const iconMap = activeAppId === "app" ? {
+    dashboard: AppHomeIcon,
+    host: HostIcon,
+    server: ServerIcon,
+    domains: DomainsIcon,
+    websites: WebsitesIcon,
+    billing: AppBillingIcon,
+    settings: AppSettingsIcon,
+    projects: ProjectIcon,
+    products: ProductIcon,
+    meetings: CalendarIcon,
+    applications: AppApplicationsIcon,
+    marketplace: AppMarketplaceIcon
+  } : {
     dashboard: DashboardIcon,
     host: HostIcon,
     server: ServerIcon,
@@ -97,7 +116,6 @@ export const DashboardSidebar = ({
     projects: ProjectIcon,
     products: ProductIcon,
     meetings: CalendarIcon,
-    applications: ApplicationIcon,
     marketplace: MarketplaceIcon
   };
 
@@ -106,7 +124,9 @@ export const DashboardSidebar = ({
     : activeAppId === "app"
     ? (tokens.isDark ? "#FEFEFE" : "#0F6773")
     : (tokens.isDark ? "#FEFEFE" : "#584ABC");
-  const navIdleColorHex = tokens.isDark ? "#C6CCDF" : "#A3AED0";
+  const navIdleColorHex = activeAppId === "app"
+    ? (tokens.isDark ? "#C6CCDF" : "#000000")
+    : (tokens.isDark ? "#C6CCDF" : "#A3AED0");
 
   const navActiveColorClass = `text-[${navActiveColorHex}]`;
   const navIdleColorClass = `text-[${navIdleColorHex}]`;

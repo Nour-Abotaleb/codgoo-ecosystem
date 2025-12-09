@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { i18n } from "@shared/config/i18n";
-import { ArrowRight, SettingsIcon, ProductIcon, DiamondIcon, ApplicationIcon, RevenueIcon, BackupIcon, ChartIcon, ClockIcon, ArrowUpIcon } from "@utilities/icons";
+import { ArrowRight, SettingsIcon, NumofApplicationsIcon, ActiveSubscriptionsIcon, TypeofApplicationsIcon, RevenueIcon, NewUpdatesIcon, ClockIcon, ArrowUpIcon, MasterIcon, GeneralIcon, RecentActivityReloadIcon } from "@utilities/icons";
 import appWidget from "@assets/images/app/widget.png";
 import mobileImage from "@assets/images/app/mobile.png";
 import type { DashboardTokens, AppDashboardData, DashboardHeroContent } from "../../types";
@@ -205,19 +205,6 @@ const getStatusBadge = (status: string) => {
   }
 };
 
-const getActivityIcon = (iconType: string) => {
-  switch (iconType) {
-    case "refresh":
-      return <BackupIcon className="w-5 h-5" />;
-    case "chart":
-      return <ChartIcon className="w-5 h-5" />;
-    case "dots":
-      return <ApplicationIcon className="w-5 h-5" />;
-    default:
-      return null;
-  }
-};
-
 export const AppDashboardOverview = ({
   data,
   hero,
@@ -259,11 +246,11 @@ export const AppDashboardOverview = ({
   const getStatIcon = (statId: string) => {
     switch (statId) {
       case "apps":
-        return <ProductIcon className="w-8 h-8" />;
+        return <NumofApplicationsIcon className="w-8 h-8" />;
       case "subscriptions":
-        return <DiamondIcon className="w-8 h-8" />;
+        return <ActiveSubscriptionsIcon className="w-8 h-8" />;
       case "types":
-        return <ApplicationIcon className="w-8 h-8" />;
+        return <TypeofApplicationsIcon className="w-8 h-8" />;
       case "revenue":
         return <RevenueIcon className="w-8 h-8" />;
       default:
@@ -355,7 +342,7 @@ export const AppDashboardOverview = ({
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {data.subscriptions.map((subscription) => {
-                const badge = getStatusBadge(subscription.status);
+                // const badge = getStatusBadge(subscription.status);
                 return (
                   <div
                     key={subscription.id}
@@ -370,7 +357,7 @@ export const AppDashboardOverview = ({
                           className="w-full h-full object-cover"
                         />
                         {/* Status Badge */}
-                        <span 
+                        {/* <span 
                           className="absolute top-2 right-2 rounded-full px-2 py-1.5 text-xs font-semibold z-20 flex items-center gap-1.5"
                           style={{ 
                             backgroundColor: badge.bgColor, 
@@ -382,7 +369,7 @@ export const AppDashboardOverview = ({
                             style={{ backgroundColor: badge.textColor }}
                           ></span>
                           {badge.text}
-                        </span>
+                        </span> */}
                       </div>
                       {/* Subscription Info */}
                       <div className="relative z-10">
@@ -392,8 +379,32 @@ export const AppDashboardOverview = ({
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-4">
                             <div className="flex items-center gap-1">
-                              <DiamondIcon className="h-3 w-3 text-[#A3AED0]" />
-                              <p className="text-sm text-[#A3AED0]">{subscription.plan}</p>
+                              {(() => {
+                                const planLower = subscription.plan?.toLowerCase();
+                                if (planLower === "master") {
+                                  return (
+                                    <>
+                                      <MasterIcon className="h-3 w-3 text-[#A3AED0]" />
+                                      <p className="text-sm text-[#A3AED0]">Master</p>
+                                    </>
+                                  );
+                                } else if (planLower === "general") {
+                                  return (
+                                    <>
+                                      <GeneralIcon className="h-3 w-3 text-[#A3AED0]" />
+                                      <p className="text-sm text-[#A3AED0]">General</p>
+                                    </>
+                                  );
+                                } else {
+                                  // For other plans, show General icon and the original plan text
+                                  return (
+                                    <>
+                                      <GeneralIcon className="h-3 w-3 text-[#A3AED0]" />
+                                      <p className="text-sm text-[#A3AED0]">{subscription.plan}</p>
+                                    </>
+                                  );
+                                }
+                              })()}
                             </div>
                             <div className="flex items-center gap-1">
                               <ClockIcon className="h-3 w-3 text-[#A3AED0]" />
@@ -525,7 +536,7 @@ export const AppDashboardOverview = ({
             </button>
           </div>
           <div className="space-y-4">
-            {data.activities.map((activity) => (
+            {data.activities.map((activity, index) => (
               <div
                 key={activity.id}
                 className="flex items-start gap-3"
@@ -535,7 +546,11 @@ export const AppDashboardOverview = ({
                   style={tokens.isDark ? {} : { backgroundColor: bgColor }}
                 >
                   <div style={{ color: tokens.isDark ? "white" : primaryColor }}>
-                    {getActivityIcon(activity.icon)}
+                    {index === 1 ? (
+                      <NewUpdatesIcon className="w-5 h-5" />
+                    ) : (
+                      <RecentActivityReloadIcon className="w-5 h-5" />
+                    )}
                   </div>
                 </div>
                 <div className="flex-1 flex items-center gap-1">
