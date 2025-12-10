@@ -9,6 +9,7 @@ export type MarketplaceItem = {
   readonly rating: number;
   readonly reviewCount: number;
   readonly priceType: "Free" | "Paid";
+  readonly price?: string;
   readonly icon: React.ReactNode;
   readonly iconColor?: string;
   readonly iconGradient?: string;
@@ -57,29 +58,34 @@ export const MarketplaceCard = ({ item, tokens, onClick, onLearnMore }: Marketpl
             {item.description}
           </p>
 
-          {/* Rating */}
-          <div className="flex items-center gap-2 mb-2">
-            <div className="flex items-center">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <span
-                  key={i}
-                  className="text-lg md:text-xl"
-                  style={{ color: i < Math.floor(item.rating) ? "#F8C56B" : "#E0E0E0" }}
-                >
-                  ★
-                </span>
-              ))}
-            </div>
-            <span className={`text-sm ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"}`}>
-              ({item.rating}) • {item.reviewCount.toLocaleString()} reviews
+          {/* Price and Rating */}
+          <div className="mt-3 flex items-center justify-between text-sm w-full">
+            <span className={`text-[15px] font-medium ${tokens.isDark ? "text-white" : "text-[#1A3341]"}`}>
+              {item.price || ""}
             </span>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <div className="flex items-center">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <span
+                    key={i}
+                    className="text-lg md:text-xl"
+                    style={{ color: i < Math.floor(item.rating) ? "#F8C56B" : "#E0E0E0" }}
+                  >
+                    ★
+                  </span>
+                ))}
+              </div>
+              <span className={`text-sm ${tokens.isDark ? "text-white/70" : "text-black"}`}>
+                ({item.rating}) • {item.reviewCount.toLocaleString()} reviews
+              </span>
+            </div>
           </div>
         </div>
 
         {/* Icon */}
         <div className="flex-shrink-0">
           <div
-            className="w-16 h-16 rounded-full flex items-center justify-center"
+            className="w-14 h-14 rounded-full flex items-center justify-center"
             style={
               item.iconGradient
                 ? { background: item.iconGradient }
@@ -92,15 +98,11 @@ export const MarketplaceCard = ({ item, tokens, onClick, onLearnMore }: Marketpl
       </div>
 
       {/* Learn More Link */}
-      <div className="flex justify-end mt-auto">
+      <div className="flex justify-end mt-2 cursor-pointer">
         <button
           type="button"
-          className="flex items-center gap-1 text-sm font-medium transition-colors text-white py-2.5 px-4 rounded-full"
-          style={{ backgroundColor: tokens.isDark ? "#FFFFFF66" : "#0F6773" }}
-          onClick={(e) => {
-            e.stopPropagation();
-            onLearnMore?.();
-          }}
+          className="flex items-center gap-1 text-sm font-medium transition-colors text-white py-2.5 px-4 rounded-full bg-[#0F6773] cursor-pointer"
+          onClick={onLearnMore}
         >
           <span>Learn more</span>
           <ArrowRight className={`h-4 w-4 ${isRTL ? "rotate-180" : ""}`} />

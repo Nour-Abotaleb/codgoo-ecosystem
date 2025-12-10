@@ -33,7 +33,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
               {/* Icon */}
               <div className="flex-shrink-0">
                 <div
-                  className="w-18 h-18 rounded-xl flex items-center justify-center"
+                  className="w-18 h-18 rounded-full flex items-center justify-center"
                   style={
                     item.iconGradient
                       ? { background: item.iconGradient }

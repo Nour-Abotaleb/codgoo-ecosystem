@@ -30,6 +30,7 @@ import { SettingsView as AppSettingsView } from "./components/app/settings/Setti
 import { ProductsView } from "./components/software/ProductsView";
 import { ProductDetailsView } from "./components/software/ProductDetailsView";
 import { AppDashboardOverview } from "./components/app/AppDashboardOverview";
+import { ApplicationsView } from "./components/app/ApplicationsView";
 import { MarketplaceView, marketplaceItems } from "./components/app/MarketplaceView";
 import { MarketplaceDetailView } from "./components/app/MarketplaceDetailView";
 import type { MarketplaceItem } from "./components/app/MarketplaceCard";
@@ -537,6 +538,11 @@ export const DashboardPage = () => {
             )
           ) : activeNavId === "billing" ? (
             <BillingView tokens={tokens} activeAppId={activeApp.id} />
+          ) : activeNavId === "applications" && activeApp.id === "app" ? (
+            <ApplicationsView
+              tokens={tokens}
+              onOpenMarketplace={() => handleSelectNav("marketplace")}
+            />
           ) : activeNavId === "marketplace" && activeApp.id === "app" ? (
             marketplaceDetailMatch ? (() => {
               const itemId = marketplaceDetailMatch.params.itemId;

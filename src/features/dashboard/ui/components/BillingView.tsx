@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { SearchIcon, UnpaidIcon, PendingIcon, ActiveIcon, DeleteIcon, PayAllIcon, DownloadIcon } from "@utilities/icons";
 import type { DashboardTokens, DashboardAppId } from "../types";
 import { SoftwareStatisticsCards, SoftwareBillingView } from "./software/SoftwareBillingView";
+import { AppBillingView } from "./app/AppBillingView";
 
 type BillingViewProps = {
   readonly tokens: DashboardTokens;
@@ -733,6 +734,13 @@ export const BillingView = ({ tokens, activeAppId }: BillingViewProps) => {
           <SoftwareBillingView tokens={tokens} searchQuery={searchQuery} onSearchChange={setSearchQuery} />
         </div>
       </>
+    );
+  }
+
+  // For app, show the dedicated billing experience with tabs and updated styling
+  if (activeAppId === "app") {
+    return (
+      <AppBillingView tokens={tokens} />
     );
   }
 

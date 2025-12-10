@@ -20,7 +20,8 @@ export const marketplaceItems: readonly MarketplaceItem[] = [
     rating: 4.9,
     reviewCount: 1234,
     priceType: "Free",
-    icon: <SnapChatIcon className="w-8 h-8" />,
+    price: "135 EGP",
+    icon: <SnapChatIcon className="w-7 h-7" />,
     iconGradient: "linear-gradient(to left, #DC4BAF, #AB55F3)"
   },
   {
@@ -30,7 +31,8 @@ export const marketplaceItems: readonly MarketplaceItem[] = [
     rating: 4.8,
     reviewCount: 856,
     priceType: "Paid",
-    icon: <RedditIcon className="w-8 h-8" />,
+    price: "135 EGP",
+    icon: <RedditIcon className="w-7 h-7" />,
     iconGradient: "linear-gradient(to right,  #4B4DDC, #55C6F3)"
   },
   {
@@ -40,7 +42,8 @@ export const marketplaceItems: readonly MarketplaceItem[] = [
     rating: 4.7,
     reviewCount: 2341,
     priceType: "Free",
-    icon: <PrintIcon className="w-8 h-8" />,
+    price: "135 EGP",
+    icon: <PrintIcon className="w-7 h-7" />,
     iconGradient: "linear-gradient(to right, #F3AC55, #F9E560)"
   },
   // Duplicate items for demonstration
@@ -53,6 +56,7 @@ export const marketplaceItems: readonly MarketplaceItem[] = [
         rating: 4.9,
         reviewCount: 1234,
         priceType: "Free" as const,
+        price: "135 EGP",
         iconGradient: "linear-gradient(to left, #DC4BAF, #AB55F3)"
       },
       {
@@ -62,6 +66,7 @@ export const marketplaceItems: readonly MarketplaceItem[] = [
         rating: 4.8,
         reviewCount: 856,
         priceType: "Paid" as const,
+        price: "135 EGP",
         iconGradient: "linear-gradient(to right, #55C6F3, #4B4DDC)"
       },
       {
@@ -71,6 +76,7 @@ export const marketplaceItems: readonly MarketplaceItem[] = [
         rating: 4.7,
         reviewCount: 2341,
         priceType: "Free" as const,
+        price: "135 EGP",
         iconGradient: "linear-gradient(to right, #F9E560, #F3AC55)"
       }
     ];
@@ -79,11 +85,11 @@ export const marketplaceItems: readonly MarketplaceItem[] = [
       ...item,
       id: `${item.id}-${i + 1}`,
       icon: item.id === "snapchat-ads" ? (
-        <SnapChatIcon className="w-8 h-8" />
+        <SnapChatIcon className="w-7 h-7" />
       ) : item.id === "ai-product-writer" ? (
-        <RedditIcon className="w-8 h-8" />
+        <RedditIcon className="w-7 h-7" />
       ) : (
-        <PrintIcon className="w-8 h-8" />
+        <PrintIcon className="w-7 h-7" />
       )
     };
   })
@@ -119,29 +125,6 @@ export const MarketplaceView = ({ tokens, onItemClick }: MarketplaceViewProps) =
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Header with Search */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        {/* Search Input */}
-        <div className="relative flex-1 max-w-md">
-          <SearchIcon
-            className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 ${
-              tokens.isDark ? "text-white/50" : "text-[#A3AED0]"
-            }`}
-          />
-          <input
-            type="text"
-            placeholder="Search"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className={`w-full pl-10 pr-4 py-2.5 rounded-full border transition-colors ${
-              tokens.isDark
-                ? "bg-[var(--color-card-bg)] text-white placeholder-white/50"
-                : "bg-white border-[#E6E9FB] text-[#2B3674] placeholder-[#A3AED0]"
-            } focus:outline-none focus:ring-1 focus:ring-[#071FD7]/20`}
-          />
-        </div>
-      </div>
-
       {/* Category Tabs */}
       <div className="flex items-center gap-2 flex-wrap">
         {categories.map((category) => (
