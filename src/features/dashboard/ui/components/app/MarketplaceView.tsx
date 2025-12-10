@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { SearchIcon, SnapChatIcon, RedditIcon, PrintIcon } from "@utilities/icons";
+import { SnapChatIcon, RedditIcon, PrintIcon } from "@utilities/icons";
 import type { DashboardTokens } from "../../types";
 import { MarketplaceCard, type MarketplaceItem } from "./MarketplaceCard";
 
@@ -97,7 +97,6 @@ export const marketplaceItems: readonly MarketplaceItem[] = [
 
 export const MarketplaceView = ({ tokens, onItemClick }: MarketplaceViewProps) => {
   const [activeCategory, setActiveCategory] = useState<Category>("All");
-  const [searchQuery, setSearchQuery] = useState("");
 
   const categories: readonly Category[] = ["All", "Music", "Collections", "Sports"];
 
@@ -110,18 +109,8 @@ export const MarketplaceView = ({ tokens, onItemClick }: MarketplaceViewProps) =
       // For now, we'll just return all items (no filtering needed)
     }
 
-    // Filter by search query
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(
-        (item) =>
-          item.title.toLowerCase().includes(query) ||
-          item.description.toLowerCase().includes(query)
-      );
-    }
-
     return filtered;
-  }, [activeCategory, searchQuery]);
+  }, [activeCategory]);
 
   return (
     <div className="flex flex-col gap-6">
