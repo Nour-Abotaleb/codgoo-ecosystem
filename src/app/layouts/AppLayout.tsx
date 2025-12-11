@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom";
 
 import { AppFooter } from "@shared/components/AppFooter";
 import { AppHeader } from "@shared/components/AppHeader";
+import { ThemeManager } from "@shared/theme";
 
 type AppLayoutProps = {
   readonly children: ReactNode;
@@ -14,9 +15,8 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
 
   const { isAuthRoute, isDashboardRoute, containerClass, mainClass } = useMemo(() => {
     const authRoutes = new Set(["/login", "/register"]);
-    const dashboardRoutes = new Set(["/dashboard"]);
     const auth = authRoutes.has(location.pathname);
-    const dashboard = dashboardRoutes.has(location.pathname);
+    const dashboard = location.pathname.startsWith("/dashboard");
 
     return {
       isAuthRoute: auth,
@@ -27,7 +27,7 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
           ? "bg-transparent text-white"
           : "bg-slate-950 text-slate-100",
       mainClass: auth
-        ? "flex flex-1 items-center justify-center px-4 py-10 sm:px-6 lg:px-8"
+        ? "flex flex-1"
         : dashboard
           ? "flex flex-1"
           : "flex flex-1 items-center justify-center px-4 py-10 sm:px-6 lg:px-8",
@@ -35,11 +35,13 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
   }, [location.pathname]);
 
   return (
-    <div className={`flex min-h-screen flex-col transition-colors ${containerClass}`}>
-      {!isAuthRoute && !isDashboardRoute && <AppHeader />}
-      <main className={mainClass}>{children}</main>
-      {!isAuthRoute && !isDashboardRoute && <AppFooter />}
-    </div>
+    <ThemeManager>
+      <div className={`flex min-h-screen flex-col transition-colors ${containerClass}`}>
+        {!isAuthRoute && !isDashboardRoute && <AppHeader />}
+        <main className={mainClass}>{children}</main>
+        {!isAuthRoute && !isDashboardRoute && <AppFooter />}
+      </div>
+    </ThemeManager>
   );
 };
 

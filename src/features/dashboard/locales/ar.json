@@ -1,0 +1,51 @@
+{
+  "navigation": {
+    "dashboard": "لوحة التحكم",
+    "host": "الاستضافة",
+    "server": "الخوادم",
+    "domains": "النطاقات",
+    "websites": "المواقع",
+    "billing": "الفواتير",
+    "settings": "الإعدادات",
+    "applications": "التطبيقات",
+    "marketplace": "السوق",
+    "projects": "المشاريع",
+    "products": "المنتجات",
+    "meetings": "الاجتماعات"
+  },
+  "apps": {
+    "cloud": "كودجو كلاود",
+    "app": "كودجو أب",
+    "software": "كودجو سوفت وير"
+  },
+  "header": {
+    "search": "بحث",
+    "notifications": "الإشعارات",
+    "toggleTheme": "تبديل المظهر",
+    "cart": "السلة",
+    "order": "الطلب"
+  },
+  "marketplace": {
+    "searchPlaceholder": "بحث",
+    "noItemsFound": "لم يتم العثور على عناصر تطابق معاييرك.",
+    "previous": "السابق",
+    "next": "التالي"
+  },
+  "billing": {
+    "search": "بحث",
+    "payAll": "دفع الكل",
+    "invoices": "الفواتير",
+    "quotes": "عروض الأسعار",
+    "addFunds": "إضافة أموال",
+    "addFundsDescription": "أضف أموالاً إلى رصيد حسابك لدفع الفواتير تلقائياً أو استخدامها للمشتريات المستقبلية."
+  },
+  "common": {
+    "all": "الكل",
+    "previous": "السابق",
+    "next": "التالي",
+    "search": "بحث",
+    "loading": "جاري التحميل...",
+    "noData": "لا توجد بيانات متاحة"
+  }
+}
+

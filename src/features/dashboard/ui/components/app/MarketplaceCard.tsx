@@ -1,0 +1,113 @@
+import { i18n } from "@shared/config/i18n";
+import { ArrowRight } from "@utilities/icons";
+import type { DashboardTokens } from "../../types";
+
+export type MarketplaceItem = {
+  readonly id: string;
+  readonly title: string;
+  readonly description: string;
+  readonly rating: number;
+  readonly reviewCount: number;
+  readonly priceType: "Free" | "Paid";
+  readonly price?: string;
+  readonly icon: React.ReactNode;
+  readonly iconColor?: string;
+  readonly iconGradient?: string;
+};
+
+type MarketplaceCardProps = {
+  readonly item: MarketplaceItem;
+  readonly tokens: DashboardTokens;
+  readonly onClick?: () => void;
+  readonly onLearnMore?: () => void;
+};
+
+export const MarketplaceCard = ({ item, tokens, onClick, onLearnMore }: MarketplaceCardProps) => {
+  const isRTL = i18n.language === "ar";
+  // const priceTypeColors = {
+  //   Free: { bg: "#27B43E", text: "#FFFFFF" },
+  //   Paid: { bg: "#FF8A0E", text: "#FFFFFF" }
+  // };
+
+  // const colors = priceTypeColors[item.priceType];
+
+  return (
+    <div
+      className={`${tokens.cardBase} rounded-2xl p-4 transition-all cursor-pointer flex flex-col`}
+      onClick={onClick}
+    >
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex-1 min-w-0">
+          {/* Price Type Badge */}
+          {/* <div className="flex items-center gap-3 mb-3">
+            <span
+              className="inline-flex items-center justify-center px-5 py-1 rounded-full text-sm font-light"
+              style={{ backgroundColor: colors.bg, color: colors.text }}
+            >
+              {item.priceType}
+            </span>
+          </div> */}
+
+          {/* Title */}
+          <h3 className={`text-lg font-bold mb-2 ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
+            {item.title}
+          </h3>
+
+          {/* Description */}
+          <p className={`text-sm mb-2 ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"}`}>
+            {item.description}
+          </p>
+
+          {/* Price and Rating */}
+          <div className="mt-3 flex items-center justify-between text-sm w-full">
+            <span className={`text-[15px] font-medium ${tokens.isDark ? "text-white" : "text-[#1A3341]"}`}>
+              {item.price || ""}
+            </span>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <div className="flex items-center">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <span
+                    key={i}
+                    className="text-lg md:text-xl"
+                    style={{ color: i < Math.floor(item.rating) ? "#F8C56B" : "#E0E0E0" }}
+                  >
+                    ★
+                  </span>
+                ))}
+              </div>
+              <span className={`text-sm ${tokens.isDark ? "text-white/70" : "text-black"}`}>
+                ({item.rating}) • {item.reviewCount.toLocaleString()} reviews
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Icon */}
+        <div className="flex-shrink-0">
+          <div
+            className="w-14 h-14 rounded-full flex items-center justify-center"
+            style={
+              item.iconGradient
+                ? { background: item.iconGradient }
+                : { backgroundColor: item.iconColor || "#E7F0F1" }
+            }
+          >
+            {item.icon}
+          </div>
+        </div>
+      </div>
+
+      {/* Learn More Link */}
+      <div className="flex justify-end mt-2 cursor-pointer">
+        <button
+          type="button"
+          className="flex items-center gap-1 text-sm font-medium transition-colors text-white py-2.5 px-4 rounded-full bg-[#0F6773] cursor-pointer"
+          onClick={onLearnMore}
+        >
+          <span>Learn more</span>
+          <ArrowRight className={`h-4 w-4 ${isRTL ? "rotate-180" : ""}`} />
+        </button>
+      </div>
+    </div>
+  );
+};

@@ -5,7 +5,11 @@
   font-family: "Urbanist", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
   color-scheme: light dark;
-  direction: ltr;
+  --color-auth-border: #e2e8f0;
+  --color-auth-placeholder: #94a3b8;
+  --color-auth-helper: #475569;
+  --color-link: #6366f1;
+  --color-nav-link: #584ABC;
 }
 
 body {
@@ -27,5 +31,14 @@ input:-webkit-autofill:focus {
 input:-moz-autofill {
   box-shadow: 0 0 0 1000px #ffffff inset;
   -moz-text-fill-color: #0f172a;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
 }
 

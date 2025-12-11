@@ -34,7 +34,7 @@ export const LoginForm = () => {
 
       <button
         type="submit"
-        className="mt-2 inline-flex h-14 md:h-17 items-center justify-center cursor-pointer rounded-[32px] bg-black text-base md:text-xl font-medium text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+        className="mt-2 inline-flex h-14 items-center justify-center cursor-pointer rounded-[32px] bg-black text-base md:text-xl font-medium text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
       >
         Login
       </button>

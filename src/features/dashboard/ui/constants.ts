@@ -1,10 +1,15 @@
 import heroTexture from "@assets/images/cloud/widget2.png";
-import heroWave from "@assets/images/cloud/widget.png";
+import heroWave from "@assets/images/cloud/bg.png";
+import heroSoftwareBg from "@assets/images/software/bg.png";
+import heroAppBg from "@assets/images/app/bg.png";
 import recentOne from "@assets/images/cloud/recent-1.png";
 import recentTwo from "@assets/images/cloud/recent-2.png";
-import logoApp from "@assets/logos/logo-app.svg";
-import logoCloudPng from "@assets/logos/logo-cloud.png";
-import logoCloudSvg from "@assets/logos/logo-cloud.svg";
+import logoAppDark from "@assets/logos/logo-app-dark.svg";
+import logoAppWhite from "@assets/logos/logo-app-white.svg";
+import logoCloudDark from "@assets/logos/logo-cloud-dark.svg";
+import logoCloudWhite from "@assets/logos/logo-cloud-white.svg";
+import logoSoftwareDark from "@assets/logos/logo-software-dark.svg";
+import logoSoftwareWhite from "@assets/logos/logo-software-white.svg";
 
 import type {
   DashboardApp,
@@ -14,19 +19,121 @@ import type {
   DomainStatus,
   NewsItem,
   ProductItem,
+  ServerService,
+  ServerServiceStatus,
   SiteItem,
   StatItem,
-  TicketItem
+  TicketItem,
+  SoftwareDashboardData,
+  AppDashboardData
 } from "./types";
 
 export const supportChannels = ["Chat", "Tickets", "Knowledgebase"] as const;
 export type SupportChannel = (typeof supportChannels)[number];
 
 export const statusColors: Record<DomainStatus, string> = {
-  Active: "bg-emerald-500/15 text-emerald-300",
-  Pending: "bg-amber-500/15 text-amber-300",
-  Fraud: "bg-rose-500/15 text-rose-300"
+  Active: "bg-emerald-500/10 text-emerald-300",
+  Pending: "bg-amber-500/10 text-amber-300",
+  Fraud: "bg-rose-500/10 text-rose-300"
 };
+
+export const serverServiceStatusStyles: Record<ServerServiceStatus, string> = {
+  Active: "text-white",
+  Pending: "text-white"
+};
+
+export const serverServices: readonly ServerService[] = [
+  {
+    id: "srv-001",
+    product: "11aveafrica.com",
+    plan: "(Starter cPanel)",
+    pricing: "$30.00 USD",
+    billingCycle: "Monthly",
+    nextDueDate: "2026-03-17",
+    status: "Pending"
+  },
+  {
+    id: "srv-002",
+    product: "5545dd.com",
+    plan: "(Pro)",
+    pricing: "$30.00 USD",
+    billingCycle: "Quarterly",
+    nextDueDate: "2026-03-17",
+    status: "Active"
+  },
+  {
+    id: "srv-003",
+    product: "5545dd.com",
+    plan: "(Pro)",
+    pricing: "$30.00 USD",
+    billingCycle: "Triennially",
+    nextDueDate: "2026-03-17",
+    status: "Pending"
+  },
+  {
+    id: "srv-004",
+    product: "5545dd.com",
+    plan: "(Pro)",
+    pricing: "$30.00 USD",
+    billingCycle: "Monthly",
+    nextDueDate: "2026-03-17",
+    status: "Active"
+  },
+  {
+    id: "srv-005",
+    product: "5545dd.com",
+    plan: "(Pro)",
+    pricing: "$30.00 USD",
+    billingCycle: "Monthly",
+    nextDueDate: "2026-03-17",
+    status: "Active"
+  },
+  {
+    id: "srv-006",
+    product: "5545dd.com",
+    plan: "(Pro)",
+    pricing: "$30.00 USD",
+    billingCycle: "Monthly",
+    nextDueDate: "2026-03-17",
+    status: "Pending"
+  },
+  {
+    id: "srv-007",
+    product: "5545dd.com",
+    plan: "(Pro)",
+    pricing: "$30.00 USD",
+    billingCycle: "Monthly",
+    nextDueDate: "2026-03-17",
+    status: "Pending"
+  },
+  {
+    id: "srv-008",
+    product: "5545dd.com",
+    plan: "(Pro)",
+    pricing: "$30.00 USD",
+    billingCycle: "Monthly",
+    nextDueDate: "2026-03-17",
+    status: "Pending"
+  },
+  {
+    id: "srv-009",
+    product: "5545dd.com",
+    plan: "(Pro)",
+    pricing: "$30.00 USD",
+    billingCycle: "Monthly",
+    nextDueDate: "2026-03-17",
+    status: "Pending"
+  },
+  {
+    id: "srv-010",
+    product: "5545dd.com",
+    plan: "(Pro)",
+    pricing: "$30.00 USD",
+    billingCycle: "Monthly",
+    nextDueDate: "2026-03-17",
+    status: "Active"
+  }
+] as const;
 
 export const heroAssets = {
   texture: heroTexture,
@@ -52,9 +159,15 @@ export const dashboardApps: readonly DashboardApp[] = [
 ] as const;
 
 export const dashboardAppLogos: Record<DashboardAppId, string> = {
-  cloud: logoCloudSvg,
-  app: logoApp,
-  software: logoCloudPng
+  cloud: logoCloudWhite,
+  app: logoAppWhite,
+  software: logoSoftwareWhite
+};
+
+export const dashboardAppLogosLight: Record<DashboardAppId, string> = {
+  cloud: logoCloudDark,
+  app: logoAppDark,
+  software: logoSoftwareDark
 };
 
 const createStats = (values: [string, string, string, string]): StatItem[] => [
@@ -66,11 +179,14 @@ const createStats = (values: [string, string, string, string]): StatItem[] => [
 
 const createProducts = (items: ProductItem[]): ProductItem[] => items;
 
-const createDomains = (items: { id: string; name: string; status: DomainStatus }[]): {
+const createDomains = (items: {
   id: string;
   name: string;
+  registrationDate: string;
+  nextDueDate: string;
+  autoRenew: boolean;
   status: DomainStatus;
-}[] => items;
+}[]) => items;
 
 const createSites = (items: SiteItem[]): SiteItem[] => items;
 
@@ -81,43 +197,47 @@ const createNews = (items: NewsItem[]): NewsItem[] => items;
 const cloudNavigation: DashboardNavItem[] = [
   { id: "dashboard", label: "Dashboard", icon: "dashboard" },
   { id: "host", label: "Host", icon: "host" },
-  { id: "server", label: "Server", icon: "server" },
+  { id: "server", label: "Servers", icon: "server" },
   { id: "domains", label: "Domains", icon: "domains" },
   { id: "websites", label: "Websites", icon: "websites" },
-  { id: "billing", label: "Billing", icon: "billing" }
+  { id: "billing", label: "Billing", icon: "billing" },
+  { id: "settings", label: "Settings", icon: "settings" }
 ];
 
 const appNavigation: DashboardNavItem[] = [
-  { id: "release-center", label: "Release Center" },
-  { id: "experiments", label: "Experiments" },
-  { id: "distribution", label: "Distribution" },
-  { id: "crash-analytics", label: "Crash Analytics" }
+  { id: "dashboard", label: "Dashboard", icon: "dashboard" },
+  { id: "applications", label: "Applications", icon: "applications" },
+  { id: "marketplace", label: "Marketplace", icon: "marketplace" },
+  { id: "billing", label: "Billing", icon: "billing" },
+  { id: "settings", label: "Settings", icon: "settings" }
 ];
 
 const softwareNavigation: DashboardNavItem[] = [
-  { id: "ops-overview", label: "Ops Overview" },
-  { id: "runbooks", label: "Runbooks" },
-  { id: "automation", label: "Automation" },
-  { id: "finance", label: "Finance Insights" }
+  { id: "dashboard", label: "Dashboard", icon: "dashboard" },
+  { id: "projects", label: "Projects", icon: "projects" },
+  { id: "products", label: "Products", icon: "products" },
+  { id: "meetings", label: "Meetings", icon: "meetings" },
+  { id: "billing", label: "Billing", icon: "billing" },
+  { id: "settings", label: "Settings", icon: "settings" }
 ];
 
 export const dashboardContent: Record<DashboardAppId, DashboardDataset> = {
   cloud: {
     navigation: cloudNavigation,
     hero: {
-      eyebrow: "Daily Website Backup",
-      title: "Keep your sites safe in the Codgoo Cloud",
+      title: "Daily Website Backup",
       highlights: [
         "Automatic daily backup of your website",
-        "Keep your WordPress or site updated automatically",
+        "Keep your WordPress or website updated automatically",
         "Monitor for malware and get alerts",
         "One-click restore whenever you need it"
       ],
       priceLabel: "Starting from just",
-      price: "$209/month",
+      price: "$2.09/month",
       ctaLabel: "Get Started",
       gradient:
-        "linear-gradient(125deg, rgba(124,77,255,0.9) 0%, rgba(73,43,210,0.85) 45%, rgba(26,21,60,0.95) 100%)"
+        "linear-gradient(135deg, rgba(64,41,158,0.95) 0%, rgba(98,52,204,0.95) 45%, rgba(168,113,255,0.9) 100%)",
+      backgroundImage: heroWave
     },
     stats: createStats(["24", "24", "24", "1"]),
     products: createProducts([
@@ -144,10 +264,86 @@ export const dashboardContent: Record<DashboardAppId, DashboardDataset> = {
       }
     ]),
     domains: createDomains([
-      { id: "codgoo", name: "Codgoo UI.com", status: "Active" },
-      { id: "codgoo-dashboard", name: "Codgoo UI.com", status: "Pending" },
-      { id: "marketplace", name: "Marketplace.com", status: "Fraud" },
-      { id: "weekly", name: "Weekly Updates.com", status: "Pending" }
+      {
+        id: "domain-001",
+        name: "Codgoo UI.com",
+        registrationDate: "2026-03-17",
+        nextDueDate: "2026-03-17",
+        autoRenew: true,
+        status: "Active"
+      },
+      {
+        id: "domain-002",
+        name: "Codgoo Dashboard.com",
+        registrationDate: "2026-03-17",
+        nextDueDate: "2026-03-17",
+        autoRenew: true,
+        status: "Pending"
+      },
+      {
+        id: "domain-003",
+        name: "Marketplace.com",
+        registrationDate: "2026-03-17",
+        nextDueDate: "2026-03-17",
+        autoRenew: true,
+        status: "Fraud"
+      },
+      {
+        id: "domain-004",
+        name: "Weekly Updates.com",
+        registrationDate: "2026-03-17",
+        nextDueDate: "2026-03-17",
+        autoRenew: true,
+        status: "Pending"
+      },
+      {
+        id: "domain-005",
+        name: "codgoo.dev",
+        registrationDate: "2026-03-17",
+        nextDueDate: "2026-03-17",
+        autoRenew: true,
+        status: "Pending"
+      },
+      {
+        id: "domain-006",
+        name: "codgoo.app",
+        registrationDate: "2026-03-17",
+        nextDueDate: "2026-03-17",
+        autoRenew: true,
+        status: "Pending"
+      },
+      {
+        id: "domain-007",
+        name: "codgoo.software",
+        registrationDate: "2026-03-17",
+        nextDueDate: "2026-03-17",
+        autoRenew: true,
+        status: "Pending"
+      },
+      {
+        id: "domain-008",
+        name: "codgoo-suite.com",
+        registrationDate: "2026-03-17",
+        nextDueDate: "2026-03-17",
+        autoRenew: true,
+        status: "Pending"
+      },
+      {
+        id: "domain-009",
+        name: "codgoo-labs.com",
+        registrationDate: "2026-03-17",
+        nextDueDate: "2026-03-17",
+        autoRenew: true,
+        status: "Pending"
+      },
+      {
+        id: "domain-010",
+        name: "codgoo-beta.com",
+        registrationDate: "2026-03-17",
+        nextDueDate: "2026-03-17",
+        autoRenew: true,
+        status: "Pending"
+      }
     ]),
     sites: createSites([
       { id: "business", name: "mybusiness.com", type: "WordPress" },
@@ -159,10 +355,31 @@ export const dashboardContent: Record<DashboardAppId, DashboardDataset> = {
       {
         id: "#162796",
         title: "One Page Orderform Template Released",
-        tag: "Customer Reply",
+        tag: "Customer-Reply",
         date: "Sunday, June 22nd, 2025",
         time: "14:10"
-      }
+      },
+      {
+        id: "#162797",
+        title: "One Page Orderform Template Released",
+        tag: "Customer-Reply",
+        date: "Monday, June 23rd, 2025",
+        time: "15:20"
+      },
+      {
+        id: "#162798",
+        title: "One Page Orderform Template Released",
+        tag: "Customer-Reply",
+        date: "Tuesday, June 24th, 2025",
+        time: "16:30"
+      },
+      {
+        id: "#162799",
+        title: "One Page Orderform Template Released",
+        tag: "Customer-Reply",
+        date: "Wednesday, June 25th, 2025",
+        time: "17:40"
+      },
     ]),
     news: createNews([
       {
@@ -182,51 +399,209 @@ export const dashboardContent: Record<DashboardAppId, DashboardDataset> = {
         date: "July 4th, 2025",
         time: "07:40",
         image: recentTwo
+      },
+      {
+        id: "news-3",
+        title: "One Page Orderform Template Released",
+        description:
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et.",
+        date: "July 5th, 2025",
+        time: "09:15",
+        image: recentOne
+      },
+      {
+        id: "news-4",
+        title: "One Page Orderform Template Released",
+        description:
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et.",
+        date: "July 6th, 2025",
+        time: "11:30",
+        image: recentTwo
+      },
+      {
+        id: "news-5",
+        title: "One Page Orderform Template Released",
+        description:
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et.",
+        date: "July 7th, 2025",
+        time: "14:20",
+        image: recentOne
+      },
+      {
+        id: "news-6",
+        title: "One Page Orderform Template Released",
+        description:
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et.",
+        date: "July 8th, 2025",
+        time: "16:45",
+        image: recentTwo
+      },
+      {
+        id: "news-7",
+        title: "One Page Orderform Template Released",
+        description:
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et.",
+        date: "July 9th, 2025",
+        time: "10:00",
+        image: recentOne
+      },
+      {
+        id: "news-8",
+        title: "One Page Orderform Template Released",
+        description:
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et.",
+        date: "July 10th, 2025",
+        time: "13:25",
+        image: recentTwo
       }
     ])
   },
   app: {
     navigation: appNavigation,
     hero: {
-      eyebrow: "Mobile Release Hub",
-      title: "Ship Codgoo App updates without downtime",
+      title: "Let's Get Started",
       highlights: [
-        "Automatic rollout waves with health checks",
-        "Feature flags synced across platforms",
-        "Real-time crash alerts and diagnostics",
-        "Integrated store listing management"
+        "Discover powerful applications",
+        "Manage your subscriptions easily",
+        "Access marketplace features",
+        "Get 24/7 support"
       ],
-      priceLabel: "Plans beginning at",
-      price: "$149/month",
-      ctaLabel: "Launch Rollout",
+      priceLabel: "Starting from",
+      price: "$9.99/month",
+      ctaLabel: "Discover now",
       gradient:
-        "linear-gradient(125deg, rgba(255,137,102,0.9) 0%, rgba(240,78,164,0.85) 45%, rgba(77,15,120,0.95) 100%)"
+        "linear-gradient(135deg, #093F46 0%, rgba(56,129,139,0.7) 100%)",
+      backgroundImage: heroAppBg
     },
-    stats: [],
+    stats: createStats(["12", "4", "3", "32002"]),
     products: [],
     domains: [],
     sites: [],
     tickets: [],
     news: [],
-    placeholder:
-      "Codgoo App dashboard content will appear here soon. Try the new sidebar routes to explore the layout."
+    appData: {
+      stats: [
+        { id: "apps", label: "Number Of Apps", value: "12" },
+        { id: "subscriptions", label: "Active Subscriptions", value: "4" },
+        { id: "types", label: "Types of apps", value: "3" },
+        { id: "revenue", label: "Total revenue", value: "32002" }
+      ],
+      subscriptions: [
+        {
+          id: "sub-1",
+          name: "Codgoo Hosting",
+          plan: "master",
+          expiryDate: "10 Nov 2025",
+          status: "Active",
+          amount: "$7,098.00"
+        },
+        {
+          id: "sub-2",
+          name: "Codgoo Hosting",
+          plan: "master",
+          expiryDate: "10 Nov 2025",
+          status: "Expiring Soon",
+          amount: "$7,098.00"
+        },
+        {
+          id: "sub-3",
+          name: "Codgoo Hosting",
+          plan: "general",
+          expiryDate: "10 Nov 2025",
+          status: "Expired",
+          amount: "$7,098.00"
+        },
+        {
+          id: "sub-4",
+          name: "Codgoo Hosting",
+          plan: "general",
+          expiryDate: "10 Nov 2025",
+          status: "Active",
+          amount: "$7,098.00"
+        }
+      ],
+      quickAccess: [
+        {
+          id: "qa-1",
+          name: "Codgoo Hosting",
+          plan: "Premium",
+          expiryDate: "15 Dec 2025",
+          status: "Active"
+        },
+        {
+          id: "qa-2",
+          name: "Codgoo Marketing",
+          plan: "Basic",
+          expiryDate: "10 Nov 2025",
+          status: "Expiring Soon"
+        },
+        {
+          id: "qa-3",
+          name: "FixMate App",
+          plan: "Pro",
+          expiryDate: "05 Feb 2026",
+          status: "Active"
+        }
+      ],
+      categories: {
+        total: "12 Total Apps",
+        items: [
+          { name: "Hr", percentage: 40, color: "#0F6773" },
+          { name: "CRM", percentage: 10, color: "url(#web-gradient)", gradient: { from: "#34D8D6", to: "#76E6E5" } },
+          { name: "AI", percentage: 30, color: "#D3D3D3" },
+          { name: "Marketing", percentage: 20, color: "url(#marketing-gradient)", gradient: { from: "rgba(15, 103, 115, 0.16)", to: "#0F6773" } }
+        ]
+      },
+      activities: [
+        {
+          id: "act-1",
+          message: "You renewed your subscription for FixMate App",
+          timeAgo: "3h ago",
+          icon: "refresh"
+        },
+        {
+          id: "act-2",
+          message: "New update available for App Builder",
+          timeAgo: "5h ago",
+          icon: "chart"
+        },
+        {
+          id: "act-3",
+          message: "New update available for App Builder",
+          timeAgo: "5h ago",
+          icon: "dots"
+        },
+        {
+          id: "act-4",
+          message: "New update available for App Builder",
+          timeAgo: "5h ago",
+          icon: "chart"
+        },
+        {
+          id: "act-5",
+          message: "New update available for App Builder",
+          timeAgo: "5h ago",
+          icon: "chart"
+        }
+      ]
+    } as AppDashboardData
   },
   software: {
     navigation: softwareNavigation,
     hero: {
-      eyebrow: "Operations Command",
-      title: "Codgoo Software keeps teams in sync",
+      title: "Let's Get Started",
       highlights: [
-        "Unified dashboards for engineering, ops, and finance",
-        "Smart anomaly detection powered by Codgoo AI",
-        "Built-in playbooks for rapid incident response",
-        "Cross-team OKR tracking with live forecasts"
+        "Create and manage projects",
+        "Track proposals and invoices",
+        "Monitor client relationships",
+        "Streamline your workflow"
       ],
-      priceLabel: "Suite access from",
-      price: "$329/month",
-      ctaLabel: "View Suite",
+      priceLabel: "Starting from",
+      price: "$19.99/month",
+      ctaLabel: "Add project",
       gradient:
-        "linear-gradient(125deg, rgba(85,217,233,0.9) 0%, rgba(90,113,255,0.85) 45%, rgba(18,27,95,0.95) 100%)"
+        "linear-gradient(135deg, rgba(7,31,215,0.6) 0%, rgba(7,31,215,0.7) 100%)",
+      backgroundImage: heroSoftwareBg
     },
     stats: [],
     products: [],
@@ -234,8 +609,93 @@ export const dashboardContent: Record<DashboardAppId, DashboardDataset> = {
     sites: [],
     tickets: [],
     news: [],
-    placeholder:
-      "Codgoo Software dashboards are under construction. Sidebar navigation reflects the upcoming modules."
+    softwareData: {
+      proposals: {
+        total: "100.00",
+        items: [
+          { status: "Pending", percentage: 30, color: "#F8D20D" },
+          { status: "Declined", percentage: 40, color: "#E00A48" },
+          { status: "Accepted", percentage: 20, color: "#000000" }
+        ]
+      },
+      events: [
+        {
+          id: "event-1",
+          title: "Digital Marketing Workshop",
+          date: "July 25, 2025",
+          location: "Online",
+          time: "8:00 PM",
+          day: "Tues 02",
+          hour: "11:00",
+          attendees: 5
+        },
+        {
+          id: "event-2",
+          title: "Digital Marketing Workshop",
+          date: "July 25, 2025",
+          location: "Online",
+          time: "8:00 PM",
+          day: "Thu 04",
+          hour: "11:00",
+          attendees: 5
+        },
+        {
+          id: "event-3",
+          title: "Digital Marketing Workshop",
+          date: "July 25, 2025",
+          location: "Online",
+          time: "8:00 PM",
+          day: "Sat 06",
+          hour: "11:00",
+          attendees: 5
+        }
+      ],
+      invoices: [
+        { status: "Paid", percentage: 40, color: "rgb(94,177,218)" },
+        { status: "Unpaid", percentage: 25, color: "#071FD7" },
+        { status: "Overdue", percentage: 35, color: "#000000" }
+      ],
+      clients: [
+        { month: "Jan", value: 20 },
+        { month: "Feb", value: 25 },
+        { month: "Mar", value: 30 },
+        { month: "Apr", value: 35 },
+        { month: "May", value: 50, highlight: true, highlightLabel: "Client +35" },
+        { month: "Jun", value: 45 },
+        { month: "Jul", value: 40 },
+        { month: "Aug", value: 50 },
+        { month: "Sep", value: 55 },
+        { month: "Oct", value: 60 },
+        { month: "Nov", value: 65 },
+        { month: "Dec", value: 70 }
+      ],
+      projects: [
+        {
+          id: "proj-1",
+          name: "Codgoo UI.com",
+          date: "14 Apr, 2024",
+          status: "Ongoing"
+        },
+        {
+          id: "proj-2",
+          name: "Codgoo UI.com",
+          date: "14 Apr, 2024",
+          status: "Pending"
+        },
+        {
+          id: "proj-3",
+          name: "Marketplace.com",
+          date: "14 Apr, 2024",
+          status: "Not Started"
+        },
+        {
+          id: "proj-4",
+          name: "Weekly Updates.com",
+          date: "14 Apr, 2024",
+          status: "Pending"
+        }
+      ]
+    } as SoftwareDashboardData
   }
 };
 

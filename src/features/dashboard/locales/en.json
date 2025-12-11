@@ -1,0 +1,51 @@
+{
+  "navigation": {
+    "dashboard": "Dashboard",
+    "host": "Host",
+    "server": "Servers",
+    "domains": "Domains",
+    "websites": "Websites",
+    "billing": "Billing",
+    "settings": "Settings",
+    "applications": "Applications",
+    "marketplace": "Marketplace",
+    "projects": "Projects",
+    "products": "Products",
+    "meetings": "Meetings"
+  },
+  "apps": {
+    "cloud": "Codgoo Cloud",
+    "app": "Codgoo App",
+    "software": "Codgoo Software"
+  },
+  "header": {
+    "search": "Search",
+    "notifications": "Notifications",
+    "toggleTheme": "Toggle theme",
+    "cart": "Cart",
+    "order": "Order"
+  },
+  "marketplace": {
+    "searchPlaceholder": "Search",
+    "noItemsFound": "No items found matching your criteria.",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "billing": {
+    "search": "Search",
+    "payAll": "Pay All",
+    "invoices": "Invoices",
+    "quotes": "Quotes",
+    "addFunds": "Add Funds",
+    "addFundsDescription": "Add funds to your account balance to pay for invoices automatically or use for future purchases."
+  },
+  "common": {
+    "all": "All",
+    "previous": "Previous",
+    "next": "Next",
+    "search": "Search",
+    "loading": "Loading...",
+    "noData": "No data available"
+  }
+}
+

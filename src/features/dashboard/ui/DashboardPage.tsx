@@ -1,92 +1,605 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
+import { useMatch, useNavigate, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { useAppDispatch, useAppSelector } from "@store/hooks";
-import { selectTheme, setTheme, toggleTheme } from "@store/theme/theme-slice";
+import { selectTheme, toggleTheme } from "@store/theme/theme-slice";
 
-import { dashboardApps, dashboardContent } from "./constants";
+import {
+  dashboardApps,
+  dashboardContent,
+  serverServices
+} from "./constants";
 import { DashboardHeader } from "./components/DashboardHeader";
 import { DashboardSidebar } from "./components/DashboardSidebar";
+import { ServerServicesView } from "./components/cloud/ServerServicesView";
+import { ManageServerView } from "./components/cloud/ManageServerView";
+import { DomainsView } from "./components/cloud/DomainsView";
+import { ManageDomainView } from "./components/cloud/ManageDomainView";
+import { RegisterDomainView } from "./components/cloud/RegisterDomainView";
+import { DashboardOverview } from "./components/cloud/DashboardOverview";
+import { SoftwareDashboardOverview } from "./components/software/SoftwareDashboardOverview";
+import { ProjectsView } from "./components/software/ProjectsView";
+import { ProjectDetailsView } from "./components/software/ProjectDetailsView";
+import { ProposalsView } from "./components/software/ProposalsView";
+import { TaskDetailView } from "./components/software/TaskDetailView";
+import { tasksData } from "./components/software/TasksView";
+import { MeetingsView } from "./components/software/MeetingsView";
+import { SettingsView } from "./components/software/SettingsView";
+import { SettingsView as AppSettingsView } from "./components/app/settings/SettingsView";
+import { ProductsView } from "./components/software/ProductsView";
+import { ProductDetailsView } from "./components/software/ProductDetailsView";
+import { AppDashboardOverview } from "./components/app/AppDashboardOverview";
+import { ApplicationsView } from "./components/app/ApplicationsView";
+import { MarketplaceView, marketplaceItems } from "./components/app/MarketplaceView";
+import { MarketplaceDetailView } from "./components/app/MarketplaceDetailView";
+import type { MarketplaceItem } from "./components/app/MarketplaceCard";
+import { BillingView } from "./components/BillingView";
+import { WebsitesView } from "./components/cloud/WebsitesView";
+import { ManageWebsiteView } from "./components/cloud/ManageWebsiteView";
+import { HostView } from "./components/cloud/HostView";
+import { ManageHostView } from "./components/cloud/ManageHostView";
+import { OrderView } from "./components/OrderView";
 import type { DashboardAppId, DashboardTokens } from "./types";
+import { getDefaultDashboard } from "./utils/dashboardPreferences";
+import { setDashboardAppId } from "@shared/theme";
 
 export const DashboardPage = () => {
+  const { t, i18n: i18nInstance } = useTranslation("dashboard");
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
   const theme = useAppSelector(selectTheme);
   const isDark = theme === "dark";
-  const [activeAppId, setActiveAppId] = useState<DashboardAppId>(dashboardApps[0].id);
+  const [activeAppId, setActiveAppId] = useState<DashboardAppId>(() => {
+    return getDefaultDashboard();
+  });
+  const isRTL = i18nInstance.language === "ar";
 
   const activeApp = useMemo(
     () => dashboardApps.find((app) => app.id === activeAppId) ?? dashboardApps[0],
     [activeAppId]
   );
+  const manageMatch = useMatch("/dashboard/manage-server/:serviceId");
+  const manageDomainMatch = useMatch("/dashboard/manage-domain/:domainId");
+  const productDetailsMatch = useMatch("/dashboard/products/:productId");
+  const manageNameserversMatch = useMatch("/dashboard/manage-nameservers");
+  const manageWebsiteMatch = useMatch("/dashboard/manage-website/:websiteId");
+  const manageHostMatch = useMatch("/dashboard/manage-host/:hostId");
+  const projectDetailsMatch = useMatch("/dashboard/projects/:projectId");
+  const proposalsMatch = useMatch("/dashboard/projects/:projectId/proposals");
+  const marketplaceDetailMatch = useMatch("/dashboard/marketplace/:itemId");
+  const orderMatch = useMatch("/dashboard/order");
+  const taskDetailMatch = useMatch("/dashboard/software/tasks/:taskId");
   const dataset = dashboardContent[activeApp.id];
-  const hasPlaceholder = Boolean(dataset.placeholder);
-  const headerSubtitle = hasPlaceholder
-    ? "Preview mode — dashboard content loading soon."
-    : dataset.hero.eyebrow;
+  const navigationItems = dataset.navigation;
+  const [activeNavId, setActiveNavId] = useState(() => navigationItems[0]?.id ?? "");
+  const activeNavigationItem = navigationItems.find((item) => item.id === activeNavId);
+
+  // Update dashboard app ID for theme system
   useEffect(() => {
-    dispatch(setTheme(activeApp.theme));
-  }, [dispatch, activeApp.theme]);
+    setDashboardAppId(activeApp.id);
+    return () => {
+      setDashboardAppId(undefined);
+    };
+  }, [activeApp.id]);
+
+  // Update document title and favicon when switching apps
+  useEffect(() => {
+    // Update document title
+    document.title = activeApp.name;
+
+    // Update favicon
+    const faviconLink = document.querySelector("link[rel='icon']") as HTMLLinkElement;
+    if (faviconLink) {
+      const faviconMap: Record<DashboardAppId, string> = {
+        cloud: "/logo-cloud.svg",
+        app: "/logo-app.svg",
+        software: "/logo-software.svg"
+      };
+      faviconLink.href = faviconMap[activeAppId] ?? "/logo-cloud.svg";
+    }
+  }, [activeApp.name, activeAppId]);
+
+  // Removed automatic theme switching - preserve user's theme preference when switching apps
+  // useEffect(() => {
+  //   dispatch(setTheme(activeApp.theme));
+  // }, [dispatch, activeApp.theme]);
+
+  useEffect(() => {
+    if (!navigationItems.some((item) => item.id === activeNavId)) {
+      setActiveNavId(navigationItems[0]?.id ?? "");
+    }
+  }, [navigationItems, activeNavId]);
+
+  useEffect(() => {
+    if (manageMatch && activeNavId !== "server") {
+      setActiveNavId("server");
+    }
+  }, [manageMatch, activeNavId]);
+
+  useEffect(() => {
+    if (manageDomainMatch && activeNavId !== "domains") {
+      setActiveNavId("domains");
+    }
+  }, [manageDomainMatch, activeNavId]);
+
+  useEffect(() => {
+    if (manageNameserversMatch && activeNavId !== "domains") {
+      setActiveNavId("domains");
+    }
+  }, [manageNameserversMatch, activeNavId]);
+
+  useEffect(() => {
+    if (manageWebsiteMatch && activeNavId !== "websites") {
+      setActiveNavId("websites");
+    }
+  }, [manageWebsiteMatch, activeNavId]);
+
+  // Sync activeNavId with current route
+  useEffect(() => {
+    const path = location.pathname;
+    
+    // Handle order route - don't change activeNavId
+    if (path.includes("/order")) {
+      return;
+    }
+    
+    // Handle manage-server route
+    if (path.includes("/manage-server/")) {
+      if (activeNavId !== "server") {
+        setActiveNavId("server");
+      }
+      return;
+    }
+
+    // Handle manage-domain route
+    if (path.includes("/manage-domain/")) {
+      if (activeNavId !== "domains") {
+        setActiveNavId("domains");
+      }
+      return;
+    }
+
+    // Handle manage-nameservers route
+    if (path.includes("/manage-nameservers")) {
+      if (activeNavId !== "domains") {
+        setActiveNavId("domains");
+      }
+      return;
+    }
+
+    // Handle manage-website route
+    if (path.includes("/manage-website/")) {
+      if (activeNavId !== "websites") {
+        setActiveNavId("websites");
+      }
+      return;
+    }
+
+    // Handle manage-host route
+    if (path.includes("/manage-host/")) {
+      if (activeNavId !== "host") {
+        setActiveNavId("host");
+      }
+      return;
+    }
+
+    // Handle project details route
+    if (path.includes("/projects/") && path.split("/").length > 3) {
+      if (activeNavId !== "projects") {
+        setActiveNavId("projects");
+      }
+      return;
+    }
+
+    // Handle marketplace detail route
+    if (path.includes("/marketplace/") && path.split("/").length > 3) {
+      if (activeNavId !== "marketplace") {
+        setActiveNavId("marketplace");
+      }
+      return;
+    }
+
+    // Handle task detail route
+    if (path.includes("/tasks/") && path.split("/").length > 3) {
+      if (activeNavId !== "projects") {
+        setActiveNavId("projects");
+      }
+      return;
+    }
+
+    // Extract navId from path (e.g., /dashboard/domains -> domains)
+    const pathParts = path.split("/").filter(Boolean);
+    if (pathParts.length >= 2 && pathParts[0] === "dashboard") {
+      const routeNavId = pathParts[1];
+      // Check if this route corresponds to a valid nav item
+      const matchingNavItem = navigationItems.find((item) => item.id === routeNavId);
+      if (matchingNavItem && activeNavId !== routeNavId) {
+        setActiveNavId(routeNavId);
+      } else if (pathParts.length === 1 || (pathParts.length === 2 && routeNavId === "dashboard")) {
+        // Default to first nav item if at /dashboard or /dashboard/dashboard
+        if (activeNavId !== navigationItems[0]?.id) {
+          setActiveNavId(navigationItems[0]?.id ?? "");
+        }
+      }
+    }
+  }, [location.pathname, navigationItems, activeNavId]);
 
   const handleToggleTheme = () => {
     dispatch(toggleTheme());
   };
 
+  const handleSelectNav = useCallback(
+    (navId: string) => {
+      setActiveNavId(navId);
+      // Navigate to the appropriate route
+      if (navId === "dashboard") {
+        navigate("/dashboard");
+      } else {
+        navigate(`/dashboard/${navId}`);
+      }
+    },
+    [navigate]
+  );
+
+  const handleSelectApp = useCallback(
+    (appId: DashboardAppId) => {
+      setActiveAppId(appId);
+      navigate("/dashboard");
+    },
+    [navigate]
+  );
+
+  const handleOpenService = useCallback(
+    (serviceId: string) => {
+      navigate(`/dashboard/manage-server/${serviceId}`);
+    },
+    [navigate]
+  );
+
+  const handleReturnToServices = useCallback(() => {
+    navigate("/dashboard");
+  }, [navigate]);
+
+  const selectedService = useMemo(
+    () => serverServices.find((service) => service.id === manageMatch?.params?.serviceId),
+    [manageMatch?.params?.serviceId]
+  );
+
   const tokens: DashboardTokens = {
     isDark,
-    rootClass: isDark ? "bg-[#080817] text-white" : "bg-[#f6f2ff] text-[#0f1035]",
-    sidebarClass: isDark
-      ? "bg-[#0D0D15] border-white/10 text-white"
-      : "bg-white/90 border-[#e3e2ff] text-[#0f1035]",
-    cardBase: isDark
-      ? "bg-white/5 border border-white/10 text-white"
-      : "bg-white border border-[#e4ddff] text-[#0f1035]",
-    subtleText: isDark ? "text-white/60" : "text-[#6a6f92]",
-    divider: isDark ? "border-white/10" : "border-[#e9e2ff]",
-    buttonFilled: isDark
-      ? "text-white shadow-[0_12px_30px_-10px_rgba(122,76,255,0.6)]"
-      : "text-white shadow-[0_12px_30px_-10px_rgba(110,75,255,0.35)]",
-    buttonGhost: isDark ? "text-white" : "bg-[#f2efff] text-[#6e4bff]",
-    surfaceMuted: isDark ? "bg-white/10" : "bg-[#f7f5ff]",
-    iconActive: "text-white",
-    iconIdle: isDark ? "text-white/80" : "text-[#595f80]",
+    rootClass:
+      "bg-[var(--color-page-bg)] text-[var(--color-page-text)] transition-colors duration-300",
+    sidebarClass:
+      "bg-[var(--color-sidebar-bg)] border-[var(--color-sidebar-border)] text-[var(--color-sidebar-text)]",
+    cardBase:
+      "bg-[var(--color-card-bg)] text-[var(--color-card-text)]",
+    sidebarNavActiveText: "text-[var(--color-sidebar-nav-active-text)]",
+    sidebarNavIdleText:
+      "text-[var(--color-sidebar-nav-idle-text)] hover:text-[var(--color-sidebar-nav-active-text)]",
+    subtleText: isDark ? "text-white/70" : "text-[var(--color-page-text)]/65",
+    divider: "border-[var(--color-border-divider)]",
+    buttonFilled:
+      "bg-[var(--color-button-filled-bg)] text-[var(--color-button-filled-text)]",
+    buttonGhost:
+      "bg-[var(--color-button-ghost-bg)] text-[var(--color-button-ghost-text)]",
+    surfaceMuted: "bg-[var(--color-surface-muted)]",
+    iconActive: "text-[var(--color-icon-active)]",
+    iconIdle: "text-[var(--color-icon-idle)]",
     chipClass:
       "inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium"
   };
 
   return (
     <div className={`dashboard flex w-full ${tokens.rootClass}`}>
-      <DashboardSidebar
-        apps={dashboardApps}
-        activeAppId={activeApp.id}
-        onSelectApp={setActiveAppId}
-        navigationItems={dataset.navigation}
-        tokens={tokens}
-      />
+        <DashboardSidebar
+          apps={dashboardApps}
+          activeAppId={activeApp.id}
+          onSelectApp={handleSelectApp}
+          navigationItems={navigationItems}
+          activeNavId={activeNavId}
+          onSelectNav={handleSelectNav}
+          tokens={tokens}
+        />
 
-      <section className="flex min-h-screen flex-1 flex-col lg:ms-72">
-        <div className="flex flex-col gap-8 px-5 pb-12 pt-8 md:px-10 lg:px-14 xl:px-16">
+        <section className={`flex min-h-screen flex-1 flex-col bg-[var(--color-shell-bg)] rounded-[32px] m-6 transition-all duration-300 ${isRTL ? "lg:mr-64" : "lg:ml-64"}`}>
+        <div className="flex flex-col gap-4 px-6 py-3 text-start">
           <DashboardHeader
             tokens={tokens}
             activeApp={activeApp}
-            subtitle={headerSubtitle}
+            activeNavigationLabel={orderMatch ? t("header.order") : activeNavigationItem ? t(`navigation.${activeNavigationItem.id}`) : undefined}
             onToggleTheme={handleToggleTheme}
+            onCartClick={() => navigate("/dashboard/order")}
           />
+          {orderMatch ? (
+            <OrderView tokens={tokens} />
+          ) : activeNavId === "dashboard" ? (
+            activeApp.id === "software" && dataset.softwareData ? (
+              <SoftwareDashboardOverview
+                data={dataset.softwareData}
+                hero={dataset.hero}
+                tokens={tokens}
+              />
+            ) : activeApp.id === "app" && dataset.appData ? (
+              <AppDashboardOverview
+                data={dataset.appData}
+                hero={dataset.hero}
+                tokens={tokens}
+                onNavigateToMarketplace={() => handleSelectNav("marketplace")}
+              />
+            ) : (
+              <DashboardOverview
+                dataset={dataset}
+                tokens={tokens}
+                onManageDomain={() => handleSelectNav("domains")}
+              />
+            )
+          ) : activeNavId === "host" ? (
+            manageHostMatch ? (
+              <ManageHostView hostId={manageHostMatch.params.hostId ?? ""} tokens={tokens} />
+            ) : (
+              <HostView tokens={tokens} />
+            )
+          ) : activeNavId === "server" ? (
+            manageMatch && selectedService ? (
+              <ManageServerView
+                service={selectedService}
+                tokens={tokens}
+                onBack={handleReturnToServices}
+              />
+            ) : (
+              <ServerServicesView
+                services={serverServices}
+                tokens={tokens}
+                onOpenService={handleOpenService}
+              />
+            )
+          ) : activeNavId === "domains" ? (
+            manageDomainMatch ? (
+              <ManageDomainView tokens={tokens} />
+            ) : manageNameserversMatch ? (
+              <RegisterDomainView tokens={tokens} />
+            ) : (
+              <DomainsView domains={dataset.domains} tokens={tokens} />
+            )
+          ) : activeNavId === "websites" ? (
+            manageWebsiteMatch ? (
+              <ManageWebsiteView tokens={tokens} />
+            ) : (
+              <WebsitesView sites={dataset.sites} tokens={tokens} />
+            )
+          ) : activeNavId === "projects" && activeApp.id === "software" ? (
+            proposalsMatch ? (
+              (() => {
+                // Find project from default projects or get from data source
+                const defaultProjects = [
+                  {
+                    id: "proj-1",
+                    name: "FixMate App",
+                    description:
+                      "Updated app interface, changed order and appointment tracking system, improved customer satisfaction",
+                    status: "Active" as const,
+                    team: [
+                      { id: "1", name: "John Doe" },
+                      { id: "2", name: "Jane Smith" },
+                      { id: "3", name: "Bob Wilson" }
+                    ],
+                    startDate: "15 Oct 2023",
+                    deadline: "20 Nov 2023",
+                    budget: "$5,000",
+                    tasks: { completed: 8, total: 10 },
+                    type: "Mobile",
+                    lastUpdate: "2 days ago"
+                  },
+                  {
+                    id: "proj-2",
+                    name: "FixMate App",
+                    description:
+                      "Updated app interface, changed order and appointment tracking system, improved customer satisfaction",
+                    status: "Active" as const,
+                    team: [
+                      { id: "1", name: "John Doe" },
+                      { id: "2", name: "Jane Smith" },
+                      { id: "3", name: "Bob Wilson" }
+                    ],
+                    startDate: "15 Oct 2023",
+                    deadline: "20 Nov 2023",
+                    budget: "$5,000",
+                    tasks: { completed: 8, total: 10 },
+                    type: "Mobile",
+                    lastUpdate: "2 days ago"
+                  },
+                  {
+                    id: "proj-3",
+                    name: "FixMate App",
+                    description:
+                      "Updated app interface, changed order and appointment tracking system, improved customer satisfaction",
+                    status: "Active" as const,
+                    team: [
+                      { id: "1", name: "John Doe" },
+                      { id: "2", name: "Jane Smith" },
+                      { id: "3", name: "Bob Wilson" }
+                    ],
+                    startDate: "15 Oct 2023",
+                    deadline: "20 Nov 2023",
+                    budget: "$5,000",
+                    tasks: { completed: 8, total: 10 },
+                    type: "Mobile",
+                    lastUpdate: "2 days ago"
+                  }
+                ];
+                const projectId = proposalsMatch.params.projectId;
+                const project = defaultProjects.find((p) => p.id === projectId) ?? defaultProjects[0];
+                return (
+                  <ProposalsView
+                    project={project}
+                    tokens={tokens}
+                  />
+                );
+              })()
+            ) : projectDetailsMatch ? (
+              (() => {
+                // Find project from default projects or get from data source
+                const defaultProjects = [
+                  {
+                    id: "proj-1",
+                    name: "FixMate App",
+                    description:
+                      "Updated app interface, changed order and appointment tracking system, improved customer satisfaction",
+                    status: "Active" as const,
+                    team: [
+                      { id: "1", name: "John Doe" },
+                      { id: "2", name: "Jane Smith" },
+                      { id: "3", name: "Bob Wilson" }
+                    ],
+                    startDate: "15 Oct 2023",
+                    deadline: "20 Nov 2023",
+                    budget: "$5,000",
+                    tasks: { completed: 8, total: 10 },
+                    type: "Mobile",
+                    lastUpdate: "2 days ago"
+                  },
+                  {
+                    id: "proj-2",
+                    name: "FixMate App",
+                    description:
+                      "Updated app interface, changed order and appointment tracking system, improved customer satisfaction",
+                    status: "Active" as const,
+                    team: [
+                      { id: "1", name: "John Doe" },
+                      { id: "2", name: "Jane Smith" },
+                      { id: "3", name: "Bob Wilson" }
+                    ],
+                    startDate: "15 Oct 2023",
+                    deadline: "20 Nov 2023",
+                    budget: "$5,000",
+                    tasks: { completed: 8, total: 10 },
+                    type: "Mobile",
+                    lastUpdate: "2 days ago"
+                  },
+                  {
+                    id: "proj-3",
+                    name: "FixMate App",
+                    description:
+                      "Updated app interface, changed order and appointment tracking system, improved customer satisfaction",
+                    status: "Active" as const,
+                    team: [
+                      { id: "1", name: "John Doe" },
+                      { id: "2", name: "Jane Smith" },
+                      { id: "3", name: "Bob Wilson" }
+                    ],
+                    startDate: "15 Oct 2023",
+                    deadline: "20 Nov 2023",
+                    budget: "$5,000",
+                    tasks: { completed: 8, total: 10 },
+                    type: "Mobile",
+                    lastUpdate: "2 days ago"
+                  }
+                ];
+                const projectId = projectDetailsMatch.params.projectId;
+                const project = defaultProjects.find((p) => p.id === projectId) ?? defaultProjects[0];
+                return (
+                  <ProjectDetailsView
+                    project={project}
+                    tokens={tokens}
+                    onBack={() => navigate("/dashboard/projects")}
+                    onManage={() => {
+                      // Handle manage
+                    }}
+                  />
+                );
+              })()
+            ) : taskDetailMatch ? (
+              (() => {
+                const taskId = taskDetailMatch.params.taskId;
+                const task = tasksData.find((t) => t.id === taskId) ?? tasksData[0];
+                return (
+                  <TaskDetailView
+                    task={task}
+                    tokens={tokens}
+                    onBack={() => navigate("/dashboard/projects")}
+                  />
+                );
+              })()
+            ) : (
+              <ProjectsView
+                tokens={tokens}
+                onAddProject={() => {
+                  // Handle add project
+                }}
+                onViewDetails={(projectId) => {
+                  navigate(`/dashboard/projects/${projectId}`);
+                }}
+                onManage={() => {
+                  // Handle manage
+                }}
+              />
+            )
+          ) : activeNavId === "billing" ? (
+            <BillingView tokens={tokens} activeAppId={activeApp.id} />
+          ) : activeNavId === "applications" && activeApp.id === "app" ? (
+            <ApplicationsView
+              tokens={tokens}
+              onOpenMarketplace={() => handleSelectNav("marketplace")}
+            />
+          ) : activeNavId === "marketplace" && activeApp.id === "app" ? (
+            marketplaceDetailMatch ? (() => {
+              const itemId = marketplaceDetailMatch.params.itemId;
+              // Find the base item (remove suffix like -1, -2, etc.)
+              const baseId = itemId?.replace(/-\d+$/, "") || itemId;
+              const selectedItem = marketplaceItems.find((item: MarketplaceItem) => item.id === baseId || item.id === itemId);
+              
+              if (!selectedItem) {
+                return (
+                  <div className={`${tokens.cardBase} rounded-3xl p-10`}>
+                    <h2 className="text-2xl font-semibold">Item not found</h2>
+                    <p className={`mt-3 text-sm ${tokens.subtleText}`}>
+                      The marketplace item you're looking for doesn't exist.
+                    </p>
+                  </div>
+                );
+              }
 
-          {hasPlaceholder ? (
-            <div
-              className={`${tokens.cardBase} flex flex-col items-start gap-4 rounded-[32px] px-8 py-10 text-left`}
-            >
+              return (
+                <MarketplaceDetailView
+                  item={selectedItem}
+                  tokens={tokens}
+                  onBack={() => navigate("/dashboard/marketplace")}
+                />
+              );
+            })() : (
+              <MarketplaceView
+                tokens={tokens}
+                onItemClick={(itemId) => navigate(`/dashboard/marketplace/${itemId}`)}
+              />
+            )
+          ) : activeNavId === "meetings" && activeApp.id === "software" ? (
+            <MeetingsView tokens={tokens} />
+          ) : activeNavId === "products" && activeApp.id === "software" ? (
+            productDetailsMatch ? (
+              <ProductDetailsView
+                productId={productDetailsMatch.params.productId ?? ""}
+                tokens={tokens}
+                onBack={() => navigate("/dashboard/products")}
+              />
+            ) : (
+              <ProductsView tokens={tokens} />
+            )
+          ) : activeNavId === "settings" && activeApp.id === "software" ? (
+            <SettingsView tokens={tokens} />
+          ) : activeNavId === "settings" && activeApp.id === "app" ? (
+            <AppSettingsView tokens={tokens} />
+          ) : (
+            <div className={`${tokens.cardBase} rounded-3xl p-10`}>
               <h2 className="text-2xl font-semibold">
-                {activeApp.name} preview
+                {activeNavigationItem?.label ?? "Coming Soon"}
               </h2>
-              <p className={`text-sm ${tokens.subtleText}`}>
-                {dataset.placeholder}
-              </p>
-              <p className={`text-xs uppercase tracking-[0.35em] ${tokens.subtleText}`}>
-                Sidebar navigation updated for this workspace
+              <p className={`mt-3 text-sm ${tokens.subtleText}`}>
+                This section is under construction. Switch to the Servers tab to explore the available screen.
               </p>
             </div>
-          ) : null}
+          )}
         </div>
       </section>
     </div>

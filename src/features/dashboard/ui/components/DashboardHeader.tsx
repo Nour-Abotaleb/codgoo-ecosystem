@@ -1,11 +1,14 @@
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { i18n } from "@shared/config/i18n";
 
 import userAvatar from "@assets/images/user.png";
 import {
   CartIcon,
   DarkModeIcon,
   NotificationIcon,
-  SearchIcon
+  SearchIcon,
+  LanguageIcon
 } from "@utilities/icons";
 
 import type { DashboardApp, DashboardTokens } from "../types";
@@ -13,86 +16,172 @@ import type { DashboardApp, DashboardTokens } from "../types";
 type DashboardHeaderProps = {
   readonly tokens: DashboardTokens;
   readonly activeApp: DashboardApp;
+  readonly activeNavigationLabel?: string;
   readonly subtitle?: string;
   readonly onToggleTheme: () => void;
+  readonly onCartClick?: () => void;
 };
+
+type ActiveIcon = "notification" | "theme" | "cart" | "language" | null;
 
 export const DashboardHeader = ({
   tokens,
   activeApp,
-  subtitle,
-  onToggleTheme
+  activeNavigationLabel,
+  // subtitle,
+  onToggleTheme,
+  onCartClick
 }: DashboardHeaderProps) => {
+  const { i18n: i18nInstance, t } = useTranslation("dashboard");
+  const [activeIcon, setActiveIcon] = useState<ActiveIcon>(null);
+  const isRTL = i18n.language === "ar";
   const actionBarClass = useMemo(
     () =>
-      `${tokens.cardBase} flex items-center gap-1 rounded-full px-5 py-2 backdrop-blur`,
+      `${tokens.cardBase} flex items-center gap-2 rounded-full px-5 py-2 backdrop-blur`,
     [tokens.cardBase]
   );
 
-  const searchFieldClass = useMemo(
-    () =>
-      tokens.isDark
-        ? "bg-white/8 text-white placeholder:text-[#6B73A0]"
-        : "bg-white/60 text-[#22274a] placeholder:text-[#727aa5]",
-    [tokens.isDark]
-  );
+  const searchFieldClass = tokens.isDark
+    ? "bg-[var(--color-search-bg)] text-[color:var(--color-search-text)] placeholder:text-[color:var(--color-search-placeholder)]"
+    : "bg-[#F4F7FE] text-[color:var(--color-search-text)] placeholder:text-[color:var(--color-search-placeholder)]";
 
-  const iconButtonClass = useMemo(
-    () =>
-      `${tokens.buttonGhost} flex h-10 w-10 items-center justify-center rounded-full`,
-    [tokens.buttonGhost]
-  );
+  const primaryColor = activeApp.id === "software" 
+    ? "#071FD7" 
+    : activeApp.id === "app"
+    ? "#0F6773"
+    : "#584ABC";
+  const primaryBgColor = activeApp.id === "software" 
+    ? "#EEEDF8" 
+    : activeApp.id === "app"
+    ? "#E7F0F1"
+    : "#EEEDF8";
+
+  const getIconButtonClass = (iconId: ActiveIcon) => {
+    const isActive = activeIcon === iconId;
+    const baseClass = "flex h-9 w-9 items-center justify-center rounded-full transition-colors duration-200";
+    
+    if (tokens.isDark) {
+      if (isActive) {
+        return `${baseClass} bg-[var(--color-icon-surface)] text-white`;
+      }
+      return `${baseClass} hover:opacity-80`;
+    } else {
+      if (isActive) {
+        return baseClass;
+      }
+      return `${baseClass} hover:opacity-90`;
+    }
+  };
+
+  const getIconButtonStyle = (iconId: ActiveIcon) => {
+    const isActive = activeIcon === iconId;
+    if (!tokens.isDark && isActive) {
+      return { backgroundColor: primaryBgColor };
+    }
+    return {};
+  };
+
+  const getIconColorClass = (iconId: ActiveIcon) => {
+    const isActive = activeIcon === iconId;
+    
+    if (tokens.isDark) {
+      return "text-white";
+    } else {
+      if (isActive) {
+        return "";
+      }
+      return "text-[#A3AED0]";
+    }
+  };
+
+  const pageLabel = activeNavigationLabel ?? t(`apps.${activeApp.id}`);
+
+  const handleLanguageToggle = () => {
+    const currentLang = i18nInstance.resolvedLanguage ?? "en";
+    const newLang = currentLang === "en" ? "ar" : "en";
+    void i18nInstance.changeLanguage(newLang);
+  };
 
   return (
-    <header className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-      <div>
-        <p
-          className={`text-xs font-semibold uppercase tracking-[0.35em] ${tokens.subtleText}`}
+    <header className="relative z-50 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+      <div className="text-start">
+        <h1
+          className={`text-2xl font-semibold md:text-3xl ${
+            tokens.isDark ? "" : ""
+          }`}
+          style={tokens.isDark ? {} : { color: primaryColor }}
         >
-          Pages / Dashboard
-        </p>
-        <h1 className="mt-3 text-3xl font-semibold md:text-4xl">{activeApp.name}</h1>
-        {subtitle && (
-          <p className={`mt-2 text-sm ${tokens.subtleText}`}>
-            {subtitle}
-          </p>
-        )}
+          {pageLabel}
+        </h1>
       </div>
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
         <div className={actionBarClass}>
-          <div className={`flex h-11 flex-1 items-center gap-3 rounded-full px-4 ${searchFieldClass}`}>
-            <SearchIcon className="h-4 w-4 opacity-70" />
+          <div className={`flex h-10.5 flex-1 items-center gap-3 rounded-full ${isRTL ? "pr-4 pl-4" : "px-4"} ${searchFieldClass}`}>
+            <SearchIcon className={`h-4 w-4 opacity-70 ${isRTL ? "order-2" : ""}`} />
             <input
               type="search"
-              placeholder="Search"
-              className="flex-1 bg-transparent text-sm focus:outline-none"
+              placeholder={t("header.search")}
+              className={`flex-1 bg-transparent text-sm focus:outline-none ${isRTL ? "text-end" : "text-start"}`}
             />
           </div>
 
           <button
             type="button"
-            className={iconButtonClass}
-            aria-label="Notifications"
+            onClick={() => setActiveIcon(activeIcon === "notification" ? null : "notification")}
+            className={getIconButtonClass("notification")}
+            style={getIconButtonStyle("notification")}
+            aria-label={t("header.notifications")}
           >
-            <NotificationIcon className="h-5 w-5" />
+            <NotificationIcon 
+              className={`h-5 w-5 ${getIconColorClass("notification")}`}
+              style={!tokens.isDark && activeIcon === "notification" ? { color: primaryColor } : {}}
+            />
           </button>
 
           <button
             type="button"
-            onClick={onToggleTheme}
-            className={iconButtonClass}
-            aria-label="Toggle theme"
+            onClick={() => {
+              setActiveIcon(activeIcon === "theme" ? null : "theme");
+              onToggleTheme();
+            }}
+            className={getIconButtonClass("theme")}
+            style={getIconButtonStyle("theme")}
+            aria-label={t("header.toggleTheme")}
           >
-            <DarkModeIcon className="h-5 w-5" />
+            <DarkModeIcon 
+              className={`h-5 w-5 ${getIconColorClass("theme")}`}
+              style={!tokens.isDark && activeIcon === "theme" ? { color: primaryColor } : {}}
+            />
           </button>
 
           <button
             type="button"
-            className={iconButtonClass}
-            aria-label="Cart"
+            onClick={() => {
+              setActiveIcon(activeIcon === "cart" ? null : "cart");
+              onCartClick?.();
+            }}
+            className={getIconButtonClass("cart")}
+            style={getIconButtonStyle("cart")}
+            aria-label={t("header.cart")}
           >
-            <CartIcon className="h-5 w-5" />
+            <CartIcon 
+              className={`h-5 w-5 ${getIconColorClass("cart")}`}
+              style={!tokens.isDark && activeIcon === "cart" ? { color: primaryColor } : {}}
+            />
+          </button>
+
+          <button
+            type="button"
+            onClick={handleLanguageToggle}
+            className={getIconButtonClass("language")}
+            style={getIconButtonStyle("language")}
+            aria-label="Toggle Language"
+          >
+            <LanguageIcon 
+              className={`h-5 w-5 ${getIconColorClass("language")}`}
+              style={!tokens.isDark && activeIcon === "language" ? { color: primaryColor } : {}}
+            />
           </button>
 
           <img

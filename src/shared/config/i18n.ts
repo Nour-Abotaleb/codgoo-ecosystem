@@ -6,6 +6,8 @@ import commonEn from "@assets/locales/en/common.json";
 import commonAr from "@assets/locales/ar/common.json";
 import landingEn from "@features/landing/locales/en.json";
 import landingAr from "@features/landing/locales/ar.json";
+import dashboardEn from "@features/dashboard/locales/en.json";
+import dashboardAr from "@features/dashboard/locales/ar.json";
 
 export const defaultNS = "common";
 export const supportedLanguages = ["en", "ar"] as const;
@@ -24,11 +26,13 @@ const applyLanguageAttributes = (language: string) => {
 const resources = {
   en: {
     common: commonEn,
-    landing: landingEn
+    landing: landingEn,
+    dashboard: dashboardEn
   },
   ar: {
     common: commonAr,
-    landing: landingAr
+    landing: landingAr,
+    dashboard: dashboardAr
   }
 } as const;
 
@@ -40,7 +44,7 @@ void i18n
     fallbackLng: "en",
     supportedLngs: supportedLanguages,
     defaultNS,
-    ns: ["common", "landing"],
+    ns: ["common", "landing", "dashboard"],
     interpolation: {
       escapeValue: false
     },
