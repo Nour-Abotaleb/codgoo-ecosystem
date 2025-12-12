@@ -35,6 +35,8 @@ import { MarketplaceView, marketplaceItems } from "./components/app/MarketplaceV
 import { MarketplaceDetailView } from "./components/app/MarketplaceDetailView";
 import type { MarketplaceItem } from "./components/app/MarketplaceCard";
 import { BillingView } from "./components/BillingView";
+import { BundleSelectionView } from "./components/app/BundleSelectionView";
+import { BundleAppsView } from "./components/app/BundleAppsView";
 import { WebsitesView } from "./components/cloud/WebsitesView";
 import { ManageWebsiteView } from "./components/cloud/ManageWebsiteView";
 import { HostView } from "./components/cloud/HostView";
@@ -69,6 +71,8 @@ export const DashboardPage = () => {
   const projectDetailsMatch = useMatch("/dashboard/projects/:projectId");
   const proposalsMatch = useMatch("/dashboard/projects/:projectId/proposals");
   const marketplaceDetailMatch = useMatch("/dashboard/marketplace/:itemId");
+  const marketplaceBundleMatch = useMatch("/dashboard/marketplace/bundles");
+  const marketplaceBundleDetailMatch = useMatch("/dashboard/marketplace/bundles/:bundleId");
   const orderMatch = useMatch("/dashboard/order");
   const taskDetailMatch = useMatch("/dashboard/software/tasks/:taskId");
   const dataset = dashboardContent[activeApp.id];
@@ -544,7 +548,11 @@ export const DashboardPage = () => {
               onOpenMarketplace={() => handleSelectNav("marketplace")}
             />
           ) : activeNavId === "marketplace" && activeApp.id === "app" ? (
-            marketplaceDetailMatch ? (() => {
+            marketplaceBundleDetailMatch ? (
+              <BundleAppsView tokens={tokens} />
+            ) : marketplaceBundleMatch ? (
+              <BundleSelectionView tokens={tokens} />
+            ) : marketplaceDetailMatch ? (() => {
               const itemId = marketplaceDetailMatch.params.itemId;
               // Find the base item (remove suffix like -1, -2, etc.)
               const baseId = itemId?.replace(/-\d+$/, "") || itemId;

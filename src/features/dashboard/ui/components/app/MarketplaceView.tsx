@@ -1,5 +1,7 @@
 import { useState, useMemo } from "react";
-import { SnapChatIcon, RedditIcon, PrintIcon } from "@utilities/icons";
+import { useNavigate } from "react-router-dom";
+import { SnapChatIcon, RedditIcon, PrintIcon, GeneralServicesIcon, MasterStrokeIcon, AppFilterIcon, FilledBundleSubscriptionsIcon, ArrowRight } from "@utilities/icons";
+import marketplaceBg from "@assets/images/app/marketplace-bg.svg";
 import type { DashboardTokens } from "../../types";
 import { MarketplaceCard, type MarketplaceItem } from "./MarketplaceCard";
 
@@ -8,7 +10,7 @@ type MarketplaceViewProps = {
   readonly onItemClick?: (itemId: string) => void;
 };
 
-type Category = "All" | "Music" | "Collections" | "Sports";
+type Category = "general" | "master";
 
 // Sample marketplace data - in a real app, this would come from an API
 // eslint-disable-next-line react-refresh/only-export-components
@@ -96,44 +98,83 @@ export const marketplaceItems: readonly MarketplaceItem[] = [
 ];
 
 export const MarketplaceView = ({ tokens, onItemClick }: MarketplaceViewProps) => {
-  const [activeCategory, setActiveCategory] = useState<Category>("All");
-
-  const categories: readonly Category[] = ["All", "Music", "Collections", "Sports"];
+  const navigate = useNavigate();
+  const [activeCategory, setActiveCategory] = useState<Category>("general");
 
   const filteredItems = useMemo(() => {
-    let filtered = marketplaceItems;
-
-    // Filter by category
-    if (activeCategory !== "All") {
-      // In a real app, items would have category metadata
-      // For now, we'll just return all items (no filtering needed)
-    }
-
-    return filtered;
+    return marketplaceItems;
   }, [activeCategory]);
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Special Bundles Banner */}
+      <div className="relative w-full">
+        <img src={marketplaceBg} alt="Special Bundles" className="w-full" />
+        <div className="absolute inset-0 flex items-center justify-between p-6 md:p-8">
+          <div className="flex items-center gap-4 flex-1">
+            <div className="flex-shrink-0 bg-[#3A656B] w-16 h-16 rounded-full flex items-center justify-center">
+              <FilledBundleSubscriptionsIcon className="w-8 h-8 text-white" />
+            </div>
+            <div className="flex flex-col gap-2">
+              <h2 className="text-2xl md:text-3xl font-bold text-white">Special Bundles</h2>
+              <p className="text-sm md:text-base text-[#E7E7E7] font-light">Save big with our curated product bundles</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 relative mt-8">
+            <button
+              type="button"
+              className="flex items-center gap-2 px-4 py-2 md:px-6 md:py-2.5 border border-white text-white rounded-full font-regular text-sm md:text-base hover:bg-white/90 hover:text-[#0F6773] cursor-pointer transition-colors"
+              onClick={() => navigate("/dashboard/marketplace/bundles")}
+            >
+              <span>Discover our bundle</span>
+              <ArrowRight className="w-4 h-4 md:w-5 md:h-5" />
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Category Tabs */}
-      <div className="flex items-center gap-2 flex-wrap">
-        {categories.map((category) => (
-          <button
-            key={category}
-            type="button"
-            onClick={() => setActiveCategory(category)}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-              activeCategory === category
-                ? tokens.isDark
-                  ? "bg-[#0F6773] text-white"
-                  : "bg-[#0F6773] text-white"
-                : tokens.isDark
-                ? "bg-[var(--color-card-bg)] text-white/70 hover:text-white"
-                : "bg-white text-[#718EBF] hover:text-[#2B3674]"
-            }`}
-          >
-            {category}
-          </button>
-        ))}
+      <div className="flex items-center justify-between mt-2">
+        <div className="flex items-center gap-6">
+          {[
+            { id: "general" as Category, label: "General Services Apps", icon: GeneralServicesIcon },
+            { id: "master" as Category, label: "Master Apps", icon: MasterStrokeIcon },
+          ].map((tab) => {
+            const isActive = activeCategory === tab.id;
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveCategory(tab.id)}
+                className={`relative flex items-center gap-2 pb-3 text-sm md:text-base font-semibold transition-colors ${
+                  isActive
+                    ? tokens.isDark ? "text-white/70" : "text-black"
+                    : tokens.isDark
+                    ? "text-white/60"
+                    : "text-black"
+                }`}
+              >
+                <Icon className="h-4 w-4" />
+                {tab.label}
+                {isActive ? (
+                  <span className="absolute inset-x-0 -bottom-[1px] h-[3px] rounded-full bg-[#0F6773]" />
+                ) : null}
+              </button>
+            );
+          })}
+        </div>
+        <button
+          type="button"
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+            tokens.isDark
+              ? "bg-white/10 text-white/70 hover:text-white"
+              : "bg-white text-black"
+          }`}
+        >
+          <AppFilterIcon className="h-5 w-5" />
+          <span className="text-sm md:text-base font-medium">Filters</span>
+        </button>
       </div>
 
       {/* Marketplace Grid */}

@@ -49,37 +49,14 @@ export const MarketplaceCard = ({ item, tokens, onClick, onLearnMore }: Marketpl
           </div> */}
 
           {/* Title */}
-          <h3 className={`text-lg font-bold mb-2 ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
+          <h3 className={`text-lg font-bold mb-2 ${tokens.isDark ? "text-white" : "text-black"}`}>
             {item.title}
           </h3>
 
           {/* Description */}
-          <p className={`text-sm mb-2 ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"}`}>
+          <p className={`text-sm mb-2 ${tokens.isDark ? "text-white/70" : "text-[#5F5F5F]"}`}>
             {item.description}
           </p>
-
-          {/* Price and Rating */}
-          <div className="mt-3 flex items-center justify-between text-sm w-full">
-            <span className={`text-[15px] font-medium ${tokens.isDark ? "text-white" : "text-[#1A3341]"}`}>
-              {item.price || ""}
-            </span>
-            <div className="flex items-center gap-2 flex-shrink-0">
-              <div className="flex items-center">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <span
-                    key={i}
-                    className="text-lg md:text-xl"
-                    style={{ color: i < Math.floor(item.rating) ? "#F8C56B" : "#E0E0E0" }}
-                  >
-                    ★
-                  </span>
-                ))}
-              </div>
-              <span className={`text-sm ${tokens.isDark ? "text-white/70" : "text-black"}`}>
-                ({item.rating}) • {item.reviewCount.toLocaleString()} reviews
-              </span>
-            </div>
-          </div>
         </div>
 
         {/* Icon */}
@@ -94,6 +71,29 @@ export const MarketplaceCard = ({ item, tokens, onClick, onLearnMore }: Marketpl
           >
             {item.icon}
           </div>
+        </div>
+      </div>
+
+      {/* Price and Rating */}
+      <div className="mt-2 flex items-center justify-between text-sm w-full">
+        <span className={`text-[15px] font-medium ${tokens.isDark ? "text-white" : "text-[#1A3341]"}`}>
+          {item.price || ""}
+        </span>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex items-center">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <span
+                key={i}
+                className="text-lg md:text-xl"
+                style={{ color: i < Math.floor(item.rating) ? "#F8C56B" : "#E0E0E0" }}
+              >
+                ★
+              </span>
+            ))}
+          </div>
+          <span className={`text-sm ${tokens.isDark ? "text-white/70" : "text-black"}`}>
+            ({item.rating}) • {item.reviewCount.toLocaleString()} reviews
+          </span>
         </div>
       </div>
 
