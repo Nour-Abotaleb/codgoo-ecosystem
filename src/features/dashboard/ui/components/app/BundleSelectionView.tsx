@@ -70,6 +70,7 @@ const topGradients = [
 ];
 
 const actionColors = ["#4CA8B5", "#0B595D", "#0C6187"];
+const actionColorsDark = ["white", "white", "white"];
 const checkBgColors = ["#67C6D266", "#28B2AE66", "#419EC966"];
 
 type BundleSelectionViewProps = {
@@ -137,7 +138,10 @@ export const BundleSelectionView = ({ tokens }: BundleSelectionViewProps) => {
                       className="mt-0.5 h-6 w-6 rounded-full flex items-center justify-center"
                       style={{ backgroundColor: checkBgColors[idx] }}
                     >
-                      <VerifiedIcon className="h-3 w-3" style={{ color: actionColors[idx] }} />
+                      <VerifiedIcon 
+                        className="h-3 w-3" 
+                        style={{ color: tokens.isDark ? actionColorsDark[idx] : actionColors[idx] }} 
+                      />
                     </span>
                     <span className={`${tokens.isDark ? "text-white" : "text-[#142133]"}`}>{perk}</span>
                   </li>
