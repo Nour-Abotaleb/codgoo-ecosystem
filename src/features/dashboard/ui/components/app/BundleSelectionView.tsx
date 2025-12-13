@@ -14,7 +14,7 @@ type BundleCard = {
   readonly actionLabel: string;
 };
 
-const bundleCards: readonly BundleCard[] = [
+export const bundleCards: readonly BundleCard[] = [
   {
     id: "starter",
     title: "Starter Bundle",
@@ -81,12 +81,12 @@ export const BundleSelectionView = ({ tokens }: BundleSelectionViewProps) => {
   const navigate = useNavigate();
   return (
     <div className="flex flex-col gap-8">
-      <div className="flex justify-between items-start gap-4">
-        <div className="flex flex-col gap-2">
+      <div className="flex items-center gap-3">
+        <div className="flex flex-col gap-2 flex-1">
           <h1 className={`text-2xl font-bold ${tokens.isDark ? "text-white" : "text-[#142133]"}`}>
             Build Your Custom Bundle
           </h1>
-          <p className={`text-sm ${tokens.subtleText}`}>
+          <p className={`text-sm md:text-base ${tokens.subtleText}`}>
             Choose applications and save big with our bundle packages
           </p>
         </div>
@@ -169,7 +169,7 @@ export const BundleSelectionView = ({ tokens }: BundleSelectionViewProps) => {
             <div className="px-4 pb-5">
               <button
                 type="button"
-                className="w-full rounded-full text-white text-sm font-regular py-3 transition-colors"
+                className="w-full rounded-full text-white text-sm font-regular py-3 transition-colors cursor-pointer"
                 style={{ backgroundColor: actionColors[idx] }}
                 onClick={() => navigate(`/dashboard/marketplace/bundles/${bundle.id}`)}
               >

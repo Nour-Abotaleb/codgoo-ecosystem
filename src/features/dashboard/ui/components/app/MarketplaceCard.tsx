@@ -1,5 +1,5 @@
 import { i18n } from "@shared/config/i18n";
-import { ArrowRight } from "@utilities/icons";
+import { ArrowRight, VerifiedIcon } from "@utilities/icons";
 import type { DashboardTokens } from "../../types";
 
 export type MarketplaceItem = {
@@ -19,23 +19,57 @@ type MarketplaceCardProps = {
   readonly item: MarketplaceItem;
   readonly tokens: DashboardTokens;
   readonly onClick?: () => void;
-  readonly onLearnMore?: () => void;
+  readonly onLearnMore?: (e: React.MouseEvent) => void;
+  readonly isSelected?: boolean;
+  readonly isSelectable?: boolean;
+  readonly onSelect?: () => void;
 };
 
-export const MarketplaceCard = ({ item, tokens, onClick, onLearnMore }: MarketplaceCardProps) => {
+export const MarketplaceCard = ({ 
+  item, 
+  tokens, 
+  onClick, 
+  onLearnMore,
+  isSelected = false,
+  isSelectable = true,
+  onSelect
+}: MarketplaceCardProps) => {
   const isRTL = i18n.language === "ar";
-  // const priceTypeColors = {
-  //   Free: { bg: "#27B43E", text: "#FFFFFF" },
-  //   Paid: { bg: "#FF8A0E", text: "#FFFFFF" }
-  // };
+  const isSelectionMode = !!onSelect; // Only in selection mode when onSelect is provided
 
-  // const colors = priceTypeColors[item.priceType];
+  const handleCardClick = () => {
+    if (isSelectionMode) {
+      // In selection mode (BundleAppsView), toggle selection
+      if (onSelect && isSelectable) {
+        onSelect();
+      }
+    } else {
+      // In normal mode (MarketplaceView), navigate
+      if (onClick) {
+        onClick();
+      }
+    }
+  };
 
   return (
     <div
-      className={`${tokens.cardBase} rounded-2xl p-4 transition-all cursor-pointer flex flex-col`}
-      onClick={onClick}
+      className={`${tokens.cardBase} rounded-2xl p-4 transition-all flex flex-col relative ${
+        isSelectionMode
+          ? isSelected 
+            ? "border-2 border-[#0F6773] cursor-pointer" 
+            : isSelectable 
+              ? "border-2 border-transparent hover:border-[#0F6773]/30 cursor-pointer" 
+              : "border-2 border-transparent opacity-60 cursor-not-allowed"
+          : "cursor-pointer" // Normal mode - no special border styling
+      }`}
+      onClick={handleCardClick}
     >
+      {/* Selection Indicator - Only show in selection mode */}
+      {isSelectionMode && isSelected && (
+        <div className="absolute bottom-5 right-3 w-6 h-6 bg-[#0F6773] rounded-full flex items-center justify-center">
+          <VerifiedIcon className="h-3 w-5 text-white" />
+        </div>
+      )}
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
           {/* Price Type Badge */}
@@ -98,11 +132,16 @@ export const MarketplaceCard = ({ item, tokens, onClick, onLearnMore }: Marketpl
       </div>
 
       {/* Learn More Link */}
-      <div className="flex justify-end mt-2 cursor-pointer">
+      <div className="flex justify-start mt-2">
         <button
           type="button"
-          className="flex items-center gap-1 text-sm font-medium transition-colors text-white py-2.5 px-4 rounded-full bg-[#0F6773] cursor-pointer"
-          onClick={onLearnMore}
+          className="flex items-center gap-1 text-sm font-medium transition-colors text-white py-2.5 px-4 rounded-full bg-[#0F6773] cursor-pointer hover:bg-[#0d5a65]"
+          onClick={(e) => {
+            e.stopPropagation();
+            if (onLearnMore) {
+              onLearnMore(e);
+            }
+          }}
         >
           <span>Learn more</span>
           <ArrowRight className={`h-4 w-4 ${isRTL ? "rotate-180" : ""}`} />

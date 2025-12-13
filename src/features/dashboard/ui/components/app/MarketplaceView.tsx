@@ -185,7 +185,10 @@ export const MarketplaceView = ({ tokens, onItemClick }: MarketplaceViewProps) =
             item={item}
             tokens={tokens}
             onClick={() => onItemClick?.(item.id)}
-            onLearnMore={() => onItemClick?.(item.id)}
+            onLearnMore={(e) => {
+              e.stopPropagation();
+              onItemClick?.(item.id);
+            }}
           />
         ))}
       </div>
