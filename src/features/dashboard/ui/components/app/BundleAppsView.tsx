@@ -3,6 +3,7 @@ import { useNavigate, useMatch } from "react-router-dom";
 import type { DashboardTokens } from "../../types";
 import { marketplaceItems } from "./MarketplaceView";
 import { MarketplaceCard } from "./MarketplaceCard";
+import { CheckoutView } from "./CheckoutView";
 import { AppFilterIcon, ArrowRight } from "@utilities/icons";
 import stars from "@assets/images/app/app-stars.svg";
 import { bundleCards } from "./BundleSelectionView";
@@ -23,6 +24,7 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
   const match = useMatch("/dashboard/marketplace/bundles/:bundleId");
   const bundleId = match?.params?.bundleId;
   const [selectedAppIds, setSelectedAppIds] = useState<Set<string>>(new Set());
+  const [showCheckout, setShowCheckout] = useState(false);
   
   const selectedCount = selectedAppIds.size;
 
@@ -101,10 +103,23 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
   const savings = originalPrice - bundlePrice;
   const savingsPercentage = originalPrice > 0 ? Math.round((savings / originalPrice) * 100) : 0;
 
+  // Show checkout if enabled
+  if (showCheckout) {
+    return (
+      <CheckoutView
+        tokens={tokens}
+        bundleTitle={heading}
+        bundlePrice={price}
+        selectedAppIds={selectedAppIds}
+        onBack={() => setShowCheckout(false)}
+      />
+    );
+  }
+
   return (
     <div className="flex flex-col gap-4">
       {/* Bundle Details */}
-      <div className={`flex flex-col gap-2 ${tokens.isDark ? "bg-[#1a1a1a]" : "bg-white"} rounded-[24px] p-4`}>
+      <div className={`flex flex-col gap-2 ${tokens.isDark ? "bg-[#1F2733]" : "bg-white"} rounded-[24px] p-4`}>
         <div className="flex items-center gap-3">
           <div className={`flex items-center gap-2 cursor-pointer ${tokens.isDark ? "bg-[#2a2a2a] text-[#34D8D6]" : "bg-[#E7F0F1] text-[#0F6773]"} rounded-full p-2 w-12 h-12 justify-center`} onClick={() => navigate("/dashboard/marketplace/bundles")}>
             <ArrowRight className="w-4 h-4 md:w-5 md:h-5 rotate-180" />
@@ -245,8 +260,7 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
             type="button"
             className="px-8 py-2.5 mt-8 w-full bg-[#0F6773] text-white rounded-full text-base md:text-lg hover:bg-[#0d5a65] transition-colors cursor-pointer"
             onClick={() => {
-              // TODO: Implement purchase logic
-              console.log("Purchase bundle with apps:", Array.from(selectedAppIds));
+              setShowCheckout(true);
             }}
           >
             Purchase Bundle Now
