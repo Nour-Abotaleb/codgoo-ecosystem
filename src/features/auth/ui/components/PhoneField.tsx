@@ -36,6 +36,7 @@ export const PhoneField = ({ label, name = "phone", defaultCountry = "US" }: Pho
   const [selectedCountry, setSelectedCountry] = useState<string>(defaultCountry);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const phoneInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -126,6 +127,16 @@ export const PhoneField = ({ label, name = "phone", defaultCountry = "US" }: Pho
   const handleSelectCountry = (code: string) => {
     setSelectedCountry(code);
     setIsOpen(false);
+    // Update the hidden input when country changes
+    if (phoneInputRef.current) {
+      const form = phoneInputRef.current.form;
+      const hiddenInput = form?.querySelector(`input[name="${name}_full"]`) as HTMLInputElement;
+      if (hiddenInput) {
+        const phoneNumber = phoneInputRef.current.value;
+        const newSelected = countries.find((country) => country.code === code) ?? countries[0];
+        hiddenInput.value = phoneNumber ? `${newSelected.dialCode}${phoneNumber}` : "";
+      }
+    }
   };
 
   const selected = countries.find((country) => country.code === selectedCountry) ?? countries[0];
@@ -137,13 +148,24 @@ export const PhoneField = ({ label, name = "phone", defaultCountry = "US" }: Pho
       </span>
       <div className="flex h-14 items-center gap-3 rounded-[16px] border border-[color:var(--color-auth-border)] bg-white pe-4 text-sm text-slate-600 transition focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20">
         <input
+          ref={phoneInputRef}
           type="tel"
           name={name}
           placeholder="Phone number"
           className="w-full border-e border-[color:var(--color-auth-border)] bg-transparent px-5 text-left text-sm text-slate-900 placeholder:text-[color:var(--color-auth-placeholder)] focus:outline-none"
           autoComplete="tel"
           inputMode="tel"
+          onChange={(e) => {
+            // Store the full phone number (dial code + number) in a hidden input
+            const hiddenInput = e.currentTarget.form?.querySelector(`input[name="${name}_full"]`) as HTMLInputElement;
+            if (hiddenInput) {
+              const phoneNumber = e.currentTarget.value;
+              hiddenInput.value = phoneNumber ? `${selected.dialCode}${phoneNumber}` : "";
+            }
+          }}
         />
+        {/* Hidden input to store the full phone number with dial code */}
+        <input type="hidden" name={`${name}_full`} />
 
         <div className="relative" ref={dropdownRef}>
           <button

@@ -4,9 +4,8 @@
 
 export type User = {
   readonly id: string;
-  readonly username: string;
+  readonly name: string;
   readonly email: string;
-  readonly company?: string;
   readonly phone?: string;
 };
 
@@ -23,13 +22,11 @@ export type LoginCredentials = {
 };
 
 export type RegisterData = {
-  readonly username: string;
+  readonly name: string;
   readonly email: string;
   readonly password: string;
-  readonly confirmPassword: string;
-  readonly company?: string;
-  readonly phone?: string;
-  readonly rememberMe?: boolean;
+  readonly password_confirmation: string;
+  readonly phone: string;
 };
 
 export type AuthResponse = {

@@ -1,25 +1,83 @@
-import { useState } from "react";
+import { type FormEvent, useCallback, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import appleIcon from "@assets/images/apple.svg";
 import facebookIcon from "@assets/images/facebook.svg";
 import googleIcon from "@assets/images/google.svg";
 
+import { useAuth } from "../hooks/useAuth";
 import { PasswordField } from "./components/PasswordField.tsx";
 import { PhoneField } from "./components/PhoneField.tsx";
 import { SocialProviders } from "./components/SocialProviders.tsx";
 import { TextField } from "./components/TextField.tsx";
 
 export const RegisterForm = () => {
-  const [rememberMe, setRememberMe] = useState(true);
+  const navigate = useNavigate();
+  const { register, loading, error } = useAuth();
+  const formRef = useRef<HTMLFormElement>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const handleSubmit = useCallback(
+    async (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      setSubmitError(null);
+
+      if (!formRef.current) return;
+
+      const formData = new FormData(formRef.current);
+      const name = formData.get("name") as string;
+      const email = formData.get("email") as string;
+      const password = formData.get("password") as string;
+      const password_confirmation = formData.get("password_confirmation") as string;
+      // Get the full phone number (with dial code) from the hidden input
+      const phone = (formData.get("phone_full") as string) || (formData.get("phone") as string);
+
+      if (!name || !email || !password || !password_confirmation || !phone) {
+        setSubmitError("All fields are required");
+        return;
+      }
+
+      if (password !== password_confirmation) {
+        setSubmitError("Passwords do not match");
+        return;
+      }
+
+      try {
+        await register({
+          name,
+          email,
+          password,
+          password_confirmation,
+          phone,
+        });
+        navigate("/dashboard");
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "Registration failed";
+        setSubmitError(errorMessage);
+      }
+    },
+    [register, navigate]
+  );
 
   return (
-    <form className="flex flex-col gap-5" noValidate>
+    <form ref={formRef} className="flex flex-col gap-5" onSubmit={handleSubmit} noValidate>
+      {submitError && (
+        <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
+          {submitError}
+        </div>
+      )}
+      {error && (
+        <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
+          {typeof error === "string" ? error : "An error occurred"}
+        </div>
+      )}
       <div className="grid gap-5 grid-cols-1">
         <TextField
-          name="username"
-          label="User name"
-          placeholder="User name"
+          name="name"
+          label="Full name"
+          placeholder="Full name"
           autoComplete="name"
+          required
         />
         <TextField
           type="email"
@@ -27,16 +85,10 @@ export const RegisterForm = () => {
           label="Email"
           placeholder="Email"
           autoComplete="email"
+          required
         />
-         <PhoneField label="Phone number" />
+        <PhoneField label="Phone number" name="phone" />
       </div>
-{/* 
-      <TextField
-        name="company"
-        label="Enter Legal Name of Company"
-        placeholder="Enter Legal Name of Company"
-        autoComplete="organization"
-      /> */}
 
       <div className="grid gap-5 grid-cols-1">
         <PasswordField
@@ -44,35 +96,23 @@ export const RegisterForm = () => {
           label="Password"
           placeholder="Password"
           autoComplete="new-password"
+          required
         />
         <PasswordField
-          name="confirmPassword"
+          name="password_confirmation"
           label="Confirm password"
           placeholder="Confirm password"
           autoComplete="new-password"
+          required
         />
       </div>
 
-      <label className="mt-2 flex items-center gap-3 text-sm text-[color:var(--color-auth-placeholder)]">
-        <span className="relative inline-flex">
-          <input
-            type="checkbox"
-            checked={rememberMe}
-            onChange={() => setRememberMe((prev) => !prev)}
-            className="peer h-4 w-4 cursor-pointer appearance-none rounded border border-black/60 bg-white transition focus:outline-none focus:ring-2 focus:ring-black/20 checked:border-black checked:bg-black"
-          />
-          <span className="pointer-events-none absolute inset-0 grid place-items-center text-xs font-bold text-white opacity-0 transition peer-checked:opacity-100">
-            ✔
-          </span>
-        </span>
-        Remember me
-      </label>
-
       <button
         type="submit"
-        className="mt-2 inline-flex h-14 items-center cursor-pointer justify-center rounded-[32px] bg-black text-base md:text-xl font-medium text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-        >
-        Create
+        disabled={loading}
+        className="mt-2 inline-flex h-14 items-center cursor-pointer justify-center rounded-[32px] bg-black text-base md:text-xl font-medium text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {loading ? "Creating..." : "Create"}
       </button>
 
       <SocialProviders

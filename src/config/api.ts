@@ -10,7 +10,7 @@ import { clearCredentials, selectToken } from "@/features/auth/store/auth-slice"
 // Vite environment variable: must start with VITE_
 const api = axios.create({
   baseURL:
-    import.meta.env.VITE_API_URL || "https://api.example.com",
+    import.meta.env.VITE_API_URL || "https://back.codgoo.com/api",
   headers: {
     "Content-Type": "application/json",
   },
@@ -34,6 +34,7 @@ api.interceptors.response.use(
     // Exclude attendance endpoints from automatic redirect
     const shouldRedirectToLogin =
       error.config?.url?.includes("/auth/") ||
+      error.config?.url?.includes("/client/") ||
       error.config?.url?.includes("/profile") ||
       error.config?.url?.includes("/teachers/profile");
 
