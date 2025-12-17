@@ -10,7 +10,7 @@ import { clearCredentials, selectToken } from "@/features/auth/store/auth-slice"
 // Vite environment variable: must start with VITE_
 const api = axios.create({
   baseURL:
-    import.meta.env.VITE_API_URL || "https://back.codgoo.com/api",
+    import.meta.env.VITE_API_URL || "https://back.codgoo.com/codgoo/public/api",
   headers: {
     "Content-Type": "application/json",
   },
@@ -20,8 +20,13 @@ const api = axios.create({
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const state = store.getState();
   const token = selectToken(state);
-  if (token && config.headers) {
-    config.headers.Authorization = `Bearer ${token}`;
+  if (config.headers) {
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    } else {
+      // Remove Authorization header if no token
+      delete config.headers.Authorization;
+    }
   }
   return config;
 });

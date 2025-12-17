@@ -103,7 +103,7 @@ export const MarketplaceView = ({ tokens, onItemClick }: MarketplaceViewProps) =
 
   const filteredItems = useMemo(() => {
     return marketplaceItems;
-  }, [activeCategory]);
+  }, []);
 
   return (
     <div className="flex flex-col gap-6">

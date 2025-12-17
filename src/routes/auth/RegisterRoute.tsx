@@ -1,12 +1,19 @@
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
-import { AuthTemplate, RegisterForm } from "@features/auth";
+import { AuthTemplate, RegisterForm, useAuth } from "@features/auth";
 
 export const RegisterRoute = () => {
+  const { isAuthenticated } = useAuth();
+
   useEffect(() => {
     document.title = "Codgoo Ecosystem";
   }, []);
+
+  // Redirect to dashboard if already authenticated
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   return (
   <AuthTemplate

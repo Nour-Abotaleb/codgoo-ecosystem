@@ -14,6 +14,7 @@ type BundleCard = {
   readonly actionLabel: string;
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const bundleCards: readonly BundleCard[] = [
   {
     id: "starter",

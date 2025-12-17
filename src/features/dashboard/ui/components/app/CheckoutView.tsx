@@ -76,8 +76,8 @@ export const CheckoutView = ({
           {/* Billing Information */}
           <div className={`${tokens.cardBase} rounded-[24px] p-6`}>
             <div className={`flex items-center gap-3 mb-6 px-6 py-4 -mx-6 -mt-6 ${tokens.isDark ? "bg-[#1F2733]" : "bg-[#E7F0F1]"} rounded-t-[24px]`}>
-              <div className={`${tokens.isDark ? "bg-[#1a1a1a] text-[#34D8D6]" : "bg-white text-[#0F6773]"} rounded-full p-2`}>
-                <MasterIcon className="w-5 h-5" />
+              <div className={`${tokens.isDark ? "bg-[#1a1a1a] text-[#34D8D6]" : "bg-white text-[#0F6773]"} rounded-full p-2.5`}>
+                <MasterIcon className="w-6 h-6" />
               </div>
               <h2 className={`text-xl md:text-2xl font-bold ${tokens.isDark ? "text-white" : "text-[#142133]"}`}>
                 Billing Information
@@ -116,7 +116,7 @@ export const CheckoutView = ({
                   className={inputClass}
                 />
               </div>
-              <div className="relative">
+              <div className="relative mt-4">
                 <label 
                   className={`absolute left-4 -top-2.5 px-2 text-sm font-medium z-10 ${
                     tokens.isDark 
@@ -132,7 +132,7 @@ export const CheckoutView = ({
                   className={inputClass}
                 />
               </div>
-              <div className="relative">
+              <div className="relative mt-4">
                 <label 
                   className={`absolute left-4 -top-2.5 px-2 text-sm font-medium z-10 ${
                     tokens.isDark 
@@ -154,8 +154,8 @@ export const CheckoutView = ({
           {/* Payment Method */}
           <div className={`${tokens.cardBase} rounded-[24px] p-6`}>
             <div className={`flex items-center gap-3 mb-6 px-6 py-4 -mx-6 -mt-6 ${tokens.isDark ? "bg-[#1F2733]" : "bg-[#E7F0F1]"} rounded-t-[24px]`}>
-              <div className={`${tokens.isDark ? "bg-[#1a1a1a] text-[#34D8D6]" : "bg-white text-[#0F6773]"} rounded-full p-2`}>
-                <CreditCardIcon className="w-5 h-5" />
+              <div className={`${tokens.isDark ? "bg-[#1a1a1a] text-[#34D8D6]" : "bg-white text-[#0F6773]"} rounded-full p-2.5`}>
+                <CreditCardIcon className="w-6 h-6" />
               </div>
               <h2 className={`text-xl md:text-2xl font-bold ${tokens.isDark ? "text-white" : "text-[#142133]"}`}>
                 Payment Method
@@ -164,15 +164,20 @@ export const CheckoutView = ({
             <div className="flex flex-col gap-4">
               {/* Credit/Debit Card */}
               <label
-                className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-colors ${
+                className={`flex items-center gap-4 p-4 rounded-xl cursor-pointer transition-colors ${
                   paymentMethod === "credit-card"
-                    ? `${tokens.isDark ? "border-[#34D8D6] bg-[#1a3a3a]" : "border-[#0F6773] bg-[#EBFBFB]"}`
-                    : `${tokens.divider} ${tokens.isDark ? "bg-[#2a2a2a]" : "bg-[#FAFAFA]"}`
+                    ? `${tokens.isDark ? "bg-[#1a3a3a]" : "bg-[#E7F0F1]"}`
+                    : `${tokens.isDark ? "bg-[#2a2a2a] border border-[#E8E8E866]" : "bg-[#FAFAFA] border border-[#E8E8E8]"}`
                 }`}
               >
                 <div className="flex items-center justify-between flex-1">
                   <div className="flex items-center gap-3">
-                    <CreditCardIcon className={`w-6 h-6 ${paymentMethod === "credit-card" ? "text-[#0F6773]" : tokens.isDark ? "text-gray-400" : "text-[#5F5F5F]"}`} />
+                    <div className={`${paymentMethod === "credit-card" 
+                      ? `${tokens.isDark ? "bg-[#1F2733] text-[#34D8D6]" : "bg-[#BAD5D9] text-[#0F6773]"}`
+                      : `${tokens.isDark ? "bg-[#1F2733] text-gray-400" : "bg-[#E7F0F1] text-[#5F5F5F]"}`
+                    } rounded-full p-2.5`}>
+                      <CreditCardIcon className={`w-5 h-5 ${paymentMethod === "credit-card" ? "text-[#0F6773]" : tokens.isDark ? "text-gray-400" : "text-[#5F5F5F]"}`} />
+                    </div>
                     <div className="flex flex-col">
                       <span className={`font-semibold ${tokens.isDark ? "text-white" : "text-[#142133]"}`}>
                         Credit/Debit Card
@@ -200,15 +205,20 @@ export const CheckoutView = ({
 
               {/* Digital Wallet */}
               <label
-                className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-colors ${
+                className={`flex items-center gap-4 p-4 rounded-xl cursor-pointer transition-colors ${
                   paymentMethod === "digital-wallet"
-                    ? `${tokens.isDark ? "border-[#34D8D6] bg-[#1a3a3a]" : "border-[#0F6773] bg-[#EBFBFB]"}`
-                    : `${tokens.divider} ${tokens.isDark ? "bg-[#2a2a2a]" : "bg-[#FAFAFA]"}`
+                    ? `${tokens.isDark ? "bg-[#1a3a3a]" : "bg-[#E7F0F1]"}`
+                    : `${tokens.isDark ? "bg-[#2a2a2a] border border-[#E8E8E866]" : "bg-[#FAFAFA] border border-[#E8E8E8]"}`
                 }`}
               >
                 <div className="flex items-center justify-between flex-1">
                   <div className="flex items-center gap-3">
-                  <DigitalWalletIcon className={`w-6 h-6 ${paymentMethod === "digital-wallet" ? "text-[#0F6773]" : tokens.isDark ? "text-gray-400" : "text-[#5F5F5F]"}`} />
+                    <div className={`${paymentMethod === "digital-wallet" 
+                      ? `${tokens.isDark ? "bg-[#1F2733] text-[#34D8D6]" : "bg-[#BAD5D9] text-[#0F6773]"}`
+                      : `${tokens.isDark ? "bg-[#1F2733] text-gray-400" : "bg-[#E7F0F1] text-[#5F5F5F]"}`
+                    } rounded-full p-2.5`}>
+                      <DigitalWalletIcon className={`w-5 h-5 ${paymentMethod === "digital-wallet" ? "text-[#0F6773]" : tokens.isDark ? "text-gray-400" : "text-[#5F5F5F]"}`} />
+                    </div>
                     <div className="flex flex-col">
                       <span className={`font-semibold ${tokens.isDark ? "text-white" : "text-[#142133]"}`}>
                         Digital Wallet
@@ -236,15 +246,20 @@ export const CheckoutView = ({
 
               {/* Bank Transfer */}
               <label
-                className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-colors ${
+                className={`flex items-center gap-4 p-4 rounded-xl cursor-pointer transition-colors ${
                   paymentMethod === "bank-transfer"
-                    ? `${tokens.isDark ? "border-[#34D8D6] bg-[#1a3a3a]" : "border-[#0F6773] bg-[#EBFBFB]"}`
-                    : `${tokens.divider} ${tokens.isDark ? "bg-[#2a2a2a]" : "bg-[#FAFAFA]"}`
+                    ? `${tokens.isDark ? "bg-[#1a3a3a]" : "bg-[#E7F0F1]"}`
+                    : `${tokens.isDark ? "bg-[#2a2a2a] border border-[#E8E8E866]" : "bg-[#FAFAFA] border border-[#E8E8E8]"}`
                 }`}
               >
                 <div className="flex items-center justify-between flex-1">
                   <div className="flex items-center gap-3">
-                  <BankTransferIcon className={`w-6 h-6 ${paymentMethod === "bank-transfer" ? "text-[#0F6773]" : tokens.isDark ? "text-gray-400" : "text-[#5F5F5F]"}`} />
+                    <div className={`${paymentMethod === "bank-transfer" 
+                      ? `${tokens.isDark ? "bg-[#1F2733] text-[#34D8D6]" : "bg-[#BAD5D9] text-[#0F6773]"}`
+                      : `${tokens.isDark ? "bg-[#1F2733] text-gray-400" : "bg-[#E7F0F1] text-[#5F5F5F]"}`
+                    } rounded-full p-2.5`}>
+                      <BankTransferIcon className={`w-5 h-5 ${paymentMethod === "bank-transfer" ? "text-[#0F6773]" : tokens.isDark ? "text-gray-400" : "text-[#5F5F5F]"}`} />
+                    </div>
                     <div className="flex flex-col">
                       <span className={`font-semibold ${tokens.isDark ? "text-white" : "text-[#142133]"}`}>
                         Bank Transfer
@@ -283,7 +298,7 @@ export const CheckoutView = ({
                   className="sr-only"
                 />
                 <div
-                  className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-colors ${
+                  className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
                     agreedToTerms
                       ? "bg-[#0F6773] border-[#0F6773]"
                       : `${tokens.divider} ${tokens.isDark ? "bg-[#2a2a2a]" : "bg-white"}`
@@ -301,28 +316,28 @@ export const CheckoutView = ({
 
         {/* Right Column - Order Summary */}
         <div className="lg:col-span-1">
-          <div className={`${tokens.cardBase} rounded-[24px] p-6 sticky top-4`}>
-            <div className={`flex items-center gap-3 mb-2 px-6 py-4 -mx-6 -mt-6 ${tokens.isDark ? "bg-[#1F2733]" : "bg-[#E7F0F1]"} rounded-t-[24px]`}>
+          <div className={`${tokens.cardBase} rounded-[24px] p-6`}>
+            <div className={`flex flex-col items-start mb-6 px-6 py-3 -mx-6 -mt-6 ${tokens.isDark ? "bg-[#1F2733]" : "bg-[#E7F0F1]"} rounded-t-[24px]`}>
               <h2 className={`text-xl md:text-2xl font-bold ${tokens.isDark ? "text-white" : "text-[#142133]"}`}>
                 Order Summary
               </h2>
+              <p className={`text-sm ${tokens.isDark ? "text-gray-400" : "text-black"}`}>
+                1 item
+              </p>
             </div>
-            <p className={`text-sm mb-6 ${tokens.isDark ? "text-gray-400" : "text-[#5F5F5F]"}`}>
-              1 item
-            </p>
 
             {/* Bundle Item */}
             <div className="flex flex-col gap-3 mb-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3 flex-1">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${tokens.isDark ? "bg-[#2a2a2a] text-[#34D8D6]" : "bg-[#E7F0F1] text-[#0F6773]"}`}>
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center ${tokens.isDark ? "bg-[#2a2a2a] text-[#34D8D6]" : "bg-[#E7F0F1] text-[#0F6773]"}`}>
                     <MasterIcon className="w-6 h-6" />
                   </div>
                   <div className="flex flex-col flex-1">
-                    <span className={`text-sm font-medium ${tokens.isDark ? "text-white" : "text-[#142133]"}`}>
+                    <span className={`text-sm md:text-base font-semibold ${tokens.isDark ? "text-white" : "text-[#0F6773]"}`}>
                       {bundleTitle}
                     </span>
-                    <span className={`text-sm font-semibold ${tokens.isDark ? "text-white" : "text-[#142133]"}`}>
+                    <span className={`text-sm md:text-base font-medium ${tokens.isDark ? "text-white" : "text-[#0F6773]"}`}>
                       {bundlePrice}
                     </span>
                   </div>
@@ -340,28 +355,28 @@ export const CheckoutView = ({
             </div>
 
             {/* Price Breakdown */}
-            <div className="py-4 mb-6 space-y-3">
+            <div className="py-4 mb-4 space-y-3">
               <div className="flex justify-between">
-                <span className={`text-sm ${tokens.isDark ? "text-gray-400" : "text-[#5F5F5F]"}`}>
+                <span className={`text-sm ${tokens.isDark ? "text-gray-400" : "text-black"}`}>
                   Subtotal
                 </span>
-                <span className={`text-sm font-medium ${tokens.isDark ? "text-white" : "text-[#142133]"}`}>
+                <span className={`text-sm font-medium ${tokens.isDark ? "text-white" : "text-black"}`}>
                   {subtotal.toLocaleString()} EGP
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className={`text-sm ${tokens.isDark ? "text-gray-400" : "text-[#5F5F5F]"}`}>
+                <span className={`text-sm ${tokens.isDark ? "text-gray-400" : "text-black"}`}>
                   Tax (14%)
                 </span>
-                <span className={`text-sm font-medium ${tokens.isDark ? "text-white" : "text-[#142133]"}`}>
+                <span className={`text-sm font-medium ${tokens.isDark ? "text-white" : "text-black"}`}>
                   {tax.toLocaleString()} EGP
                 </span>
               </div>
               <div className="flex justify-between pt-3 border-t border-[#D7D7D7]">
-                <span className={`text-lg font-semibold ${tokens.isDark ? "text-white" : "text-[#142133]"}`}>
+                <span className={`text-lg font-medium ${tokens.isDark ? "text-white" : "text-black"}`}>
                   Total
                 </span>
-                <span className={`text-lg font-semibold ${tokens.isDark ? "text-white" : "text-[#142133]"}`}>
+                <span className={`text-lg font-medium ${tokens.isDark ? "text-white" : "text-black"}`}>
                   {total.toLocaleString()} EGP
                 </span>
               </div>
@@ -372,7 +387,7 @@ export const CheckoutView = ({
               type="button"
               onClick={handleConfirmPayment}
               disabled={!agreedToTerms}
-              className={`w-full py-3 rounded-full font-semibold text-base transition-colors ${
+              className={`w-full py-2.5 rounded-full font-semibold text-base transition-colors ${
                 agreedToTerms
                   ? "bg-[#0F6773] text-white hover:bg-[#0d5a65] cursor-pointer"
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"
@@ -380,36 +395,44 @@ export const CheckoutView = ({
             >
               Confirm Payment
             </button>
-            <p className={`text-sm text-center mt-3 ${tokens.isDark ? "text-gray-400" : "text-[#5F5F5F]"}`}>
-              By Confirming, You Will Be Redirected To A Secure Payment Gateway
+            <p className={`text-[13px] text-center mt-6 ${tokens.isDark ? "text-gray-400" : "text-[#808080]"}`}>
+              By Confirming, You Will Be Redirected To<br /> A Secure Payment Gateway
             </p>
+          </div>
 
-            {/* Security Features */}
-            <div className="mt-6 space-y-4">
-              <div className="flex items-start gap-3">
-                <SecurityIcon className="w-6 h-6 flex-shrink-0 mt-0.5" />
+          {/* Security Features */}
+          <div className="mt-4 space-y-3">
+            <div className={`${tokens.isDark ? "bg-[#2a2a2a]" : "bg-white"} rounded-2xl px-4 py-6 flex flex-col items-start gap-3`}>
+              <div className="flex items-center gap-3">
+                <div className={`${tokens.isDark ? "bg-[#1F2733] text-[#34D8D6]" : "bg-[#E7F0F1] text-[#0F6773]"} rounded-full p-2.5 flex-shrink-0`}>
+                  <SecurityIcon className="w-6 h-6" />
+                </div>
                 <div className="flex flex-col gap-1">
-                  <span className={`text-sm font-semibold ${tokens.isDark ? "text-white" : "text-[#142133]"}`}>
+                  <span className={`text-sm md:text-base font-semibold ${tokens.isDark ? "text-white" : "text-[#142133]"}`}>
                     100% Secure Payment
                   </span>
-                  <span className={`text-xs ${tokens.isDark ? "text-gray-400" : "text-[#5F5F5F]"}`}>
-                    Your Payment Is Processed Through Encrypted Channels. Your Data Is Safe With Us.
-                  </span>
                 </div>
               </div>
-              <div className="flex items-start gap-3">
-                <div className="w-5 h-5 bg-[#0F6773] rounded-full flex items-center justify-center">
-                  <CheckIcon className="w-4 h-4 text-white" />
+                <span className={`text-[15px] ${tokens.isDark ? "text-gray-400" : "text-[#403F3F]"}`}>
+                  Your Payment Is Processed Through Encrypted Channels. Your Data Is Safe With Us.
+                </span>
+            </div>
+            <div className={`${tokens.isDark ? "bg-[#2a2a2a]" : "bg-white"} rounded-2xl px-4 py-6 flex flex-col items-start gap-3`}>
+              <div className="flex items-center gap-3">
+                <div className={`${tokens.isDark ? "bg-[#1F2733] text-[#34D8D6]" : "bg-[#E7F0F1] text-[#0F6773]"} rounded-full p-2.5 flex-shrink-0 flex items-center justify-center`}>
+                  <div className="w-5 h-5 bg-[#0F6773] rounded-full flex items-center justify-center">
+                    <CheckIcon className="w-4 h-4 text-white" />
+                  </div>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <span className={`text-sm font-semibold ${tokens.isDark ? "text-white" : "text-[#142133]"}`}>
+                  <span className={`text-sm md:text-base font-semibold ${tokens.isDark ? "text-white" : "text-[#142133]"}`}>
                     7-Day Money Back Guarantee
-                  </span>
-                  <span className={`text-xs ${tokens.isDark ? "text-gray-400" : "text-[#5F5F5F]"}`}>
-                    Not Satisfied? Get A Full Refund Within 7 Days, No Questions Asked.
                   </span>
                 </div>
               </div>
+              <span className={`text-[15px] ${tokens.isDark ? "text-gray-400" : "text-[#403F3F]"}`}>
+                Not Satisfied? Get A Full Refund Within 7 Days, No Questions Asked.
+              </span>
             </div>
           </div>
         </div>

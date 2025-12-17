@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { RootState } from "@/store/store";
 import type { AuthState, User, LoginCredentials, RegisterData } from "../types/auth.types";
 import { authApi } from "../api/authApi";
+import api from "@/config/api";
 
 const initialState: AuthState = {
   token: null,
@@ -18,9 +19,12 @@ export const loginUser = createAsyncThunk(
       const response = await authApi.login(credentials);
       return response;
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "An error occurred";
-      const errorData = (error as { response?: { data?: unknown } })?.response?.data;
-      return rejectWithValue(errorData || errorMessage);
+      const axiosError = error as { response?: { data?: { message?: string; error?: string } } };
+      const errorMessage = 
+        axiosError?.response?.data?.message || 
+        axiosError?.response?.data?.error || 
+        (error instanceof Error ? error.message : "Login failed");
+      return rejectWithValue(errorMessage);
     }
   }
 );
@@ -32,9 +36,12 @@ export const registerUser = createAsyncThunk(
       const response = await authApi.register(userData);
       return response;
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "An error occurred";
-      const errorData = (error as { response?: { data?: unknown } })?.response?.data;
-      return rejectWithValue(errorData || errorMessage);
+      const axiosError = error as { response?: { data?: { message?: string; error?: string } } };
+      const errorMessage = 
+        axiosError?.response?.data?.message || 
+        axiosError?.response?.data?.error || 
+        (error instanceof Error ? error.message : "Registration failed");
+      return rejectWithValue(errorMessage);
     }
   }
 );
@@ -44,8 +51,12 @@ export const logoutUser = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       await authApi.logout();
+      // Clear token from axios defaults
+      delete api.defaults.headers.common["Authorization"];
       return null;
     } catch (error: unknown) {
+      // Even if logout API call fails, clear the token locally
+      delete api.defaults.headers.common["Authorization"];
       const errorMessage = error instanceof Error ? error.message : "An error occurred";
       const errorData = (error as { response?: { data?: unknown } })?.response?.data;
       return rejectWithValue(errorData || errorMessage);
@@ -103,6 +114,8 @@ const authSlice = createSlice({
       state.user = null;
       state.error = null;
       state.loading = false;
+      // Clear token from axios defaults
+      delete api.defaults.headers.common["Authorization"];
     },
     setToken(state, action: { payload: string | null }) {
       state.token = action.payload;
@@ -153,10 +166,16 @@ const authSlice = createSlice({
         state.user = null;
         state.loading = false;
         state.error = null;
+        // Clear token from axios defaults
+        delete api.defaults.headers.common["Authorization"];
       })
       .addCase(logoutUser.rejected, (state, action) => {
+        state.token = null;
+        state.user = null;
         state.loading = false;
         state.error = action.payload as string | null;
+        // Clear token from axios defaults even on error
+        delete api.defaults.headers.common["Authorization"];
       });
 
     // Refresh Token

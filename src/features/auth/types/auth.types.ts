@@ -22,7 +22,7 @@ export type LoginCredentials = {
 };
 
 export type RegisterData = {
-  readonly name: string;
+  readonly username: string;
   readonly email: string;
   readonly password: string;
   readonly password_confirmation: string;

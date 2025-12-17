@@ -11,16 +11,24 @@ import { PhoneField } from "./components/PhoneField.tsx";
 import { SocialProviders } from "./components/SocialProviders.tsx";
 import { TextField } from "./components/TextField.tsx";
 
+type FieldErrors = {
+  name?: string;
+  email?: string;
+  phone?: string;
+  password?: string;
+  password_confirmation?: string;
+};
+
 export const RegisterForm = () => {
   const navigate = useNavigate();
   const { register, loading, error } = useAuth();
   const formRef = useRef<HTMLFormElement>(null);
-  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
   const handleSubmit = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
-      setSubmitError(null);
+      setFieldErrors({});
 
       if (!formRef.current) return;
 
@@ -32,28 +40,48 @@ export const RegisterForm = () => {
       // Get the full phone number (with dial code) from the hidden input
       const phone = (formData.get("phone_full") as string) || (formData.get("phone") as string);
 
-      if (!name || !email || !password || !password_confirmation || !phone) {
-        setSubmitError("All fields are required");
-        return;
+      const errors: FieldErrors = {};
+
+      if (!name || name.trim() === "") {
+        errors.name = "Full name is required";
       }
 
-      if (password !== password_confirmation) {
-        setSubmitError("Passwords do not match");
+      if (!email || email.trim() === "") {
+        errors.email = "Email is required";
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        errors.email = "Please enter a valid email address";
+      }
+
+      if (!phone || phone.trim() === "") {
+        errors.phone = "Phone number is required";
+      }
+
+      if (!password || password.trim() === "") {
+        errors.password = "Password is required";
+      }
+
+      if (!password_confirmation || password_confirmation.trim() === "") {
+        errors.password_confirmation = "Please confirm your password";
+      } else if (password && password !== password_confirmation) {
+        errors.password_confirmation = "Passwords do not match";
+      }
+
+      if (Object.keys(errors).length > 0) {
+        setFieldErrors(errors);
         return;
       }
 
       try {
         await register({
-          name,
+          username: name, // Map name field to username for API
           email,
           password,
           password_confirmation,
           phone,
         });
         navigate("/dashboard");
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : "Registration failed";
-        setSubmitError(errorMessage);
+      } catch {
+        // Error is handled by the error state from useAuth
       }
     },
     [register, navigate]
@@ -61,11 +89,6 @@ export const RegisterForm = () => {
 
   return (
     <form ref={formRef} className="flex flex-col gap-5" onSubmit={handleSubmit} noValidate>
-      {submitError && (
-        <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
-          {submitError}
-        </div>
-      )}
       {error && (
         <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
           {typeof error === "string" ? error : "An error occurred"}
@@ -78,6 +101,7 @@ export const RegisterForm = () => {
           placeholder="Full name"
           autoComplete="name"
           required
+          error={fieldErrors.name}
         />
         <TextField
           type="email"
@@ -86,8 +110,9 @@ export const RegisterForm = () => {
           placeholder="Email"
           autoComplete="email"
           required
+          error={fieldErrors.email}
         />
-        <PhoneField label="Phone number" name="phone" />
+        <PhoneField label="Phone number" name="phone" error={fieldErrors.phone} />
       </div>
 
       <div className="grid gap-5 grid-cols-1">
@@ -97,6 +122,7 @@ export const RegisterForm = () => {
           placeholder="Password"
           autoComplete="new-password"
           required
+          error={fieldErrors.password}
         />
         <PasswordField
           name="password_confirmation"
@@ -104,6 +130,7 @@ export const RegisterForm = () => {
           placeholder="Confirm password"
           autoComplete="new-password"
           required
+          error={fieldErrors.password_confirmation}
         />
       </div>
 

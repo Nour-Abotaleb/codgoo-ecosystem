@@ -5,16 +5,21 @@ import { useAuth } from "../hooks/useAuth";
 import { PasswordField } from "./components/PasswordField.tsx";
 import { TextField } from "./components/TextField.tsx";
 
+type FieldErrors = {
+  email?: string;
+  password?: string;
+};
+
 export const LoginForm = () => {
   const navigate = useNavigate();
   const { login, loading, error } = useAuth();
   const formRef = useRef<HTMLFormElement>(null);
-  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
   const handleSubmit = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
-      setSubmitError(null);
+      setFieldErrors({});
 
       if (!formRef.current) return;
 
@@ -22,8 +27,20 @@ export const LoginForm = () => {
       const email = formData.get("email") as string;
       const password = formData.get("password") as string;
 
-      if (!email || !password) {
-        setSubmitError("Email and password are required");
+      const errors: FieldErrors = {};
+
+      if (!email || email.trim() === "") {
+        errors.email = "Email is required";
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        errors.email = "Please enter a valid email address";
+      }
+
+      if (!password || password.trim() === "") {
+        errors.password = "Password is required";
+      }
+
+      if (Object.keys(errors).length > 0) {
+        setFieldErrors(errors);
         return;
       }
 
@@ -33,9 +50,8 @@ export const LoginForm = () => {
           password,
         });
         navigate("/dashboard");
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : "Login failed";
-        setSubmitError(errorMessage);
+      } catch {
+        // Error is handled by the error state from useAuth
       }
     },
     [login, navigate]
@@ -43,11 +59,6 @@ export const LoginForm = () => {
 
   return (
     <form ref={formRef} className="flex flex-col gap-6" onSubmit={handleSubmit} noValidate>
-      {submitError && (
-        <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
-          {submitError}
-        </div>
-      )}
       {error && (
         <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
           {typeof error === "string" ? error : "An error occurred"}
@@ -61,6 +72,7 @@ export const LoginForm = () => {
         autoComplete="email"
         autoFocus
         required
+        error={fieldErrors.email}
       />
       <PasswordField
         name="password"
@@ -68,6 +80,7 @@ export const LoginForm = () => {
         placeholder="Password"
         autoComplete="current-password"
         required
+        error={fieldErrors.password}
       />
 
       <button
