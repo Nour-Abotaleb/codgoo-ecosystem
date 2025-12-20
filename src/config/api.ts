@@ -56,7 +56,7 @@ api.interceptors.response.use(
       // Clear token from Redux state and redirect to login
       store.dispatch(clearCredentials());
       delete api.defaults.headers.common["Authorization"];
-      window.location.href = "/auth/login";
+      window.location.href = "/login";
     }
 
     // For other 401 errors (like attendance), just reject the promise

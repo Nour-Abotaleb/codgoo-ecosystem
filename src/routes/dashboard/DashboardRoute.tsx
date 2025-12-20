@@ -1,4 +1,10 @@
 import { DashboardPage } from "@features/dashboard";
-export const DashboardRoute = () => <DashboardPage />;
+import { ProtectedRoute } from "../ProtectedRoute";
+
+export const DashboardRoute = () => (
+  <ProtectedRoute>
+    <DashboardPage />
+  </ProtectedRoute>
+);
 
 
