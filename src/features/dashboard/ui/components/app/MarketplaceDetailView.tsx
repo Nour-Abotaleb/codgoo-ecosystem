@@ -22,14 +22,14 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
   const tabs: readonly Tab[] = ["Overview", "Features", "Pricing", "Screenshots"];
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       {/* Top Section: Application Header, Rating Card, and Sidebar */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-4 items-start">
         {/* Left Column: Application Header, Rating Card, Tabs, and Content */}
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-4">
           {/* Application Header */}
           <div className={`${tokens.cardBase} rounded-2xl p-4`}>
-            <div className="flex items-start gap-6">
+            <div className="flex items-start gap-4">
               {/* Icon */}
               <div className="flex-shrink-0">
                 <div
@@ -145,7 +145,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
 
             {/* Tab Content */}
             {activeTab === "Overview" && (
-              <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-4">
               {/* Description */}
               <div className={`${tokens.cardBase} rounded-2xl p-4`}>
                 <h3 className={`text-lg font-bold mb-3 ${tokens.isDark ? "text-white" : "text-black"}`}>
@@ -215,7 +215,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
 
             {/* Features Tab */}
             {activeTab === "Features" && (
-              <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-4">
                 <div className={`${tokens.cardBase} rounded-2xl p-4`}>
                   <h3 className={`text-lg font-bold mb-4 ${tokens.isDark ? "text-white" : "text-black"}`}>
                     Features
@@ -252,7 +252,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
 
             {/* Pricing Tab */}
             {activeTab === "Pricing" && (
-              <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-4">
                 <div className={`${tokens.cardBase} rounded-2xl p-4`}>
                   <h3 className={`text-lg font-semibold mb-2 ${tokens.isDark ? "text-white" : "text-black"}`}>
                     Pricing Plans
@@ -358,7 +358,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
 
             {/* Screenshots Tab */}
             {activeTab === "Screenshots" && (
-              <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-4">
                 <div className={`${tokens.cardBase} rounded-2xl p-4`}>
                   <h3 className={`text-lg font-bold mb-4 ${tokens.isDark ? "text-white" : "text-black"}`}>
                     Screenshots
@@ -398,7 +398,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
             <h3 className={`text-lg font-bold mb-4 ${tokens.isDark ? "text-white" : "text-black"}`}>
               Supported Integrations
             </h3>
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4">
               <div className="flex items-center gap-3">
                 <SnapchatColoredIcon className="w-6 h-6" />
                 <span className={`font-medium ${tokens.isDark ? "text-white" : "text-[#111111]"}`}>

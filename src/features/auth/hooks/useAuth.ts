@@ -13,11 +13,6 @@ import {
 } from "../store/auth-slice";
 import type { LoginCredentials, RegisterData } from "../types/auth.types";
 
-/**
- * Main auth hook
- * Provides authentication state and methods
- * Now uses Redux async thunks - all API calls will show in Redux DevTools!
- */
 export const useAuth = () => {
   const dispatch = useAppDispatch();
   const token = useAppSelector(selectToken);

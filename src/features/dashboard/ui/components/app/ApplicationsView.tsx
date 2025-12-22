@@ -134,7 +134,7 @@ export const ApplicationsView = ({
   return (
     <div className="flex flex-col gap-6">
       {/* Header */}
-      <div className="flex flex-col gap-4 mt-2">
+      <div className="flex flex-col gap-4">
         {/* Tabs with Preview Icons */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-6">
@@ -285,7 +285,7 @@ export const ApplicationsView = ({
                 </div>
               </div>
 
-              <div className="mt-2 flex items-center justify-end gap-3 cursor-pointer">
+              <div className="mt-2 flex items-center justify-start gap-3 cursor-pointer">
                 <button
                   type="button"
                   className="rounded-full bg-[#0F6773] px-8 py-2 text-sm text-white transition-colors hover:bg-[#0d5661] cursor-pointer"

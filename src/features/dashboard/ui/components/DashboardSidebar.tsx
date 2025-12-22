@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
+// import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { i18n } from "@shared/config/i18n";
+
+import { useAuth } from "@features/auth";
 
 import {
   BillingIcon,
@@ -57,6 +60,8 @@ export const DashboardSidebar = ({
   onSelectNav,
   tokens
 }: DashboardSidebarProps) => {
+  // const navigate = useNavigate();
+  const { logout } = useAuth();
   const [isSwitcherOpen, setSwitcherOpen] = useState(false);
   const [defaultDashboard, setDefaultDashboardState] = useState<DashboardAppId>(() => getDefaultDashboard());
   const switcherRef = useRef<HTMLDivElement>(null);
@@ -308,6 +313,17 @@ export const DashboardSidebar = ({
       <div className="mt-auto flex flex-row items-center justify-between border-t border-[color:var(--color-sidebar-divider)] px-2 pt-6 pb-2">
         <button
           type="button"
+          onClick={async () => {
+            try {
+              await logout();
+            } catch (error) {
+              console.error("Logout failed:", error);
+            } finally {
+              // Always clear and redirect, even if logout API fails
+              // Use window.location for a hard redirect to clear everything
+              window.location.href = "/login";
+            }
+          }}
           className={`group flex cursor-pointer items-center justify-center rounded-full w-11 h-11 transition-colors ${tokens.isDark ? "bg-white" : "bg-[#FEEFEE]"}`}
         >
           <Logout className={`h-5 w-5 transition-colors opacity-70 ${navIdleColorClass} group-hover:${hoverColorClass}`} />

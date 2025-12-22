@@ -12,6 +12,7 @@ type PhoneFieldProps = {
   readonly label: string;
   readonly name?: string;
   readonly defaultCountry?: string;
+  readonly error?: string;
 };
 
 const getFlagEmoji = (countryCode: string) =>
@@ -31,11 +32,12 @@ const FALLBACK_COUNTRIES: CountryOption[] = [
   { code: "EG", name: "Egypt", dialCode: "+20", flagUrl: getFlagUrl("EG"), fallbackEmoji: "🇪🇬" },
 ];
 
-export const PhoneField = ({ label, name = "phone", defaultCountry = "US" }: PhoneFieldProps) => {
+export const PhoneField = ({ label, name = "phone", defaultCountry = "US", error }: PhoneFieldProps) => {
   const [countries, setCountries] = useState<CountryOption[]>(FALLBACK_COUNTRIES);
   const [selectedCountry, setSelectedCountry] = useState<string>(defaultCountry);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const phoneInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -126,24 +128,46 @@ export const PhoneField = ({ label, name = "phone", defaultCountry = "US" }: Pho
   const handleSelectCountry = (code: string) => {
     setSelectedCountry(code);
     setIsOpen(false);
+    // Update the hidden input when country changes
+    if (phoneInputRef.current) {
+      const form = phoneInputRef.current.form;
+      const hiddenInput = form?.querySelector(`input[name="${name}_full"]`) as HTMLInputElement;
+      if (hiddenInput) {
+        const phoneNumber = phoneInputRef.current.value;
+        const newSelected = countries.find((country) => country.code === code) ?? countries[0];
+        hiddenInput.value = phoneNumber ? `${newSelected.dialCode}${phoneNumber}` : "";
+      }
+    }
   };
 
   const selected = countries.find((country) => country.code === selectedCountry) ?? countries[0];
 
   return (
-    <label className="relative block text-left">
-      <span className="pointer-events-none absolute left-5 top-0 -translate-y-[40%] bg-white px-2 text-base md:text-lg font-medium tracking-wide text-black">
-        {label}
-      </span>
-      <div className="flex h-14 items-center gap-3 rounded-[16px] border border-[color:var(--color-auth-border)] bg-white pe-4 text-sm text-slate-600 transition focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20">
+    <div className="relative block text-left">
+      <label className="relative block">
+        <span className="pointer-events-none absolute left-5 top-0 -translate-y-[40%] bg-white px-2 text-base md:text-lg font-medium tracking-wide text-black">
+          {label}
+        </span>
+        <div className={`flex h-14 items-center gap-3 rounded-[16px] border bg-white pe-4 text-sm text-slate-600 transition focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20 ${error ? 'border-red-500' : 'border-[color:var(--color-auth-border)]'}`}>
         <input
+          ref={phoneInputRef}
           type="tel"
           name={name}
           placeholder="Phone number"
-          className="w-full border-e border-[color:var(--color-auth-border)] bg-transparent px-5 text-left text-sm text-slate-900 placeholder:text-[color:var(--color-auth-placeholder)] focus:outline-none"
+          className="w-full border-e border-[color:var(--color-auth-border)] bg-transparent px-5 text-left text-sm md:text-base text-slate-900 placeholder:text-[color:var(--color-auth-placeholder)] focus:outline-none"
           autoComplete="tel"
           inputMode="tel"
+          onChange={(e) => {
+            // Store the full phone number (dial code + number) in a hidden input
+            const hiddenInput = e.currentTarget.form?.querySelector(`input[name="${name}_full"]`) as HTMLInputElement;
+            if (hiddenInput) {
+              const phoneNumber = e.currentTarget.value;
+              hiddenInput.value = phoneNumber ? `${selected.dialCode}${phoneNumber}` : "";
+            }
+          }}
         />
+        {/* Hidden input to store the full phone number with dial code */}
+        <input type="hidden" name={`${name}_full`} />
 
         <div className="relative" ref={dropdownRef}>
           <button
@@ -211,7 +235,11 @@ export const PhoneField = ({ label, name = "phone", defaultCountry = "US" }: Pho
           ) : null}
         </div>
       </div>
-    </label>
+      </label>
+      {error && (
+        <p className="mt-1 text-sm text-red-600">{error}</p>
+      )}
+    </div>
   );
 };
 
