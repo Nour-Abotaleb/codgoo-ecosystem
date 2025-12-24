@@ -264,7 +264,7 @@ const ManageNameserversSearchPanel = ({
   return (
     <div className={`${tokens.cardBase} rounded-[28px] px-6 py-2 transition-colors`}>
       <div className="mt-4 flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
-        <div className={`flex h-12 flex-1 items-center gap-3 rounded-full border ${tokens.divider} bg-[var(--color-search-bg)] px-4 text-[var(--color-search-text)] transition-colors`}>
+        <div className={`flex h-12 flex-1 items-center gap-3 rounded-full border ${tokens.divider} bg-transparent stroke px-4 text-[var(--color-search-text)] transition-colors`}>
           <SearchIcon className="h-5 w-5 text-[var(--color-search-placeholder)]" />
           <input
             type="search"
@@ -274,7 +274,7 @@ const ManageNameserversSearchPanel = ({
           />
         </div>
         {/* Domain TLD */}
-        <div className="flex h-12 w-64 items-center gap-2 rounded-full border border-[var(--color-border-divider)] bg-[var(--color-card-bg)] px-4 text-sm transition-colors">
+        <div className="flex h-12 w-64 items-center gap-2 rounded-full border border-[var(--color-border-divider)] bg-[#0F1217] px-4 text-sm transition-colors">
           <select
             defaultValue={manageNameserversData.tld}
             className="w-full bg-transparent text-sm text-[var(--color-page-text)] focus:outline-none"

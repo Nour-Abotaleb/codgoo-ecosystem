@@ -401,7 +401,7 @@ export const TasksView = ({
                 Tasks
               </h2>
               {/* <div
-                className={`flex h-11 items-center gap-3 rounded-full border ${tokens.divider} bg-[var(--color-search-bg)] px-4 text-[var(--color-search-text)] transition-colors sm:max-w-xs`}
+                className={`flex h-11 items-center gap-3 rounded-full border ${tokens.divider} bg-transparent stroke px-4 text-[var(--color-search-text)] transition-colors sm:max-w-xs`}
               >
                 <SearchIcon className="h-5 w-5 text-[var(--color-search-placeholder)]" />
                 <input
@@ -426,7 +426,7 @@ export const TasksView = ({
               Tasks
             </h2>
             <div
-              className={`flex h-11 items-center gap-3 rounded-full border ${tokens.divider} bg-[var(--color-search-bg)] px-4 text-[var(--color-search-text)] transition-colors sm:max-w-xs`}
+              className={`flex h-11 items-center gap-3 rounded-full border ${tokens.divider} bg-transparent stroke px-4 text-[var(--color-search-text)] transition-colors sm:max-w-xs`}
             >
               <SearchIcon className="h-5 w-5 text-[var(--color-search-placeholder)]" />
               <input

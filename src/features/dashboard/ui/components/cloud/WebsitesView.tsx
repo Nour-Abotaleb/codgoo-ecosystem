@@ -56,7 +56,7 @@ const WebsiteCard = ({
   ] as const;
 
   return (
-    <div className={`relative rounded-[24px] px-6 py-4 transition-colors hover:border-[#7469C7] ${tokens.isDark ? "bg-[#F4F4FF11]" : "bg-[#F4F4FF]"}`}>
+    <div className={`relative rounded-[24px] px-6 py-4 transition-colors hover:border-[#7469C7] ${tokens.isDark ? "bg-transparent stroke" : "bg-[#F4F4FF]"}`}>
 
       {/* Domain Name */}
       <div className="flex justify-between items-center">
@@ -118,7 +118,7 @@ const WebsiteCard = ({
             e.stopPropagation();
             navigate(`/dashboard/manage-website/${site.id}`);
           }}
-          className={`${tokens.isDark ? "bg-white" : "bg-white"} transition text-[#584ABC] w-[90%] flex justify-center cursor-pointer flex items-center gap-2 rounded-full px-8 py-3 text-sm md:text-base font-semibold`}
+          className={`${tokens.isDark ? "bg-transparent stroke" : "bg-white"} transition text-[#584ABC] w-[90%] flex justify-center cursor-pointer flex items-center gap-2 rounded-full px-8 py-3 text-sm md:text-base font-semibold`}
         >
           Dashboard
         </button>
@@ -301,7 +301,7 @@ export const WebsitesView = ({ sites, tokens }: WebsitesViewProps) => {
 
                 <div className="flex items-center gap-2 text-sm text-[var(--color-page-text)]">
                   <span>Showing</span>
-                  <select className="rounded-lg border border-[var(--color-border-divider)] bg-[var(--color-card-bg)] px-2 py-1 text-sm focus:outline-none">
+                  <select className="rounded-lg border border-[var(--color-border-divider)] px-2 py-1 text-sm focus:outline-none">
                     <option value="12">12</option>
                     <option value="24">24</option>
                     <option value="48">48</option>
@@ -312,7 +312,7 @@ export const WebsitesView = ({ sites, tokens }: WebsitesViewProps) => {
             )}
           </>
         ) : (
-          <div className="mt-8 rounded-xl bg-[var(--color-table-row-bg)] px-6 py-12 text-center text-sm transition-colors">
+          <div className="mt-8 rounded-xl bg-[#0F1217] px-6 py-12 text-center text-sm transition-colors">
             <p className="text-base font-semibold">
               No websites found yet
             </p>

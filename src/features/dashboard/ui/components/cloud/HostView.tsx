@@ -232,7 +232,7 @@ export const HostView = ({ tokens }: HostViewProps) => {
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <div
-              className={`flex h-11 flex-1 items-center gap-3 rounded-full border ${tokens.divider} bg-[var(--color-search-bg)] px-4 text-[var(--color-search-text)] transition-colors sm:w-72`}
+              className={`flex h-11 flex-1 items-center gap-3 rounded-full border ${tokens.divider} bg-transparent stroke px-4 text-[var(--color-search-text)] transition-colors sm:w-72`}
             >
               <SearchIcon className="h-5 w-5 text-[var(--color-search-placeholder)]" />
               <input
@@ -291,7 +291,7 @@ export const HostView = ({ tokens }: HostViewProps) => {
                       navigate(`/dashboard/manage-host/${invoice.id}`);
                     }}
                   >
-                    <td className="rounded-l-xl bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
+                    <td className="rounded-l-xl px-6 py-4 transition-colors">
                       <div className="flex items-center gap-3">
                         <input
                           type="checkbox"
@@ -307,13 +307,13 @@ export const HostView = ({ tokens }: HostViewProps) => {
                         <span className="text-base font-semibold">{invoice.invoiceNumber}</span>
                       </div>
                     </td>
-                    <td className="bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
+                    <td className="px-6 py-4 transition-colors">
                       <p className="font-medium">{invoice.date}</p>
                     </td>
-                    <td className="bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
+                    <td className="px-6 py-4 transition-colors">
                       <p className="font-medium">{invoice.total}</p>
                     </td>
-                    <td className="bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
+                    <td className="px-6 py-4 transition-colors">
                       <span
                         className={`inline-flex items-center gap-1 text-sm font-medium ${
                           tokens.isDark ? "text-white" : "text-[#2B3674]"
@@ -323,7 +323,7 @@ export const HostView = ({ tokens }: HostViewProps) => {
                         {invoice.status}
                       </span>
                     </td>
-                    <td className="rounded-r-xl bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
+                    <td className="rounded-r-xl px-6 py-4 transition-colors">
                       <button
                         type="button"
                         onClick={(e) => e.stopPropagation()}
@@ -346,7 +346,7 @@ export const HostView = ({ tokens }: HostViewProps) => {
 
           <div className="flex items-center gap-2 text-sm text-[var(--color-page-text)]">
             <span>Showing</span>
-            <select className="rounded-lg border border-[var(--color-border-divider)] bg-[var(--color-card-bg)] px-2 py-1 text-sm focus:outline-none">
+            <select className="rounded-lg border border-[var(--color-border-divider)] px-2 py-1 text-sm focus:outline-none">
               <option value="20">20</option>
               <option value="50">50</option>
               <option value="100">100</option>

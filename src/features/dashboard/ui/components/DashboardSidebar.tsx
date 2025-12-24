@@ -28,9 +28,6 @@ import {
   AppSettingsIcon
 } from "@utilities/icons";
 
-import cloudNavBackground from "@assets/images/cloud/nav-bg.svg";
-import softwareNavBackground from "@assets/images/software/nav-bg.svg";
-import appNavBackground from "@assets/images/app/nav-bg.svg";
 import { dashboardAppLogos, dashboardAppLogosLight } from "../constants";
 import type {
   DashboardApp,
@@ -124,38 +121,30 @@ export const DashboardSidebar = ({
     marketplace: MarketplaceIcon
   };
 
-  const navActiveColorHex = activeAppId === "software" 
-    ? (tokens.isDark ? "#FEFEFE" : "#071FD7")
-    : activeAppId === "app"
-    ? (tokens.isDark ? "#FEFEFE" : "#0F6773")
-    : (tokens.isDark ? "#FEFEFE" : "#584ABC");
-  const navIdleColorHex = activeAppId === "app"
-    ? (tokens.isDark ? "#C6CCDF" : "#000000")
-    : (tokens.isDark ? "#C6CCDF" : "#A3AED0");
+  const navActiveColorHex = tokens.isDark ? "#FFFFFF" : "#584ABC";
+  const navIdleColorHex = tokens.isDark ? "#FFFFFF" : "#504343";
 
   const navActiveColorClass = `text-[${navActiveColorHex}]`;
   const navIdleColorClass = `text-[${navIdleColorHex}]`;
 
-  const hoverColorClass = activeAppId === "software"
-    ? (tokens.isDark ? "text-[#FEFEFE]" : "text-[#071FD7]")
-    : activeAppId === "app"
-    ? (tokens.isDark ? "text-[#FEFEFE]" : "text-[#0F6773]")
-    : (tokens.isDark ? "text-[#FEFEFE]" : "text-[#584ABC]");
+  const hoverColorClass = tokens.isDark ? "text-[#FFFFFF]" : "text-[#504343]";
 
-  const navBackground = activeAppId === "software" 
-    ? softwareNavBackground 
-    : activeAppId === "app"
-    ? appNavBackground
-    : cloudNavBackground;
+  // const navBackground = activeAppId === "software" 
+  //   ? softwareNavBackground 
+  //   : activeAppId === "app"
+  //   ? appNavBackground
+  //   : cloudNavBackground;
 
   const { t } = useTranslation("dashboard");
   const isRTL = i18n.language === "ar";
 
   return (
     <aside
-      className={`dashboard__sidebar fixed inset-y-0 ${isRTL ? "right-0" : "left-0"} z-20 hidden min-h-screen w-64 pe-1 flex-col py-10 lg:flex ${tokens.sidebarClass}`}
+      className={`dashboard__sidebar fixed inset-y-0 ${isRTL ? "right-0" : "left-0"} z-20 hidden min-h-screen w-64 pe-1 flex-col pt-10 lg:flex ${tokens.sidebarClass}`}
     >
-      <div className="relative flex justify-center gap-6 border-b border-[color:var(--color-sidebar-divider)] pb-4">
+      <div className={`relative flex justify-center gap-6  mx-2 rounded-[20px] p-4  ${
+                tokens.isDark ? 'bg-tranparent' : 'bg-[#F9FBFD]'
+              }`}>
         <img 
           src={activeLogo} 
           alt={`${activeAppId} logo`} 
@@ -187,7 +176,7 @@ export const DashboardSidebar = ({
           </button>
           {isSwitcherOpen && (
             <div
-              className={`absolute ${isRTL ? "right-0" : "left-0"} mt-3 w-64 rounded-xl p-2 shadow-2xl backdrop-blur ${popoverBaseClass}`}
+              className={`absolute ${isRTL ? "right-0" : "left-0"} z-9 mt-3 w-64 rounded-xl p-2 shadow-2xl backdrop-blur ${popoverBaseClass}`}
             >
               <ul className="space-y-2">
                 {apps.map((app) => {
@@ -263,8 +252,9 @@ export const DashboardSidebar = ({
           )}
         </div>
       </div>
+<div className=" border-b border-[color:var(--color-sidebar-divider)] border-b-[1.58px] py-2 mx-2"></div>
 
-      <nav className={`mt-4 flex flex-col px-2 ${activeAppId === "cloud" ? "mb-34" : activeAppId === "software" ? "mb-47" : "mb-60"}`}>
+      <nav className={`mt-4 grid grid-cols-2 gap-3 px-2 ${activeAppId === "cloud" ? "mb-0" : activeAppId === "software" ? "mb-0" : "mb-0"}`}>
         {navigationItems.map((item) => {
           const isActive = item.id === activeNavId;
           const Icon = item.icon ? iconMap[item.icon] : undefined;
@@ -282,16 +272,14 @@ export const DashboardSidebar = ({
               type="button"
               onClick={() => onSelectNav(item.id)}
               aria-current={isActive ? "page" : undefined}
-              className="group relative flex cursor-pointer items-center gap-2 overflow-hidden rounded-xl px-2 py-1.5 text-lg font-semibold transition-colors"
+              className={`group relative flex flex-col cursor-pointer items-center justify-center  overflow-hidden rounded-[20px] px-4 py-4 text-lg font-semibold transition-all ${
+                tokens.isDark ? 'bg-[#13181E]' : 'bg-[#F9FBFD]'
+              }`}
+              style={isActive ? { border: tokens.isDark ? '1.05px solid #7469C7' : '1.05px solid #584ABC' } : {}}
             >
-              {isActive && (
-                <span className="absolute inset-0">
-                  <img src={navBackground} alt="" className="h-full w-full object-cover" />
-                </span>
-              )}
               <span className="relative flex h-10 w-10 items-center justify-center">
                 {Icon ? (
-                  <Icon className={`h-5 w-5 transition-colors ${iconColorClass}`} />
+                  <Icon className={`h-6 w-6 transition-colors ${iconColorClass}`} />
                 ) : (
                   <PlaceholderIcon
                     label={t(`navigation.${item.id}`)}
@@ -302,7 +290,7 @@ export const DashboardSidebar = ({
                   />
                 )}
               </span>
-              <span className={`relative transition-colors ${labelColorClass}`}>
+              <span className={`relative transition-colors text-center ${labelColorClass}`}>
                 {t(`navigation.${item.id}`)}
               </span>
             </button>
@@ -310,7 +298,7 @@ export const DashboardSidebar = ({
         })}
       </nav>
 
-      <div className="mt-auto flex flex-row items-center justify-between border-t border-[color:var(--color-sidebar-divider)] px-2 pt-6 pb-2">
+      <div className="mt-auto flex flex-row items-center justify-between  px-2 pb-4">
         <button
           type="button"
           onClick={async () => {

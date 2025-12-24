@@ -300,7 +300,7 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
           </div>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <div
-                className={`flex h-11 w-full items-center gap-3 rounded-full border ${tokens.divider} bg-[var(--color-search-bg)] px-4 text-[var(--color-search-text)] transition-colors sm:w-72`}
+                className={`flex h-11 w-full items-center gap-3 rounded-full border ${tokens.divider} bg-transparent stroke px-4 text-[var(--color-search-text)] transition-colors sm:w-72`}
               >
                 <SearchIcon className="h-5 w-5 text-[var(--color-search-placeholder)]" />
                 <input
@@ -356,7 +356,7 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
                         key={domain.id}
                         className="text-sm"
                       >
-                        <td className="rounded-l-xl bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
+                        <td className="rounded-l-xl px-6 py-4 transition-colors">
                           <div className="flex items-center gap-3">
                             <input
                               type="checkbox"
@@ -371,19 +371,19 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
                             </div>
                           </div>
                         </td>
-                        <td className="bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
+                        <td className="px-6 py-4 transition-colors">
                           <p className="font-medium">{domain.registrationDate}</p>
                           <p className={`mt-1 text-xs ${tokens.subtleText}`}>
                             Created via Codgoo Cloud
                           </p>
                         </td>
-                        <td className="bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
+                        <td className="px-6 py-4 transition-colors">
                           <p className="font-medium">{domain.nextDueDate}</p>
                           <p className={`mt-1 text-xs ${tokens.subtleText}`}>
                             Renewal reminder 14 days before
                           </p>
                         </td>
-                        <td className="bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
+                        <td className="px-6 py-4 transition-colors">
                           <span
                             className={`inline-flex items-center gap-2 rounded-full px-2 py-1 text-sm font-semibold}`}
                           >
@@ -391,7 +391,7 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
                             {(autoRenewStatus[domain.id] ?? domain.autoRenew) ? "Enabled" : "Disabled"}
                           </span>
                         </td>
-                        <td className="bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
+                        <td className="px-6 py-4 transition-colors">
                           <span
                             className={`inline-flex items-center gap-1 text-sm font-medium ${
                               tokens.isDark ? "text-white" : "text-[#2B3674]"
@@ -401,7 +401,7 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
                             {domain.status}
                           </span>
                         </td>
-                        <td className="rounded-r-xl bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
+                        <td className="rounded-r-xl px-6 py-4 transition-colors">
                           <div className="flex items-center gap-3">
                             <button
                               type="button"
@@ -476,7 +476,7 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
                   <tr>
                     <td
                       colSpan={6}
-                      className="rounded-xl bg-[var(--color-table-row-bg)] px-6 py-12 text-center text-sm transition-colors"
+                      className="rounded-xl bg-[#0F1217] px-6 py-12 text-center text-sm transition-colors"
                     >
                       <p className="text-base font-semibold">
                         No domains found yet
@@ -497,7 +497,7 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
 
               <div className="flex items-center gap-2 text-sm text-[var(--color-page-text)]">
                 <span>Showing</span>
-                <select className="rounded-lg border border-[var(--color-border-divider)] bg-[var(--color-card-bg)] px-2 py-1 text-sm focus:outline-none">
+                <select className="rounded-lg border border-[var(--color-border-divider)] px-2 py-1 text-sm focus:outline-none">
                   <option value="20">20</option>
                   <option value="50">50</option>
                   <option value="100">100</option>

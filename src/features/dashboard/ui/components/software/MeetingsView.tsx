@@ -167,7 +167,7 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
             onChange={(e) => setSearchQuery(e.target.value)}
             className={`w-full pl-10 pr-4 py-2.5 rounded-full border transition-colors ${
               tokens.isDark
-                ? "bg-[var(--color-card-bg)] text-white placeholder-white/50"
+                ? "bg-[#0F1217] text-white placeholder-white/50"
                 : "bg-white border-[#E6E9FB] text-[#2B3674] placeholder-[#A3AED0]"
             } focus:outline-none focus:ring-1 focus:ring-[#071FD7]/20`}
           />
@@ -195,7 +195,7 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
               onChange={(e) => setStatusFilter(e.target.value as MeetingStatus | "All")}
               className={`appearance-none pl-4 pr-10 py-2.5 rounded-full border transition-colors cursor-pointer ${
                 tokens.isDark
-                  ? "bg-[var(--color-card-bg)] text-white"
+                  ? "bg-[#0F1217] text-white"
                   : "bg-white border-[#E6E9FB] text-[#2B3674]"
               } focus:outline-none focus:ring-1 focus:ring-[#071FD7]/20`}
             >
@@ -328,7 +328,7 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
                                   <div
                                     className={`absolute right-0 top-full mt-2 w-48 rounded-lg shadow-sm z-10 ${
                                       tokens.isDark
-                                        ? "bg-[var(--color-card-bg)]"
+                                        ? "bg-[#0F1217]"
                                         : "bg-white border border-[#E6E9FB]"
                                     }`}
                                   >

@@ -3,6 +3,7 @@ export type { AppDispatch, RootState } from "./store";
 export { useAppDispatch, useAppSelector } from "./hooks";
 export { ThemeProvider } from "./theme/ThemeProvider";
 export { useTheme } from "./theme/use-theme";
+export { baseApi } from "./api/base-api";
 
 // Re-export auth feature for convenience (can also import directly from @/features/auth)
 export {

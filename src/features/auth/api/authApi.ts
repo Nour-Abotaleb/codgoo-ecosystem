@@ -50,58 +50,40 @@ export const authApi = {
     console.log("Response data:", response.data);
     console.log("Response data type:", typeof response.data);
     
-    // Handle nested response structure: response.data.data
-    type ApiData = ApiAuthResponse['data'];
-    let apiData: ApiData;
-    
-    if (response.data && typeof response.data === 'object') {
-      // Check if it's the nested structure (status, message, data)
-      if ('data' in response.data && typeof response.data.data === 'object') {
-        apiData = response.data.data as unknown as ApiData;
-        console.log("Using nested structure - apiData:", apiData);
-      } 
-      // Check if it's already the data object (direct structure)
-      else if ('token' in response.data && 'client' in response.data) {
-        apiData = response.data as unknown as ApiData;
-        console.log("Using direct structure - apiData:", apiData);
-      } else {
-        console.error("Unexpected response structure:", response.data);
-        throw new Error("Invalid API response structure - cannot find token or client data");
-      }
-    } else {
-      throw new Error("Invalid API response - response.data is not an object");
-    }
+    // Handle the actual API response structure which includes subscriptions at root level
+    const apiResponse = response.data as any;
     
     // Validate required fields
-    if (!apiData || !apiData.token) {
-      console.error("Token missing in apiData:", apiData);
+    if (!apiResponse || !apiResponse.token) {
+      console.error("Token missing in response:", apiResponse);
       throw new Error("Token not found in API response");
     }
     
-    if (!apiData.client) {
-      console.error("Client missing in apiData:", apiData);
+    if (!apiResponse.client) {
+      console.error("Client missing in response:", apiResponse);
       throw new Error("Client data not found in API response");
     }
     
     // Transform API response to AuthResponse format
     const user: User = {
-      id: String(apiData.client.id),
-      name: apiData.client.name,
-      email: apiData.client.email,
-      phone: apiData.client.phone || undefined,
+      id: String(apiResponse.client.id),
+      name: apiResponse.client.name,
+      email: apiResponse.client.email,
+      phone: apiResponse.client.phone || undefined,
     };
 
     const authResponse: AuthResponse = {
       user,
-      token: apiData.token,
+      token: apiResponse.token,
       refreshToken: "", // Backend doesn't provide refresh token
-      expiresIn: 0, // Backend doesn't provide expiresIn
+      expiresIn: apiResponse.expires_in || 0,
+      subscriptions: apiResponse.subscriptions || [],
     };
     
     // Debug: Log the transformed response
     console.log("Transformed AuthResponse:", authResponse);
     console.log("Token value:", authResponse.token);
-    console.log("Token length:", authResponse.token?.length);
+    console.log("Subscriptions:", authResponse.subscriptions);
     
     return authResponse;
   },

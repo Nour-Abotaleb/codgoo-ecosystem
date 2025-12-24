@@ -1,6 +1,8 @@
 import { ProfessionalBundlesIcon, EnterpriseBundlesIcon, FilledBundleSubscriptionsIcon, VerifiedIcon } from "@utilities/icons";
 import { useNavigate } from "react-router-dom";
 import type { DashboardTokens } from "../../types";
+import { useGetMarketplacePackagesQuery } from "@/store/api/marketplace-api";
+import { useMemo } from "react";
 
 type BundleCard = {
   readonly id: string;
@@ -13,56 +15,6 @@ type BundleCard = {
   readonly savingsNote: string;
   readonly actionLabel: string;
 };
-
-// eslint-disable-next-line react-refresh/only-export-components
-export const bundleCards: readonly BundleCard[] = [
-  {
-    id: "starter",
-    title: "Starter Bundle",
-    price: "300",
-    description: "Perfect for getting started",
-    perks: ["Choose 3 Applications", "Lifetime Updates", "Basic Support", "Single Developer License"],
-    savings: "29%",
-    savingsNote: "Save up to 100",
-    actionLabel: "Select This Bundle"
-  },
-  {
-    id: "professional",
-    title: "Professional Bundle",
-    price: "500",
-    description: "Perfect for getting started",
-    badge: "Most Popular",
-    perks: [
-      "Choose 6 Applications",
-      "Lifetime Updates",
-      "Priority Support",
-      "Team License (5 developers)",
-      "Free Future Updates"
-    ],
-    savings: "40%",
-    savingsNote: "Save up to 340",
-    actionLabel: "Select This Bundle"
-  },
-  {
-    id: "enterprise",
-    title: "Enterprise Bundle",
-    price: "1000",
-    description: "Perfect for getting started",
-    badge: "Best Value",
-    perks: [
-      "Choose 10 Applications",
-      "Lifetime Updates",
-      "Premium Support",
-      "Unlimited Team License",
-      "Free Future Updates",
-      "Custom Integrations",
-      "Dedicated Account Manager"
-    ],
-    savings: "29%",
-    savingsNote: "Save up to 120",
-    actionLabel: "Select This Bundle"
-  }
-];
 
 const topGradients = [
   "bg-gradient-to-br from-[#043F45] to-[#25A9A6]",
@@ -80,6 +32,30 @@ type BundleSelectionViewProps = {
 
 export const BundleSelectionView = ({ tokens }: BundleSelectionViewProps) => {
   const navigate = useNavigate();
+  const { data, isLoading } = useGetMarketplacePackagesQuery();
+
+  // Transform API data to match BundleCard format
+  const bundleCards = useMemo((): readonly BundleCard[] => {
+    if (!data?.data) return [];
+
+    return data.data.map((pkg): BundleCard => {
+      // Parse JSON strings
+      const features = JSON.parse(pkg.features) as string[];
+      const badges = JSON.parse(pkg.badges) as string[];
+
+      return {
+        id: pkg.id.toString(),
+        title: pkg.name,
+        price: pkg.price.amount.toString(),
+        description: pkg.tagline,
+        badge: badges.length > 0 ? badges[0] : undefined,
+        perks: features,
+        savings: `${pkg.savings.percentage}%`,
+        savingsNote: pkg.savings.text,
+        actionLabel: "Select This Bundle"
+      };
+    });
+  }, [data]);
   return (
     <div className="flex flex-col gap-8">
       <div className="flex items-center gap-3">
@@ -104,10 +80,21 @@ export const BundleSelectionView = ({ tokens }: BundleSelectionViewProps) => {
         <p className={`text-sm ${tokens.subtleText}`}>Pick the bundle that best fits your needs</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* Loading State */}
+      {isLoading && (
+        <div className={`${tokens.cardBase} rounded-2xl p-10 text-center`}>
+          <p className={`text-lg ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"}`}>
+            Loading bundles...
+          </p>
+        </div>
+      )}
+
+      {/* Bundles Grid */}
+      {!isLoading && bundleCards.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {bundleCards.map((bundle, idx) => (
           <div key={bundle.id} className={`${tokens.cardBase} rounded-2xl bg-[#FAFAFA] overflow-hidden flex flex-col`}>
-            <div className={`relative p-4 text-white ${topGradients[idx]}`}>
+            <div className={`relative p-4 text-white ${topGradients[idx % topGradients.length]}`}>
               {bundle.badge ? (
                 <span className="absolute top-3 right-3 bg-white text-[#208483] text-xs font-medium px-3 py-1.5 rounded-full">
                   {bundle.badge}
@@ -115,9 +102,9 @@ export const BundleSelectionView = ({ tokens }: BundleSelectionViewProps) => {
               ) : null}
               <div className="flex items-center gap-3">
                 <div className="h-14 w-14 rounded-full bg-[#386B70] flex items-center justify-center">
-                  {idx === 0 ? (
+                  {idx % 3 === 0 ? (
                     <FilledBundleSubscriptionsIcon className="h-7 w-7 text-white" />
-                  ) : idx === 1 ? (
+                  ) : idx % 3 === 1 ? (
                     <ProfessionalBundlesIcon className="h-7 w-7 text-white" />
                   ) : (
                     <EnterpriseBundlesIcon className="h-7 w-7 text-white" />
@@ -137,14 +124,14 @@ export const BundleSelectionView = ({ tokens }: BundleSelectionViewProps) => {
                   <li key={perk} className="flex items-start gap-2">
                     <span
                       className="mt-0.5 h-6 w-6 rounded-full flex items-center justify-center"
-                      style={{ backgroundColor: checkBgColors[idx] }}
+                      style={{ backgroundColor: checkBgColors[idx % checkBgColors.length] }}
                     >
                       <VerifiedIcon 
                         className="h-3 w-3" 
-                        style={{ color: tokens.isDark ? actionColorsDark[idx] : actionColors[idx] }} 
+                        style={{ color: tokens.isDark ? actionColorsDark[idx % actionColorsDark.length] : actionColors[idx % actionColors.length] }} 
                       />
                     </span>
-                    <span className={`${tokens.isDark ? "text-white" : "text-[#142133]"}`}>{perk}</span>
+                    <span className={`${tokens.isDark ? "text-black" : "text-[#142133]"}`}>{perk}</span>
                   </li>
                 ))}
               </ul>
@@ -171,7 +158,7 @@ export const BundleSelectionView = ({ tokens }: BundleSelectionViewProps) => {
               <button
                 type="button"
                 className="w-full rounded-full text-white text-sm font-regular py-3 transition-colors cursor-pointer"
-                style={{ backgroundColor: actionColors[idx] }}
+                style={{ backgroundColor: actionColors[idx % actionColors.length] }}
                 onClick={() => navigate(`/dashboard/marketplace/bundles/${bundle.id}`)}
               >
                 {bundle.actionLabel}
@@ -180,6 +167,16 @@ export const BundleSelectionView = ({ tokens }: BundleSelectionViewProps) => {
           </div>
         ))}
       </div>
+      )}
+
+      {/* Empty State */}
+      {!isLoading && bundleCards.length === 0 && (
+        <div className={`${tokens.cardBase} rounded-2xl p-10 text-center`}>
+          <p className={`text-lg ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"}`}>
+            No bundles available at the moment.
+          </p>
+        </div>
+      )}
     </div>
   );
 };

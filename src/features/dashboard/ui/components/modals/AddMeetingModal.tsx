@@ -145,7 +145,7 @@ export const AddMeetingModal = ({
                       className={`absolute left-4 -top-2.5 px-2 text-sm font-medium z-10 ${
                         tokens.isDark 
                           ? "text-white/70 bg-[#232637]" 
-                          : "text-black bg-[var(--color-card-bg)]"
+                          : "text-black bg-[#0F1217]"
                       }`}
                     >
                       Start Date
@@ -172,7 +172,7 @@ export const AddMeetingModal = ({
                       className={`absolute left-4 -top-2.5 px-2 text-sm font-medium z-10 ${
                         tokens.isDark 
                           ? "text-white/70 bg-[#232637]" 
-                          : "text-black bg-[var(--color-card-bg)]"
+                          : "text-black bg-[#0F1217]"
                       }`}
                     >
                       time
@@ -200,7 +200,7 @@ export const AddMeetingModal = ({
                     className={`absolute left-4 -top-2.5 px-2 text-sm font-medium z-10 ${
                       tokens.isDark 
                         ? "text-white/70 bg-[#232637]" 
-                        : "text-black bg-[var(--color-card-bg)]"
+                        : "text-black bg-[#0F1217]"
                     }`}
                   >
                     Meeting Title
@@ -226,7 +226,7 @@ export const AddMeetingModal = ({
                       className={`absolute left-4 -top-2.5 px-2 text-sm font-medium z-10 ${
                         tokens.isDark 
                           ? "text-white/70 bg-[#232637]" 
-                          : "text-black bg-[var(--color-card-bg)]"
+                          : "text-black bg-[#0F1217]"
                       }`}
                     >
                       Project name
@@ -285,7 +285,7 @@ export const AddMeetingModal = ({
                       className={`absolute left-4 -top-2.5 px-2 text-sm font-medium z-10 ${
                         tokens.isDark 
                           ? "text-white/70 bg-[#232637]" 
-                          : "text-black bg-[var(--color-card-bg)]"
+                          : "text-black bg-[#0F1217]"
                       }`}
                     >
                       Note

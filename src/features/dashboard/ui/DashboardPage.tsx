@@ -31,9 +31,11 @@ import { ProductsView } from "./components/software/ProductsView";
 import { ProductDetailsView } from "./components/software/ProductDetailsView";
 import { AppDashboardOverview } from "./components/app/AppDashboardOverview";
 import { ApplicationsView } from "./components/app/ApplicationsView";
-import { MarketplaceView, marketplaceItems } from "./components/app/MarketplaceView";
+import { MarketplaceView } from "./components/app/MarketplaceView";
 import { MarketplaceDetailView } from "./components/app/MarketplaceDetailView";
 import type { MarketplaceItem } from "./components/app/MarketplaceCard";
+import { useGetMarketplaceAppsQuery } from "@/store/api/marketplace-api";
+import { fallbackMarketplaceData } from "./components/app/marketplace-fallback-data";
 import { BillingView } from "./components/BillingView";
 import { BundleSelectionView } from "./components/app/BundleSelectionView";
 import { BundleAppsView } from "./components/app/BundleAppsView";
@@ -57,6 +59,36 @@ export const DashboardPage = () => {
     return getDefaultDashboard();
   });
   const isRTL = i18nInstance.language === "ar";
+  const { data: marketplaceApiData } = useGetMarketplaceAppsQuery();
+
+  // Use API data if available, otherwise use fallback data
+  const marketplaceData = useMemo(() => {
+    if (marketplaceApiData?.data && marketplaceApiData.data.length > 0) {
+      return marketplaceApiData;
+    }
+    return fallbackMarketplaceData;
+  }, [marketplaceApiData]);
+
+  // Transform marketplace data to MarketplaceItem format
+  const marketplaceItems = useMemo((): MarketplaceItem[] => {
+    if (!marketplaceData?.data) return [];
+
+    return marketplaceData.data.map((app): MarketplaceItem => ({
+      id: app.id.toString(),
+      title: app.name,
+      description: app.description,
+      rating: app.rating?.average ?? 0,
+      reviewCount: app.rating?.reviewsCount ?? 0,
+      priceType: app.price?.amount === 0 ? "Free" : "Paid",
+      price: `${app.price?.amount ?? 0} ${app.price?.currency ?? "USD"}`,
+      icon: app.icon?.url ? (
+        <img src={app.icon.url} alt={app.icon.alt || app.name} className="w-7 h-7" />
+      ) : (
+        <div className="w-7 h-7 bg-gray-300 rounded" />
+      ),
+      iconGradient: undefined,
+    }));
+  }, [marketplaceData]);
 
   const activeApp = useMemo(
     () => dashboardApps.find((app) => app.id === activeAppId) ?? dashboardApps[0],
@@ -277,8 +309,8 @@ export const DashboardPage = () => {
       "bg-[var(--color-page-bg)] text-[var(--color-page-text)] transition-colors duration-300",
     sidebarClass:
       "bg-[var(--color-sidebar-bg)] border-[var(--color-sidebar-border)] text-[var(--color-sidebar-text)]",
-    cardBase:
-      "bg-[var(--color-card-bg)] text-[var(--color-card-text)]",
+    cardBase: isDark ? 
+      "bg-[#0F1217]  text-[var(--color-card-text)]":"bg-white  text-[var(--color-card-text)]",
     sidebarNavActiveText: "text-[var(--color-sidebar-nav-active-text)]",
     sidebarNavIdleText:
       "text-[var(--color-sidebar-nav-idle-text)] hover:text-[var(--color-sidebar-nav-active-text)]",
@@ -307,7 +339,7 @@ export const DashboardPage = () => {
           tokens={tokens}
         />
 
-        <section className={`flex min-h-screen flex-1 flex-col bg-[var(--color-shell-bg)] rounded-[32px] m-6 transition-all duration-300 ${isRTL ? "lg:mr-64" : "lg:ml-64"}`}>
+        <section className={`flex min-h-screen flex-1 flex-col  rounded-[32px] m-6 transition-all duration-300 ${isRTL ? "lg:mr-64" : "lg:ml-64"} ${isDark ? "bg-[#13181E]" :"bg-[#F8F8F8]"}`} >
         <div className="flex flex-col gap-4 px-6 py-3 text-start">
           <DashboardHeader
             tokens={tokens}

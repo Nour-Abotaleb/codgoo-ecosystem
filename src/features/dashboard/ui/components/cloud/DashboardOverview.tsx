@@ -218,7 +218,7 @@ export const DashboardOverview = ({
           return (
             <div
               key={stat.id}
-              className={`${cardClass} flex flex-col gap-2 px-4 py-7 bg-[var(--color-table-row-bg)]`}
+              className={`${cardClass} flex flex-col gap-2 px-4 py-7 `}
             >
               <div className="flex items-center gap-3">
                 <div className={`flex items-center justify-center rounded-full p-2 ${tokens.isDark ? "bg-[var(--color-icon-surface)]" : "bg-[#EEEDF8]"}`}>
@@ -250,7 +250,7 @@ export const DashboardOverview = ({
             {dataset.products.map((product) => (
               <div
                 key={product.id}
-                className={`grid gap-3 rounded-2xl ${tokens.isDark ? "bg-[var(--color-table-row-bg)]" : "bg-[#F4F4FF]"} px-4 py-1 text-sm md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)_minmax(0,1fr)_auto] md:items-center`}
+                className={`grid gap-3 rounded-2xl ${tokens.isDark ? "stroke" : "bg-[#F4F4FF] "} px-4 py-1 text-sm  md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)_minmax(0,1fr)_auto] md:items-center`}
               >
                 <div>
                   <p className="font-medium text-base text-[var(--color-page-text)]">{product.server}</p>
@@ -348,7 +348,7 @@ export const DashboardOverview = ({
           <div className="flex items-center justify-between gap-2">
             <h3 className={`text-lg lg:text-xl font-bold ${tokens.isDark ? "text-[var(--color-page-text)]" : "text-[#2B3674]"}`}>Domains</h3>
             <div className="flex items-center gap-3 text-sm text-[var(--color-page-text)]/60">
-              <div className="flex h-10 items-center gap-2 rounded-full border border-[var(--color-border-divider)] bg-[var(--color-card-bg)] px-4">
+              <div className="flex h-10 items-center gap-2 rounded-full border border-[var(--color-border-divider)]  px-4">
                 <SearchIcon className="h-4 w-4" />
                 <input
                   type="search"
@@ -375,7 +375,7 @@ export const DashboardOverview = ({
               <tbody>
                 {filteredDomains.map((domain) => {
                   return (
-                    <tr key={domain.id} className="bg-[var(--color-table-row-bg)]">
+                    <tr key={domain.id} className="">
                       <td className="rounded-l-2xl px-4 py-2 font-medium text-[var(--color-card-text)]">
                         {domain.name}
                       </td>
@@ -442,7 +442,7 @@ export const DashboardOverview = ({
             {dataset.sites.map((site) => (
               <div
                 key={site.id}
-                className={`relative rounded-[24px] px-6 py-4 transition-colors hover:border-[#7469C7] ${tokens.isDark ? "bg-[#F4F4FF11]" : "bg-[#F4F4FF]"}`}
+                className={`relative rounded-[24px] px-6 py-4 transition-colors hover:border-[#7469C7] ${tokens.isDark ? "bg-transparent stroke" : "bg-[#F4F4FF]"}`}
               >
                 {/* Domain Name */}
                 <div className="flex justify-between items-center">
@@ -467,7 +467,7 @@ export const DashboardOverview = ({
                       e.stopPropagation();
                       navigate(`/dashboard/manage-website/${site.id}`);
                     }}
-                    className={`${tokens.isDark ? "bg-white" : "bg-white"} transition text-[#584ABC] w-[85%] flex justify-center cursor-pointer flex items-center gap-2 rounded-full px-8 py-2.5 text-sm md:text-base font-semibold`}
+                    className={`${tokens.isDark ? "bg-transparent stroke" : "bg-white"} transition text-[#584ABC] w-[85%] flex justify-center cursor-pointer flex items-center gap-2 rounded-full px-8 py-2.5 text-sm md:text-base font-semibold`}
                   >
                     Manage Site
                   </button>
@@ -493,7 +493,7 @@ export const DashboardOverview = ({
             {paginatedTickets.map((ticket) => (
               <div
                 key={ticket.id}
-                className={`flex flex-col gap-3 rounded-[20px] p-6 transition-colors hover:border-[#7469C7] ${tokens.isDark ? "bg-[#F4F4FF11]" : "bg-[#F4F4FF]"}`}
+                className={`flex flex-col gap-3 rounded-[20px] p-6 transition-colors hover:border-[#7469C7] ${tokens.isDark ? "bg-transparent stroke" : "bg-[#F4F4FF]"}`}
               >
                 <div className="flex items-center justify-between">
                   <p className={`text-sm md:text-base font-medium ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>{ticket.id}</p>
@@ -559,7 +559,7 @@ export const DashboardOverview = ({
             {paginatedNews.map((news) => (
               <div
                 key={news.id}
-                className={`flex flex-col gap-3 rounded-[20px] px-6 py-4 transition-colors hover:border-[#7469C7] ${tokens.isDark ? "bg-[#F4F4FF11]" : "bg-[#F4F4FF]"}`}
+                className={`flex flex-col gap-3 rounded-[20px] px-6 py-4 transition-colors hover:border-[#7469C7] ${tokens.isDark ? "bg-transparent stroke" : "bg-[#F4F4FF]"}`}
               >
                 <div>
                   <h4 className="text-base font-semibold text-[var(--color-page-text)]">

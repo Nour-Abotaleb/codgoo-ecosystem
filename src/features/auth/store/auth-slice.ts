@@ -6,12 +6,15 @@ import api from "@/config/api";
 
 const AUTH_TOKEN_KEY = "auth_token";
 const AUTH_USER_KEY = "auth_user";
+const AUTH_SUBSCRIPTIONS_KEY = "auth_subscriptions";
 
 // Load initial state from localStorage
 const getInitialState = (): AuthState => {
   const token = localStorage.getItem(AUTH_TOKEN_KEY);
   const userStr = localStorage.getItem(AUTH_USER_KEY);
+  const subscriptionsStr = localStorage.getItem(AUTH_SUBSCRIPTIONS_KEY);
   let user: User | null = null;
+  let subscriptions = null;
   
   if (userStr) {
     try {
@@ -22,9 +25,19 @@ const getInitialState = (): AuthState => {
     }
   }
 
+  if (subscriptionsStr) {
+    try {
+      subscriptions = JSON.parse(subscriptionsStr);
+    } catch {
+      // Invalid subscriptions data, clear it
+      localStorage.removeItem(AUTH_SUBSCRIPTIONS_KEY);
+    }
+  }
+
   return {
     token: token || null,
     user,
+    subscriptions,
     loading: false,
     error: null,
   };
@@ -123,24 +136,31 @@ const authSlice = createSlice({
         payload: {
           readonly token: string;
           readonly user: User;
+          readonly subscriptions?: any[];
         };
       },
     ) {
       state.token = action.payload.token;
       state.user = action.payload.user;
+      state.subscriptions = action.payload.subscriptions || null;
       state.error = null;
       // Persist to localStorage
       localStorage.setItem(AUTH_TOKEN_KEY, action.payload.token);
       localStorage.setItem(AUTH_USER_KEY, JSON.stringify(action.payload.user));
+      if (action.payload.subscriptions) {
+        localStorage.setItem(AUTH_SUBSCRIPTIONS_KEY, JSON.stringify(action.payload.subscriptions));
+      }
     },
     clearCredentials(state) {
       state.token = null;
       state.user = null;
+      state.subscriptions = null;
       state.error = null;
       state.loading = false;
       // Clear from localStorage
       localStorage.removeItem(AUTH_TOKEN_KEY);
       localStorage.removeItem(AUTH_USER_KEY);
+      localStorage.removeItem(AUTH_SUBSCRIPTIONS_KEY);
       // Clear token from axios defaults
       delete api.defaults.headers.common["Authorization"];
     },
@@ -167,6 +187,7 @@ const authSlice = createSlice({
         console.log("loginUser.fulfilled payload:", action.payload);
         console.log("Token from payload:", action.payload.token);
         console.log("User from payload:", action.payload.user);
+        console.log("Subscriptions from payload:", action.payload.subscriptions);
         
         if (!action.payload.token) {
           console.error("Token is missing in payload!");
@@ -176,13 +197,18 @@ const authSlice = createSlice({
         
         state.token = action.payload.token;
         state.user = action.payload.user;
+        state.subscriptions = action.payload.subscriptions || null;
         state.error = null;
         
         // Persist to localStorage
         try {
           localStorage.setItem(AUTH_TOKEN_KEY, action.payload.token);
           localStorage.setItem(AUTH_USER_KEY, JSON.stringify(action.payload.user));
+          if (action.payload.subscriptions) {
+            localStorage.setItem(AUTH_SUBSCRIPTIONS_KEY, JSON.stringify(action.payload.subscriptions));
+          }
           console.log("Token saved to localStorage:", localStorage.getItem(AUTH_TOKEN_KEY));
+          console.log("Subscriptions saved to localStorage:", localStorage.getItem(AUTH_SUBSCRIPTIONS_KEY));
         } catch (error) {
           console.error("Failed to save to localStorage:", error);
         }
@@ -202,10 +228,14 @@ const authSlice = createSlice({
         state.loading = false;
         state.token = action.payload.token;
         state.user = action.payload.user;
+        state.subscriptions = action.payload.subscriptions || null;
         state.error = null;
         // Persist to localStorage
         localStorage.setItem(AUTH_TOKEN_KEY, action.payload.token);
         localStorage.setItem(AUTH_USER_KEY, JSON.stringify(action.payload.user));
+        if (action.payload.subscriptions) {
+          localStorage.setItem(AUTH_SUBSCRIPTIONS_KEY, JSON.stringify(action.payload.subscriptions));
+        }
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
@@ -220,22 +250,26 @@ const authSlice = createSlice({
       .addCase(logoutUser.fulfilled, (state) => {
         state.token = null;
         state.user = null;
+        state.subscriptions = null;
         state.loading = false;
         state.error = null;
         // Clear from localStorage
         localStorage.removeItem(AUTH_TOKEN_KEY);
         localStorage.removeItem(AUTH_USER_KEY);
+        localStorage.removeItem(AUTH_SUBSCRIPTIONS_KEY);
         // Clear token from axios defaults
         delete api.defaults.headers.common["Authorization"];
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.token = null;
         state.user = null;
+        state.subscriptions = null;
         state.loading = false;
         state.error = action.payload as string | null;
         // Clear from localStorage even on error
         localStorage.removeItem(AUTH_TOKEN_KEY);
         localStorage.removeItem(AUTH_USER_KEY);
+        localStorage.removeItem(AUTH_SUBSCRIPTIONS_KEY);
         // Clear token from axios defaults even on error
         delete api.defaults.headers.common["Authorization"];
       });
@@ -249,10 +283,14 @@ const authSlice = createSlice({
         state.loading = false;
         state.token = action.payload.token;
         state.user = action.payload.user;
+        state.subscriptions = action.payload.subscriptions || null;
         state.error = null;
         // Persist to localStorage
         localStorage.setItem(AUTH_TOKEN_KEY, action.payload.token);
         localStorage.setItem(AUTH_USER_KEY, JSON.stringify(action.payload.user));
+        if (action.payload.subscriptions) {
+          localStorage.setItem(AUTH_SUBSCRIPTIONS_KEY, JSON.stringify(action.payload.subscriptions));
+        }
       })
       .addCase(refreshAuthToken.rejected, (state, action) => {
         state.loading = false;
@@ -287,6 +325,7 @@ export const authReducer = authSlice.reducer;
 // Selectors
 export const selectToken = (state: RootState) => state.auth.token;
 export const selectUser = (state: RootState) => state.auth.user;
+export const selectSubscriptions = (state: RootState) => state.auth.subscriptions;
 export const selectIsAuthenticated = (state: RootState) =>
   !!state.auth.token;
 export const selectAuthLoading = (state: RootState) => state.auth.loading;

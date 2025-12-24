@@ -77,7 +77,7 @@ export const SoftwareStatisticsCards = ({ tokens }: { readonly tokens: Dashboard
       {invoiceStats.map((stat) => {
         const Icon = stat.icon;
         return (
-          <div key={stat.id} className={`${tokens.cardBase} rounded-2xl p-6 transition-colors ${tokens.isDark ? "!bg-[#25223866]" : "!bg-white"}`}>
+          <div key={stat.id} className={`${tokens.cardBase} rounded-2xl p-6 transition-colors ${tokens.isDark ? "bg-[#0F1217]" : "!bg-white"}`}>
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-start" style={{ color: iconBaseColor }}>
                 <Icon className="h-8 w-8 md:h-10 md:w-10" />
@@ -117,7 +117,7 @@ export const SoftwareBillingView = ({ tokens, searchQuery, onSearchChange }: { r
       {/* Search Bar */}
         <div className="flex items-center gap-3">
           <div
-            className={`flex h-12 w-full items-center gap-3 rounded-full border ${tokens.isDark ? "border-[#2E314166]" : "border-[#DBDBDB]"} bg-[var(--color-search-bg)] px-4 text-[var(--color-search-text)] transition-colors`}
+            className={`flex h-12 w-full items-center gap-3 rounded-full border ${tokens.isDark ? "border-[#2E314166]" : "border-[#DBDBDB]"} bg-transparent stroke px-4 text-[var(--color-search-text)] transition-colors`}
           >
           <SearchIcon className="h-5 w-5 text-[#A7A7A7]" />
           <input
@@ -135,7 +135,7 @@ export const SoftwareBillingView = ({ tokens, searchQuery, onSearchChange }: { r
         {filteredInvoices.map((invoice) => (
           <div
             key={invoice.id}
-            className={`${tokens.cardBase} rounded-2xl overflow-hidden transition-colors ${tokens.isDark ? "!bg-[#1E1B2E]" : "!bg-[#F4F5FF]"}`}
+            className={`${tokens.cardBase} rounded-2xl overflow-hidden transition-colors ${tokens.isDark ? "bg-tansparent stroke " : "!bg-[#F4F5FF]"}`}
           >
             {/* Top Section */}
             <div className="flex flex-col gap-3 px-4 py-4">

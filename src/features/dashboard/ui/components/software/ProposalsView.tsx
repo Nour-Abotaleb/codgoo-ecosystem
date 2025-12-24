@@ -217,7 +217,7 @@ export const ProposalsView = ({ tokens, project }: ProposalsViewProps) => {
 
         {/* Right Panel - Summary/Discussion */}
         <div className="flex flex-col gap-6">
-          <div className={`${tokens.isDark ? "!bg-[var(--color-search-bg)]" : "!bg-[#FFFEF7]"} rounded-2xl overflow-hidden flex flex-col`}>
+          <div className={`${tokens.isDark ? "!bg-transparent stroke" : "!bg-[#FFFEF7]"} rounded-2xl overflow-hidden flex flex-col`}>
             {/* Tabs */}
             <div className="flex border-b border-[#E6E6E6]">
               <button

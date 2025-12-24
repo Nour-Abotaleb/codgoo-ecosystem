@@ -119,7 +119,7 @@ export const AttachmentsView = ({ tokens }: AttachmentsViewProps) => {
               className={`${tokens.cardBase} rounded-2xl overflow-hidden transition-colors`}
             >
               {/* Preview Area */}
-              <div className={`h-60 ${tokens.isDark ? "bg-[var(--color-search-bg)]" : "bg-[#F4F5FF]"} flex flex-col relative group/image`}>
+              <div className={`h-60 ${tokens.isDark ? "bg-transparent " : "bg-[#F4F5FF]"} flex flex-col relative group/image`}>
                 <div className="flex-1 flex items-center justify-center relative overflow-hidden p-3">
                   {isImage ? (
                     <div
@@ -232,7 +232,7 @@ export const AttachmentsView = ({ tokens }: AttachmentsViewProps) => {
               </div>
 
             {/* Metadata */}
-            <div className={`flex items-center justify-between px-4 py-2 ${tokens.isDark ? "bg-[var(--color-search-bg)]" : "bg-[#FFFEF7]"}`}>
+            <div className={`flex items-center justify-between px-4 py-2 ${tokens.isDark ? "bg-transparent " : "bg-[#FFFEF7]"}`}>
               <div className="flex items-start flex-col gap-2">
                 <span className={`text-sm font-medium ${tokens.isDark ? "text-white" : "text-[#071FD7]"}`}>
                   {attachment.uploadedBy}

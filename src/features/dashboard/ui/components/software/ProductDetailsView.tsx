@@ -55,7 +55,7 @@ export const ProductDetailsView = ({ productId, tokens, onBack }: ProductDetails
     <div className="flex flex-col gap-6">
 
       {/* Two Column Layout in One Container */}
-      <div className={`${tokens.cardBase} rounded-2xl px-6 py-10 transition-colors ${tokens.isDark ? "!bg-[#1E1B2E]" : "!bg-white"}`}>
+      <div className={`${tokens.cardBase} rounded-2xl px-6 py-10 transition-colors ${tokens.isDark ? "bg-tansparent stroke " : "!bg-white"}`}>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left Column - Images */}
           <div>

@@ -189,7 +189,7 @@ export const TaskCard = ({ task, tokens, onViewTask, showViewButton = true, cust
       {/* Bottom Section with Different Background */}
       {(showViewButton || customButtons) && (
         <div className={`flex items-center justify-between px-6 py-4 border-t border-dashed ${
-          tokens.isDark ? "border-[#2E3141] bg-[var(--color-card-bg)]" : "border-[#E2E8FF] bg-[#FFFEF7]"
+          tokens.isDark ? "border-[#2E3141] bg-[#0F1217]" : "border-[#E2E8FF] bg-[#FFFEF7]"
         }`}>
           <div className="flex items-center gap-6">
             <span className={`text-base text-[#718EBF]`}>

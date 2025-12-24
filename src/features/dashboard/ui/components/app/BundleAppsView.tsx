@@ -1,19 +1,13 @@
 import { useMemo, useState } from "react";
 import { useNavigate, useMatch } from "react-router-dom";
+import toast from "react-hot-toast";
 import type { DashboardTokens } from "../../types";
-import { marketplaceItems } from "./MarketplaceView";
-import { MarketplaceCard } from "./MarketplaceCard";
+import { MarketplaceCard, type MarketplaceItem } from "./MarketplaceCard";
 import { CheckoutView } from "./CheckoutView";
 import { AppFilterIcon, ArrowRight } from "@utilities/icons";
 import stars from "@assets/images/app/app-stars.svg";
-import { bundleCards } from "./BundleSelectionView";
-
-// Bundle lookup with all details
-const bundleLookup = {
-  starter: { title: "Starter Bundle", price: "300 EGP", limit: 3 },
-  professional: { title: "Professional Bundle", price: "500 EGP", limit: 6 },
-  enterprise: { title: "Enterprise Bundle", price: "1000 EGP", limit: 10 }
-} as const;
+import { useGetMarketplaceAppsQuery, useGetMarketplacePackagesQuery, useBuildBundleMutation } from "@/store/api/marketplace-api";
+import { fallbackMarketplaceData } from "./marketplace-fallback-data";
 
 type BundleAppsViewProps = {
   readonly tokens: DashboardTokens;
@@ -25,38 +19,71 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
   const bundleId = match?.params?.bundleId;
   const [selectedAppIds, setSelectedAppIds] = useState<Set<string>>(new Set());
   const [showCheckout, setShowCheckout] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { data } = useGetMarketplaceAppsQuery();
+  const { data: packagesData } = useGetMarketplacePackagesQuery();
+  const [buildBundle] = useBuildBundleMutation();
+  
+  // Use API data if available, otherwise use fallback data
+  const marketplaceData = useMemo(() => {
+    if (data?.data && data.data.length > 0) {
+      return data;
+    }
+    return fallbackMarketplaceData;
+  }, [data]);
+
+  // Transform marketplace data to MarketplaceItem format - Filter only General type
+  const marketplaceItems = useMemo((): MarketplaceItem[] => {
+    if (!marketplaceData?.data) return [];
+
+    return marketplaceData.data
+      .filter((app) => app.type === "General") // Only show General type apps
+      .map((app): MarketplaceItem => ({
+        id: app.id.toString(),
+        title: app.name,
+        description: app.description,
+        rating: app.rating.average,
+        reviewCount: app.rating.reviewsCount,
+        priceType: app.price.amount === 0 ? "Free" : "Paid",
+        price: `${app.price.amount} ${app.price.currency}`,
+        icon: app.icon.url ? (
+          <img src={app.icon.url} alt={app.icon.alt || app.name} className="w-7 h-7" />
+        ) : (
+          <div className="w-7 h-7 bg-gray-300 rounded" />
+        ),
+        iconGradient: undefined,
+      }));
+  }, [marketplaceData]);
   
   const selectedCount = selectedAppIds.size;
 
-  // Get bundle details from lookup or bundleCards
+  // Get bundle details from API or fallback
   const bundleData = useMemo(() => {
     if (!bundleId) {
-      return bundleLookup.professional;
+      return { title: "Professional Bundle", price: "500 EGP", limit: 6 };
     }
-    
-    // Normalize bundleId to lowercase for comparison
-    const normalizedId = bundleId.toLowerCase().trim();
-    
-    // First try the lookup table (case-insensitive)
-    const bundleKey = normalizedId as keyof typeof bundleLookup;
-    if (bundleKey in bundleLookup) {
-      return bundleLookup[bundleKey];
+
+    // Try to find from API data
+    if (packagesData?.data) {
+      const found = packagesData.data.find(pkg => pkg.id.toString() === bundleId);
+      if (found) {
+        return {
+          title: found.name,
+          price: `${found.price.amount} ${found.price.currency}`,
+          limit: found.apps_count
+        };
+      }
     }
-    
-    // Fallback to bundleCards (case-insensitive match)
-    const found = bundleCards.find(b => b.id.toLowerCase() === normalizedId);
-    if (found) {
-      const choosePerk = found.perks.find(p => p.startsWith("Choose"));
-      const limit = choosePerk ? parseInt(choosePerk.match(/\d+/)?.[0] || "6", 10) : 6;
-      return {
-        title: found.title,
-        price: `${found.price} EGP`,
-        limit
-      };
-    }
-    
-    return bundleLookup.professional; // Default fallback
-  }, [bundleId]);
+
+    // Fallback to static lookup
+    const bundleLookup = {
+      "1": { title: "Starter Bundle", price: "300 EGP", limit: 1 },
+      "2": { title: "Professional Bundle", price: "500 EGP", limit: 3 },
+      "3": { title: "Enterprise Bundle", price: "1000 EGP", limit: 6 }
+    } as const;
+
+    return bundleLookup[bundleId as keyof typeof bundleLookup] || { title: "Professional Bundle", price: "500 EGP", limit: 6 };
+  }, [bundleId, packagesData]);
 
   const heading = bundleData.title;
   const price = bundleData.price;
@@ -103,6 +130,65 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
   const savings = originalPrice - bundlePrice;
   const savingsPercentage = originalPrice > 0 ? Math.round((savings / originalPrice) * 100) : 0;
 
+  const handlePurchaseBundle = async () => {
+    if (!bundleId) {
+      toast.error("Invalid bundle ID");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      
+      // Get customer ID from localStorage
+      const authUser = localStorage.getItem("auth_user");
+      if (!authUser) {
+        toast.error("Please login to continue");
+        navigate("/login");
+        return;
+      }
+
+      const user = JSON.parse(authUser);
+      const customerId = parseInt(user.id, 10);
+
+      if (isNaN(customerId)) {
+        toast.error("Invalid user ID");
+        return;
+      }
+
+      // Convert selected app IDs to numbers (can be empty array)
+      const applicationIds = Array.from(selectedAppIds).map(id => parseInt(id, 10));
+
+      // Build the request payload
+      const payload = {
+        bundleId: parseInt(bundleId, 10),
+        customer: {
+          id: customerId,
+        },
+        applications: applicationIds,
+      };
+
+      // Call the API
+      const response = await buildBundle(payload).unwrap();
+
+      if (response.status) {
+        toast.success("Bundle subscription successful!");
+        // Show checkout view
+        setShowCheckout(true);
+      } else {
+        toast.error(response.message || "Failed to subscribe to bundle");
+        // Still show checkout view even on failure
+        setShowCheckout(true);
+      }
+    } catch (error: any) {
+      console.error("Bundle subscription error:", error);
+      toast.error(error?.data?.message || "An error occurred while subscribing to the bundle");
+      // Show checkout view even on error
+      setShowCheckout(true);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   // Show checkout if enabled
   if (showCheckout) {
     return (
@@ -111,6 +197,7 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
         bundleTitle={heading}
         bundlePrice={price}
         selectedAppIds={selectedAppIds}
+        bundleId={bundleId}
         onBack={() => setShowCheckout(false)}
       />
     );
@@ -237,16 +324,21 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
         })}
       </div>
 
-      {/* Purchase Popup - Show when all apps are selected */}
-      {isComplete && (
-        <div className={`sticky bottom-2 ${tokens.isDark ? "bg-[#1a1a1a] border-gray-700" : "bg-[#E5F2F4]"} p-6 z-50 mt-6 rounded-[24px]`}>
+      {/* Purchase Popup - Always visible */}
+      <div className={`sticky bottom-2 ${tokens.isDark ? "bg-[#1a1a1a] border-gray-700" : "bg-[#E5F2F4]"} p-6 z-50 mt-6 rounded-[24px]`}>
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex flex-col gap-1">
               <h3 className={`text-xl font-medium ${tokens.isDark ? "text-white" : "text-black"}`}>
-                Ready to Complete Your Bundle?
+                {selectedCount > 0 ? "Ready to Complete Your Bundle?" : "Select Apps to Get Started"}
               </h3>
               <p className={`text-sm md:text-lg ${tokens.isDark ? "text-gray-400" : "text-[#5F5F5F]"}`}>
-                You'll save <span className="text-[#228C3D]">{savings} EGP {savingsPercentage}%</span> with this bundle
+                {selectedCount === 0 ? (
+                  <>Choose up to {limit} applications for your {heading}</>
+                ) : isComplete ? (
+                  <>You'll save <span className="text-[#228C3D]">{savings} EGP ({savingsPercentage}%)</span> with this bundle</>
+                ) : (
+                  <>You've selected {selectedCount} of {limit} applications</>
+                )}
               </p>
             </div>
             <div className="flex items-center gap-4">
@@ -258,16 +350,14 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
           </div>
           <button
             type="button"
-            className="px-8 py-2.5 mt-8 w-full bg-[#0F6773] text-white rounded-full text-base md:text-lg hover:bg-[#0d5a65] transition-colors cursor-pointer"
-            onClick={() => {
-              setShowCheckout(true);
-            }}
+            className="px-8 py-2.5 mt-8 w-full bg-[#0F6773] text-white rounded-full text-base md:text-lg hover:bg-[#0d5a65] transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#0F6773]"
+            onClick={handlePurchaseBundle}
+            disabled={isSubmitting}
           >
-            Purchase Bundle Now
+            {isSubmitting ? "Processing..." : "Purchase Bundle Now"}
           </button>
         </div>
-      )}
-    </div>
+      </div>
   );
 };
 

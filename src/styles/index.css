@@ -42,4 +42,6 @@ input:-moz-autofill {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;  /* Chrome, Safari and Opera */
 }
-
+.stroke{
+  border: 1px solid #292C35
+}

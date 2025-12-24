@@ -189,7 +189,7 @@ export const ProductsView = ({ tokens }: ProductsViewProps) => {
       {/* Search Bar */}
       <div className="flex items-center gap-3">
         <div
-          className={`flex h-12 w-full items-center gap-3 rounded-full bg-[var(--color-search-bg)] px-4 text-[var(--color-search-text)] transition-colors`}
+          className={`flex h-12 w-full items-center gap-3 rounded-full bg-transparent stroke px-4 text-[var(--color-search-text)] transition-colors`}
         >
           <SearchIcon className="h-5 w-5 text-[#A7A7A7]" />
           <input
@@ -217,7 +217,7 @@ export const ProductsView = ({ tokens }: ProductsViewProps) => {
         {paginatedProducts.map((product) => (
           <div
             key={product.id}
-            className={`${tokens.cardBase} rounded-2xl overflow-hidden transition-colors ${tokens.isDark ? "!bg-[#1E1B2E]" : "!bg-white"}`}
+            className={`${tokens.cardBase} rounded-2xl overflow-hidden transition-colors ${tokens.isDark ? "bg-tansparent stroke " : "!bg-white"}`}
           >
             {/* Product Image */}
             <div className="relative overflow-hidden">

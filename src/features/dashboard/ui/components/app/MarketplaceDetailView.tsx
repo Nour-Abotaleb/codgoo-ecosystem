@@ -1,9 +1,11 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { i18n } from "@shared/config/i18n";
 import { ArrowRight, EmailIcon, PhoneIcon, FileCodeIcon, MarketPlaceCartIcon, WoocommerceIcon, SnapchatColoredIcon } from "@utilities/icons";
 import allCustomersImage from "@assets/images/app/all-customers.svg";
 import screenshot1 from "@assets/images/app/screenshot1.svg";
 import screenshot2 from "@assets/images/app/screenshot2.svg";
+import { useAttachAppToBundleMutation } from "@/store/api/marketplace-api";
 import type { DashboardTokens } from "../../types";
 import type { MarketplaceItem } from "./MarketplaceCard";
 
@@ -18,8 +20,67 @@ type Tab = "Overview" | "Features" | "Pricing" | "Screenshots";
 export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewProps) => {
   const [activeTab, setActiveTab] = useState<Tab>("Overview");
   const isRTL = i18n.language === "ar";
+  
+  const [attachAppToBundle, { isLoading: isAttaching }] = useAttachAppToBundleMutation();
 
   const tabs: readonly Tab[] = ["Overview", "Features", "Pricing", "Screenshots"];
+
+  // Get bundle_package_id from localStorage subscriptions
+  const getBundlePackageId = (): number | null => {
+    try {
+      const subscriptionsStr = localStorage.getItem("auth_subscriptions");
+      if (!subscriptionsStr) return null;
+      
+      const subscriptions = JSON.parse(subscriptionsStr);
+      if (Array.isArray(subscriptions) && subscriptions.length > 0) {
+        // Get the first active subscription's bundle_package_id
+        const activeSubscription = subscriptions.find((sub: any) => sub.status === "active");
+        return activeSubscription?.bundle_package_id || subscriptions[0]?.bundle_package_id || null;
+      }
+      return null;
+    } catch (error) {
+      console.error("Error reading subscriptions from localStorage:", error);
+      return null;
+    }
+  };
+
+  // Handle subscription button click
+  const handleSubscribe = async () => {
+    const bundleId = getBundlePackageId();
+    
+    if (!bundleId) {
+      toast.error("No active subscription found. Please subscribe to a bundle first.");
+      return;
+    }
+
+    if (!item.id) {
+      toast.error("Application ID is missing.");
+      return;
+    }
+
+    try {
+      // Convert string id to number
+      const appId = parseInt(item.id, 10);
+      if (isNaN(appId)) {
+        toast.error("Invalid application ID.");
+        return;
+      }
+
+      const result = await attachAppToBundle({
+        bundleId,
+        applications: [appId],
+      }).unwrap();
+
+      if (result.status) {
+        toast.success(result.message || "Application subscribed successfully!");
+      } else {
+        toast.error(result.message || "Failed to subscribe to application.");
+      }
+    } catch (error: any) {
+      console.error("Error subscribing to application:", error);
+      toast.error(error?.data?.message || "An error occurred while subscribing.");
+    }
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -57,10 +118,12 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
                 <div className="flex items-center gap-3">
                   <button
                     type="button"
-                    className="px-6 py-2.5 rounded-full font-medium text-white transition-colors cursor-pointer"
+                    onClick={handleSubscribe}
+                    disabled={isAttaching}
+                    className="px-6 py-2.5 rounded-full font-medium text-white transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{ backgroundColor: "#0F6773" }}
                   >
-                    Subscription
+                    {isAttaching ? "Subscribing..." : "Subscription"}
                   </button>
                   <button
                     type="button"
@@ -191,7 +254,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
                       </tr>
                     </thead>
                     <tbody>
-                      <tr className={tokens.isDark ? "bg-[var(--color-table-row-bg)]" : "bg-white"}>
+                      <tr className={tokens.isDark ? "bg-[#0F1217]" : "bg-white"}>
                         <td className="px-4 py-3 font-medium text-[var(--color-card-text)]">Jane Cooper</td>
                         <td className="px-4 py-3 text-[var(--color-card-text)]">Microsoft</td>
                         <td className="px-4 py-3 text-[var(--color-card-text)]">+1 234 567 890</td>
@@ -430,7 +493,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
                 <div
                   key={i}
                   className={`rounded-xl p-4 ${
-                    tokens.isDark ? "bg-[var(--color-table-row-bg)]" : "border border-[#DBDBDB]"
+                    tokens.isDark ? "bg-[#0F1217]" : "border border-[#DBDBDB]"
                   }`}
                 >
                   <div className="flex items-center gap-1 mb-3">

@@ -42,7 +42,7 @@ export const DashboardHeader = ({
   );
 
   const searchFieldClass = tokens.isDark
-    ? "bg-[var(--color-search-bg)] text-[color:var(--color-search-text)] placeholder:text-[color:var(--color-search-placeholder)]"
+    ? "bg-transparent stroke text-[color:var(--color-search-text)] placeholder:text-[color:var(--color-search-placeholder)]"
     : "bg-[#F4F7FE] text-[color:var(--color-search-text)] placeholder:text-[color:var(--color-search-placeholder)]";
 
   const primaryColor = activeApp.id === "software" 

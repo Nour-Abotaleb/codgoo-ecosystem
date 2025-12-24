@@ -272,7 +272,7 @@ const InvoicesTable = ({ tokens, searchQuery, activeAppId }: { readonly tokens: 
               const isSelected = selectedInvoices.has(invoice.id);
               return (
                 <tr key={invoice.id} className="text-sm">
-                  <td className="rounded-l-xl bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
+                  <td className="rounded-l-xl px-6 py-4 transition-colors">
                     <div className="flex items-center gap-3">
                       <input
                         type="checkbox"
@@ -285,13 +285,13 @@ const InvoicesTable = ({ tokens, searchQuery, activeAppId }: { readonly tokens: 
                       <span className="text-base font-semibold">{invoice.invoiceNumber}</span>
                     </div>
                   </td>
-                  <td className="bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
+                  <td className="px-6 py-4 transition-colors">
                     <p className="font-medium">{invoice.date}</p>
                   </td>
-                  <td className="bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
+                  <td className="px-6 py-4 transition-colors">
                     <p className="font-medium">{invoice.total}</p>
                   </td>
-                  <td className="bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
+                  <td className="px-6 py-4 transition-colors">
                     <span
                       className={`inline-flex items-center gap-1 text-sm font-medium ${
                         tokens.isDark ? "text-white" : "text-[#2B3674]"
@@ -301,7 +301,7 @@ const InvoicesTable = ({ tokens, searchQuery, activeAppId }: { readonly tokens: 
                       {invoice.status}
                     </span>
                   </td>
-                  <td className="rounded-r-xl bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
+                  <td className="rounded-r-xl px-6 py-4 transition-colors">
                     <button
                       type="button"
                       className={`${tokens.buttonGhost} flex h-9 w-9 items-center justify-center rounded-full`}
@@ -333,7 +333,7 @@ const InvoicesTable = ({ tokens, searchQuery, activeAppId }: { readonly tokens: 
 
           <div className="flex items-center gap-2 text-sm text-[var(--color-page-text)]">
             <span>Showing</span>
-            <select className="rounded-lg border border-[var(--color-border-divider)] bg-[var(--color-card-bg)] px-2 py-1 text-sm focus:outline-none">
+            <select className="rounded-lg border border-[var(--color-border-divider)]  px-2 py-1 text-sm focus:outline-none">
               <option value="20">20</option>
               <option value="50">50</option>
               <option value="100">100</option>
@@ -496,7 +496,7 @@ const QuotesTable = ({ tokens, searchQuery, activeAppId }: { readonly tokens: Da
     <div className="flex flex-col gap-6">
       {/* <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div
-          className={`flex h-12 flex-1 items-center gap-3 rounded-full border ${tokens.divider} bg-[var(--color-search-bg)] px-4 text-[var(--color-search-text)] transition-colors sm:max-w-xs`}
+          className={`flex h-12 flex-1 items-center gap-3 rounded-full border ${tokens.divider} bg-transparent stroke px-4 text-[var(--color-search-text)] transition-colors sm:max-w-xs`}
         >
           <SearchIcon className="h-5 w-5 text-[var(--color-search-placeholder)]" />
           <input
@@ -535,7 +535,7 @@ const QuotesTable = ({ tokens, searchQuery, activeAppId }: { readonly tokens: Da
               const isSelected = selectedQuotes.has(quote.id);
               return (
                 <tr key={quote.id} className="text-sm">
-                  <td className="rounded-l-xl bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
+                  <td className="rounded-l-xl px-6 py-4 transition-colors">
                     <div className="flex items-center gap-3">
                       <input
                         type="checkbox"
@@ -548,16 +548,16 @@ const QuotesTable = ({ tokens, searchQuery, activeAppId }: { readonly tokens: Da
                       <span className="text-base font-semibold">{quote.quoteNumber}</span>
                     </div>
                   </td>
-                  <td className="bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
+                  <td className="px-6 py-4 transition-colors">
                     <p className="font-medium">{quote.subject}</p>
                   </td>
-                  <td className="bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
+                  <td className="px-6 py-4 transition-colors">
                     <p className="font-medium">{quote.dateCreated}</p>
                   </td>
-                  <td className="bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
+                  <td className="px-6 py-4 transition-colors">
                     <p className="font-medium">{quote.validUntil}</p>
                   </td>
-                  <td className="bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
+                  <td className="px-6 py-4 transition-colors">
                     <span
                       className={`inline-flex items-center gap-1 text-sm font-medium ${
                         tokens.isDark ? "text-white" : "text-[#2B3674]"
@@ -567,7 +567,7 @@ const QuotesTable = ({ tokens, searchQuery, activeAppId }: { readonly tokens: Da
                       {quote.stage}
                     </span>
                   </td>
-                  <td className="rounded-r-xl bg-[var(--color-table-row-bg)] px-6 py-4 transition-colors">
+                  <td className="rounded-r-xl px-6 py-4 transition-colors">
                     <button
                       type="button"
                       className={`${tokens.buttonGhost} flex h-9 w-9 items-center justify-center rounded-full`}
@@ -599,7 +599,7 @@ const QuotesTable = ({ tokens, searchQuery, activeAppId }: { readonly tokens: Da
 
           <div className="flex items-center gap-2 text-sm text-[var(--color-page-text)]">
             <span>Showing</span>
-            <select className="rounded-lg border border-[var(--color-border-divider)] bg-[var(--color-card-bg)] px-2 py-1 text-sm focus:outline-none">
+            <select className="rounded-lg border border-[var(--color-border-divider)] px-2 py-1 text-sm focus:outline-none">
               <option value="20">20</option>
               <option value="50">50</option>
               <option value="100">100</option>
@@ -650,7 +650,7 @@ const AddFunds = ({ tokens, activeAppId }: { readonly tokens: DashboardTokens; r
           <input
             type="number"
             placeholder="Enter amount"
-            className={`w-full rounded-xl border ${tokens.divider} bg-[var(--color-search-bg)] px-4 py-3 text-[var(--color-search-text)] placeholder:text-[var(--color-search-placeholder)] focus:outline-none`}
+            className={`w-full rounded-xl border ${tokens.divider} bg-transparent stroke px-4 py-3 text-[var(--color-search-text)] placeholder:text-[var(--color-search-placeholder)] focus:outline-none`}
             style={{ 
               "--tw-ring-color": appColors.lighterAccent,
             } as React.CSSProperties & { "--tw-ring-color": string }}
@@ -664,7 +664,7 @@ const AddFunds = ({ tokens, activeAppId }: { readonly tokens: DashboardTokens; r
         </div>
         <div>
           <label className="block text-sm font-medium mb-2">Payment Method</label>
-          <select className={`w-full rounded-xl border ${tokens.divider} bg-[var(--color-search-bg)] px-4 py-3 text-[var(--color-search-text)] focus:outline-none`}
+          <select className={`w-full rounded-xl border ${tokens.divider} bg-transparent stroke px-4 py-3 text-[var(--color-search-text)] focus:outline-none`}
             style={{ 
               "--tw-ring-color": appColors.lighterAccent,
             } as React.CSSProperties & { "--tw-ring-color": string }}
@@ -775,7 +775,7 @@ export const BillingView = ({ tokens, activeAppId }: BillingViewProps) => {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
               <div
-                className={`flex h-11 flex-1 items-center gap-3 rounded-full border ${tokens.divider} bg-[var(--color-search-bg)] px-4 text-[var(--color-search-text)] transition-colors sm:max-w-xs`}
+                className={`flex h-11 flex-1 items-center gap-3 rounded-full border ${tokens.divider} bg-transparent stroke px-4 text-[var(--color-search-text)] transition-colors sm:max-w-xs`}
               >
                 <SearchIcon className="h-5 w-5 text-[var(--color-search-placeholder)]" />
                 <input

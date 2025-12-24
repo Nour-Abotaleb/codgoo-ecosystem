@@ -137,7 +137,7 @@ export const ManageServerView = ({ service, tokens }: ManageServerViewProps) => 
   const isRTL = i18n.language === "ar";
   const cardClass =
     "rounded-[20px] p-4 transition-colors";
-  const summaryCardClass = `${tokens.isDark ? "bg-[var(--color-table-row-bg)]" : "bg-[#F4F4FF]"} text-[var(--color-card-text)] rounded-2xl p-6 transition-colors`;
+  const summaryCardClass = `${tokens.isDark ? "bg-[#0F1217]" : "bg-[#F4F4FF]"} text-[var(--color-card-text)] rounded-2xl p-6 transition-colors`;
   const usageCardClass =
     "rounded-[20px] p-6 transition-colors";
   const labelClass = `text-base ${tokens.subtleText}`;

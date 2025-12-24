@@ -213,7 +213,7 @@ export const ServerServicesView = ({
           </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <div
-              className={`flex h-11 w-full items-center gap-3 rounded-full px-4 sm:w-68 border ${tokens.divider} bg-[var(--color-search-bg)] text-[var(--color-search-text)] transition-colors`}
+              className={`flex h-11 w-full items-center gap-3 rounded-full px-4 sm:w-68 border ${tokens.divider} bg-transparent stroke text-[var(--color-search-text)] transition-colors`}
             >
               <SearchIcon className="w-5 text-[var(--color-search-placeholder)]" />
               <input
@@ -262,7 +262,7 @@ export const ServerServicesView = ({
               {paginatedServices.map((service) => {
                 return (
                   <tr key={service.id} className="text-sm">
-                    <td className="whitespace-nowrap px-6 py-3 pe-6 rounded-l-xl bg-[var(--color-table-row-bg)] transition-colors">
+                    <td className={`whitespace-nowrap px-6 py-3 pe-6 rounded-l-xl  transition-colors ${tokens.isDark ? "bg-[#0F1217]" : ""}`}>
                       <div className="flex items-center gap-3">
                         <input
                           type="checkbox"
@@ -277,7 +277,7 @@ export const ServerServicesView = ({
                         </div>
                       </div>
                     </td>
-                    <td className="whitespace-nowrap px-6 py-3 pe-6 bg-[var(--color-table-row-bg)] transition-colors">
+                    <td className="whitespace-nowrap px-6 py-3 pe-6  transition-colors">
                       <div>
                         <p className="font-medium">{service.pricing}</p>
                         <p className={`mt-1 text-sm ${tokens.subtleText}`}>
@@ -285,10 +285,10 @@ export const ServerServicesView = ({
                         </p>
                       </div>
                     </td>
-                    <td className="whitespace-nowrap px-6 py-3 pe-6 bg-[var(--color-table-row-bg)] transition-colors">
+                    <td className="whitespace-nowrap px-6 py-3 pe-6  transition-colors">
                       <p className="font-medium">{service.nextDueDate}</p>
                     </td>
-                    <td className="whitespace-nowrap px-6 py-3 pe-6 bg-[var(--color-table-row-bg)] transition-colors">
+                    <td className="whitespace-nowrap px-6 py-3 pe-6 transition-colors">
                       <span
                         className={`inline-flex items-center gap-1 text-sm font-medium ${
                           tokens.isDark ? "text-white" : "text-[#2B3674]"
@@ -298,7 +298,7 @@ export const ServerServicesView = ({
                         {service.status}
                       </span>
                     </td>
-                    <td className="whitespace-nowrap px-6 py-3 rounded-r-xl bg-[var(--color-table-row-bg)] transition-colors">
+                    <td className="whitespace-nowrap px-6 py-3 rounded-r-xl  transition-colors">
                       <div className="flex items-center gap-3">
                         <button
                           type="button"
@@ -330,7 +330,7 @@ export const ServerServicesView = ({
 
             <div className="flex items-center gap-2 text-sm text-[var(--color-page-text)]">
               <span>Showing</span>
-              <select className="rounded-lg border border-[var(--color-border-divider)] bg-[var(--color-card-bg)] px-2 py-1 text-sm focus:outline-none">
+              <select className="rounded-lg border border-[var(--color-border-divider)] px-2 py-1 text-sm focus:outline-none">
                 <option value="20">20</option>
                 <option value="50">50</option>
                 <option value="100">100</option>
