@@ -615,13 +615,13 @@ const QuotesTable = ({ tokens, searchQuery, activeAppId }: { readonly tokens: Da
 const MassPayment = ({ tokens, activeAppId }: { readonly tokens: DashboardTokens; readonly activeAppId: DashboardAppId }) => {
   const appColors = getAppColors(activeAppId, tokens.isDark);
   return (
-    <div className={`${tokens.cardBase} rounded-[28px] p-8 transition-colors`}>
+    <div className={`${tokens.cardBase} rounded-[20px] p-8 transition-colors`}>
       <h3 className="text-2xl font-semibold mb-4">Mass Payment</h3>
       <p className={`text-sm ${tokens.subtleText} mb-6`}>
         Pay multiple invoices at once using this feature. Select the invoices you want to pay and proceed with a single payment.
       </p>
       <div className="flex flex-col gap-4">
-        <div className="rounded-2xl border border-[var(--color-border-divider)] bg-[var(--color-shell-bg)] p-6">
+        <div className="rounded-[20px] border border-[var(--color-border-divider)] bg-[var(--color-shell-bg)] p-6">
           <h4 className="text-lg font-semibold mb-4">Selected Invoices</h4>
           <p className={`text-sm ${tokens.subtleText}`}>No invoices selected. Go to "My Invoices" tab to select invoices for mass payment.</p>
         </div>
@@ -639,7 +639,7 @@ const MassPayment = ({ tokens, activeAppId }: { readonly tokens: DashboardTokens
 const AddFunds = ({ tokens, activeAppId }: { readonly tokens: DashboardTokens; readonly activeAppId: DashboardAppId }) => {
   const appColors = getAppColors(activeAppId, tokens.isDark);
   return (
-    <div className={`${tokens.cardBase} rounded-[28px] p-8 transition-colors`}>
+    <div className={`${tokens.cardBase} rounded-[20px] p-8 transition-colors`}>
       <h3 className="text-2xl font-semibold mb-4">Add Funds</h3>
       <p className={`text-sm ${tokens.subtleText} mb-6`}>
         Add funds to your account balance to pay for invoices automatically or use for future purchases.
@@ -650,7 +650,7 @@ const AddFunds = ({ tokens, activeAppId }: { readonly tokens: DashboardTokens; r
           <input
             type="number"
             placeholder="Enter amount"
-            className={`w-full rounded-xl border ${tokens.divider} bg-transparent stroke px-4 py-3 text-[var(--color-search-text)] placeholder:text-[var(--color-search-placeholder)] focus:outline-none`}
+            className={`w-full rounded-[20px] border ${tokens.divider} bg-transparent stroke px-4 py-3 text-[var(--color-search-text)] placeholder:text-[var(--color-search-placeholder)] focus:outline-none`}
             style={{ 
               "--tw-ring-color": appColors.lighterAccent,
             } as React.CSSProperties & { "--tw-ring-color": string }}
@@ -664,7 +664,7 @@ const AddFunds = ({ tokens, activeAppId }: { readonly tokens: DashboardTokens; r
         </div>
         <div>
           <label className="block text-sm font-medium mb-2">Payment Method</label>
-          <select className={`w-full rounded-xl border ${tokens.divider} bg-transparent stroke px-4 py-3 text-[var(--color-search-text)] focus:outline-none`}
+          <select className={`w-full rounded-[20px] border ${tokens.divider} bg-transparent stroke px-4 py-3 text-[var(--color-search-text)] focus:outline-none`}
             style={{ 
               "--tw-ring-color": appColors.lighterAccent,
             } as React.CSSProperties & { "--tw-ring-color": string }}
@@ -730,7 +730,7 @@ export const BillingView = ({ tokens, activeAppId }: BillingViewProps) => {
     return (
       <>
         <SoftwareStatisticsCards tokens={tokens} />
-        <div className={`${tokens.cardBase} rounded-[28px] p-6 transition-colors`}>
+        <div className={`${tokens.cardBase} rounded-[20px] p-6 transition-colors`}>
           <SoftwareBillingView tokens={tokens} searchQuery={searchQuery} onSearchChange={setSearchQuery} />
         </div>
       </>
@@ -746,7 +746,7 @@ export const BillingView = ({ tokens, activeAppId }: BillingViewProps) => {
 
   // For cloud and app, show the tabbed interface
   return (
-    <div className={`${tokens.cardBase} rounded-[28px] px-6 py-4 transition-colors`}>
+    <div className={`${tokens.cardBase} rounded-[20px] px-6 py-4 transition-colors`}>
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           {/* <h2 className={`text-2xl font-semibold md:text-3xl ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>

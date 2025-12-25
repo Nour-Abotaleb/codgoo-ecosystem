@@ -77,12 +77,14 @@ export const BundleSelectionView = ({ tokens }: BundleSelectionViewProps) => {
         <div className={`text-base md:text-lg font-bold ${tokens.isDark ? "text-white" : "text-black"}`}>
           Select a Bundle Package
         </div>
-        <p className={`text-sm ${tokens.subtleText}`}>Pick the bundle that best fits your needs</p>
+        <p className={`text-sm ${tokens.subtleText}`}>
+          Pick the bundle that best fits your needs
+        </p>
       </div>
 
       {/* Loading State */}
       {isLoading && (
-        <div className={`${tokens.cardBase} rounded-2xl p-10 text-center`}>
+        <div className={`${tokens.cardBase} rounded-[20px] p-10 text-center`}>
           <p className={`text-lg ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"}`}>
             Loading bundles...
           </p>
@@ -93,7 +95,7 @@ export const BundleSelectionView = ({ tokens }: BundleSelectionViewProps) => {
       {!isLoading && bundleCards.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {bundleCards.map((bundle, idx) => (
-          <div key={bundle.id} className={`${tokens.cardBase} rounded-2xl bg-[#FAFAFA] overflow-hidden flex flex-col`}>
+          <div key={bundle.id} className={`${tokens.cardBase} rounded-[20px] bg-[#FAFAFA] overflow-hidden flex flex-col`}>
             <div className={`relative p-4 text-white ${topGradients[idx % topGradients.length]}`}>
               {bundle.badge ? (
                 <span className="absolute top-3 right-3 bg-white text-[#208483] text-xs font-medium px-3 py-1.5 rounded-full">
@@ -138,7 +140,7 @@ export const BundleSelectionView = ({ tokens }: BundleSelectionViewProps) => {
             </div>
 
             <div className="px-4 pb-4">
-              <div className="bg-[#EBFBFB] text-[#249796] rounded-2xl px-4 py-3 text-sm font-medium flex flex-col items-start gap-2 justify-between">
+              <div className="bg-[#EBFBFB] text-[#249796] rounded-[20px] px-4 py-3 text-sm font-medium flex flex-col items-start gap-2 justify-between">
                 <div className="flex items-center gap-2">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M3.67063 12.9386L7.44563 16.7136C8.99563 18.2636 11.5123 18.2636 13.0706 16.7136L16.729 13.0553C18.279 11.5053 18.279 8.98864 16.729 7.43031L12.9456 3.66364C12.154 2.87197 11.0623 2.44697 9.94563 2.50531L5.77896 2.70531C4.1123 2.78031 2.7873 4.10531 2.70396 5.76364L2.50396 9.93031C2.45396 11.0553 2.87896 12.147 3.67063 12.9386Z" stroke="#208483" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -171,7 +173,7 @@ export const BundleSelectionView = ({ tokens }: BundleSelectionViewProps) => {
 
       {/* Empty State */}
       {!isLoading && bundleCards.length === 0 && (
-        <div className={`${tokens.cardBase} rounded-2xl p-10 text-center`}>
+        <div className={`${tokens.cardBase} rounded-[20px] p-10 text-center`}>
           <p className={`text-lg ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"}`}>
             No bundles available at the moment.
           </p>

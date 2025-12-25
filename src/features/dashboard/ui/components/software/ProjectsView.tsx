@@ -116,7 +116,7 @@ export const ProjectsView = ({
           return (
             <div
               key={stat.id}
-              className={`${tokens.cardBase} rounded-2xl p-6`}
+              className={`${tokens.cardBase} rounded-[20px] p-6`}
             >
               <div className="flex items-start flex-col gap-4">
                 <div

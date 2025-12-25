@@ -86,7 +86,7 @@ export const LoginForm = () => {
       <button
         type="submit"
         disabled={loading}
-        className="mt-2 inline-flex h-14 items-center justify-center cursor-pointer rounded-[32px] bg-black text-base md:text-xl font-medium text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="mt-2 inline-flex h-14 items-center justify-center cursor-pointer rounded-[20px] bg-black text-base md:text-xl font-medium text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {loading ? "Logging in..." : "Login"}
       </button>

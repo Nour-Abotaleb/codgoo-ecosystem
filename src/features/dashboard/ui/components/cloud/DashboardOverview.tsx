@@ -155,7 +155,7 @@ export const DashboardOverview = ({
       {/* Hero Section */}
       <section>
         <div
-          className="relative overflow-hidden rounded-[54px] px-8 py-8 text-white transition-all duration-500"
+          className="relative overflow-hidden rounded-[20px] px-8 py-8 text-white transition-all duration-500"
           style={currentSlide.gradient ? { background: currentSlide.gradient } : undefined}
         >
           {/* Hero Image */}
@@ -250,7 +250,7 @@ export const DashboardOverview = ({
             {dataset.products.map((product) => (
               <div
                 key={product.id}
-                className={`grid gap-3 rounded-2xl ${tokens.isDark ? "stroke" : "bg-[#F4F4FF] "} px-4 py-1 text-sm  md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)_minmax(0,1fr)_auto] md:items-center`}
+                className={`grid gap-3 rounded-[20px] ${tokens.isDark ? "stroke" : "bg-[#F4F4FF] "} px-4 py-1 text-sm  md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)_minmax(0,1fr)_auto] md:items-center`}
               >
                 <div>
                   <p className="font-medium text-base text-[var(--color-page-text)]">{product.server}</p>
@@ -442,7 +442,7 @@ export const DashboardOverview = ({
             {dataset.sites.map((site) => (
               <div
                 key={site.id}
-                className={`relative rounded-[24px] px-6 py-4 transition-colors hover:border-[#7469C7] ${tokens.isDark ? "bg-transparent stroke" : "bg-[#F4F4FF]"}`}
+                className={`relative rounded-[20px] px-6 py-4 transition-colors hover:border-[#7469C7] ${tokens.isDark ? "bg-transparent stroke" : "bg-[#F4F4FF]"}`}
               >
                 {/* Domain Name */}
                 <div className="flex justify-between items-center">
@@ -504,13 +504,13 @@ export const DashboardOverview = ({
                   {ticket.title}
                 </h4>
                 <div className="flex items-center gap-2">
-                  <div className={`flex items-center gap-1 rounded-2xl py-2.5 max-w-fit px-4 text-sm ${tokens.isDark ? "bg-[#393C4C] text-white" : "bg-white text-[#584ABC]"}`}>
+                  <div className={`flex items-center gap-1 rounded-[20px] py-2.5 max-w-fit px-4 text-sm ${tokens.isDark ? "bg-[#393C4C] text-white" : "bg-white text-[#584ABC]"}`}>
                     <DateIcon className="h-4 w-4" />
                     <span>
                       {ticket.date} 
                     </span>
                   </div>
-                  <div className={`flex items-center gap-1 rounded-2xl py-2.5 max-w-fit px-4 text-sm ${tokens.isDark ? "bg-[#393C4C] text-white" : "bg-white text-[#584ABC]"}`}>
+                  <div className={`flex items-center gap-1 rounded-[20px] py-2.5 max-w-fit px-4 text-sm ${tokens.isDark ? "bg-[#393C4C] text-white" : "bg-white text-[#584ABC]"}`}>
                     <ClockIcon className="h-4 w-4" />
                     <span>{ticket.time}</span>
                   </div>

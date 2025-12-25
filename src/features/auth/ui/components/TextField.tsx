@@ -24,7 +24,7 @@ export const TextField = ({
       <span className="pointer-events-none absolute left-5 top-0 -translate-y-[40%] bg-white px-2 text-base md:text-lg font-medium tracking-wide text-black">
         {label ?? placeholder}
       </span>
-      <div className={`flex h-14 items-center overflow-hidden rounded-[16px] border bg-white text-sm text-slate-700 transition focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20 ${error ? 'border-red-500' : 'border-[color:var(--color-auth-border)]'}`}>
+      <div className={`flex h-14 items-center overflow-hidden rounded-[20px] border bg-white text-sm text-slate-700 transition focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20 ${error ? 'border-red-500' : 'border-[color:var(--color-auth-border)]'}`}>
         <input
           id={name}
           name={name}

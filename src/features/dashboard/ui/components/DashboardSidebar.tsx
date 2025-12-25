@@ -38,6 +38,11 @@ import type {
 import { PlaceholderIcon } from "./PlaceholderIcon";
 import { getDefaultDashboard, setDefaultDashboard } from "../utils/dashboardPreferences";
 
+// Import logos for Electron compatibility
+import logoCloud from "/logo-cloud.svg";
+import logoSoftware from "/logo-software.svg";
+import logoApp from "/logo-app.svg";
+
 type DashboardSidebarProps = {
   readonly apps: readonly DashboardApp[];
   readonly activeAppId: DashboardAppId;
@@ -121,7 +126,13 @@ export const DashboardSidebar = ({
     marketplace: MarketplaceIcon
   };
 
-  const navActiveColorHex = tokens.isDark ? "#FFFFFF" : "#584ABC";
+  const navActiveColorHex = tokens.isDark 
+    ? "#FFFFFF" 
+    : activeAppId === "software" 
+    ? "#071FD7" 
+    : activeAppId === "app"
+    ? "#0F6773"
+    : "#584ABC";
   const navIdleColorHex = tokens.isDark ? "#FFFFFF" : "#504343";
 
   const navActiveColorClass = `text-[${navActiveColorHex}]`;
@@ -140,7 +151,7 @@ export const DashboardSidebar = ({
 
   return (
     <aside
-      className={`dashboard__sidebar fixed inset-y-0 ${isRTL ? "right-0" : "left-0"} z-20 hidden min-h-screen w-64 pe-1 flex-col pt-10 lg:flex ${tokens.sidebarClass}`}
+      className={`dashboard__sidebar fixed inset-y-0 ${isRTL ? "right-0" : "left-0"} z-20 hidden min-h-screen w-64 pe-1 flex-col pt-6 lg:flex ${tokens.sidebarClass}`}
     >
       <div className={`relative flex justify-center gap-6  mx-2 rounded-[20px] p-4  ${
                 tokens.isDark ? 'bg-tranparent' : 'bg-[#F9FBFD]'
@@ -206,10 +217,10 @@ export const DashboardSidebar = ({
                           <img
                             src={
                               app.id === "cloud"
-                                ? "/logo-cloud.svg"
+                                ? logoCloud
                                 : app.id === "app"
-                                ? "/logo-software.svg"
-                                : "/logo-app.svg"
+                                ? logoSoftware
+                                : logoApp
                             }
                             alt={`${app.id} logo`}
                             className="h-6 w-auto object-contain"
@@ -259,6 +270,29 @@ export const DashboardSidebar = ({
           const isActive = item.id === activeNavId;
           const Icon = item.icon ? iconMap[item.icon] : undefined;
 
+          // Determine border color based on activeAppId
+          const getBorderColor = () => {
+            if (!isActive) return {};
+            
+            if (tokens.isDark) {
+              return {
+                border: activeAppId === "software" 
+                  ? "1.05px solid #071FD7" 
+                  : activeAppId === "app"
+                  ? "1.05px solid #0F6773"
+                  : "1.05px solid #7469C7"
+              };
+            } else {
+              return {
+                border: activeAppId === "software" 
+                  ? "1.05px solid #071FD7" 
+                  : activeAppId === "app"
+                  ? "1.05px solid #0F6773"
+                  : "1.05px solid #584ABC"
+              };
+            }
+          };
+
           const iconColorClass = isActive
             ? navActiveColorClass
             : `${navIdleColorClass} group-hover:${hoverColorClass}`;
@@ -272,14 +306,14 @@ export const DashboardSidebar = ({
               type="button"
               onClick={() => onSelectNav(item.id)}
               aria-current={isActive ? "page" : undefined}
-              className={`group relative flex flex-col cursor-pointer items-center justify-center  overflow-hidden rounded-[20px] px-4 py-4 text-lg font-semibold transition-all ${
+              className={`group relative flex flex-col cursor-pointer items-center justify-center overflow-hidden rounded-[20px] px-4 py-4 text-lg font-semibold transition-[border] duration-200 ease-in-out ${
                 tokens.isDark ? 'bg-[#13181E]' : 'bg-[#F9FBFD]'
               }`}
-              style={isActive ? { border: tokens.isDark ? '1.05px solid #7469C7' : '1.05px solid #584ABC' } : {}}
+              style={getBorderColor()}
             >
               <span className="relative flex h-10 w-10 items-center justify-center">
                 {Icon ? (
-                  <Icon className={`h-6 w-6 transition-colors ${iconColorClass}`} />
+                  <Icon className={`h-6 w-6 transition-colors duration-200 ease-in-out ${iconColorClass}`} />
                 ) : (
                   <PlaceholderIcon
                     label={t(`navigation.${item.id}`)}
@@ -290,7 +324,7 @@ export const DashboardSidebar = ({
                   />
                 )}
               </span>
-              <span className={`relative transition-colors text-center ${labelColorClass}`}>
+              <span className={`relative transition-colors duration-200 ease-in-out text-center ${labelColorClass}`}>
                 {t(`navigation.${item.id}`)}
               </span>
             </button>

@@ -55,13 +55,13 @@ export const ProductDetailsView = ({ productId, tokens, onBack }: ProductDetails
     <div className="flex flex-col gap-6">
 
       {/* Two Column Layout in One Container */}
-      <div className={`${tokens.cardBase} rounded-2xl px-6 py-10 transition-colors ${tokens.isDark ? "bg-tansparent stroke " : "!bg-white"}`}>
+      <div className={`${tokens.cardBase} rounded-[20px] px-6 py-10 transition-colors ${tokens.isDark ? "bg-tansparent stroke " : "!bg-white"}`}>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left Column - Images */}
           <div>
             {/* Main Product Image */}
             <div className="mb-6">
-              <div className="relative bg-[#FFFEF7] rounded-2xl overflow-hidden flex flex-col items-center justify-center gap-10">
+              <div className="relative bg-[#FFFEF7] rounded-[20px] overflow-hidden flex flex-col items-center justify-center gap-10">
                 <img
                   src={prDetailsImg}
                   alt="Product details"
@@ -126,7 +126,7 @@ export const ProductDetailsView = ({ productId, tokens, onBack }: ProductDetails
                   key={feature.id}
                   type="button"
                   onClick={() => toggleFeature(feature.id)}
-                  className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all text-left max-w-[450px] ${
+                  className={`flex items-center gap-3 p-3 rounded-[20px] border-2 transition-all text-left max-w-[450px] ${
                     feature.selected
                       ? tokens.isDark
                         ? "border-[#071FD7] bg-[#071FD7]/10"

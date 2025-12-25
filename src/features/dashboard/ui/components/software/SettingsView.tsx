@@ -65,7 +65,7 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
   const [accountSharingData, setAccountSharingData] = useState<readonly AccountSharingItem[]>(initialAccountSharingData);
 
-  const cardClass = `${tokens.cardBase} rounded-[28px] p-6 transition-colors`;
+  const cardClass = `${tokens.cardBase} rounded-[20px] p-6 transition-colors`;
   const sectionTitleClass = `text-xl font-bold ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`;
   const labelClass = `text-sm font-medium ${tokens.isDark ? "text-white/70" : "text-[#2B3674]"}`;
   const valueClass = `text-sm md:text-base ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`;

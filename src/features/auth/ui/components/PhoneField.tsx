@@ -148,7 +148,7 @@ export const PhoneField = ({ label, name = "phone", defaultCountry = "US", error
         <span className="pointer-events-none absolute left-5 top-0 -translate-y-[40%] bg-white px-2 text-base md:text-lg font-medium tracking-wide text-black">
           {label}
         </span>
-        <div className={`flex h-14 items-center gap-3 rounded-[16px] border bg-white pe-4 text-sm text-slate-600 transition focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20 ${error ? 'border-red-500' : 'border-[color:var(--color-auth-border)]'}`}>
+        <div className={`flex h-14 items-center gap-3 rounded-[20px] border bg-white pe-4 text-sm text-slate-600 transition focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20 ${error ? 'border-red-500' : 'border-[color:var(--color-auth-border)]'}`}>
         <input
           ref={phoneInputRef}
           type="tel"
@@ -202,7 +202,7 @@ export const PhoneField = ({ label, name = "phone", defaultCountry = "US", error
           </button>
 
           {isOpen ? (
-            <div className="absolute right-0 z-20 mt-2 w-64 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl">
+            <div className="absolute right-0 z-20 mt-2 w-64 overflow-hidden rounded-[20px] border border-slate-200 bg-white shadow-xl">
               <ul className="max-h-64 overflow-y-auto py-2" role="listbox">
                 {countries.map((country) => (
                   <li key={country.code}>

@@ -28,7 +28,7 @@ export const EmailVerificationSuccessModal = ({
       />
 
       {/* Modal */}
-      <div className={`relative w-full max-w-xl ${tokens.cardBase} rounded-2xl p-6 max-h-[90vh] overflow-hidden flex flex-col`}>
+      <div className={`relative w-full max-w-xl ${tokens.cardBase} rounded-[20px] p-6 max-h-[90vh] overflow-hidden flex flex-col`}>
         {/* Content */}
         <div className="flex flex-col items-center gap-2">
           {/* Success Icon */}

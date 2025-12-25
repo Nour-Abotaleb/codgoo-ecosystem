@@ -71,7 +71,7 @@ export const ManageDomainView = ({ tokens }: ManageDomainViewProps) => {
 
   if (!domain || dataset.domains.length === 0) {
     return (
-      <div className={`${tokens.cardBase} rounded-[32px] px-6 py-4 transition-colors`}>
+      <div className={`${tokens.cardBase} rounded-[20px] px-6 py-4 transition-colors`}>
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <h1 className="mt-6 text-3xl font-semibold tracking-tight lg:text-4xl">
@@ -89,7 +89,7 @@ export const ManageDomainView = ({ tokens }: ManageDomainViewProps) => {
   return (
     <div className="flex flex-col gap-6">
       {/* Congrats Banner */}
-      <div className="relative overflow-hidden rounded-[24px]">
+      <div className="relative overflow-hidden rounded-[20px]">
         <img src={domainsBg} alt="" className="w-full max-h-[260px] " />
         <div className="absolute inset-0 p-6 flex items-start flex-col justify-center gap-2 text-white">
           <div className="flex items-center gap-2 text-2xl md:text-3xl lg:text-[44px]">
@@ -109,7 +109,7 @@ export const ManageDomainView = ({ tokens }: ManageDomainViewProps) => {
         {/* First Row: Domain Overview with CircularProgress | Protect Your Brand */}
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,2fr)]">
           {/* Domain Overview Card */}
-          <div className="rounded-[28px] border border-[var(--color-border-divider)] bg-[var(--color-shell-bg)] px-6 py-4">
+          <div className="rounded-[20px] border border-[var(--color-border-divider)] bg-[var(--color-shell-bg)] px-6 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className={`flex h-12 w-12 items-center justify-center rounded-full ${
@@ -147,7 +147,7 @@ export const ManageDomainView = ({ tokens }: ManageDomainViewProps) => {
           </div>
 
           {/* Protect Your Brand */}
-          <div className="flex flex-col justify-between rounded-[28px] border border-[var(--color-border-divider)] bg-[var(--color-shell-bg)] p-6">
+          <div className="flex flex-col justify-between rounded-[20px] border border-[var(--color-border-divider)] bg-[var(--color-shell-bg)] p-6">
             <div className="flex items-start justify-between">
               <div>
                 <h3 className={`text-lg md:text-xl font-semibold ${tokens.isDark ? "text-[var(--color-page-text)]" : "text-[#2B3674]"}`}>Protect Your Brand</h3>
@@ -193,7 +193,7 @@ export const ManageDomainView = ({ tokens }: ManageDomainViewProps) => {
           {/* Build Web App Card */}
           <div>
             <div className="relative">
-              <img src={buildBg} alt="" className="w-full max-h-[420px] object-cover rounded-[24px]" />
+              <img src={buildBg} alt="" className="w-full max-h-[420px] object-cover rounded-[20px]" />
               <div className="absolute inset-0 p-12 flex flex-col justify-between">
                 <div>
                   <div className="flex items-start justify-between">
@@ -219,7 +219,7 @@ export const ManageDomainView = ({ tokens }: ManageDomainViewProps) => {
           </div>
 
           {/* DNS / Nameservers */}
-          <div className="flex flex-col gap-6 rounded-[28px] border border-[var(--color-border-divider)] bg-[var(--color-shell-bg)] px-6 py-4 h-full">
+          <div className="flex flex-col gap-6 rounded-[20px] border border-[var(--color-border-divider)] bg-[var(--color-shell-bg)] px-6 py-4 h-full">
             <div>
               <div className="flex items-start justify-between">
                 <h3 className={`text-lg md:text-xl font-semibold ${tokens.isDark ? "text-[var(--color-page-text)]" : "text-[#2B3674]"}`}>DNS / Nameservers</h3>

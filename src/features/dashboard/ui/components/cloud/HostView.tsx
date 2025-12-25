@@ -195,7 +195,7 @@ export const HostView = ({ tokens }: HostViewProps) => {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className={`${tokens.cardBase} rounded-[28px] py-4 px-6 transition-colors`}>
+      <div className={`${tokens.cardBase} rounded-[20px] py-4 px-6 transition-colors`}>
         {/* Title */}
         {/* <div className="mb-3">
           <h2 className={`text-2xl font-semibold md:text-3xl ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>

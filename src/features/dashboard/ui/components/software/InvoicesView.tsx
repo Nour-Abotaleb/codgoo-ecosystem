@@ -135,7 +135,7 @@ export const InvoicesView = ({ tokens }: InvoicesViewProps) => {
         {invoiceStats.map((stat) => {
           const Icon = stat.icon;
           return (
-            <div key={stat.id} className={`${tokens.cardBase} rounded-2xl p-6`}>
+            <div key={stat.id} className={`${tokens.cardBase} rounded-[20px] p-6`}>
               <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-start" style={{ color: iconBaseColor }}>
                   <Icon className="h-8 w-8 md:h-10 md:w-10" />
@@ -157,7 +157,7 @@ export const InvoicesView = ({ tokens }: InvoicesViewProps) => {
         {invoicesData.map((invoice) => (
           <div
             key={invoice.id}
-            className={`${tokens.cardBase} rounded-2xl overflow-hidden transition-colors ${tokens.isDark ? "bg-[#0F1217]" : "!bg-[#F4F5FF]"}`}
+            className={`${tokens.cardBase} rounded-[20px] overflow-hidden transition-colors ${tokens.isDark ? "bg-[#0F1217]" : "!bg-[#F4F5FF]"}`}
           >
             {/* Top Section */}
             <div className="flex flex-col gap-1 px-4 py-2">

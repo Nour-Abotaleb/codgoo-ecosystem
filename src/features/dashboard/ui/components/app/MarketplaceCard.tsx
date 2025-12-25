@@ -53,7 +53,7 @@ export const MarketplaceCard = ({
 
   return (
     <div
-      className={`${tokens.cardBase} rounded-2xl p-4 transition-all flex flex-col relative ${
+      className={`${tokens.cardBase} rounded-[20px] p-4 transition-all flex flex-col relative ${
         isSelectionMode
           ? isSelected 
             ? "border-2 border-[#0F6773] cursor-pointer" 

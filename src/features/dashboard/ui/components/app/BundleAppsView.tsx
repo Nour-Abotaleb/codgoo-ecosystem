@@ -171,18 +171,44 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
       const response = await buildBundle(payload).unwrap();
 
       if (response.status) {
+        // Save bundle subscription to localStorage
+        if (response.data?.bundleId) {
+          try {
+            const newSubscription = {
+              id: response.data.id,
+              bundle_package_id: response.data.bundleId,
+              bundle_name: heading,
+              status: response.data.status || "pending",
+              expires_at: null,
+              applications: []
+            };
+
+            const subscriptionsStr = localStorage.getItem("auth_subscriptions");
+            let subscriptions = [];
+            
+            if (subscriptionsStr) {
+              subscriptions = JSON.parse(subscriptionsStr);
+              if (!Array.isArray(subscriptions)) {
+                subscriptions = [];
+              }
+            }
+
+            // Add new subscription
+            subscriptions.push(newSubscription);
+            localStorage.setItem("auth_subscriptions", JSON.stringify(subscriptions));
+          } catch (error) {
+            console.error("Error saving subscription to localStorage:", error);
+          }
+        }
         toast.success("Bundle subscription successful!");
-        // Show checkout view
         setShowCheckout(true);
       } else {
         toast.error(response.message || "Failed to subscribe to bundle");
-        // Still show checkout view even on failure
         setShowCheckout(true);
       }
     } catch (error: any) {
       console.error("Bundle subscription error:", error);
       toast.error(error?.data?.message || "An error occurred while subscribing to the bundle");
-      // Show checkout view even on error
       setShowCheckout(true);
     } finally {
       setIsSubmitting(false);
@@ -206,7 +232,7 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
   return (
     <div className="flex flex-col gap-4">
       {/* Bundle Details */}
-      <div className={`flex flex-col gap-2 ${tokens.isDark ? "bg-[#1F2733]" : "bg-white"} rounded-[24px] p-4`}>
+      <div className={`flex flex-col gap-2 ${tokens.isDark ? "bg-[#1F2733]" : "bg-white"} rounded-[20px] p-4`}>
         <div className="flex items-center gap-3">
           <div className={`flex items-center gap-2 cursor-pointer ${tokens.isDark ? "bg-[#2a2a2a] text-[#34D8D6]" : "bg-[#E7F0F1] text-[#0F6773]"} rounded-full p-2 w-12 h-12 justify-center`} onClick={() => navigate("/dashboard/marketplace/bundles")}>
             <ArrowRight className="w-4 h-4 md:w-5 md:h-5 rotate-180" />
@@ -220,7 +246,7 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
             </p>
           </div>
         </div>
-        <div className={`${tokens.isDark ? "bg-[#2a2a2a]" : "bg-[#FAFAFA]"} rounded-[24px] p-6 mt-4`}>
+        <div className={`${tokens.isDark ? "bg-[#2a2a2a]" : "bg-[#FAFAFA]"} rounded-[20px] p-6 mt-4`}>
           <div className="flex items-start justify-between gap-4 mb-2">
             <div className="flex flex-col gap-2 flex-1">
               <span className={`px-3 py-1 rounded-full ${tokens.isDark ? "bg-[#1a3a3a] text-[#34D8D6]" : "bg-[#EBFBFB] text-[#208483]"} text-sm font-medium flex items-center gap-1 w-fit`}>
@@ -260,7 +286,7 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
           {isComplete && (
             <div className="mt-4 mb-3 grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Original Price Card */}
-              <div className={`${tokens.isDark ? "bg-[#2a2a2a]" : "bg-[#FAFAFA]"} rounded-[24px] p-6`}>
+              <div className={`${tokens.isDark ? "bg-[#2a2a2a]" : "bg-[#FAFAFA]"} rounded-[20px] p-6`}>
                 <p className={`text-sm md:text-base mb-1 ${tokens.isDark ? "text-gray-400" : "text-[#5F5F5F]"}`}>Original Price</p>
                 <p className={`text-xl md:text-2xl ${tokens.isDark ? "text-white" : "text-[#142133]"}`}>
                   {originalPrice.toLocaleString()} EGP
@@ -268,7 +294,7 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
               </div>
 
               {/* Bundle Price Card */}
-              <div className={`${tokens.isDark ? "bg-[#2a2a2a]" : "bg-[#FAFAFA]"} rounded-[24px] p-6`}>
+              <div className={`${tokens.isDark ? "bg-[#2a2a2a]" : "bg-[#FAFAFA]"} rounded-[20px] p-6`}>
                 <p className={`text-sm md:text-base mb-1 ${tokens.isDark ? "text-gray-400" : "text-[#5F5F5F]"}`}>Bundle Price</p>
                 <p className={`text-xl md:text-2xl ${tokens.isDark ? "text-[#34D8D6]" : "text-[#34D8D6]"}`}>
                   {bundlePrice.toLocaleString()} EGP
@@ -276,7 +302,7 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
               </div>  
 
               {/* You Save Card */}
-              <div className={`${tokens.isDark ? "bg-[#1a3a1a66] text-[#4ade80]" : "bg-[#E5F9E9] text-[#228C3D]"} rounded-[24px] p-6`}>
+              <div className={`${tokens.isDark ? "bg-[#1a3a1a66] text-[#4ade80]" : "bg-[#E5F9E9] text-[#228C3D]"} rounded-[20px] p-6`}>
                 <p className={`text-sm md:text-base mb-1 ${tokens.isDark ? "text-[#4ade80]" : "text-[#228C3D]"}`}>You Save</p>
                 <p className={`text-xl md:text-2xl ${tokens.isDark ? "text-[#4ade80]" : "text-[#228C3D]"}`}>
                   {savings.toLocaleString()} EGP <span className="text-sm font-light">({savingsPercentage}%)</span>
@@ -325,7 +351,7 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
       </div>
 
       {/* Purchase Popup - Always visible */}
-      <div className={`sticky bottom-2 ${tokens.isDark ? "bg-[#1a1a1a] border-gray-700" : "bg-[#E5F2F4]"} p-6 z-50 mt-6 rounded-[24px]`}>
+      <div className={`sticky bottom-2 ${tokens.isDark ? "bg-[#1a1a1a] border-gray-700" : "bg-[#E5F2F4]"} p-6 z-50 mt-6 rounded-[20px]`}>
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex flex-col gap-1">
               <h3 className={`text-xl font-medium ${tokens.isDark ? "text-white" : "text-black"}`}>

@@ -157,7 +157,7 @@ export const ProductsView = ({ tokens }: ProductsViewProps) => {
   return (
     <div className="flex flex-col gap-6">
       {/* Featured Product Section */}
-      <div className={`${tokens.cardBase} rounded-[28px] overflow-hidden transition-colors relative ${tokens.isDark ? "bg-[#1E1B2E]" : "bg-[#2B3674]"}`}>
+      <div className={`${tokens.cardBase} rounded-[20px] overflow-hidden transition-colors relative ${tokens.isDark ? "bg-[#1E1B2E]" : "bg-[#2B3674]"}`}>
         <img
           src={productsBg}
           alt="Product illustration"
@@ -217,7 +217,7 @@ export const ProductsView = ({ tokens }: ProductsViewProps) => {
         {paginatedProducts.map((product) => (
           <div
             key={product.id}
-            className={`${tokens.cardBase} rounded-2xl overflow-hidden transition-colors ${tokens.isDark ? "bg-tansparent stroke " : "!bg-white"}`}
+            className={`${tokens.cardBase} rounded-[20px] overflow-hidden transition-colors ${tokens.isDark ? "bg-tansparent stroke " : "!bg-white"}`}
           >
             {/* Product Image */}
             <div className="relative overflow-hidden">

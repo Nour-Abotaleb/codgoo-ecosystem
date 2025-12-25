@@ -16,6 +16,7 @@ import { TasksView } from "./TasksView";
 import { InvoicesView } from "./InvoicesView";
 import { AttachmentsView } from "./AttachmentsView";
 import type { DashboardTokens } from "../../types";
+import { useTabState } from "@shared/hooks/useTabState";
 
 type ProjectDetailsViewProps = {
   readonly project: ProjectCardData;
@@ -96,7 +97,7 @@ export const ProjectDetailsView = ({
 }: ProjectDetailsViewProps) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [activeTab, setActiveTab] = useState<TabId>("overview");
+  const [activeTab, setActiveTab] = useTabState<TabId>("overview");
   const [activeMilestoneTab, setActiveMilestoneTab] = useState(0);
   
   const milestoneTabs = ["Milestone", "Milestone", "Milestone", "Milestone", "Milestone"];
@@ -160,7 +161,7 @@ export const ProjectDetailsView = ({
               return (
                 <div
                   key={stat.id}
-                  className={`${tokens.cardBase} rounded-2xl p-6`}
+                  className={`${tokens.cardBase} rounded-[20px] p-6`}
                 >
                   <div className="flex flex-col gap-4">
                     <div
@@ -194,7 +195,7 @@ export const ProjectDetailsView = ({
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {/* Progress Timeline */}
             <div
-              className={`${tokens.cardBase} rounded-2xl p-6`}
+              className={`${tokens.cardBase} rounded-[20px] p-6`}
             >
               <h3
                 className={`text-lg md:text-xl font-semibold mb-4 ${
@@ -234,7 +235,7 @@ export const ProjectDetailsView = ({
 
             {/* Activity & Notes */}
             <div
-              className={`${tokens.cardBase} rounded-2xl p-6`}
+              className={`${tokens.cardBase} rounded-[20px] p-6`}
             >
               <div className="flex items-center justify-between mb-4">
                 <h3
@@ -297,7 +298,7 @@ export const ProjectDetailsView = ({
 
       {activeTab !== "overview" && activeTab !== "tasks" && activeTab !== "invoices" && activeTab !== "attachments" && (
         <div
-          className={`${tokens.cardBase} rounded-2xl p-10`}
+          className={`${tokens.cardBase} rounded-[20px] p-10`}
         >
           <p className={`text-center ${tokens.subtleText}`}>
             {tabs.find((t) => t.id === activeTab)?.label} content coming soon...

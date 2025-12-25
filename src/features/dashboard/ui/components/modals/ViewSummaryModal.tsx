@@ -81,7 +81,7 @@ export const ViewSummaryModal = ({
       />
 
       {/* Modal */}
-      <div className={`relative w-full max-w-xl ${tokens.cardBase} ${tokens.isDark ? "bg-[#232637]" : "bg-white"} rounded-2xl max-h-[90vh] overflow-hidden flex flex-col`}>
+      <div className={`relative w-full max-w-xl ${tokens.cardBase} ${tokens.isDark ? "bg-[#232637]" : "bg-white"} rounded-[20px] max-h-[90vh] overflow-hidden flex flex-col`}>
         {/* Header */}
         <div className={`flex items-center justify-between px-6 pt-6 pb-4 flex-shrink-0 rounded-t-2xl ${
           tokens.isDark ? "bg-[#232637]" : "bg-[#FFFEF7]"
@@ -116,7 +116,7 @@ export const ViewSummaryModal = ({
         <div className="flex-1 overflow-y-auto scrollbar-hide pt-3 px-6">
           <div className="flex flex-col gap-6 pb-4">
             {/* Meeting Summary Section */}
-            <div className={`flex flex-col gap-4 py-4 px-2 rounded-2xl ${tokens.isDark ? "" : "bg-[#F4F5FF]"}`}>
+            <div className={`flex flex-col gap-4 py-4 px-2 rounded-[20px] ${tokens.isDark ? "" : "bg-[#F4F5FF]"}`}>
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
                   <h3 className={`text-lg font-bold ${tokens.isDark ? "text-white" : "text-black"}`}>

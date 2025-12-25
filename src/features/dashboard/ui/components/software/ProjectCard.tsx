@@ -115,7 +115,7 @@ export const ProjectCard = ({
     : 0;
 
   return (
-    <div className={`${tokens.cardBase} rounded-2xl p-6`}>
+    <div className={`${tokens.cardBase} rounded-[20px] p-6`}>
       <div className="flex flex-col gap-4">
         {/* Title, Description, Team Section with Chart */}
         <div className="flex items-center justify-between gap-6">
@@ -170,7 +170,7 @@ export const ProjectCard = ({
 
         {/* Key Details Row */}
         <div className={`flex flex-col ${!onViewDetails ? 'lg:flex-row' : ''} gap-4`}>
-          <div className={`rounded-xl p-4 flex-1 ${tokens.isDark ? tokens.surfaceMuted : ''}`} style={tokens.isDark ? {} : { backgroundColor: '#FCF6D4' }}>
+          <div className={`rounded-[20px] p-4 flex-1 ${tokens.isDark ? tokens.surfaceMuted : ''}`} style={tokens.isDark ? {} : { backgroundColor: '#FCF6D4' }}>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 items-center">
               <div className="flex flex-col gap-2">
                 <span className="text-sm md:text-base ${tokens.isDark ? 'text-[#718EBF]' : 'text-[#232323]'} font-medium">Start</span>

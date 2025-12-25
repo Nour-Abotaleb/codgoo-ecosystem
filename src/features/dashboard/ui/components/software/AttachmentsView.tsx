@@ -116,14 +116,14 @@ export const AttachmentsView = ({ tokens }: AttachmentsViewProps) => {
           return (
             <div
               key={attachment.id}
-              className={`${tokens.cardBase} rounded-2xl overflow-hidden transition-colors`}
+              className={`${tokens.cardBase} rounded-[20px] overflow-hidden transition-colors`}
             >
               {/* Preview Area */}
               <div className={`h-60 ${tokens.isDark ? "bg-transparent " : "bg-[#F4F5FF]"} flex flex-col relative group/image`}>
                 <div className="flex-1 flex items-center justify-center relative overflow-hidden p-3">
                   {isImage ? (
                     <div
-                      className={`w-full h-full flex items-center justify-center relative rounded-2xl overflow-hidden p-3 ${
+                      className={`w-full h-full flex items-center justify-center relative rounded-[20px] overflow-hidden p-3 ${
                         tokens.isDark ? "bg-[#1D1D2D]" : "bg-[#E9ECFF]"
                       }`}
                     >
@@ -134,14 +134,14 @@ export const AttachmentsView = ({ tokens }: AttachmentsViewProps) => {
                       />
                       {/* Hover Overlay with Eye Icon */}
                       <div 
-                        className="absolute inset-0 bg-black/25 opacity-0 group-hover/image:opacity-100 rounded-2xl transition-opacity duration-300 flex items-center justify-center cursor-pointer"
+                        className="absolute inset-0 bg-black/25 opacity-0 group-hover/image:opacity-100 rounded-[20px] transition-opacity duration-300 flex items-center justify-center cursor-pointer"
                         onClick={() => setPreviewImage(screenshotImage)}
                       >
                         <EyeIcon className="h-8 w-8 text-white" />
                       </div>
                     </div>
                   ) : isDocx ? (
-                    <div className={`rounded-2xl w-full h-full flex items-center justify-center ${
+                    <div className={`rounded-[20px] w-full h-full flex items-center justify-center ${
                       tokens.isDark ? "bg-[#1D1D2D]" : "bg-[#E9ECFF]"
                     }`}>
                       <DocstIcon
@@ -149,7 +149,7 @@ export const AttachmentsView = ({ tokens }: AttachmentsViewProps) => {
                       />
                     </div>
                   ) : isPdf ? (
-                    <div className={`rounded-2xl w-full h-full flex items-center justify-center ${
+                    <div className={`rounded-[20px] w-full h-full flex items-center justify-center ${
                       tokens.isDark ? "bg-[#1D1D2D]" : "bg-[#E9ECFF]"
                     }`}>
                       <PDFIcon

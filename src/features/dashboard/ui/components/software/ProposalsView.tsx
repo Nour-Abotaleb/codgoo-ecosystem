@@ -99,7 +99,7 @@ export const ProposalsView = ({ tokens, project }: ProposalsViewProps) => {
         })}
       </div>
 
-      <div className={`${tokens.cardBase} rounded-2xl p-6 flex flex-col gap-6`}>
+      <div className={`${tokens.cardBase} rounded-[20px] p-6 flex flex-col gap-6`}>
       {/* Project Header */}
       <div className="flex items-start justify-between">
         <div className="flex flex-col gap-2">
@@ -217,7 +217,7 @@ export const ProposalsView = ({ tokens, project }: ProposalsViewProps) => {
 
         {/* Right Panel - Summary/Discussion */}
         <div className="flex flex-col gap-6">
-          <div className={`${tokens.isDark ? "!bg-transparent stroke" : "!bg-[#FFFEF7]"} rounded-2xl overflow-hidden flex flex-col`}>
+          <div className={`${tokens.isDark ? "!bg-transparent stroke" : "!bg-[#FFFEF7]"} rounded-[20px] overflow-hidden flex flex-col`}>
             {/* Tabs */}
             <div className="flex border-b border-[#E6E6E6]">
               <button

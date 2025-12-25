@@ -10,7 +10,9 @@
   },
   "actions": {
     "learnMore": "اعرف المزيد",
-    "getStarted": "ابدأ الآن"
+    "getStarted": "ابدأ الآن",
+    "back": "رجوع",
+    "forward": "تقدم"
   },
   "footer": {
     "madeWith": "صنع بحب ❤️ بعقلية تركز على الميزات"

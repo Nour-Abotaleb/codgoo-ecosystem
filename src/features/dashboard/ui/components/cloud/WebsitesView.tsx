@@ -56,7 +56,7 @@ const WebsiteCard = ({
   ] as const;
 
   return (
-    <div className={`relative rounded-[24px] px-6 py-4 transition-colors hover:border-[#7469C7] ${tokens.isDark ? "bg-transparent stroke" : "bg-[#F4F4FF]"}`}>
+    <div className={`relative rounded-[20px] px-6 py-4 transition-colors hover:border-[#7469C7] ${tokens.isDark ? "bg-transparent stroke" : "bg-[#F4F4FF]"}`}>
 
       {/* Domain Name */}
       <div className="flex justify-between items-center">
@@ -75,7 +75,7 @@ const WebsiteCard = ({
           </button>
           {isMenuOpen ? (
             <div
-              className={`absolute right-0 top-full z-20 w-56 rounded-2xl border p-1 text-left shadow-xl ${
+              className={`absolute right-0 top-full z-20 w-56 rounded-[20px] border p-1 text-left shadow-xl ${
                 tokens.isDark
                   ? "border-white/10 bg-[#141325]"
                   : "border-gray-200 bg-white"
@@ -86,7 +86,7 @@ const WebsiteCard = ({
                   <li key={action.id}>
                     <button
                       type="button"
-                      className={`w-full rounded-xl px-4 py-2 text-left text-sm font-medium transition ${
+                      className={`w-full rounded-[20px] px-4 py-2 text-left text-sm font-medium transition ${
                         tokens.isDark
                           ? "text-slate-100 hover:bg-white/10 hover:text-white"
                           : "text-black hover:bg-gray-100 hover:text-black"
@@ -259,7 +259,7 @@ export const WebsitesView = ({ sites, tokens }: WebsitesViewProps) => {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className={`${tokens.cardBase} rounded-[28px] py-4 px-6 transition-colors`}>
+      <div className={`${tokens.cardBase} rounded-[20px] py-4 px-6 transition-colors`}>
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
             <h2 className={`text-2xl font-semibold ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
@@ -312,7 +312,7 @@ export const WebsitesView = ({ sites, tokens }: WebsitesViewProps) => {
             )}
           </>
         ) : (
-          <div className="mt-8 rounded-xl bg-[#0F1217] px-6 py-12 text-center text-sm transition-colors">
+          <div className="mt-8 rounded-[20px] bg-[#0F1217] px-6 py-12 text-center text-sm transition-colors">
             <p className="text-base font-semibold">
               No websites found yet
             </p>

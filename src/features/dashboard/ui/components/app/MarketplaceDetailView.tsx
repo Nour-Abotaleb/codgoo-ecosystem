@@ -89,7 +89,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
         {/* Left Column: Application Header, Rating Card, Tabs, and Content */}
         <div className="flex flex-col gap-4">
           {/* Application Header */}
-          <div className={`${tokens.cardBase} rounded-2xl p-4`}>
+          <div className={`${tokens.cardBase} rounded-[20px] p-4`}>
             <div className="flex items-start gap-4">
               {/* Icon */}
               <div className="flex-shrink-0">
@@ -142,7 +142,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
           </div>
 
           {/* Rating Card */}
-          <div className={`${tokens.cardBase} rounded-2xl p-4`}>
+          <div className={`${tokens.cardBase} rounded-[20px] p-4`}>
             <div className="flex items-center gap-3">
               <div className="flex items-center">
                 {Array.from({ length: 5 }).map((_, i) => (
@@ -177,7 +177,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
           </div>
 
           {/* Tabs and Content Card */}
-          <div className={`${tokens.cardBase} rounded-2xl p-4`}>
+          <div className={`${tokens.cardBase} rounded-[20px] p-4`}>
             {/* Tabs */}
             <div className="flex items-center gap-2 border-b mb-6" style={{ borderColor: tokens.isDark ? "rgba(255,255,255,0.1)" : "#E6E9FB" }}>
               {tabs.map((tab) => (
@@ -210,7 +210,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
             {activeTab === "Overview" && (
               <div className="flex flex-col gap-4">
               {/* Description */}
-              <div className={`${tokens.cardBase} rounded-2xl p-4`}>
+              <div className={`${tokens.cardBase} rounded-[20px] p-4`}>
                 <h3 className={`text-lg font-bold mb-3 ${tokens.isDark ? "text-white" : "text-black"}`}>
                   Overview
                 </h3>
@@ -224,12 +224,12 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
                 <img
                   src={allCustomersImage}
                   alt="All Customers"
-                  className="w-full h-auto rounded-2xl"
+                  className="w-full h-auto rounded-[20px]"
                 />
               </div>
 
               {/* All Customers Table */}
-              {/* <div className={`${tokens.cardBase} rounded-2xl overflow-hidden`}>
+              {/* <div className={`${tokens.cardBase} rounded-[20px] overflow-hidden`}>
                 <div className="p-6 border-b" style={{ borderColor: tokens.isDark ? "rgba(255,255,255,0.1)" : "#E6E9FB" }}>
                   <h3 className={`text-lg font-bold ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
                     All Customers
@@ -279,7 +279,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
             {/* Features Tab */}
             {activeTab === "Features" && (
               <div className="flex flex-col gap-4">
-                <div className={`${tokens.cardBase} rounded-2xl p-4`}>
+                <div className={`${tokens.cardBase} rounded-[20px] p-4`}>
                   <h3 className={`text-lg font-bold mb-4 ${tokens.isDark ? "text-white" : "text-black"}`}>
                     Features
                   </h3>
@@ -316,13 +316,13 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
             {/* Pricing Tab */}
             {activeTab === "Pricing" && (
               <div className="flex flex-col gap-4">
-                <div className={`${tokens.cardBase} rounded-2xl p-4`}>
+                <div className={`${tokens.cardBase} rounded-[20px] p-4`}>
                   <h3 className={`text-lg font-semibold mb-2 ${tokens.isDark ? "text-white" : "text-black"}`}>
                     Pricing Plans
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {/* Free Plan */}
-                    <div className={`${tokens.cardBase} rounded-2xl p-4 border ${
+                    <div className={`${tokens.cardBase} rounded-[20px] p-4 border ${
                       tokens.isDark ? "border-white/10" : "border-[#DBDBDB]"
                     }`}>
                       <div className="mb-2">
@@ -350,7 +350,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
                     </div>
 
                     {/* Professional Plan */}
-                    <div className={`${tokens.cardBase} rounded-2xl p-4 border-2 relative ${
+                    <div className={`${tokens.cardBase} rounded-[20px] p-4 border-2 relative ${
                       tokens.isDark ? "border-[#0F6773]" : "border-[#0F6773]"
                     }`}>
                       <div className="absolute top-4 right-2">
@@ -387,7 +387,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
                     </div>
 
                     {/* Enterprise Plan */}
-                    <div className={`${tokens.cardBase} rounded-2xl p-4 border ${
+                    <div className={`${tokens.cardBase} rounded-[20px] p-4 border ${
                       tokens.isDark ? "border-white/10" : "border-[#DBDBDB]"
                     }`}>
                       <div className="mb-2">
@@ -422,7 +422,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
             {/* Screenshots Tab */}
             {activeTab === "Screenshots" && (
               <div className="flex flex-col gap-4">
-                <div className={`${tokens.cardBase} rounded-2xl p-4`}>
+                <div className={`${tokens.cardBase} rounded-[20px] p-4`}>
                   <h3 className={`text-lg font-bold mb-4 ${tokens.isDark ? "text-white" : "text-black"}`}>
                     Screenshots
                   </h3>
@@ -431,14 +431,14 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
                       <img
                         src={screenshot1}
                         alt="Screenshot 1 - Community"
-                        className="w-full h-auto opacity-90 rounded-2xl"
+                        className="w-full h-auto opacity-90 rounded-[20px]"
                       />
                     </div>
                     <div className="w-full">
                       <img
                         src={screenshot2}
                         alt="Screenshot 2 - Explore"
-                        className="w-full h-auto opacity-90 rounded-2xl"
+                        className="w-full h-auto opacity-90 rounded-[20px]"
                       />
                     </div>
                   </div>
@@ -457,7 +457,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
           </div>
 
           {/* Supported Integrations */}
-          <div className={`${tokens.cardBase} rounded-2xl p-4`}>
+          <div className={`${tokens.cardBase} rounded-[20px] p-4`}>
             <h3 className={`text-lg font-bold mb-4 ${tokens.isDark ? "text-white" : "text-black"}`}>
               Supported Integrations
             </h3>
@@ -484,7 +484,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
           </div>
 
           {/* Customer Reviews */}
-          <div className={`${tokens.cardBase} rounded-2xl p-4`}>
+          <div className={`${tokens.cardBase} rounded-[20px] p-4`}>
             <h3 className={`text-lg font-bold mb-4 ${tokens.isDark ? "text-white" : "text-black"}`}>
               Customer Reviews
             </h3>
@@ -492,7 +492,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
               {Array.from({ length: 3 }).map((_, i) => (
                 <div
                   key={i}
-                  className={`rounded-xl p-4 ${
+                  className={`rounded-[20px] p-4 ${
                     tokens.isDark ? "bg-[#0F1217]" : "border border-[#DBDBDB]"
                   }`}
                 >
@@ -517,7 +517,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
             <div className="flex items-center justify-center gap-2 mt-4">
               <button
                 type="button"
-                className={`w-8 h-8 rounded-md flex items-center bg-[#0F6773] justify-center ${
+                className={`w-8 h-8 rounded-[20px] flex items-center bg-[#0F6773] justify-center ${
                   tokens.isDark ? "hover:bg-white/10" : "hover:bg-gray-100"
                 }`}
               >
@@ -525,7 +525,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
               </button>
               <button
                 type="button"
-                className={`w-8 h-8 rounded-md flex bg-[#0F6773] items-center justify-center ${
+                className={`w-8 h-8 rounded-[20px] flex bg-[#0F6773] items-center justify-center ${
                   tokens.isDark ? "hover:bg-white/10" : "hover:bg-gray-100"
                 }`}
               >
@@ -536,7 +536,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
         </div>
 
         {/* Right Column: Subscription & Technical Support Sidebar */}
-        <div className={`${tokens.cardBase} rounded-2xl p-4`}>
+        <div className={`${tokens.cardBase} rounded-[20px] p-4`}>
           {/* Subscription Header */}
           <div className="flex justify-center mb-6 w-full">
             <span

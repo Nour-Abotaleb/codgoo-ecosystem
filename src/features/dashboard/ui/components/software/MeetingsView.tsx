@@ -219,7 +219,7 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
         {filteredMeetings.map((meeting, index) => (
           <div key={meeting.id}>
             <div
-              className={`${tokens.cardBase} rounded-2xl overflow-hidden transition-colors`}
+              className={`${tokens.cardBase} rounded-[20px] overflow-hidden transition-colors`}
             >
               {/* Top Section - Gradient Background */}
               <div className={`p-6 ${tokens.isDark ? "bg-gradient-to-br from-[#071FD7]/10 to-[#071FD7]/5" : "bg-[#F4F5FF]"}`}>
@@ -529,7 +529,7 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
 
         {filteredMeetings.length === 0 && (
           <div
-            className={`${tokens.cardBase} rounded-2xl p-10 text-center`}
+            className={`${tokens.cardBase} rounded-[20px] p-10 text-center`}
           >
             <p className={`text-lg ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"}`}>
               No meetings found matching your criteria.

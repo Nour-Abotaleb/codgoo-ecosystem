@@ -5,6 +5,7 @@ import path from "node:path";
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  base: './', // Important for Electron to load assets correctly
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),

@@ -1,6 +1,8 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { i18n } from "@shared/config/i18n";
+import { BackButton } from "@shared/components";
+import { useFullscreen } from "@shared/hooks/useFullscreen";
 
 import userAvatar from "@assets/images/user.png";
 import {
@@ -8,7 +10,9 @@ import {
   DarkModeIcon,
   NotificationIcon,
   SearchIcon,
-  LanguageIcon
+  LanguageIcon,
+  FullscreenIcon,
+  ExitFullscreenIcon
 } from "@utilities/icons";
 
 import type { DashboardApp, DashboardTokens } from "../types";
@@ -22,7 +26,7 @@ type DashboardHeaderProps = {
   readonly onCartClick?: () => void;
 };
 
-type ActiveIcon = "notification" | "theme" | "cart" | "language" | null;
+type ActiveIcon = "notification" | "theme" | "cart" | "language" | "fullscreen" | null;
 
 export const DashboardHeader = ({
   tokens,
@@ -34,7 +38,9 @@ export const DashboardHeader = ({
 }: DashboardHeaderProps) => {
   const { i18n: i18nInstance, t } = useTranslation("dashboard");
   const [activeIcon, setActiveIcon] = useState<ActiveIcon>(null);
+  const prevPageLabelRef = useRef<string>("");
   const isRTL = i18n.language === "ar";
+  const { isFullscreen, toggleFullscreen } = useFullscreen();
   const actionBarClass = useMemo(
     () =>
       `${tokens.cardBase} flex items-center gap-2 rounded-full px-5 py-2 backdrop-blur`,
@@ -96,6 +102,11 @@ export const DashboardHeader = ({
 
   const pageLabel = activeNavigationLabel ?? t(`apps.${activeApp.id}`);
 
+  // Track page label changes for transition animation
+  useEffect(() => {
+    prevPageLabelRef.current = pageLabel;
+  }, [pageLabel]);
+
   const handleLanguageToggle = () => {
     const currentLang = i18nInstance.resolvedLanguage ?? "en";
     const newLang = currentLang === "en" ? "ar" : "en";
@@ -104,15 +115,24 @@ export const DashboardHeader = ({
 
   return (
     <header className="relative z-50 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-      <div className="text-start">
-        <h1
-          className={`text-2xl font-semibold md:text-3xl ${
-            tokens.isDark ? "" : ""
-          }`}
-          style={tokens.isDark ? {} : { color: primaryColor }}
-        >
-          {pageLabel}
-        </h1>
+      <div className="flex items-center gap-3">
+        {/* Back Button - Icon Only */}
+        <BackButton isDark={tokens.isDark} showText={false} />
+        
+        {/* Page Title with Smooth Transition */}
+        <div className="relative min-w-[200px]">
+          <h1
+            key={pageLabel}
+            className={`text-2xl font-semibold md:text-3xl ${
+              isRTL 
+                ? "animate-slide-in-right" 
+                : "animate-slide-in-left"
+            }`}
+            style={tokens.isDark ? {} : { color: primaryColor }}
+          >
+            {pageLabel}
+          </h1>
+        </div>
       </div>
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
@@ -182,6 +202,29 @@ export const DashboardHeader = ({
               className={`h-5 w-5 ${getIconColorClass("language")}`}
               style={!tokens.isDark && activeIcon === "language" ? { color: primaryColor } : {}}
             />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setActiveIcon(activeIcon === "fullscreen" ? null : "fullscreen");
+              toggleFullscreen();
+            }}
+            className={getIconButtonClass("fullscreen")}
+            style={getIconButtonStyle("fullscreen")}
+            aria-label={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+          >
+            {isFullscreen ? (
+              <ExitFullscreenIcon 
+                className={`h-5 w-5 ${getIconColorClass("fullscreen")}`}
+                style={!tokens.isDark && activeIcon === "fullscreen" ? { color: primaryColor } : {}}
+              />
+            ) : (
+              <FullscreenIcon 
+                className={`h-5 w-5 ${getIconColorClass("fullscreen")}`}
+                style={!tokens.isDark && activeIcon === "fullscreen" ? { color: primaryColor } : {}}
+              />
+            )}
           </button>
 
           <img

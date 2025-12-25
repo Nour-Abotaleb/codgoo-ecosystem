@@ -59,7 +59,7 @@ export const DeleteRecordModal = ({
       />
 
       {/* Modal */}
-      <div className={`relative w-full max-w-lg ${tokens.cardBase} ${tokens.isDark ? "bg-[#232637]" : "bg-white"} rounded-2xl p-6 max-h-[90vh] overflow-hidden flex flex-col`}>
+      <div className={`relative w-full max-w-lg ${tokens.cardBase} ${tokens.isDark ? "bg-[#232637]" : "bg-white"} rounded-[20px] p-6 max-h-[90vh] overflow-hidden flex flex-col`}>
         {/* Content */}
         <div className="flex flex-col items-center gap-4">
           {/* Delete Icon */}
@@ -118,7 +118,7 @@ export const DeleteRecordModal = ({
           <div className="absolute inset-0 bg-black/50" />
           
           {/* Loader Modal */}
-          <div className={`relative w-full max-w-lg ${tokens.cardBase} ${tokens.isDark ? "bg-[#232637]" : "bg-white"} rounded-2xl p-6 max-h-[90vh] overflow-hidden flex flex-col`}>
+          <div className={`relative w-full max-w-lg ${tokens.cardBase} ${tokens.isDark ? "bg-[#232637]" : "bg-white"} rounded-[20px] p-6 max-h-[90vh] overflow-hidden flex flex-col`}>
             <div className="flex flex-col items-center gap-4">
               {/* Spinner */}
               <div className="flex items-center justify-center">

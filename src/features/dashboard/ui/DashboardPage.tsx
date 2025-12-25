@@ -5,6 +5,11 @@ import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
 import { selectTheme, toggleTheme } from "@store/theme/theme-slice";
 
+// Import logos for Electron compatibility
+import logoCloud from "/logo-cloud.svg";
+import logoSoftware from "/logo-software.svg";
+import logoApp from "/logo-app.svg";
+
 import {
   dashboardApps,
   dashboardContent,
@@ -129,11 +134,11 @@ export const DashboardPage = () => {
     const faviconLink = document.querySelector("link[rel='icon']") as HTMLLinkElement;
     if (faviconLink) {
       const faviconMap: Record<DashboardAppId, string> = {
-        cloud: "/logo-cloud.svg",
-        app: "/logo-app.svg",
-        software: "/logo-software.svg"
+        cloud: logoCloud,
+        app: logoApp,
+        software: logoSoftware
       };
-      faviconLink.href = faviconMap[activeAppId] ?? "/logo-cloud.svg";
+      faviconLink.href = faviconMap[activeAppId] ?? logoCloud;
     }
   }, [activeApp.name, activeAppId]);
 
@@ -339,7 +344,7 @@ export const DashboardPage = () => {
           tokens={tokens}
         />
 
-        <section className={`flex min-h-screen flex-1 flex-col  rounded-[32px] m-6 transition-all duration-300 ${isRTL ? "lg:mr-64" : "lg:ml-64"} ${isDark ? "bg-[#13181E]" :"bg-[#F8F8F8]"}`} >
+        <section className={`flex min-h-screen flex-1 flex-col  rounded-[20px] m-6 transition-all duration-300 ${isRTL ? "lg:mr-64" : "lg:ml-64"} ${isDark ? "bg-[#13181E]" :"bg-[#F8F8F8]"}`} >
         <div className="flex flex-col gap-4 px-6 py-3 text-start">
           <DashboardHeader
             tokens={tokens}
@@ -592,7 +597,7 @@ export const DashboardPage = () => {
               
               if (!selectedItem) {
                 return (
-                  <div className={`${tokens.cardBase} rounded-3xl p-10`}>
+                  <div className={`${tokens.cardBase} rounded-[20px] p-10`}>
                     <h2 className="text-2xl font-semibold">Item not found</h2>
                     <p className={`mt-3 text-sm ${tokens.subtleText}`}>
                       The marketplace item you're looking for doesn't exist.
@@ -631,7 +636,7 @@ export const DashboardPage = () => {
           ) : activeNavId === "settings" && activeApp.id === "app" ? (
             <AppSettingsView tokens={tokens} />
           ) : (
-            <div className={`${tokens.cardBase} rounded-3xl p-10`}>
+            <div className={`${tokens.cardBase} rounded-[20px] p-10`}>
               <h2 className="text-2xl font-semibold">
                 {activeNavigationItem?.label ?? "Coming Soon"}
               </h2>

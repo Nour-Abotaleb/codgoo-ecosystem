@@ -73,7 +73,7 @@ export const TwoFactorAuthModal = ({
           />
 
           {/* Modal */}
-          <div className={`relative w-full max-w-lg ${tokens.cardBase} ${tokens.isDark ? "bg-[#232637]" : "bg-white"} rounded-2xl p-6 max-h-[90vh] overflow-hidden flex flex-col`}>
+          <div className={`relative w-full max-w-lg ${tokens.cardBase} ${tokens.isDark ? "bg-[#232637]" : "bg-white"} rounded-[20px] p-6 max-h-[90vh] overflow-hidden flex flex-col`}>
             {/* Header */}
             <div className="flex items-center justify-between mb-2 flex-shrink-0">
               <div className="flex items-center gap-3">

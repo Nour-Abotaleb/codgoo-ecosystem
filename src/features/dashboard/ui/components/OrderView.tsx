@@ -101,7 +101,7 @@ export const OrderView = ({ tokens }: OrderViewProps) => {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className={`${tokens.isDark ? tokens.cardBase : "bg-white"} rounded-2xl p-4`}>
+      <div className={`${tokens.isDark ? tokens.cardBase : "bg-white"} rounded-[20px] p-4`}>
         <div className="flex flex-wrap items-center gap-0">
           {serviceTabs.map((tab, index) => (
             <div key={tab.id} className="flex items-center">
@@ -123,7 +123,7 @@ export const OrderView = ({ tokens }: OrderViewProps) => {
       <div className="flex flex-col gap-6">
         <h2 className="text-2xl font-bold">Choose Package</h2>
 
-        <div className={`${tokens.isDark ? tokens.cardBase : "bg-white"} rounded-2xl p-6`}>
+        <div className={`${tokens.isDark ? tokens.cardBase : "bg-white"} rounded-[20px] p-6`}>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
             {packages.map((pkg) => (
               <div key={pkg.id} className={cardClass}>
@@ -167,7 +167,7 @@ export const OrderView = ({ tokens }: OrderViewProps) => {
                 </button>
                 <button
                   type="button"
-                  className={`${tokens.buttonFilled} !bg-[#584ABC] rounded-[16px] px-6 py-3 font-medium transition-opacity hover:opacity-90`}
+                  className={`${tokens.buttonFilled} !bg-[#584ABC] rounded-[20px] px-6 py-3 font-medium transition-opacity hover:opacity-90`}
                 >
                   Order Now
                 </button>

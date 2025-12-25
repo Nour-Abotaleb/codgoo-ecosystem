@@ -82,7 +82,7 @@ export const MarketplaceView = ({ tokens, onItemClick }: MarketplaceViewProps) =
         <div className="flex items-center gap-6">
           {[
             { id: "General" as Category, label: "General Services Apps", icon: GeneralServicesIcon },
-            { id: "Master" as Category, label: "Master Apps", icon: MasterStrokeIcon },
+            { id: "Master" as Category, label: "Business App", icon: MasterStrokeIcon },
           ].map((tab) => {
             const isActive = activeCategory === tab.id;
             const Icon = tab.icon;
@@ -123,7 +123,7 @@ export const MarketplaceView = ({ tokens, onItemClick }: MarketplaceViewProps) =
 
       {/* Loading State */}
       {isLoading && (
-        <div className={`${tokens.cardBase} rounded-2xl p-10 text-center`}>
+        <div className={`${tokens.cardBase} rounded-[20px] p-10 text-center`}>
           <p className={`text-lg ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"}`}>
             Loading marketplace apps...
           </p>
@@ -150,7 +150,7 @@ export const MarketplaceView = ({ tokens, onItemClick }: MarketplaceViewProps) =
 
       {/* Empty State */}
       {!isLoading && filteredItems.length === 0 && (
-        <div className={`${tokens.cardBase} rounded-2xl p-10 text-center`}>
+        <div className={`${tokens.cardBase} rounded-[20px] p-10 text-center`}>
           <p className={`text-lg ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"}`}>
             No items found matching your criteria.
           </p>

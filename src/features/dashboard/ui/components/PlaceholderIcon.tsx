@@ -16,7 +16,7 @@ export const PlaceholderIcon = ({
   idleClassName
 }: PlaceholderIconProps) => (
   <span
-    className={`flex h-11 w-11 items-center justify-center rounded-2xl text-xs font-semibold uppercase tracking-wide ${
+    className={`flex h-11 w-11 items-center justify-center rounded-[20px] text-xs font-semibold uppercase tracking-wide ${
       isActive ? activeClassName ?? tokens.iconActive : idleClassName ?? tokens.iconIdle
     }`}
   >

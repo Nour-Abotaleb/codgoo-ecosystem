@@ -180,7 +180,7 @@ export const ServerServicesView = ({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className={`${tokens.cardBase} rounded-[28px] py-4 px-6 transition-colors`}>
+      <div className={`${tokens.cardBase} rounded-[20px] py-4 px-6 transition-colors`}>
         {/* <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
           <div>
             <h2 className={`text-2xl font-semibold md:text-3xl ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>All Servers</h2>

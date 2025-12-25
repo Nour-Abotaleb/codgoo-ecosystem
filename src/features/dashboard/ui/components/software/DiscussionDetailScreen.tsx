@@ -119,7 +119,7 @@ export const DiscussionDetailScreen = ({ discussion, tokens }: DiscussionDetailS
   };
 
   return (
-    <div className={`flex flex-col h-screen ${tokens.cardBase} rounded-2xl overflow-hidden`}>
+    <div className={`flex flex-col h-screen ${tokens.cardBase} rounded-[20px] overflow-hidden`}>
       {/* Header */}
       <div className={`flex items-center justify-between px-6 py-4 border-b ${tokens.isDark ? "border-white/10" : "border-[#E9E9E9]"} flex-shrink-0`}>
         <div className="flex items-center gap-4">
@@ -228,7 +228,7 @@ export const DiscussionDetailScreen = ({ discussion, tokens }: DiscussionDetailS
       {/* Message Input */}
       <div className={`flex-shrink-0 px-6 py-4 border-t ${tokens.isDark ? "border-white/10" : "border-[#E9E9E9]"}`}>
         <div
-          className={`flex flex-col gap-3 px-4 py-3 rounded-2xl border ${
+          className={`flex flex-col gap-3 px-4 py-3 rounded-[20px] border ${
             tokens.isDark
               ? "bg-[#1A1D29] border-white/20"
               : "bg-white border-[#E9E9E9]"

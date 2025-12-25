@@ -114,7 +114,7 @@ export const AppBillingView = ({ tokens }: { readonly tokens: DashboardTokens })
           return (
             <div
               key={stat.id}
-              className={`${tokens.cardBase} rounded-2xl p-6 transition-colors ${isDark ? "!bg-ransparent " : "!bg-white"}`}
+              className={`${tokens.cardBase} rounded-[20px] p-6 transition-colors ${isDark ? "!bg-ransparent " : "!bg-white"}`}
             >
               <div className="flex flex-col items-start gap-3">
                 <div className="">
@@ -131,7 +131,7 @@ export const AppBillingView = ({ tokens }: { readonly tokens: DashboardTokens })
       </div>
 
       {/* Tabs */}
-      <div className={`${tokens.cardBase} rounded-[28px]  transition-colors ${isDark ? "bg-transparent" : "!bg-white"}`}>
+      <div className={`${tokens.cardBase} rounded-[20px]  transition-colors ${isDark ? "bg-transparent" : "!bg-white"}`}>
         <div className="flex flex-col gap-4">
           <div className="flex flex-wrap items-center gap-6">
             {[
@@ -166,7 +166,7 @@ export const AppBillingView = ({ tokens }: { readonly tokens: DashboardTokens })
             {subscriptions.map((sub) => (
               <div
                 key={sub.id}
-                className={`rounded-2xl overflow-hidden transition-colors ${isDark ? "!bg-[#0F1217] " : "!bg-[#E7F0F1]"}`}
+                className={`rounded-[20px] overflow-hidden transition-colors ${isDark ? "!bg-[#0F1217] " : "!bg-[#E7F0F1]"}`}
               >
                 <div className="flex flex-col gap-3 px-4 py-4">
                   <div className="flex items-center justify-between">

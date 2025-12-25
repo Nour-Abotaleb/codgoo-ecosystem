@@ -129,7 +129,7 @@ export const TaskDiscussionsModal = ({ tokens, isOpen, onClose, onJoinDiscussion
       />
 
       {/* Modal */}
-      <div className={`relative w-full max-w-xl ${tokens.cardBase} ${tokens.isDark ? "bg-[#232637]" : "bg-white"} rounded-2xl max-h-[90vh] overflow-hidden flex flex-col`}>
+      <div className={`relative w-full max-w-xl ${tokens.cardBase} ${tokens.isDark ? "bg-[#232637]" : "bg-white"} rounded-[20px] max-h-[90vh] overflow-hidden flex flex-col`}>
             {/* Header */}
             <div className={`flex items-center justify-between px-6 pt-6 pb-4 flex-shrink-0 rounded-t-2xl ${
               tokens.isDark ? "bg-[#232637]" : "bg-[#FFFEF7]"
@@ -159,7 +159,7 @@ export const TaskDiscussionsModal = ({ tokens, isOpen, onClose, onJoinDiscussion
           {discussions.map((discussion) => (
             <div
               key={discussion.id}
-              className={`${tokens.isDark ? "bg-[#1A1D29]" : "bg-[#F4F5FF]"} rounded-xl p-4`}
+              className={`${tokens.isDark ? "bg-[#1A1D29]" : "bg-[#F4F5FF]"} rounded-[20px] p-4`}
             >
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
@@ -264,7 +264,7 @@ export const TaskDiscussionsModal = ({ tokens, isOpen, onClose, onJoinDiscussion
               type="text"
               value={discussionTitle}
               onChange={(e) => setDiscussionTitle(e.target.value)}
-              className={`w-full px-4 py-2.5 rounded-[16px] border ${
+              className={`w-full px-4 py-2.5 rounded-[20px] border ${
                 tokens.isDark
                   ? "bg-[#1A1D29] border-white/20 text-white"
                   : "border-gray-200 text-black"
@@ -284,7 +284,7 @@ export const TaskDiscussionsModal = ({ tokens, isOpen, onClose, onJoinDiscussion
             >
               Members
             </label>
-            <div className={`flex flex-wrap gap-2 p-3 min-h-[48px] rounded-[16px] border ${
+            <div className={`flex flex-wrap gap-2 p-3 min-h-[48px] rounded-[20px] border ${
               tokens.isDark
                 ? "bg-[#1A1D29] border-white/20"
                 : "border-gray-200 bg-white"

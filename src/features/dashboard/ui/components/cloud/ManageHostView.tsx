@@ -121,7 +121,7 @@ export const ManageHostView = ({ hostId: _hostId, tokens }: ManageHostViewProps)
   const isRTL = i18n.language === "ar";
   const cardClass =
     "rounded-[20px] p-4 transition-colors";
-  const summaryCardClass = `${tokens.isDark ? "bg-[#0F1217]" : "bg-[#F4F4FF]"} text-[var(--color-card-text)] rounded-2xl p-6 transition-colors`;
+  const summaryCardClass = `${tokens.isDark ? "bg-[#0F1217]" : "bg-[#F4F4FF]"} text-[var(--color-card-text)] rounded-[20px] p-6 transition-colors`;
   const usageCardClass =
     "rounded-[20px] p-6 transition-colors";
   const labelClass = `text-base font-regular text-[#718EBF]`;
@@ -201,7 +201,7 @@ export const ManageHostView = ({ hostId: _hostId, tokens }: ManageHostViewProps)
             <button
               key={action.id}
               type="button"
-              className={`${tokens.cardBase} flex h-full flex-col gap-4 rounded-2xl p-5 text-left`}
+              className={`${tokens.cardBase} flex h-full flex-col gap-4 rounded-[20px] p-5 text-left`}
             >
               <span
                 className={`${tokens.buttonGhost} inline-flex h-10 w-10 items-center justify-center rounded-full`}
@@ -241,7 +241,7 @@ export const ManageHostView = ({ hostId: _hostId, tokens }: ManageHostViewProps)
             {recentTickets.map((ticket) => (
               <div
                 key={ticket.id}
-                className="flex items-center justify-between rounded-2xl px-4 py-1.5"
+                className="flex items-center justify-between rounded-[20px] px-4 py-1.5"
               >
                 <div className="flex items-center gap-2">
                   <span className={`h-2 w-2 rounded-full ${tokens.isDark ? "bg-white" : "bg-[#584ABC]"}`} />

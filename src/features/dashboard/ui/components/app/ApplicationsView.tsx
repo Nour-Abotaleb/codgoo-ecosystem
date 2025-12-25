@@ -45,7 +45,7 @@ export const ApplicationsView = ({
           <div className="flex items-center gap-6">
             {[
               { id: "General" as AppCategory, label: "General Services Apps", icon: GeneralServicesIcon },
-              { id: "Master" as AppCategory, label: "Master Apps", icon: MasterStrokeIcon },
+              { id: "Master" as AppCategory, label: "Business App", icon: MasterStrokeIcon },
             ].map((tab) => {
               const isActive = activeTab === tab.id;
               const Icon = tab.icon;
@@ -116,13 +116,13 @@ export const ApplicationsView = ({
 
       {/* Cards / Empty state */}
       {isLoading ? (
-        <div className={`${tokens.cardBase} rounded-2xl p-10 text-center`}>
+        <div className={`${tokens.cardBase} rounded-[20px] p-10 text-center`}>
           <p className={`text-lg ${tokens.isDark ? "text-white/70" : "text-[#5F5F5F]"}`}>
             Loading applications...
           </p>
         </div>
       ) : items.length === 0 ? (
-        <div className={`${tokens.cardBase} rounded-2xl p-10 text-center`}>
+        <div className={`${tokens.cardBase} rounded-[20px] p-10 text-center`}>
           <div className="mx-auto flex items-center justify-center text-[#9DC1C6]">
             <MarketplaceIcon className="h-18 w-18" />
           </div>
@@ -153,7 +153,7 @@ export const ApplicationsView = ({
           {items.map((item, index) => (
             <div
               key={item.id}
-              className={`rounded-2xl ${tokens.isDark ? "bg-[#0F1217]" : "bg-white"} p-4`}
+              className={`rounded-[20px] ${tokens.isDark ? "bg-[#0F1217]" : "bg-white"} p-4`}
             >
               <div className="flex items-center justify-between gap-4">
                 <div className="flex flex-col flex-1 min-w-0">

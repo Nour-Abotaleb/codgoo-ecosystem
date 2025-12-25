@@ -145,7 +145,7 @@ export const CheckoutView = ({
         {/* Left Column - Main Content */}
         <div className="lg:col-span-2 flex flex-col gap-4">
           {/* Billing Information */}
-          <div className={`${tokens.cardBase} rounded-[24px] p-6`}>
+          <div className={`${tokens.cardBase} rounded-[20px] p-6`}>
             <div className={`flex items-center gap-3 mb-6 px-6 py-4 -mx-6 -mt-6 ${tokens.isDark ? "bg-[#1F2733]" : "bg-[#E7F0F1]"} rounded-t-[24px]`}>
               <div className={`${tokens.isDark ? "bg-[#1a1a1a] text-[#34D8D6]" : "bg-white text-[#0F6773]"} rounded-full p-2.5`}>
                 <MasterIcon className="w-6 h-6" />
@@ -223,7 +223,7 @@ export const CheckoutView = ({
           </div>
 
           {/* Payment Method */}
-          <div className={`${tokens.cardBase} rounded-[24px] p-6`}>
+          <div className={`${tokens.cardBase} rounded-[20px] p-6`}>
             <div className={`flex items-center gap-3 mb-6 px-6 py-4 -mx-6 -mt-6 ${tokens.isDark ? "bg-[#1F2733]" : "bg-[#E7F0F1]"} rounded-t-[24px]`}>
               <div className={`${tokens.isDark ? "bg-[#1a1a1a] text-[#34D8D6]" : "bg-white text-[#0F6773]"} rounded-full p-2.5`}>
                 <CreditCardIcon className="w-6 h-6" />
@@ -235,7 +235,7 @@ export const CheckoutView = ({
             <div className="flex flex-col gap-4">
               {/* Credit/Debit Card */}
               <label
-                className={`flex items-center gap-4 p-4 rounded-xl cursor-pointer transition-colors ${
+                className={`flex items-center gap-4 p-4 rounded-[20px] cursor-pointer transition-colors ${
                   paymentMethod === "credit-card"
                     ? `${tokens.isDark ? "bg-[#1a3a3a]" : "bg-[#E7F0F1]"}`
                     : `${tokens.isDark ? "bg-[#2a2a2a] border border-[#E8E8E866]" : "bg-[#FAFAFA] border border-[#E8E8E8]"}`
@@ -276,7 +276,7 @@ export const CheckoutView = ({
 
               {/* Digital Wallet */}
               <label
-                className={`flex items-center gap-4 p-4 rounded-xl cursor-pointer transition-colors ${
+                className={`flex items-center gap-4 p-4 rounded-[20px] cursor-pointer transition-colors ${
                   paymentMethod === "digital-wallet"
                     ? `${tokens.isDark ? "bg-[#1a3a3a]" : "bg-[#E7F0F1]"}`
                     : `${tokens.isDark ? "bg-[#2a2a2a] border border-[#E8E8E866]" : "bg-[#FAFAFA] border border-[#E8E8E8]"}`
@@ -317,7 +317,7 @@ export const CheckoutView = ({
 
               {/* Bank Transfer */}
               <label
-                className={`flex items-center gap-4 p-4 rounded-xl cursor-pointer transition-colors ${
+                className={`flex items-center gap-4 p-4 rounded-[20px] cursor-pointer transition-colors ${
                   paymentMethod === "bank-transfer"
                     ? `${tokens.isDark ? "bg-[#1a3a3a]" : "bg-[#E7F0F1]"}`
                     : `${tokens.isDark ? "bg-[#2a2a2a] border border-[#E8E8E866]" : "bg-[#FAFAFA] border border-[#E8E8E8]"}`
@@ -358,7 +358,7 @@ export const CheckoutView = ({
 
               {/* Offline Payment */}
               <div
-                className={`flex items-center gap-4 p-4 rounded-xl cursor-pointer transition-colors ${
+                className={`flex items-center gap-4 p-4 rounded-[20px] cursor-pointer transition-colors ${
                   paymentMethod === "offline-payment"
                     ? `${tokens.isDark ? "bg-[#1a3a3a]" : "bg-[#E7F0F1]"}`
                     : `${tokens.isDark ? "bg-[#2a2a2a] border border-[#E8E8E866]" : "bg-[#FAFAFA] border border-[#E8E8E8]"}`
@@ -404,7 +404,7 @@ export const CheckoutView = ({
 
         {/* Right Column - Order Summary */}
         <div className="lg:col-span-1">
-          <div className={`${tokens.cardBase} rounded-[24px] p-6`}>
+          <div className={`${tokens.cardBase} rounded-[20px] p-6`}>
             <div className={`flex flex-col items-start mb-6 px-6 py-3 -mx-6 -mt-6 ${tokens.isDark ? "bg-[#1F2733]" : "bg-[#E7F0F1]"} rounded-t-[24px]`}>
               <h2 className={`text-xl md:text-2xl font-bold ${tokens.isDark ? "text-white" : "text-[#142133]"}`}>
                 Order Summary
@@ -470,7 +470,7 @@ export const CheckoutView = ({
               </div>
             </div>
           {/* Terms and Conditions */}
-          <div className={`${tokens.cardBase} rounded-[24px]  mb-2 space-y-1`}>
+          <div className={`${tokens.cardBase} rounded-[20px]  mb-2 space-y-1`}>
             <label className="flex items-start gap-3 cursor-pointer">
               <div className="relative flex-shrink-0 mt-1">
                 <input
@@ -514,7 +514,7 @@ export const CheckoutView = ({
 
           {/* Security Features */}
           <div className="mt-4 space-y-3">
-            <div className={`${tokens.isDark ? "bg-[#2a2a2a]" : "bg-white"} rounded-2xl px-4 py-6 flex flex-col items-start gap-3`}>
+            <div className={`${tokens.isDark ? "bg-[#2a2a2a]" : "bg-white"} rounded-[20px] px-4 py-6 flex flex-col items-start gap-3`}>
               <div className="flex items-center gap-3">
                 <div className={`${tokens.isDark ? "bg-[#1F2733] text-[#34D8D6]" : "bg-[#E7F0F1] text-[#0F6773]"} rounded-full p-2.5 flex-shrink-0`}>
                   <SecurityIcon className="w-6 h-6" />
@@ -529,7 +529,7 @@ export const CheckoutView = ({
                   Your Payment Is Processed Through Encrypted Channels. Your Data Is Safe With Us.
                 </span>
             </div>
-            <div className={`${tokens.isDark ? "bg-[#2a2a2a]" : "bg-white"} rounded-2xl px-4 py-6 flex flex-col items-start gap-3`}>
+            <div className={`${tokens.isDark ? "bg-[#2a2a2a]" : "bg-white"} rounded-[20px] px-4 py-6 flex flex-col items-start gap-3`}>
               <div className="flex items-center gap-3">
                 <div className={`${tokens.isDark ? "bg-[#1F2733] text-[#34D8D6]" : "bg-[#E7F0F1] text-[#0F6773]"} rounded-full p-2.5 flex-shrink-0 flex items-center justify-center`}>
                   <div className="w-5 h-5 bg-[#0F6773] rounded-full flex items-center justify-center">
@@ -553,7 +553,7 @@ export const CheckoutView = ({
       {/* Upload Modal */}
       {showUploadModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className={`${tokens.isDark ? "bg-[#1F2733]" : "bg-white"} rounded-[24px] p-6 max-w-md w-full`}>
+          <div className={`${tokens.isDark ? "bg-[#1F2733]" : "bg-white"} rounded-[20px] p-6 max-w-md w-full`}>
             <div className="flex items-center justify-between mb-6">
               <h3 className={`text-xl font-bold ${tokens.isDark ? "text-white" : "text-[#142133]"}`}>
                 Upload Payment Proof
@@ -573,7 +573,7 @@ export const CheckoutView = ({
                   <img 
                     src={imagePreview} 
                     alt="Payment proof" 
-                    className="w-full h-64 object-cover rounded-xl"
+                    className="w-full h-64 object-cover rounded-[20px]"
                   />
                   <button
                     type="button"
@@ -596,7 +596,7 @@ export const CheckoutView = ({
               </div>
             ) : (
               <div className="space-y-4">
-                <label className={`flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-xl cursor-pointer ${
+                <label className={`flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-[20px] cursor-pointer ${
                   tokens.isDark 
                     ? "border-gray-600 bg-[#2a2a2a] hover:bg-[#333]" 
                     : "border-gray-300 bg-gray-50 hover:bg-gray-100"

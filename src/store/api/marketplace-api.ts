@@ -120,6 +120,17 @@ export interface AttachAppResponse {
   data?: any;
 }
 
+export interface UpgradeBundleRequest {
+  bundleId: number;
+  applications: number[];
+}
+
+export interface UpgradeBundleResponse {
+  status: boolean;
+  message?: string;
+  data?: any;
+}
+
 export const marketplaceApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getMarketplaceApps: builder.query<MarketplaceResponse, void>({
@@ -210,6 +221,16 @@ export const marketplaceApi = baseApi.injectEndpoints({
         body: { applications },
       }),
     }),
+    upgradeBundle: builder.mutation<UpgradeBundleResponse, { currentBundleId: number; upgradeBundleId: number; applications: number[] }>({
+      query: ({ currentBundleId, upgradeBundleId, applications }) => ({
+        url: `Marketplace/Bundle/${currentBundleId}`,
+        method: "PATCH",
+        body: {
+          bundleId: upgradeBundleId,
+          applications,
+        },
+      }),
+    }),
   }),
 });
 
@@ -219,5 +240,6 @@ export const {
   useGetApplicationsQuery,
   useBuildBundleMutation,
   useUploadBundleAttachmentMutation,
-  useAttachAppToBundleMutation
+  useAttachAppToBundleMutation,
+  useUpgradeBundleMutation
 } = marketplaceApi;

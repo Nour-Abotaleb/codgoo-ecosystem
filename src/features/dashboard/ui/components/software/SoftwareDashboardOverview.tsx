@@ -104,7 +104,7 @@ const ProjectsAreaChart = ({
   const blueLinePath = createSmoothLinePath(blueData);
 
   return (
-    <div className={`${isDark ? "bg-black" : "bg-black"} rounded-3xl pt-2 flex flex-col h-full`}>
+    <div className={`${isDark ? "bg-black" : "bg-black"} rounded-[20px] pt-2 flex flex-col h-full`}>
       {/* Header */}
       <div className="flex items-center justify-between px-4">
         <div className="flex flex-col gap-1">
@@ -392,7 +392,7 @@ export const SoftwareDashboardOverview = ({
       {/* Hero Section */}
       <section>
         <div
-          className="relative overflow-hidden rounded-[54px] px-8 py-8 text-white transition-all duration-500"
+          className="relative overflow-hidden rounded-[20px] px-8 py-8 text-white transition-all duration-500"
         >
           {/* Hero Image */}
           {hero.backgroundImage && (
@@ -441,7 +441,7 @@ export const SoftwareDashboardOverview = ({
             return (
               <div
                 key={stat.id}
-                className={`${tokens.cardBase} rounded-3xl p-6`}
+                className={`${tokens.cardBase} rounded-[20px] p-6`}
               >
                 <div className="flex items-start flex-col gap-4">
                   <div
@@ -642,7 +642,7 @@ export const SoftwareDashboardOverview = ({
                   return (
                     <div
                       key={event.id}
-                      className={`absolute rounded-md p-1.5 shadow-sm pointer-events-auto ${cardColor}`}
+                      className={`absolute rounded-[20px] p-1.5 shadow-sm pointer-events-auto ${cardColor}`}
                       style={{
                         left,
                         top,

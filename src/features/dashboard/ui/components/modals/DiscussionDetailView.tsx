@@ -220,7 +220,7 @@ export const DiscussionDetailView = ({ discussion, tokens }: DiscussionDetailVie
             )}
             <div className={`flex flex-col gap-1 ${message.isOutgoing ? "items-end" : "items-start"} max-w-[70%]`}>
               <div
-                className={`rounded-2xl px-4 py-2.5 ${
+                className={`rounded-[20px] px-4 py-2.5 ${
                   message.isOutgoing
                     ? tokens.isDark
                       ? "bg-[#071FD7] text-white"
@@ -278,7 +278,7 @@ export const DiscussionDetailView = ({ discussion, tokens }: DiscussionDetailVie
       {/* Message Input */}
       <div className="flex-shrink-0">
         <div
-          className={`flex items-center gap-2 px-4 py-3 rounded-2xl border ${
+          className={`flex items-center gap-2 px-4 py-3 rounded-[20px] border ${
             tokens.isDark
               ? "bg-[#1A1D29] border-white/20"
               : "bg-white border-gray-200"

@@ -4,7 +4,7 @@ export const LandingHero = () => {
   const { t } = useTranslation(["landing", "common"]);
 
   return (
-    <section className="mx-auto max-w-4xl space-y-8 rounded-3xl bg-slate-900/60 px-8 py-16 text-slate-100 shadow-xl shadow-slate-900/30 ring-1 ring-slate-800">
+    <section className="mx-auto max-w-4xl space-y-8 rounded-[20px] bg-slate-900/60 px-8 py-16 text-slate-100 shadow-xl shadow-slate-900/30 ring-1 ring-slate-800">
       <span className="inline-flex items-center gap-2 rounded-full border border-indigo-500/60 bg-indigo-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-indigo-200">
         {t("app.title", { ns: "common" })}
       </span>

@@ -294,7 +294,7 @@ export const TasksView = ({
         {taskStats.map((stat) => {
           const Icon = stat.icon;
           return (
-            <div key={stat.id} className={`${tokens.cardBase} rounded-2xl p-6`}>
+            <div key={stat.id} className={`${tokens.cardBase} rounded-[20px] p-6`}>
               <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-start" style={{ color: iconBaseColor }}>
                   <Icon className="h-8 w-8 md:h-10 md:w-10" />
@@ -313,7 +313,7 @@ export const TasksView = ({
 
       {/* Milestone Section with Tasks - White Background */}
       {project && (
-        <div className={`${tokens.isDark ? tokens.cardBase : "bg-white"} rounded-2xl p-6 flex flex-col gap-6`}>
+        <div className={`${tokens.isDark ? tokens.cardBase : "bg-white"} rounded-[20px] p-6 flex flex-col gap-6`}>
           {/* Milestone Tabs */}
           <div className="flex gap-4 overflow-x-auto">
             {milestoneTabs.map((tab, index) => (
@@ -335,7 +335,7 @@ export const TasksView = ({
           </div>
 
           {/* Milestone Content with Background */}
-          <div className={`${tokens.isDark ? tokens.surfaceMuted : "bg-[#FFFEF7]"} rounded-2xl p-6 flex flex-col gap-4`}>
+          <div className={`${tokens.isDark ? tokens.surfaceMuted : "bg-[#FFFEF7]"} rounded-[20px] p-6 flex flex-col gap-4`}>
             {/* Milestone Header */}
             <div className="flex items-start justify-between gap-4">
               <div className="flex flex-col gap-2 flex-1">
@@ -356,7 +356,7 @@ export const TasksView = ({
             </div>
 
             {/* Milestone Details Card */}
-            <div className={`rounded-xl p-4 ${tokens.isDark ? tokens.surfaceMuted : ''}`} style={tokens.isDark ? {} : { backgroundColor: '#FCF6D4' }}>
+            <div className={`rounded-[20px] p-4 ${tokens.isDark ? tokens.surfaceMuted : ''}`} style={tokens.isDark ? {} : { backgroundColor: '#FCF6D4' }}>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="flex flex-col gap-2">
                   <span className={`text-base font-semibold ${
@@ -420,7 +420,7 @@ export const TasksView = ({
 
       {/* Tasks Section with Search - When no project (fallback) */}
       {!project && (
-        <div className={`${tokens.cardBase} rounded-2xl px-6 py-4`}>
+        <div className={`${tokens.cardBase} rounded-[20px] px-6 py-4`}>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-4">
             <h2 className={`text-lg md:text-xl font-semibold ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
               Tasks

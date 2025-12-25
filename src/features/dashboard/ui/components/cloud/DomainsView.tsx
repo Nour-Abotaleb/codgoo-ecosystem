@@ -264,7 +264,7 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className={`${tokens.cardBase} rounded-[28px] py-4 px-6 transition-colors`}>
+      <div className={`${tokens.cardBase} rounded-[20px] py-4 px-6 transition-colors`}>
           <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
             {/* <div>
               <h2 className={`text-2xl font-semibold md:text-3xl ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
@@ -423,7 +423,7 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
                               </button>
                               {openActionsId === domain.id ? (
                                 <div
-                                  className={`absolute right-0 z-20 mt-2 w-56 rounded-2xl border p-1 text-left ${
+                                  className={`absolute right-0 z-20 mt-2 w-56 rounded-[20px] border p-1 text-left ${
                                     tokens.isDark
                                       ? "border-white/10 bg-[#141325]"
                                       : "border-gray-200 bg-white"
@@ -434,7 +434,7 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
                                       <li key={action.id}>
                                         <button
                                           type="button"
-                                          className={`w-full rounded-xl px-4 py-2 cursor-pointer text-left text-sm font-medium transition ${
+                                          className={`w-full rounded-[20px] px-4 py-2 cursor-pointer text-left text-sm font-medium transition ${
                                             tokens.isDark
                                               ? "text-slate-100 hover:bg-white/10 hover:text-white"
                                               : "text-black hover:bg-gray-100 hover:text-black"
@@ -476,7 +476,7 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
                   <tr>
                     <td
                       colSpan={6}
-                      className="rounded-xl bg-[#0F1217] px-6 py-12 text-center text-sm transition-colors"
+                      className="rounded-[20px] bg-[#0F1217] px-6 py-12 text-center text-sm transition-colors"
                     >
                       <p className="text-base font-semibold">
                         No domains found yet

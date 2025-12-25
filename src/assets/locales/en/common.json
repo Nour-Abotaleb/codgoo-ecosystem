@@ -10,7 +10,9 @@
   },
   "actions": {
     "learnMore": "Learn more",
-    "getStarted": "Get started"
+    "getStarted": "Get started",
+    "back": "Back",
+    "forward": "Forward"
   },
   "footer": {
     "madeWith": "Made with ❤️ from a feature-oriented mindset"

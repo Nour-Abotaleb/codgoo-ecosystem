@@ -263,7 +263,7 @@ export const AppDashboardOverview = ({
       {/* Hero Section */}
       <section>
         <div
-          className="relative overflow-hidden rounded-[54px] px-8 py-8 text-white transition-all duration-500"
+          className="relative overflow-hidden rounded-[20px] px-8 py-8 text-white transition-all duration-500"
           style={hero.gradient ? { background: hero.gradient } : undefined}
         >
           {/* Hero Image */}
@@ -446,7 +446,7 @@ export const AppDashboardOverview = ({
               return (
                 <div
                   key={item.id}
-                  className={`grid gap-3 rounded-2xl ${tokens.isDark ? "bg-[#0F1217]" : "bg-[#E9F5F4]"} px-4 py-1  stroke text-sm md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto] md:items-center`}
+                  className={`grid gap-3 rounded-[20px] ${tokens.isDark ? "bg-[#0F1217]" : "bg-[#E9F5F4]"} px-4 py-1  stroke text-sm md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto] md:items-center`}
                 >
                   <div>
                     <p className="font-medium text-base text-[var(--color-page-text)]">{item.name}</p>
