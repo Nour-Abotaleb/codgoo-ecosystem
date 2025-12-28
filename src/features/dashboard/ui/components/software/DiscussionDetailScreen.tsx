@@ -16,6 +16,7 @@ type DiscussionDetailScreenProps = {
     }[];
   };
   readonly tokens: DashboardTokens;
+  readonly onBack?: () => void;
 };
 
 type ChatMessage = {
@@ -108,7 +109,7 @@ const SendIcon = (props: { className?: string }) => (
   </svg>
 );
 
-export const DiscussionDetailScreen = ({ discussion, tokens }: DiscussionDetailScreenProps) => {
+export const DiscussionDetailScreen = ({ discussion, tokens, onBack }: DiscussionDetailScreenProps) => {
   const [messageText, setMessageText] = useState("");
 
   const handleSendMessage = () => {
@@ -123,6 +124,34 @@ export const DiscussionDetailScreen = ({ discussion, tokens }: DiscussionDetailS
       {/* Header */}
       <div className={`flex items-center justify-between px-6 py-4 border-b ${tokens.isDark ? "border-white/10" : "border-[#E9E9E9]"} flex-shrink-0`}>
         <div className="flex items-center gap-4">
+          {onBack && (
+            <button
+              type="button"
+              onClick={onBack}
+              className={`flex items-center justify-center w-8 h-8 rounded-full transition-colors ${
+                tokens.isDark
+                  ? "text-white hover:bg-white/10"
+                  : "text-[#2B3674] hover:bg-gray-100"
+              }`}
+              aria-label="Go back"
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M15 18L9 12L15 6"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+          )}
           <div className="flex flex-col gap-1">
             <h3 className={`text-xl md:text-2xl font-bold ${tokens.isDark ? "text-white" : "text-black"}`}>
               {discussion.name}

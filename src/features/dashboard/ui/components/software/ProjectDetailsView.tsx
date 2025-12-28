@@ -5,9 +5,9 @@ import {
   TasksIcon,
   ProjectInvoiceIcon,
   AttachmentsIcon,
-  AllProjectsIcon,
-  CompletedIcon,
-  DayLeftIcon,
+  AllProjecs,
+  projectsCompleted,
+  DayRemaining,
   CalendarIcon,
   ActivityTasksIcon
 } from "@utilities/icons";
@@ -59,21 +59,21 @@ const projectStats: readonly ProjectStat[] = [
     label: "Project Progress",
     value: "100%",
     subtitle: "Completed",
-    icon: AllProjectsIcon
+    icon: AllProjecs
   },
   {
     id: "tasks",
     label: "Open Tasks",
     value: "2 / 3",
     subtitle: "Tasks Done",
-    icon: CompletedIcon
+    icon: projectsCompleted
   },
   {
     id: "days",
     label: "Days Left",
     value: "12",
     subtitle: "Days Remaining",
-    icon: DayLeftIcon
+    icon: DayRemaining
   }
 ];
 

@@ -7,6 +7,7 @@ import {
   SettingsIcon,
   PendingIcon,
   SearchIcon,
+   plus as PlusIcon 
 } from "@utilities/icons";
 
 import type {
@@ -229,9 +230,8 @@ export const ServerServicesView = ({
               onClick={() => navigate("/dashboard/order")}
               className={`${tokens.buttonFilled} inline-flex items-center justify-center gap-1 cursor-pointer rounded-full px-3 py-2 text-sm font-semibold`}
             >
-               <span className="inline-flex h-6 w-6 items-center justify-center text-sm rounded-full bg-white text-[#584ABC]">
-                  +
-                </span>
+                   <PlusIcon className="h-4 w-4" />
+
               Order New Server
             </button>
           </div>

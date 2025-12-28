@@ -16,7 +16,7 @@ import {
   UnpaidIcon,
   PendingIcon,
   PlusCircleIcon,
-  DomainsIcon,
+  DomainsIconSideBar,
   BackupIcon,
 } from "@utilities/icons";
 import type { DashboardTokens } from "../../types";
@@ -162,7 +162,7 @@ export const ManageHostView = ({ hostId: _hostId, tokens }: ManageHostViewProps)
         <div className="mb-6 flex flex-col justify-between gap-3 md:flex-row md:items-center border-b border-dashed border-[#A3AED0] pb-6">
           <div className="flex items-center gap-2">
             <span
-              className={`${tokens.buttonGhost} inline-flex h-10 w-10 items-center justify-center rounded-full`}
+              className={`${tokens.buttonGhost} inline-flex h-16 w-16 items-center justify-center rounded-full`}
             >
               <HostIcon className={`h-6 w-6 ${tokens.isDark ? "" : "text-[#584ABC]"}`} />
             </span>
@@ -204,7 +204,7 @@ export const ManageHostView = ({ hostId: _hostId, tokens }: ManageHostViewProps)
               className={`${tokens.cardBase} flex h-full flex-col gap-4 rounded-[20px] p-5 text-left`}
             >
               <span
-                className={`${tokens.buttonGhost} inline-flex h-10 w-10 items-center justify-center rounded-full`}
+                className={`${tokens.buttonGhost} inline-flex h-16 w-16 items-center justify-center rounded-full`}
               >
                 <action.Icon className={`h-5 w-5 md:h-6 md:w-6 ${tokens.isDark ? "" : "[&_path]:fill-[#584ABC]"}`} />
               </span>
@@ -270,7 +270,7 @@ export const ManageHostView = ({ hostId: _hostId, tokens }: ManageHostViewProps)
               >
                 <div className="flex items-center gap-4">
                   <span
-                    className={`${tokens.buttonGhost} inline-flex h-10 w-10 items-center justify-center rounded-full`}
+                    className={`${tokens.buttonGhost} inline-flex p-3 items-center justify-center rounded-full`}
                   >
                     <MetricIcon className={`h-6 w-6 ${tokens.isDark ? "" : "[&_path]:fill-[#584ABC]"}`} />
                   </span>
@@ -391,7 +391,7 @@ export const ManageHostView = ({ hostId: _hostId, tokens }: ManageHostViewProps)
                         className={`${tokens.buttonGhost} flex h-9 w-9 items-center justify-center rounded-full`}
                         aria-label={`Backup ${row.domain}`}
                       >
-                        <DomainsIcon className={`h-4 w-4 ${tokens.isDark ? "" : "[&_path]:fill-[#584ABC]"}`} />
+                        <DomainsIconSideBar className={`h-4 w-4 ${tokens.isDark ? "" : "[&_path]:fill-[#584ABC]"}`} />
                       </button>
                     </div>
                   </td>

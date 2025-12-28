@@ -8,12 +8,12 @@ import { useAuth } from "@features/auth";
 import {
   BillingIcon,
   DashboardIcon,
-  DomainsIcon,
+  DomainsIconSideBar,
   DotsSwitcher,
-  HostIcon,
+  HostIconSideBar,
   ServerIcon,
   WebsitesIcon,
-  SettingsIcon,
+  SettingsIconSideBar,
   SupportIcon,
   Logout,
   CalendarIcon,
@@ -101,9 +101,9 @@ export const DashboardSidebar = ({
   // Use App-specific icons when activeAppId is "app"
   const iconMap = activeAppId === "app" ? {
     dashboard: AppHomeIcon,
-    host: HostIcon,
+    host: HostIconSideBar,
     server: ServerIcon,
-    domains: DomainsIcon,
+    domains: DomainsIconSideBar,
     websites: WebsitesIcon,
     billing: AppBillingIcon,
     settings: AppSettingsIcon,
@@ -114,12 +114,12 @@ export const DashboardSidebar = ({
     marketplace: AppMarketplaceIcon
   } : {
     dashboard: DashboardIcon,
-    host: HostIcon,
+    host: HostIconSideBar,
     server: ServerIcon,
-    domains: DomainsIcon,
+    domains: DomainsIconSideBar,
     websites: WebsitesIcon,
     billing: BillingIcon,
-    settings: SettingsIcon,
+    settings: SettingsIconSideBar,
     projects: ProjectIcon,
     products: ProductIcon,
     meetings: CalendarIcon,

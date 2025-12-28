@@ -111,20 +111,20 @@ const WebsiteCard = ({
       </div>
 
       {/* Action Buttons */}
-      <div className="flex items-center justify-end cursor-pointer w-full pt-4 pb-2" onClick={() => navigate(`/dashboard/manage-website/${site.id}`)}>
+      <div className="flex items-center justify-center cursor-pointer w-full pt-4 pb-2" onClick={() => navigate(`/dashboard/manage-website/${site.id}`)}>
         <button
           type="button"
           onClick={(e) => {
             e.stopPropagation();
             navigate(`/dashboard/manage-website/${site.id}`);
           }}
-          className={`${tokens.isDark ? "bg-transparent stroke" : "bg-white"} transition text-[#584ABC] w-[90%] flex justify-center cursor-pointer flex items-center gap-2 rounded-full px-8 py-3 text-sm md:text-base font-semibold`}
+          className={`${tokens.isDark ? "bg-transparent stroke" : "bg-white"} transition text-[#584ABC] w-[100%] flex justify-center cursor-pointer flex items-center gap-2 rounded-full px-8 py-3 text-sm md:text-base font-semibold`}
         >
           Dashboard
         </button>
-        <div className={`w-11 h-11 bg-white rounded-full flex items-center justify-center text-center -ms-2 transition ${tokens.isDark ? "bg-white" : "bg-white"}`}>
+        {/* <div className={`w-11 h-11 bg-white rounded-full flex items-center justify-center text-center -ms-2 transition ${tokens.isDark ? "bg-white" : "bg-white"}`}>
           <ArrowUpIcon className="w-6 h-6 p-1 bg-gradient-to-b from-[#8A72FC] to-[#4318FF] rounded-full" />
-        </div>
+        </div> */}
       </div>
     </div>
   );

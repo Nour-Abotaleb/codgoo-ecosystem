@@ -119,7 +119,7 @@ export const AddNewProjectModal = ({
                 className={`absolute left-4 -top-2.5 px-2 text-sm font-medium z-10 ${
                   tokens.isDark 
                     ? "text-white/70 bg-[#232637]" 
-                    : "text-black bg-[#0F1217]"
+                    : "text-black bg-white"
                 }`}
               >
                 Project Name
@@ -144,7 +144,7 @@ export const AddNewProjectModal = ({
                 className={`absolute left-4 -top-2.5 px-2 text-sm font-medium z-10 ${
                   tokens.isDark 
                     ? "text-white/70 bg-[#232637]" 
-                    : "text-black bg-[#0F1217]"
+                    : "text-black bg-white"
                 }`}
               >
                 Project Type
@@ -207,7 +207,7 @@ export const AddNewProjectModal = ({
                   className={`absolute left-4 -top-2.5 px-2 text-sm font-medium z-10 ${
                     tokens.isDark 
                       ? "text-white/70 bg-[#232637]" 
-                      : "text-black bg-[#0F1217]"
+                      : "text-black bg-white"
                   }`}
                 >
                   Start
@@ -237,7 +237,7 @@ export const AddNewProjectModal = ({
                   className={`absolute left-4 -top-2.5 px-2 text-sm font-medium z-10 ${
                     tokens.isDark 
                       ? "text-white/70 bg-[#232637]" 
-                      : "text-black bg-[#0F1217]"
+                      : "text-black bg-white"
                   }`}
                 >
                   Deadline
@@ -268,7 +268,7 @@ export const AddNewProjectModal = ({
                 className={`absolute left-4 -top-2.5 px-2 text-sm font-medium z-10 ${
                   tokens.isDark 
                     ? "text-white/70 bg-[#232637]" 
-                    : "text-black bg-[#0F1217]"
+                    : "text-black bg-white"
                 }`}
               >
                 Project Description

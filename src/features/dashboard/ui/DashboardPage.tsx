@@ -50,7 +50,7 @@ import { HostView } from "./components/cloud/HostView";
 import { ManageHostView } from "./components/cloud/ManageHostView";
 import { OrderView } from "./components/OrderView";
 import type { DashboardAppId, DashboardTokens } from "./types";
-import { getDefaultDashboard } from "./utils/dashboardPreferences";
+import { getDefaultDashboard, getCurrentDashboard, setCurrentDashboard } from "./utils/dashboardPreferences";
 import { setDashboardAppId } from "@shared/theme";
 
 export const DashboardPage = () => {
@@ -61,7 +61,8 @@ export const DashboardPage = () => {
   const theme = useAppSelector(selectTheme);
   const isDark = theme === "dark";
   const [activeAppId, setActiveAppId] = useState<DashboardAppId>(() => {
-    return getDefaultDashboard();
+    // First try to get the current dashboard (last active), then fall back to default
+    return getCurrentDashboard() ?? getDefaultDashboard();
   });
   const isRTL = i18nInstance.language === "ar";
   const { data: marketplaceApiData } = useGetMarketplaceAppsQuery();
@@ -287,6 +288,7 @@ export const DashboardPage = () => {
   const handleSelectApp = useCallback(
     (appId: DashboardAppId) => {
       setActiveAppId(appId);
+      setCurrentDashboard(appId); // Save current app to localStorage
       navigate("/dashboard");
     },
     [navigate]

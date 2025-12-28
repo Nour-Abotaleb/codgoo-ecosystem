@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PlusCircleIcon, AllProjectsIcon, CompletedIcon, OngoingIcon, ProjectPendingIcon } from "@utilities/icons";
+import { PlusCircleIcon, AllProjecs, projectsCompleted, ProjectsOngoing,  ProjectsPending } from "@utilities/icons";
 import type { DashboardTokens } from "../../types";
 import { ProjectCard, type ProjectCardData } from "./ProjectCard";
 import { AddNewProjectModal } from "../modals/AddNewProjectModal";
@@ -74,25 +74,25 @@ const projectStats = [
     id: "all",
     label: "All Projects",
     value: "6",
-    icon: AllProjectsIcon
+    icon: AllProjecs
   },
   {
     id: "completed",
     label: "Completed",
     value: "22",
-    icon: CompletedIcon
+    icon: projectsCompleted
   },
   {
     id: "ongoing",
     label: "Ongoing",
     value: "22",
-    icon: OngoingIcon
+    icon: ProjectsOngoing
   },
   {
     id: "pending",
     label: "Pending",
     value: "22",
-    icon: ProjectPendingIcon
+    icon: ProjectsPending
   }
 ];
 

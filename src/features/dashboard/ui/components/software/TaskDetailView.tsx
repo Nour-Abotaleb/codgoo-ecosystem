@@ -103,6 +103,7 @@ export const TaskDetailView = ({ task, tokens }: TaskDetailViewProps) => {
       <DiscussionDetailScreen
         discussion={selectedDiscussion}
         tokens={tokens}
+        onBack={() => setSelectedDiscussion(null)}
       />
     );
   }

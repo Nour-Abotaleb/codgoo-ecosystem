@@ -7,7 +7,7 @@ import {
   ServerIcon,
   FileManagementIcon,
   DatabaseIcon,
-  DomainsIcon,
+  DomainsIconSideBar,
   MemoryIcon,
   BandwidthIcon,
   DiskIcon,
@@ -167,7 +167,7 @@ export const ManageWebsiteView = ({ tokens }: ManageWebsiteViewProps) => {
         <div className="mb-6 flex flex-col justify-between gap-3 md:flex-row md:items-center border-b border-dashed border-[#A3AED0] pb-6">
           <div className="flex items-center gap-2">
             <span
-              className={`${tokens.buttonGhost} inline-flex h-10 w-10 items-center justify-center rounded-full`}
+              className={`${tokens.buttonGhost} inline-flex h-16 w-16 items-center justify-center rounded-full`}
             >
               <WebsitesIcon className={`h-6 w-6 ${tokens.isDark ? "" : "text-[#584ABC]"}`} />
             </span>
@@ -209,7 +209,7 @@ export const ManageWebsiteView = ({ tokens }: ManageWebsiteViewProps) => {
               className={`${tokens.cardBase} flex h-full flex-col gap-4 rounded-[20px] p-5 text-left`}
             >
               <span
-                className={`${tokens.buttonGhost} inline-flex h-10 w-10 items-center justify-center rounded-full`}
+                className={`${tokens.buttonGhost} inline-flex h-16 w-16 items-center justify-center rounded-full`}
               >
                 <action.Icon className={`h-5 w-5 md:h-6 md:w-6 ${tokens.isDark ? "" : "[&_path]:fill-[#584ABC]"}`} />
               </span>
@@ -242,7 +242,7 @@ export const ManageWebsiteView = ({ tokens }: ManageWebsiteViewProps) => {
             <span className={`flex h-10 w-10 items-center justify-center rounded-full ${
               tokens.isDark ? "bg-white/10" : "bg-[#E6E3FF]"
             }`}>
-              <DomainsIcon className={`h-5 w-5 ${tokens.isDark ? "" : "[&_path]:fill-[#584ABC]"}`} />
+              <DomainsIconSideBar className={`h-5 w-5 ${tokens.isDark ? "" : "[&_path]:fill-[#584ABC]"}`} />
             </span>
             <h3 className={`text-2xl font-semibold ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>PageSpeed Insights</h3>
           </div>
@@ -283,7 +283,7 @@ export const ManageWebsiteView = ({ tokens }: ManageWebsiteViewProps) => {
               >
                 <div className="flex items-center gap-4">
                   <span
-                    className={`${tokens.buttonGhost} inline-flex h-10 w-10 items-center justify-center rounded-full`}
+                    className={`${tokens.buttonGhost} inline-flex p-3 items-center justify-center rounded-full`}
                   >
                     <MetricIcon className={`h-6 w-6 ${tokens.isDark ? "" : "[&_path]:fill-[#584ABC]"}`} />
                   </span>
@@ -326,16 +326,16 @@ export const ManageWebsiteView = ({ tokens }: ManageWebsiteViewProps) => {
                   />
                 </div>
               </div>
-              <div className="flex items-center justify-end cursor-pointer">
+              <div className="flex items-center justify-center cursor-pointer">
               <button
                 type="button"
                 className={`bg-white text-[#584ABC] cursor-pointer flex items-center gap-2 rounded-full px-8 py-2.5 text-sm font-semibold`}
               >
                 See details
               </button>
-              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-center -ms-2">
+              {/* <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-center -ms-2">
                  <ArrowUpIcon className="w-6 h-6 p-1 bg-gradient-to-b from-[#8A72FC] to-[#4318FF] rounded-full" />
-              </div>
+              </div> */}
               </div>
             </div>
           </div>

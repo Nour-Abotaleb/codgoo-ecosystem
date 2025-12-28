@@ -210,9 +210,9 @@ export const ManageDomainView = ({ tokens }: ManageDomainViewProps) => {
                   >
                     Try Now
                   </button>
-                  <div className="w-11 h-11 bg-white rounded-full flex items-center justify-center text-center -ms-2">
+                  {/* <div className="w-11 h-11 bg-white rounded-full flex items-center justify-center text-center -ms-2">
                     <ArrowUpIcon className="w-6 h-6 p-1 bg-gradient-to-b from-[#8A72FC] to-[#4318FF] rounded-full" />
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>

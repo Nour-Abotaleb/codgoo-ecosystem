@@ -4,10 +4,11 @@ import { i18n } from "@shared/config/i18n";
 import heroWave from "@assets/images/cloud/bg.png";
 import widgetBg from "@assets/images/cloud/widget.png";
 import widget3Bg from "@assets/images/cloud/widget3.png";
-import { SearchIcon, HostIcon, TicketIcon, InvoiceIcon, DomainsIcon, SettingsIcon, ArrowUpIcon, BackupIcon, ActiveIcon, UnpaidIcon, PendingIcon, TechIcon, DateIcon, ClockIcon } from "@utilities/icons";
+import { SearchIcon, HostIcon, TicketIcon,  InvoiceIcon,DomainsIconMINI , DomainsIcon, SettingsIcon, ArrowUpIcon, BackupIcon, ActiveIcon, UnpaidIcon, PendingIcon, TechIcon, DateIcon, ClockIcon, plus as PlusIcon } from "@utilities/icons";
 
 import type { DashboardDataset, DashboardTokens, DomainItem } from "../../types";
 import { DiamondIcon, ArrowRight } from "@utilities/icons";
+import { CustomSelect } from "@shared/components/CustomSelect";
 
 type DashboardOverviewProps = {
   readonly dataset: DashboardDataset;
@@ -80,6 +81,8 @@ export const DashboardOverview = ({
   const [activeTicketPage, setActiveTicketPage] = useState(0);
   const [domainSearchQuery, setDomainSearchQuery] = useState("");
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [selectedDomain, setSelectedDomain] = useState("");
+  const [selectedSecurityDomain, setSelectedSecurityDomain] = useState("");
   const isRTL = i18n.language === "ar";
   const cardClass = `${tokens.cardBase} rounded-[20px] px-6 py-4 transition-colors`;
   const heroSlides = createHeroSlides(dataset.hero);
@@ -221,7 +224,7 @@ export const DashboardOverview = ({
               className={`${cardClass} flex flex-col gap-2 px-4 py-7 `}
             >
               <div className="flex items-center gap-3">
-                <div className={`flex items-center justify-center rounded-full p-2 ${tokens.isDark ? "bg-[var(--color-icon-surface)]" : "bg-[#EEEDF8]"}`}>
+                <div className={`flex items-center justify-center rounded-full p-3 ${tokens.isDark ? "bg-[var(--color-icon-surface)]" : "bg-[#EEEDF8]"}`}>
                   <Icon 
                     className={`h-6 w-6 md:h-8 md:w-8 ${tokens.isDark ? "[&_path]:fill-white" : "[&_path]:fill-[#584ABC]"}`}
                   />
@@ -285,24 +288,20 @@ export const DashboardOverview = ({
             </div>
              <div className="flex items-start flex-col gap-2 w-full">
                <p className="text-white mt-2 font-light text-sm md:text-base">Choose Domain</p>
-               <div className="flex items-center w-full">
-                 <div className="flex h-11 flex-1 items-center gap-3 rounded-full bg-white px-4 min-w-0">
-                   <select
-                     className="w-full bg-transparent text-sm text-[#584ABC] focus:outline-none cursor-pointer appearance-none"
-                     defaultValue=""
-                   >
-                     <option value="" disabled className="text-[#584ABC]">Choose Domain</option>
-                     {dataset.domains.map((domain) => (
-                       <option key={domain.id} value={domain.id} className="text-[#584ABC]">
-                         {domain.name}
-                       </option>
-                     ))}
-                   </select>
-                 </div>
-                 <div className="w-11 h-11 bg-white rounded-full flex items-center justify-center text-center cursor-pointer flex-shrink-0 -ml-2">
-                   <ArrowUpIcon className="w-6 h-6 p-1 bg-gradient-to-b from-[#8A72FC] to-[#4318FF] rounded-full" />
-                 </div>
-               </div>
+               <CustomSelect
+                 options={dataset.domains.map((domain) => ({
+                   value: domain.id,
+                   label: domain.name,
+                 }))}
+                 placeholder="Choose Domain"
+                 value={selectedDomain}
+                 onChange={setSelectedDomain}
+                 icon={
+                   <div className="w-10 h-10 m-1 bg-[#584ABC] rounded-full flex items-center justify-center text-center cursor-pointer flex-shrink-0 -ml-2">
+                     <ArrowUpIcon className="w-8 h-8 p-1 rounded-full" />
+                   </div>
+                 }
+               />
              </div>
           </div>
         </div>
@@ -320,27 +319,23 @@ export const DashboardOverview = ({
                 </h3>
               </div>
             </div>
-            <div className="flex items-start flex-col gap-2 w-full">
-              <p className="text-[#7469C7] mt-2 font-light text-sm md:text-base">Choose Domain</p>
-              <div className="flex items-center w-full">
-                <div className="flex h-11 flex-1 items-center gap-3 rounded-full bg-white px-4 min-w-0">
-                  <select
-                    className="w-full bg-transparent text-sm text-[#584ABC] focus:outline-none cursor-pointer appearance-none"
-                    defaultValue=""
-                  >
-                    <option value="" disabled className="text-[#584ABC]">Choose Domain</option>
-                    {dataset.domains.map((domain) => (
-                      <option key={domain.id} value={domain.id} className="text-[#584ABC]">
-                        {domain.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="w-11 h-11 bg-white rounded-full flex items-center justify-center text-center cursor-pointer flex-shrink-0 -ml-2">
-                  <ArrowUpIcon className="w-6 h-6 p-1 bg-gradient-to-b from-[#8A72FC] to-[#4318FF] rounded-full" />
-                </div>
-              </div>
-            </div>
+             <div className="flex items-start flex-col gap-2 w-full">
+               <p className=" text-[#7469C7] mt-2 font-light text-sm md:text-base ">Choose Domain</p>
+               <CustomSelect
+                 options={dataset.domains.map((domain) => ({
+                   value: domain.id,
+                   label: domain.name,
+                 }))}
+                 placeholder="Choose Domain"
+                 value={selectedDomain}
+                 onChange={setSelectedDomain}
+                 icon={
+                   <div className="w-10 h-10 m-1 bg-[#584ABC] rounded-full flex items-center justify-center text-center cursor-pointer flex-shrink-0 -ml-2">
+                     <ArrowUpIcon className="w-8 h-8 p-1 rounded-full" />
+                   </div>
+                 }
+               />
+             </div>
           </div>
         </div>
 
@@ -417,7 +412,7 @@ export const DashboardOverview = ({
                             className={`${tokens.buttonGhost} flex h-9 w-9 items-center justify-center rounded-full`}
                             aria-label={`Domain settings for ${domain.name}`}
                           >
-                            <DomainsIcon className={`h-4 w-4 ${tokens.isDark ? "" : "text-[#584ABC]"}`} />
+                            <DomainsIconMINI  className={`h-4 w-4 ${tokens.isDark ? "" : "text-[#584ABC]"}`} />
                           </button>
                         </div>
                       </td>
@@ -460,20 +455,17 @@ export const DashboardOverview = ({
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex items-center justify-end cursor-pointer w-full pt-4 pb-2" onClick={() => navigate(`/dashboard/manage-website/${site.id}`)}>
+                <div className="flex items-center justify-center cursor-pointer w-full pt-4 pb-2" onClick={() => navigate(`/dashboard/manage-website/${site.id}`)}>
                   <button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
                       navigate(`/dashboard/manage-website/${site.id}`);
                     }}
-                    className={`${tokens.isDark ? "bg-transparent stroke" : "bg-white"} transition text-[#584ABC] w-[85%] flex justify-center cursor-pointer flex items-center gap-2 rounded-full px-8 py-2.5 text-sm md:text-base font-semibold`}
+                    className={`${tokens.isDark ? "bg-[#584ABC] text-white" : "bg-[#584ABC] text-white"} transition text-[#584ABC] w-[100%] flex justify-center cursor-pointer flex items-center  rounded-full  py-2.5 text-sm md:text-base font-semibold`}
                   >
                     Manage Site
                   </button>
-                  <div className={`w-11 h-11 bg-white rounded-full flex items-center justify-center text-center -ms-2 transition ${tokens.isDark ? "bg-white" : "bg-white"}`}>
-                    <ArrowUpIcon className="w-6 h-6 p-1 bg-gradient-to-b from-[#8A72FC] to-[#4318FF] rounded-full" />
-                  </div>
                 </div>
               </div>
             ))}
@@ -534,15 +526,13 @@ export const DashboardOverview = ({
               />
             ))}
           </div>
-          <div className="mt-16 flex justify-center bg-[#9E96D8] text-white border border-dashed border-[#584ABC] rounded-full cursor-pointer px-8 py-2 text-sm md:text-base font-semibold">
+          <div className="mt-16 flex justify-center bg-[#584ABC] text-white border border-dashed border-[#584ABC] rounded-full cursor-pointer px-8 py-2 text-sm md:text-base font-semibold">
             <button
                 type="button"
                 onClick={() => navigate("/dashboard/manage-nameservers")}
-                className="py-2.5 flex items-center gap-2 cursor-pointer"
+                className="py-2.5 flex items-center gap-2 cursor-pointer "
               >
-                <span className="inline-flex h-6 w-6 items-center justify-center text-sm rounded-full bg-white text-[#584ABC]">
-                  +
-                </span>
+           <PlusIcon className="h-4 w-4" />
                 Open New Ticket
               </button>
           </div>

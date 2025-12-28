@@ -8,6 +8,7 @@ import {
   UnpaidIcon,
   SearchIcon,
   SettingsIcon,
+     plus as PlusIcon 
 } from "@utilities/icons";
 
 import type { DashboardTokens, DomainItem } from "../../types";
@@ -316,9 +317,7 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
                 onClick={() => navigate("/dashboard/manage-nameservers")}
                 className={`${filledButtonClass} gap-2 py-2.5 cursor-pointer`}
               >
-                <span className="inline-flex h-6 w-6 items-center justify-center text-sm rounded-full bg-white text-[#584ABC]">
-                  +
-                </span>
+             <PlusIcon className="h-4 w-4" />
                 Register Domain
               </button>
             </div>
