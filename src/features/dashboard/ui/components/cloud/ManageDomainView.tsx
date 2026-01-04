@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useMemo } from "react";
 
-import { DomainsIcon, SettingsIcon, ArrowUpIcon, EditIcon, EmailIcon, PhoneIcon, BrandProtectionIcon } from "@utilities/icons";
+import { DomainsIcon, SettingsIcon, EditIcon, EmailIcon, PhoneIcon, BrandProtectionIcon } from "@utilities/icons";
 
 import buildBg from "@assets/images/cloud/build-bg.png";
 import domainsBg from "@assets/images/cloud/domains-bg.png";

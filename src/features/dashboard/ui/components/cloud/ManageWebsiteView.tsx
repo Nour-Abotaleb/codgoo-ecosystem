@@ -14,7 +14,6 @@ import {
   BackupIcon,
   ArrowRightIcon,
   WebsitesIcon,
-  ArrowUpIcon,
   SuccessIcon,
   CalendarIcon
 } from "@utilities/icons";

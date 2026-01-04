@@ -43,10 +43,15 @@ export const BundleSelectionView = ({ tokens }: BundleSelectionViewProps) => {
       const features = JSON.parse(pkg.features) as string[];
       const badges = JSON.parse(pkg.badges) as string[];
 
+      // Get the monthly price as default display price
+      const monthlyPrice = pkg.prices.find(p => p.name === "monthly");
+      const displayPrice = monthlyPrice?.amount ?? pkg.prices[0]?.amount ?? 0;
+      const currency = monthlyPrice?.currency ?? pkg.prices[0]?.currency ?? "USD";
+
       return {
         id: pkg.id.toString(),
         title: pkg.name,
-        price: pkg.price.amount.toString(),
+        price: `${displayPrice} ${currency}`,
         description: pkg.tagline,
         badge: badges.length > 0 ? badges[0] : undefined,
         perks: features,
@@ -82,12 +87,49 @@ export const BundleSelectionView = ({ tokens }: BundleSelectionViewProps) => {
         </p>
       </div>
 
-      {/* Loading State */}
+      {/* Loading State - Skeleton Cards */}
       {isLoading && (
-        <div className={`${tokens.cardBase} rounded-[20px] p-10 text-center`}>
-          <p className={`text-lg ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"}`}>
-            Loading bundles...
-          </p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className={`${tokens.cardBase} rounded-[20px] overflow-hidden flex flex-col animate-pulse`}>
+              {/* Header Skeleton */}
+              <div className={`p-4 ${tokens.isDark ? "bg-[#2a3a3a]" : "bg-gradient-to-br from-[#043F45]/20 to-[#25A9A6]/20"}`}>
+                <div className="flex items-center gap-3">
+                  <div className={`h-14 w-14 rounded-full ${tokens.isDark ? "bg-[#3a4a4a]" : "bg-[#386B70]/30"}`} />
+                </div>
+                <div className="flex flex-col mt-3 gap-2">
+                  <div className={`h-5 w-32 rounded ${tokens.isDark ? "bg-[#3a4a4a]" : "bg-[#386B70]/20"}`} />
+                  <div className={`h-4 w-48 rounded ${tokens.isDark ? "bg-[#3a4a4a]" : "bg-[#386B70]/15"}`} />
+                </div>
+                <div className={`mt-3 h-8 w-24 rounded ${tokens.isDark ? "bg-[#3a4a4a]" : "bg-[#386B70]/20"}`} />
+              </div>
+
+              {/* Features Skeleton */}
+              <div className={`p-4 flex-1 ${tokens.isDark ? "bg-[#1a2a2a]" : "bg-[#FAFAFA]"}`}>
+                <div className="space-y-3">
+                  {[1, 2, 3, 4].map((j) => (
+                    <div key={j} className="flex items-center gap-2">
+                      <div className={`h-6 w-6 rounded-full ${tokens.isDark ? "bg-[#2a3a3a]" : "bg-[#67C6D2]/30"}`} />
+                      <div className={`h-4 rounded ${tokens.isDark ? "bg-[#2a3a3a]" : "bg-gray-200"}`} style={{ width: `${60 + j * 10}%` }} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Savings Skeleton */}
+              <div className={`px-4 pb-4 ${tokens.isDark ? "bg-[#1a2a2a]" : "bg-[#FAFAFA]"}`}>
+                <div className={`rounded-[20px] px-4 py-3 ${tokens.isDark ? "bg-[#2a3a3a]" : "bg-[#EBFBFB]/50"}`}>
+                  <div className={`h-4 w-32 rounded mb-2 ${tokens.isDark ? "bg-[#3a4a4a]" : "bg-[#208483]/20"}`} />
+                  <div className={`h-5 w-40 rounded ${tokens.isDark ? "bg-[#3a4a4a]" : "bg-[#208483]/15"}`} />
+                </div>
+              </div>
+
+              {/* Button Skeleton */}
+              <div className={`px-4 pb-5 ${tokens.isDark ? "bg-[#1a2a2a]" : "bg-[#FAFAFA]"}`}>
+                <div className={`h-12 w-full rounded-full ${tokens.isDark ? "bg-[#2a3a3a]" : "bg-[#4CA8B5]/30"}`} />
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
@@ -117,7 +159,7 @@ export const BundleSelectionView = ({ tokens }: BundleSelectionViewProps) => {
                     <span className="text-lg md:text-xl font-semibold">{bundle.title}</span>
                     <span className="text-sm md:text-base font-light">{bundle.description}</span>
                 </div>
-              <div className="mt-2 text-3xl font-semibold">{bundle.price} <span className="text-base font-light">EGP</span></div>
+              <div className="mt-2 text-3xl font-semibold">{bundle.price}</div>
             </div>
 
             <div className="p-4 flex-1">
@@ -143,9 +185,9 @@ export const BundleSelectionView = ({ tokens }: BundleSelectionViewProps) => {
               <div className="bg-[#EBFBFB] text-[#249796] rounded-[20px] px-4 py-3 text-sm font-medium flex flex-col items-start gap-2 justify-between">
                 <div className="flex items-center gap-2">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M3.67063 12.9386L7.44563 16.7136C8.99563 18.2636 11.5123 18.2636 13.0706 16.7136L16.729 13.0553C18.279 11.5053 18.279 8.98864 16.729 7.43031L12.9456 3.66364C12.154 2.87197 11.0623 2.44697 9.94563 2.50531L5.77896 2.70531C4.1123 2.78031 2.7873 4.10531 2.70396 5.76364L2.50396 9.93031C2.45396 11.0553 2.87896 12.147 3.67063 12.9386Z" stroke="#208483" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M8.11263 10.1882C9.26322 10.1882 10.196 9.25541 10.196 8.10482C10.196 6.95422 9.26322 6.02148 8.11263 6.02148C6.96204 6.02148 6.0293 6.95422 6.0293 8.10482C6.0293 9.25541 6.96204 10.1882 8.11263 10.1882Z" stroke="#208483" stroke-width="1.5" stroke-linecap="round"/>
-                        <path d="M11.0293 14.3548L14.3626 11.0215" stroke="#208483" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M3.67063 12.9386L7.44563 16.7136C8.99563 18.2636 11.5123 18.2636 13.0706 16.7136L16.729 13.0553C18.279 11.5053 18.279 8.98864 16.729 7.43031L12.9456 3.66364C12.154 2.87197 11.0623 2.44697 9.94563 2.50531L5.77896 2.70531C4.1123 2.78031 2.7873 4.10531 2.70396 5.76364L2.50396 9.93031C2.45396 11.0553 2.87896 12.147 3.67063 12.9386Z" stroke="#208483" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M8.11263 10.1882C9.26322 10.1882 10.196 9.25541 10.196 8.10482C10.196 6.95422 9.26322 6.02148 8.11263 6.02148C6.96204 6.02148 6.0293 6.95422 6.0293 8.10482C6.0293 9.25541 6.96204 10.1882 8.11263 10.1882Z" stroke="#208483" strokeWidth="1.5" strokeLinecap="round"/>
+                        <path d="M11.0293 14.3548L14.3626 11.0215" stroke="#208483" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                     <span className="text-sm font-medium text-black">Estimated Savings</span>
                 </div>
@@ -182,4 +224,5 @@ export const BundleSelectionView = ({ tokens }: BundleSelectionViewProps) => {
     </div>
   );
 };
+
 

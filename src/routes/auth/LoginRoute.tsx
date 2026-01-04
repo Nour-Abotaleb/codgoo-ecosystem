@@ -1,10 +1,16 @@
 import { useEffect } from "react";
 import { Link, Navigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { useAppSelector } from "@store/hooks";
+import { selectTheme } from "@store/theme/theme-slice";
 
 import { AuthTemplate, LoginForm, useAuth } from "@features/auth";
 
 export const LoginRoute = () => {
   const { isAuthenticated } = useAuth();
+  const { t } = useTranslation("auth");
+  const theme = useAppSelector(selectTheme);
+  const isDark = theme === "dark";
 
   useEffect(() => {
     document.title = "Codgoo Ecosystem";
@@ -17,15 +23,17 @@ export const LoginRoute = () => {
 
   return (
   <AuthTemplate
-    title="Welcome Back to Codgoo"
+    title={t("login.title")}
     bottomSlot={
-      <span className="text-base md:text-lg text-black text-center">
-        You do not have an account?{" "}
+      <span className={`text-base md:text-lg text-center transition-colors ${
+        isDark ? "text-gray-300" : "text-black"
+      }`}>
+        {t("login.noAccount")}{" "}
         <Link
           to="/register"
-          className="font-medium text-[color:var(--color-link)] hover:text-indigo-500 underline"
+          className="font-medium text-indigo-500 hover:text-indigo-600 underline"
         >
-          Register now
+          {t("login.registerNow")}
         </Link>
       </span>
     }

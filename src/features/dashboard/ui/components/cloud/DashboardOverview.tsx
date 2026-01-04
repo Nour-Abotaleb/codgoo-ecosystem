@@ -82,7 +82,6 @@ export const DashboardOverview = ({
   const [domainSearchQuery, setDomainSearchQuery] = useState("");
   const [imageLoaded, setImageLoaded] = useState(false);
   const [selectedDomain, setSelectedDomain] = useState("");
-  const [selectedSecurityDomain, setSelectedSecurityDomain] = useState("");
   const isRTL = i18n.language === "ar";
   const cardClass = `${tokens.cardBase} rounded-[20px] px-6 py-4 transition-colors`;
   const heroSlides = createHeroSlides(dataset.hero);
@@ -165,7 +164,7 @@ export const DashboardOverview = ({
           <img
             src={heroImage}
             alt="Hero background"
-            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
+            className={`absolute inset-0 rounded-[20px]  w-full h-full object-cover transition-opacity duration-500 ${
               imageLoaded ? "opacity-100" : "opacity-0"
             }`}
             loading="eager"

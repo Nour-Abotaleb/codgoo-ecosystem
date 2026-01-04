@@ -1,5 +1,8 @@
 import { type FormEvent, useCallback, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { useAppSelector } from "@store/hooks";
+import { selectTheme } from "@store/theme/theme-slice";
 
 import appleIcon from "@assets/images/apple.svg";
 import facebookIcon from "@assets/images/facebook.svg";
@@ -21,9 +24,12 @@ type FieldErrors = {
 
 export const RegisterForm = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation("auth");
   const { register, loading, error } = useAuth();
   const formRef = useRef<HTMLFormElement>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const theme = useAppSelector(selectTheme);
+  const isDark = theme === "dark";
 
   const handleSubmit = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
@@ -43,27 +49,27 @@ export const RegisterForm = () => {
       const errors: FieldErrors = {};
 
       if (!name || name.trim() === "") {
-        errors.name = "Full name is required";
+        errors.name = t("register.errors.nameRequired");
       }
 
       if (!email || email.trim() === "") {
-        errors.email = "Email is required";
+        errors.email = t("register.errors.emailRequired");
       } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        errors.email = "Please enter a valid email address";
+        errors.email = t("register.errors.emailInvalid");
       }
 
       if (!phone || phone.trim() === "") {
-        errors.phone = "Phone number is required";
+        errors.phone = t("register.errors.phoneRequired");
       }
 
       if (!password || password.trim() === "") {
-        errors.password = "Password is required";
+        errors.password = t("register.errors.passwordRequired");
       }
 
       if (!password_confirmation || password_confirmation.trim() === "") {
-        errors.password_confirmation = "Please confirm your password";
+        errors.password_confirmation = t("register.errors.confirmPasswordRequired");
       } else if (password && password !== password_confirmation) {
-        errors.password_confirmation = "Passwords do not match";
+        errors.password_confirmation = t("register.errors.passwordMismatch");
       }
 
       if (Object.keys(errors).length > 0) {
@@ -84,21 +90,21 @@ export const RegisterForm = () => {
         // Error is handled by the error state from useAuth
       }
     },
-    [register, navigate]
+    [register, navigate, t]
   );
 
   return (
     <form ref={formRef} className="flex flex-col gap-5" onSubmit={handleSubmit} noValidate>
       {error && (
         <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
-          {typeof error === "string" ? error : "An error occurred"}
+          {typeof error === "string" ? error : t("register.errors.registerFailed")}
         </div>
       )}
       <div className="grid gap-5 grid-cols-1">
         <TextField
           name="name"
-          label="Full name"
-          placeholder="Full name"
+          label={t("register.fullName")}
+          placeholder={t("register.fullNamePlaceholder")}
           autoComplete="name"
           required
           error={fieldErrors.name}
@@ -106,28 +112,28 @@ export const RegisterForm = () => {
         <TextField
           type="email"
           name="email"
-          label="Email"
-          placeholder="Email"
+          label={t("register.email")}
+          placeholder={t("register.emailPlaceholder")}
           autoComplete="email"
           required
           error={fieldErrors.email}
         />
-        <PhoneField label="Phone number" name="phone" error={fieldErrors.phone} />
+        <PhoneField label={t("register.phone")} name="phone" error={fieldErrors.phone} />
       </div>
 
       <div className="grid gap-5 grid-cols-1">
         <PasswordField
           name="password"
-          label="Password"
-          placeholder="Password"
+          label={t("register.password")}
+          placeholder={t("register.passwordPlaceholder")}
           autoComplete="new-password"
           required
           error={fieldErrors.password}
         />
         <PasswordField
           name="password_confirmation"
-          label="Confirm password"
-          placeholder="Confirm password"
+          label={t("register.confirmPassword")}
+          placeholder={t("register.confirmPasswordPlaceholder")}
           autoComplete="new-password"
           required
           error={fieldErrors.password_confirmation}
@@ -137,13 +143,17 @@ export const RegisterForm = () => {
       <button
         type="submit"
         disabled={loading}
-        className="mt-2 inline-flex h-14 items-center cursor-pointer justify-center rounded-[20px] bg-black text-base md:text-xl font-medium text-white transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 disabled:opacity-50 disabled:cursor-not-allowed"
+        className={`mt-2 inline-flex h-14 items-center cursor-pointer justify-center rounded-[20px] text-base md:text-xl font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+          isDark 
+            ? "bg-indigo-600 text-white hover:bg-indigo-700 focus-visible:outline-indigo-500" 
+            : "bg-black text-white hover:bg-gray-800 focus-visible:outline-slate-900"
+        }`}
       >
-        {loading ? "Creating..." : "Create"}
+        {loading ? t("register.creating") : t("register.createButton")}
       </button>
 
       <SocialProviders
-        label="Or sign up with"
+        label={t("register.orSignUpWith")}
         providers={[
           { name: "Google", icon: googleIcon },
           { name: "Facebook", icon: facebookIcon },

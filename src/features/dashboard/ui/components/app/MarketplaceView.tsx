@@ -17,20 +17,34 @@ type Category = "General" | "Master";
 export const MarketplaceView = ({ tokens, onItemClick }: MarketplaceViewProps) => {
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState<Category>("General");
-  const { data, isLoading } = useGetMarketplaceAppsQuery();
+  
+  // Only fetch if user is authenticated
+  const token = localStorage.getItem("auth_token");
+  const { data, isLoading, isError, error } = useGetMarketplaceAppsQuery(undefined, {
+    skip: !token, // Skip the query if no token
+  });
 
   // Use API data if available, otherwise use fallback data
   const marketplaceData = useMemo(() => {
-    if (data?.data && data.data.length > 0) {
+    // Check if we have valid API data
+    if (data?.status && data?.services) {
+      console.log("Using API data:", data);
       return data;
     }
+    if (isError) {
+      console.error("API Error - using fallback data:", error);
+    } else if (!token) {
+      console.log("No auth token - using fallback data");
+    } else {
+      console.log("Using fallback data. API data:", data);
+    }
     return fallbackMarketplaceData;
-  }, [data]);
+  }, [data, isError, error, token]);
 
   const filteredItems = useMemo(() => {
-    if (!marketplaceData?.data) return [];
+    if (!marketplaceData?.services) return [];
 
-    return marketplaceData.data
+    return marketplaceData.services
       .filter((app) => app.type === activeCategory)
       .map((app): MarketplaceItem => ({
         id: app.id.toString(),

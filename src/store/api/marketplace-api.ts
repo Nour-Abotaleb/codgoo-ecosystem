@@ -26,8 +26,20 @@ export interface MarketplaceApp {
   };
 }
 
+export interface BusinessApp {
+  id: number;
+  name: string;
+  slug: string;
+  description: string;
+  is_active: number;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface MarketplaceResponse {
-  data: MarketplaceApp[];
+  status: boolean;
+  services: MarketplaceApp[];
+  business_apps: BusinessApp[];
 }
 
 export interface ApplicationApp {
@@ -63,20 +75,25 @@ export interface ApplicationsResponse {
   data: ApplicationApp[];
 }
 
+export interface PackagePrice {
+  id: number;
+  name: string;
+  amount: number;
+  currency: string;
+  duration_days: number;
+}
+
 export interface PackageBundle {
   id: number;
   apps_count: number;
   name: string;
   tagline: string;
-  price: {
-    amount: number;
-    currency: string;
-  };
   features: string; // JSON string array
   savings: {
     percentage: number;
     text: string;
   };
+  prices: PackagePrice[];
   badges: string; // JSON string array
 }
 
@@ -86,6 +103,7 @@ export interface PackagesResponse {
 
 export interface BuildBundleRequest {
   bundleId: number;
+  priceId: number;
   customer: {
     id: number;
   };
@@ -134,7 +152,22 @@ export interface UpgradeBundleResponse {
 export const marketplaceApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getMarketplaceApps: builder.query<MarketplaceResponse, void>({
-      query: () => "Marketplace/ServicesApps",
+      query: () => ({
+        url: "Marketplace/ServicesApps",
+        method: "GET",
+      }),
+      transformResponse: (response: MarketplaceResponse): MarketplaceResponse => {
+        console.log("API Response received:", response);
+        return {
+          status: response.status,
+          services: response.services || [],
+          business_apps: response.business_apps || [],
+        };
+      },
+      transformErrorResponse: (response) => {
+        console.error("API Error:", response);
+        return response;
+      },
     }),
     getMarketplacePackages: builder.query<PackagesResponse, void>({
       query: () => "Marketplace/packages",

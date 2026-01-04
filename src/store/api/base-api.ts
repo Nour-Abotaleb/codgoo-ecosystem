@@ -12,6 +12,8 @@ export const baseApi = createApi({
       
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
+      } else {
+        console.warn("No auth token found in localStorage");
       }
       
       headers.set("Content-Type", "application/json");

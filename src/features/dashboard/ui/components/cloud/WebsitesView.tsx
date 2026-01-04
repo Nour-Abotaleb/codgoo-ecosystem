@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { TechIcon, DotsSwitcher, ArrowUpIcon } from "@utilities/icons";
+import { TechIcon, DotsSwitcher } from "@utilities/icons";
 
 import type { DashboardTokens, SiteItem } from "../../types";
 
