@@ -27,7 +27,6 @@ export const CustomSelect = ({
   dropdownClassName = "",
   isDark = false,
   icon,
-  iconClassName = "",
 }: CustomSelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState(value || "");

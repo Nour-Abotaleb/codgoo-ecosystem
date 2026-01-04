@@ -13,6 +13,8 @@ type BundleAppsViewProps = {
   readonly tokens: DashboardTokens;
 };
 
+type PricePeriod = "monthly" | "quarterly" | "annually";
+
 export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
   const navigate = useNavigate();
   const match = useMatch("/dashboard/marketplace/bundles/:bundleId");
@@ -20,13 +22,19 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
   const [selectedAppIds, setSelectedAppIds] = useState<Set<string>>(new Set());
   const [showCheckout, setShowCheckout] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { data } = useGetMarketplaceAppsQuery();
+  const [selectedPeriod, setSelectedPeriod] = useState<PricePeriod>("monthly");
+  
+  // Only fetch if user is authenticated
+  const token = localStorage.getItem("auth_token");
+  const { data } = useGetMarketplaceAppsQuery(undefined, {
+    skip: !token,
+  });
   const { data: packagesData } = useGetMarketplacePackagesQuery();
   const [buildBundle] = useBuildBundleMutation();
   
   // Use API data if available, otherwise use fallback data
   const marketplaceData = useMemo(() => {
-    if (data?.data && data.data.length > 0) {
+    if (data?.status && data?.services) {
       return data;
     }
     return fallbackMarketplaceData;
@@ -34,9 +42,9 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
 
   // Transform marketplace data to MarketplaceItem format - Filter only General type
   const marketplaceItems = useMemo((): MarketplaceItem[] => {
-    if (!marketplaceData?.data) return [];
+    if (!marketplaceData?.services) return [];
 
-    return marketplaceData.data
+    return marketplaceData.services
       .filter((app) => app.type === "General") // Only show General type apps
       .map((app): MarketplaceItem => ({
         id: app.id.toString(),
@@ -60,7 +68,7 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
   // Get bundle details from API or fallback
   const bundleData = useMemo(() => {
     if (!bundleId) {
-      return { title: "Professional Bundle", price: "500 EGP", limit: 6 };
+      return { title: "Professional Bundle", limit: 6, prices: [], savings: { percentage: 0, text: "" } };
     }
 
     // Try to find from API data
@@ -69,24 +77,46 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
       if (found) {
         return {
           title: found.name,
-          price: `${found.price.amount} ${found.price.currency}`,
-          limit: found.apps_count
+          limit: found.apps_count,
+          prices: found.prices,
+          savings: found.savings
         };
       }
     }
 
     // Fallback to static lookup
     const bundleLookup = {
-      "1": { title: "Starter Bundle", price: "300 EGP", limit: 1 },
-      "2": { title: "Professional Bundle", price: "500 EGP", limit: 3 },
-      "3": { title: "Enterprise Bundle", price: "1000 EGP", limit: 6 }
+      "1": { title: "Starter Bundle", limit: 1, prices: [], savings: { percentage: 29, text: "Save up to 120 EGP" } },
+      "2": { title: "Professional Bundle", limit: 3, prices: [], savings: { percentage: 40, text: "Save up to 340 EGP" } },
+      "3": { title: "Enterprise Bundle", limit: 6, prices: [], savings: { percentage: 29, text: "Save up to 120 EGP" } }
     } as const;
 
-    return bundleLookup[bundleId as keyof typeof bundleLookup] || { title: "Professional Bundle", price: "500 EGP", limit: 6 };
+    return bundleLookup[bundleId as keyof typeof bundleLookup] || { title: "Professional Bundle", limit: 6, prices: [], savings: { percentage: 0, text: "" } };
   }, [bundleId, packagesData]);
 
+  // Get selected price based on period
+  const selectedPrice = useMemo(() => {
+    const priceForPeriod = bundleData.prices.find(p => p.name === selectedPeriod);
+    return priceForPeriod || bundleData.prices[0] || null;
+  }, [bundleData.prices, selectedPeriod]);
+
+  // Format price display
+  const price = useMemo(() => {
+    if (!selectedPrice) return "0 USD";
+    return `${selectedPrice.amount} ${selectedPrice.currency}`;
+  }, [selectedPrice]);
+
+  // Get period label for display
+  const periodLabel = useMemo(() => {
+    switch (selectedPeriod) {
+      case "monthly": return "/ month";
+      case "quarterly": return "/ 3 months";
+      case "annually": return "/ year";
+      default: return "";
+    }
+  }, [selectedPeriod]);
+
   const heading = bundleData.title;
-  const price = bundleData.price;
   const limit = bundleData.limit;
 
   const remaining = limit - selectedCount;
@@ -114,25 +144,34 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
     return Array.from(selectedAppIds).reduce((total, itemId) => {
       const item = marketplaceItems.find(i => i.id === itemId);
       if (item?.price) {
-        // Extract price number from "135 EGP" format
-        const priceNum = parseInt(item.price.replace(" EGP", "").replace(/,/g, ""), 10);
+        // Extract price number from "135 EGP" or "0.1 USD" format
+        const priceNum = parseFloat(item.price.split(" ")[0].replace(/,/g, ""));
         return total + (isNaN(priceNum) ? 0 : priceNum);
       }
       return total;
     }, 0);
-  }, [selectedAppIds]);
+  }, [selectedAppIds, marketplaceItems]);
 
   const bundlePrice = useMemo(() => {
-    const priceStr = price.replace(" EGP", "").replace(/,/g, "");
-    return parseInt(priceStr, 10);
-  }, [price]);
+    return selectedPrice?.amount ?? 0;
+  }, [selectedPrice]);
 
-  const savings = originalPrice - bundlePrice;
-  const savingsPercentage = originalPrice > 0 ? Math.round((savings / originalPrice) * 100) : 0;
+  // Use savings from API data
+  const savingsPercentage = bundleData.savings.percentage;
+  const savingsText = bundleData.savings.text;
 
   const handlePurchaseBundle = async () => {
     if (!bundleId) {
       toast.error("Invalid bundle ID");
+      return;
+    }
+
+    // Get the price ID based on selected period
+    const priceForPeriod = bundleData.prices.find(p => p.name === selectedPeriod);
+    const priceToUse = priceForPeriod || bundleData.prices[0];
+    
+    if (!priceToUse?.id) {
+      toast.error("No pricing available for this bundle");
       return;
     }
 
@@ -161,6 +200,7 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
       // Build the request payload
       const payload = {
         bundleId: parseInt(bundleId, 10),
+        priceId: priceToUse.id,
         customer: {
           id: customerId,
         },
@@ -262,9 +302,37 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
             </div>
             <div className="flex flex-col items-end text-right flex-shrink-0">
               <span className={`text-3xl font-semibold ${tokens.isDark ? "text-white" : "text-[#142133]"}`}>{price}</span>
-              <span className={`text-lg ${tokens.isDark ? "text-gray-400" : "text-[#5F5F5F]"}`}>Fixed Price</span>
+              <span className={`text-lg ${tokens.isDark ? "text-gray-400" : "text-[#5F5F5F]"}`}>{periodLabel}</span>
             </div>
           </div>
+
+          {/* Price Period Selector */}
+          {bundleData.prices.length > 0 && (
+            <div className="flex items-center gap-2 mb-4">
+              {bundleData.prices.map((priceOption) => (
+                <button
+                  key={priceOption.id}
+                  type="button"
+                  onClick={() => setSelectedPeriod(priceOption.name as PricePeriod)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                    selectedPeriod === priceOption.name
+                      ? tokens.isDark
+                        ? "bg-[#34D8D6] text-black"
+                        : "bg-[#0F6773] text-white"
+                      : tokens.isDark
+                        ? "bg-[#1a1a1a] text-gray-400 hover:text-white"
+                        : "bg-[#E9ECEA] text-[#5F5F5F] hover:text-black"
+                  }`}
+                >
+                  {priceOption.name.charAt(0).toUpperCase() + priceOption.name.slice(1)}
+                  <span className="ml-1 text-xs opacity-75">
+                    ({priceOption.amount} {priceOption.currency})
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
+
           <div className="flex items-center justify-between mb-2">
             <p className={`text-sm md:text-base ${tokens.isDark ? "text-gray-400" : "text-[#5F5F5F]"}`}>
               {selectedCount} of {limit} applications selected
@@ -289,7 +357,7 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
               <div className={`${tokens.isDark ? "bg-[#2a2a2a]" : "bg-[#FAFAFA]"} rounded-[20px] p-6`}>
                 <p className={`text-sm md:text-base mb-1 ${tokens.isDark ? "text-gray-400" : "text-[#5F5F5F]"}`}>Original Price</p>
                 <p className={`text-xl md:text-2xl ${tokens.isDark ? "text-white" : "text-[#142133]"}`}>
-                  {originalPrice.toLocaleString()} EGP
+                  {originalPrice.toLocaleString()} {selectedPrice?.currency || "USD"}
                 </p>
               </div>
 
@@ -297,7 +365,7 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
               <div className={`${tokens.isDark ? "bg-[#2a2a2a]" : "bg-[#FAFAFA]"} rounded-[20px] p-6`}>
                 <p className={`text-sm md:text-base mb-1 ${tokens.isDark ? "text-gray-400" : "text-[#5F5F5F]"}`}>Bundle Price</p>
                 <p className={`text-xl md:text-2xl ${tokens.isDark ? "text-[#34D8D6]" : "text-[#34D8D6]"}`}>
-                  {bundlePrice.toLocaleString()} EGP
+                  {bundlePrice.toLocaleString()} {selectedPrice?.currency || "USD"}
                 </p>
               </div>  
 
@@ -305,7 +373,7 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
               <div className={`${tokens.isDark ? "bg-[#1a3a1a66] text-[#4ade80]" : "bg-[#E5F9E9] text-[#228C3D]"} rounded-[20px] p-6`}>
                 <p className={`text-sm md:text-base mb-1 ${tokens.isDark ? "text-[#4ade80]" : "text-[#228C3D]"}`}>You Save</p>
                 <p className={`text-xl md:text-2xl ${tokens.isDark ? "text-[#4ade80]" : "text-[#228C3D]"}`}>
-                  {savings.toLocaleString()} EGP <span className="text-sm font-light">({savingsPercentage}%)</span>
+                  {savingsPercentage}% <span className="text-sm font-light">({savingsText})</span>
                 </p>
               </div>
             </div>
@@ -361,7 +429,7 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
                 {selectedCount === 0 ? (
                   <>Choose up to {limit} applications for your {heading}</>
                 ) : isComplete ? (
-                  <>You'll save <span className="text-[#228C3D]">{savings} EGP ({savingsPercentage}%)</span> with this bundle</>
+                  <>You'll save <span className="text-[#228C3D]">{savingsPercentage}% ({savingsText})</span> with this bundle</>
                 ) : (
                   <>You've selected {selectedCount} of {limit} applications</>
                 )}
@@ -369,7 +437,7 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
             </div>
             <div className="flex items-center gap-4">
               <div className="flex flex-col items-end">
-                <span className={`text-sm md:text-base ${tokens.isDark ? "text-gray-400" : "text-[#5F5F5F]"}`}>Total Price</span>
+                <span className={`text-sm md:text-base ${tokens.isDark ? "text-gray-400" : "text-[#5F5F5F]"}`}>Total Price {periodLabel}</span>
                 <span className={`text-2xl font-medium ${tokens.isDark ? "text-white" : "text-black"}`}>{price}</span>
               </div>
             </div>

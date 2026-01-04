@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   GridPreviewIcon,
   MenuPreviewIcon,
@@ -18,6 +19,7 @@ export const ApplicationsView = ({
   const [activeTab, setActiveTab] = useState<AppCategory>("General");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const isDark = tokens.isDark;
+  const navigate = useNavigate();
 
   const { data: applicationsData, isLoading } = useGetApplicationsQuery();
 
@@ -201,7 +203,7 @@ export const ApplicationsView = ({
               <div className="mt-2 flex items-center justify-start gap-3">
                 <button
                   type="button"
-                  onClick={() => window.open(item.launchUrl, '_blank')}
+                  onClick={() => navigate(`/app-preview?url=${encodeURIComponent(item.launchUrl)}&name=${encodeURIComponent(item.name)}&id=${item.id}`)}
                   className="rounded-full bg-[#0F6773] px-8 py-2 text-sm text-white transition-colors hover:bg-[#0d5661] cursor-pointer"
                 >
                   Login

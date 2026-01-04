@@ -1,4 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import { useAppSelector } from "@store/hooks";
+import { selectTheme } from "@store/theme/theme-slice";
+import { useTranslation } from "react-i18next";
 
 type CountryOption = {
   readonly code: string;
@@ -38,6 +41,10 @@ export const PhoneField = ({ label, name = "phone", defaultCountry = "US", error
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const phoneInputRef = useRef<HTMLInputElement>(null);
+  const theme = useAppSelector(selectTheme);
+  const isDark = theme === "dark";
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
 
   useEffect(() => {
     let isMounted = true;
@@ -142,19 +149,35 @@ export const PhoneField = ({ label, name = "phone", defaultCountry = "US", error
 
   const selected = countries.find((country) => country.code === selectedCountry) ?? countries[0];
 
+  // Autofill styles to override browser defaults
+  const autofillStyles = {
+    WebkitBoxShadow: isDark ? '0 0 0 1000px #0f1217 inset' : '0 0 0 1000px white inset',
+    WebkitTextFillColor: isDark ? 'white' : '#0f1217',
+    caretColor: isDark ? 'white' : '#0f1217',
+  } as React.CSSProperties;
+
   return (
     <div className="relative block text-left">
       <label className="relative block">
-        <span className="pointer-events-none absolute left-5 top-0 -translate-y-[40%] bg-white px-2 text-base md:text-lg font-medium tracking-wide text-black">
+        <span className={`pointer-events-none absolute ${isRTL ? 'right-5' : 'left-5'} top-0 -translate-y-[40%] px-2 text-base md:text-lg font-medium tracking-wide transition-colors ${
+          isDark ? "bg-[#0f1217] text-white" : "bg-white text-black"
+        }`}>
           {label}
         </span>
-        <div className={`flex h-14 items-center gap-3 rounded-[20px] border bg-white pe-4 text-sm text-slate-600 transition focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20 ${error ? 'border-red-500' : 'border-[color:var(--color-auth-border)]'}`}>
+        <div className={`flex h-14 items-center gap-3 rounded-[20px] border pe-4 text-sm transition focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20 ${
+          error ? 'border-red-500' : isDark ? 'border-gray-700' : 'border-[color:var(--color-auth-border)]'
+        } ${isDark ? 'bg-[#0f1217]' : 'bg-white'}`}>
         <input
           ref={phoneInputRef}
           type="tel"
           name={name}
           placeholder="Phone number"
-          className="w-full border-e border-[color:var(--color-auth-border)] bg-transparent px-5 text-left text-sm md:text-base text-slate-900 placeholder:text-[color:var(--color-auth-placeholder)] focus:outline-none"
+          style={autofillStyles}
+          className={`w-full border-e bg-transparent px-5 text-left text-sm md:text-base focus:outline-none transition-colors ${
+            isDark 
+              ? 'border-gray-700 text-white placeholder:text-gray-500' 
+              : 'border-[color:var(--color-auth-border)] text-slate-900 placeholder:text-[color:var(--color-auth-placeholder)]'
+          }`}
           autoComplete="tel"
           inputMode="tel"
           onChange={(e) => {
@@ -172,7 +195,11 @@ export const PhoneField = ({ label, name = "phone", defaultCountry = "US", error
         <div className="relative" ref={dropdownRef}>
           <button
             type="button"
-            className="flex h-10 items-center gap-2 rounded-full px-3 text-sm font-medium text-slate-800 transition hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+            className={`flex h-10 items-center gap-2 rounded-full px-3 text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 ${
+              isDark 
+                ? 'text-white hover:bg-gray-700' 
+                : 'text-slate-800 hover:bg-slate-100'
+            }`}
             onClick={() => setIsOpen((prev) => !prev)}
             aria-haspopup="listbox"
             aria-expanded={isOpen}
@@ -190,9 +217,9 @@ export const PhoneField = ({ label, name = "phone", defaultCountry = "US", error
             <span>{selected?.dialCode ?? ""}</span>
             <svg
               viewBox="0 0 16 16"
-              className={`h-4 w-4 text-slate-400 transition-transform ${
+              className={`h-4 w-4 transition-transform ${
                 isOpen ? "rotate-180" : ""
-              }`}
+              } ${isDark ? 'text-gray-400' : 'text-slate-400'}`}
               fill="none"
               stroke="currentColor"
               strokeWidth={1.5}
@@ -202,14 +229,22 @@ export const PhoneField = ({ label, name = "phone", defaultCountry = "US", error
           </button>
 
           {isOpen ? (
-            <div className="absolute right-0 z-20 mt-2 w-64 overflow-hidden rounded-[20px] border border-slate-200 bg-white shadow-xl">
+            <div className={`absolute right-0 z-20 mt-2 w-64 overflow-hidden rounded-[20px] border shadow-xl transition-colors ${
+              isDark 
+                ? 'border-gray-700 bg-[#1a1f2e]' 
+                : 'border-slate-200 bg-white'
+            }`}>
               <ul className="max-h-64 overflow-y-auto py-2" role="listbox">
                 {countries.map((country) => (
                   <li key={country.code}>
                     <button
                       type="button"
                       onClick={() => handleSelectCountry(country.code)}
-                      className="flex w-full items-center justify-between gap-3 px-4 py-2 text-left text-sm text-slate-700 transition hover:bg-indigo-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+                      className={`flex w-full items-center justify-between gap-3 px-4 py-2 text-left text-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 ${
+                        isDark 
+                          ? 'text-white hover:bg-gray-700' 
+                          : 'text-slate-700 hover:bg-indigo-50'
+                      }`}
                       role="option"
                       aria-selected={country.code === selectedCountry}
                     >
@@ -226,7 +261,7 @@ export const PhoneField = ({ label, name = "phone", defaultCountry = "US", error
                         )}
                         <span className="font-medium">{country.dialCode}</span>
                       </span>
-                      <span className="text-xs text-slate-400">{country.name}</span>
+                      <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-slate-400'}`}>{country.name}</span>
                     </button>
                   </li>
                 ))}
@@ -237,7 +272,7 @@ export const PhoneField = ({ label, name = "phone", defaultCountry = "US", error
       </div>
       </label>
       {error && (
-        <p className="mt-1 text-sm text-red-600">{error}</p>
+        <p className={`mt-1 text-sm text-red-600 ${isRTL ? 'text-right' : 'text-left'}`}>{error}</p>
       )}
     </div>
   );

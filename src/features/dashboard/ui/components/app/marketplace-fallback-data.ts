@@ -1,7 +1,8 @@
 import type { MarketplaceResponse } from "@/store/api/marketplace-api";
 
 export const fallbackMarketplaceData: MarketplaceResponse = {
-  data: [
+  status: true,
+  services: [
     {
       id: 1,
       name: "Beepost App",
@@ -252,5 +253,6 @@ export const fallbackMarketplaceData: MarketplaceResponse = {
         alt: null
       }
     }
-  ]
+  ],
+  business_apps: []
 };

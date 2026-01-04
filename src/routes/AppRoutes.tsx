@@ -4,6 +4,7 @@ import { useAuth } from "@features/auth";
 import { LoginRoute } from "./auth/LoginRoute";
 import { RegisterRoute } from "./auth/RegisterRoute";
 import { DashboardRoute } from "./dashboard/DashboardRoute";
+import { AppPreviewRoute } from "./dashboard/AppPreviewRoute";
 
 const RootRedirect = () => {
   const { isAuthenticated } = useAuth();
@@ -16,6 +17,7 @@ export const AppRoutes = () => (
     <Route path="/login" element={<LoginRoute />} />
     <Route path="/register" element={<RegisterRoute />} />
     <Route path="/dashboard/*" element={<DashboardRoute />} />
+    <Route path="/app-preview" element={<AppPreviewRoute />} />
     <Route path="*" element={<Navigate to="/" replace />} />
   </Routes>
 );

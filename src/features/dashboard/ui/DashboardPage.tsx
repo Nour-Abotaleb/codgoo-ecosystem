@@ -65,11 +65,16 @@ export const DashboardPage = () => {
     return getCurrentDashboard() ?? getDefaultDashboard();
   });
   const isRTL = i18nInstance.language === "ar";
-  const { data: marketplaceApiData } = useGetMarketplaceAppsQuery();
+  
+  // Only fetch if user is authenticated
+  const token = localStorage.getItem("auth_token");
+  const { data: marketplaceApiData } = useGetMarketplaceAppsQuery(undefined, {
+    skip: !token,
+  });
 
   // Use API data if available, otherwise use fallback data
   const marketplaceData = useMemo(() => {
-    if (marketplaceApiData?.data && marketplaceApiData.data.length > 0) {
+    if (marketplaceApiData?.status && marketplaceApiData?.services) {
       return marketplaceApiData;
     }
     return fallbackMarketplaceData;
@@ -77,9 +82,9 @@ export const DashboardPage = () => {
 
   // Transform marketplace data to MarketplaceItem format
   const marketplaceItems = useMemo((): MarketplaceItem[] => {
-    if (!marketplaceData?.data) return [];
+    if (!marketplaceData?.services) return [];
 
-    return marketplaceData.data.map((app): MarketplaceItem => ({
+    return marketplaceData.services.map((app): MarketplaceItem => ({
       id: app.id.toString(),
       title: app.name,
       description: app.description,

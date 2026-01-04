@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { i18n } from "@shared/config/i18n";
 import { ArrowRight, ActiveIcon, PendingIcon, UnpaidIcon, CalendarIcon, ClockIcon, PlusCircleIcon, SettingsIcon, CloseIcon, AllProjectsIcon, CompletedIcon, ProjectPendingIcon, DashboardAllProjectsIcon } from "@utilities/icons";
 import type { DashboardTokens, SoftwareDashboardData, DashboardHeroContent } from "../../types";
+import "@assets/images/software/Mobile.svg";
 
 type SoftwareDashboardOverviewProps = {
   readonly data: SoftwareDashboardData;
@@ -399,7 +400,7 @@ export const SoftwareDashboardOverview = ({
             <img
               src={hero.backgroundImage}
               alt="Hero background"
-              className={`absolute inset-0 w-full object-cover transition-opacity duration-500 ${
+              className={`absolute inset-0 rounded-[20px]  w-full object-cover transition-opacity duration-500 ${
                 imageLoaded ? "opacity-100" : "opacity-0"
               }`}
               loading="eager"
@@ -407,9 +408,11 @@ export const SoftwareDashboardOverview = ({
               onLoad={() => setImageLoaded(true)}
             />
           )}
+          {/* Software Mobile Image */}
+
           <div className="relative z-10 flex flex-col">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight transition-opacity duration-500 max-w-2xl">
-              Let's<br />Get Started
+              Let's <br />Get Started
             </h1>
             <button
               type="button"

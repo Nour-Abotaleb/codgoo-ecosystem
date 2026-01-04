@@ -271,7 +271,7 @@ export const AppDashboardOverview = ({
             <img
               src={hero.backgroundImage}
               alt="Hero background"
-              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
+              className={`absolute inset-0 w-full h-full rounded-[20px]  object-cover transition-opacity duration-500 ${
                 imageLoaded ? "opacity-100" : "opacity-0"
               }`}
               loading="eager"

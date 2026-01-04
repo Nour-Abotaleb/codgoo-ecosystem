@@ -490,7 +490,7 @@ export const dashboardContent: Record<DashboardAppId, DashboardDataset> = {
         {
           id: "sub-1",
           name: "Codgoo Hosting",
-          plan: "master",
+          plan: "Business",
           expiryDate: "10 Nov 2025",
           status: "Active",
           amount: "$7,098.00"
@@ -498,7 +498,7 @@ export const dashboardContent: Record<DashboardAppId, DashboardDataset> = {
         {
           id: "sub-2",
           name: "Codgoo Hosting",
-          plan: "master",
+          plan: "Business",
           expiryDate: "10 Nov 2025",
           status: "Expiring Soon",
           amount: "$7,098.00"
