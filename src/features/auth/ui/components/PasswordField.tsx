@@ -41,7 +41,7 @@ export const PasswordField = ({
         }`}>
           {label}
         </span>
-        <div className={`flex h-14 items-center overflow-hidden rounded-[20px] border text-sm transition focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20 ${
+        <div className={`flex h-14 items-center overflow-hidden rounded-[20px] border text-sm transition ${
           error ? 'border-red-500' : isDark ? 'border-gray-700' : 'border-[color:var(--color-auth-border)]'
         } ${isDark ? 'bg-[#0f1217]' : 'bg-white'}`}>
           <input
@@ -89,7 +89,7 @@ export const PasswordField = ({
         </div>
       </label>
       {error && (
-        <p className={`mt-1 text-sm text-red-600 ${isRTL ? 'text-right' : 'text-left'}`}>{error}</p>
+        <p className={` text-sm text-red-600 ${isRTL ? 'text-right' : 'text-left'}`}>{error}</p>
       )}
     </div>
   );

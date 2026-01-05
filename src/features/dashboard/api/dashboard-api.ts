@@ -199,6 +199,64 @@ export interface TaskDiscussionApiResponse {
   }>;
 }
 
+// Single Task Discussion API Response Types
+export interface SingleTaskDiscussionApiResponse {
+  status: boolean;
+  discussion: {
+    id: number;
+    message: string;
+    status: string;
+    created_by: {
+      id: number;
+      type: string;
+      name: string;
+      avatar: string;
+    };
+    created_at: string;
+    task: {
+      id: number;
+      label: string;
+    };
+    milestone: {
+      id: number;
+      title: string;
+    };
+    project: {
+      id: number;
+      name: string;
+    };
+  };
+}
+
+// Discussion Messages API Response Types
+export interface DiscussionMessagesApiResponse {
+  status: boolean;
+  message: string;
+  data: {
+    discussion_id: number;
+    task_id: number;
+    messages: Array<{
+      id: number;
+      discussion_id: number;
+      task_id: number;
+      sender_type: string;
+      sender_id: number;
+      message: string;
+      created_at: string;
+      updated_at: string;
+      type: string;
+      file_path: string | null;
+      sender: {
+        id: number;
+        name: string;
+        email: string;
+        phone: string;
+        image?: string;
+        photo?: string;
+      };
+    }>;
+  };
+}
 // Project Attachments API Response Types
 export interface ProjectAttachmentsApiResponse {
   status: boolean;
@@ -408,6 +466,22 @@ export const dashboardApi = baseApi.injectEndpoints({
         method: "GET",
       }),
     }),
+    getDiscussionMessages: builder.query<DiscussionMessagesApiResponse, number>({
+      query: (discussionId) => ({
+        url: `discussions/${discussionId}/messages`,
+        method: "GET",
+      }),
+    }),
+    sendDiscussionMessage: builder.mutation<
+      { status: boolean; message: string },
+      { discussionId: number; type: string; message: string }
+    >({
+      query: ({ discussionId, type, message }) => ({
+        url: `discussions/${discussionId}/messages`,
+        method: "POST",
+        body: { type, message },
+      }),
+    }),
     getProjectAttachments: builder.query<ProjectAttachmentsApiResponse, number>({
       query: (projectId) => ({
         url: `project/${projectId}/attachments`,
@@ -437,6 +511,12 @@ export const dashboardApi = baseApi.injectEndpoints({
         url: "our-products",
         method: "GET",
       }),
+      keepUnusedDataFor: 0, // Don't cache this query
+      transformResponse: (response: any) => {
+        console.log("Transform Response - Raw:", response);
+        console.log("Transform Response - Products:", response?.products);
+        return response;
+      },
     }),
     getProductDetails: builder.query<ProductDetailsApiResponse, number>({
       query: (productId) => ({
@@ -555,6 +635,8 @@ export const {
   useGetProjectOverviewQuery,
   useGetTaskDetailsQuery,
   useGetTaskDiscussionQuery,
+  useGetDiscussionMessagesQuery,
+  useSendDiscussionMessageMutation,
   useGetProjectAttachmentsQuery,
   useUploadProjectAttachmentMutation,
   useGetProjectInvoicesQuery,

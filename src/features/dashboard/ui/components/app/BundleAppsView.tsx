@@ -102,7 +102,7 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
 
   // Format price display
   const price = useMemo(() => {
-    if (!selectedPrice) return "0 USD";
+    if (!selectedPrice) return "0 EGP";
     return `${selectedPrice.amount} ${selectedPrice.currency}`;
   }, [selectedPrice]);
 
@@ -144,7 +144,7 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
     return Array.from(selectedAppIds).reduce((total, itemId) => {
       const item = marketplaceItems.find(i => i.id === itemId);
       if (item?.price) {
-        // Extract price number from "135 EGP" or "0.1 USD" format
+        // Extract price number from "135 EGP" or "0.1 EGP" format
         const priceNum = parseFloat(item.price.split(" ")[0].replace(/,/g, ""));
         return total + (isNaN(priceNum) ? 0 : priceNum);
       }
@@ -357,7 +357,7 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
               <div className={`${tokens.isDark ? "bg-[#2a2a2a]" : "bg-[#FAFAFA]"} rounded-[20px] p-6`}>
                 <p className={`text-sm md:text-base mb-1 ${tokens.isDark ? "text-gray-400" : "text-[#5F5F5F]"}`}>Original Price</p>
                 <p className={`text-xl md:text-2xl ${tokens.isDark ? "text-white" : "text-[#142133]"}`}>
-                  {originalPrice.toLocaleString()} {selectedPrice?.currency || "USD"}
+                  {originalPrice.toLocaleString()} {selectedPrice?.currency || "EGP"}
                 </p>
               </div>
 
@@ -365,7 +365,7 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
               <div className={`${tokens.isDark ? "bg-[#2a2a2a]" : "bg-[#FAFAFA]"} rounded-[20px] p-6`}>
                 <p className={`text-sm md:text-base mb-1 ${tokens.isDark ? "text-gray-400" : "text-[#5F5F5F]"}`}>Bundle Price</p>
                 <p className={`text-xl md:text-2xl ${tokens.isDark ? "text-[#34D8D6]" : "text-[#34D8D6]"}`}>
-                  {bundlePrice.toLocaleString()} {selectedPrice?.currency || "USD"}
+                  {bundlePrice.toLocaleString()} {selectedPrice?.currency || "EGP"}
                 </p>
               </div>  
 
@@ -454,4 +454,5 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
       </div>
   );
 };
+
 

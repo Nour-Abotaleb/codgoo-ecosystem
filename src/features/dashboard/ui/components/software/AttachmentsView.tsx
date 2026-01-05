@@ -1,79 +1,36 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import toast from "react-hot-toast";
 import { PlusCircleIcon, PDFIcon, FileCodeIcon, CopyIcon, EyeFilledIcon, DocstIcon, FilePDFIcon, ImgIcon, EyeIcon } from "@utilities/icons";
 import screenshotImage from "@assets/images/software/screenshot.svg";
 import type { DashboardTokens } from "../../types";
 import { AddAttachmentsModal } from "../modals/AddAttachmentsModal";
+import { useGetProjectAttachmentsQuery, useUploadProjectAttachmentMutation } from "@features/dashboard/api/dashboard-api";
 
 type AttachmentsViewProps = {
   readonly tokens: DashboardTokens;
+  readonly projectId: string;
 };
 
 type AttachmentItem = {
   readonly id: string;
   readonly fileName: string;
-  readonly fileType: "pdf" | "png" | "jpg" | "docx";
+  readonly fileType: "pdf" | "png" | "jpg" | "jpeg" | "docx";
   readonly uploadedBy: string;
+  readonly uploadedById: number;
+  readonly uploadedByImage: string | null;
+  readonly uploadedByType: string;
   readonly date: string;
+  readonly lastActivity: string;
+  readonly filePath: string;
   readonly isVisible: boolean;
   readonly previewUrl?: string;
 };
-
-const attachmentsData: readonly AttachmentItem[] = [
-  {
-    id: "att-1",
-    fileName: "Figma_Design_v3.png",
-    fileType: "png",
-    uploadedBy: "Kareem Ahmed",
-    date: "5 Nov 2025",
-    isVisible: true,
-  },
-  {
-    id: "att-2",
-    fileName: "Figma_Design_v3.pdf",
-    fileType: "pdf",
-    uploadedBy: "Kareem Ahmed",
-    date: "5 Nov 2025",
-    isVisible: true,
-  },
-  {
-    id: "att-3",
-    fileName: "Project_Requirements.docx",
-    fileType: "docx",
-    uploadedBy: "Kareem Ahmed",
-    date: "4 Nov 2025",
-    isVisible: false,
-  },
-  {
-    id: "att-4",
-    fileName: "Wireframe_Sketch.png",
-    fileType: "png",
-    uploadedBy: "Kareem Ahmed",
-    date: "3 Nov 2025",
-    isVisible: true,
-  },
-  {
-    id: "att-5",
-    fileName: "Final_Design.pdf",
-    fileType: "pdf",
-    uploadedBy: "Kareem Ahmed",
-    date: "2 Nov 2025",
-    isVisible: true,
-  },
-  {
-    id: "att-6",
-    fileName: "Meeting_Notes.pdf",
-    fileType: "pdf",
-    uploadedBy: "Kareem Ahmed",
-    date: "1 Nov 2025",
-    isVisible: false,
-  },
-];
 
 const getFileIcon = (fileType: AttachmentItem["fileType"]) => {
   if (fileType === "pdf") {
     return FilePDFIcon;
   }
-  if (fileType === "png" || fileType === "jpg") {
+  if (fileType === "png" || fileType === "jpg" || fileType === "jpeg") {
     return ImgIcon;
   }
   if (fileType === "docx") {
@@ -82,9 +39,86 @@ const getFileIcon = (fileType: AttachmentItem["fileType"]) => {
   return FileCodeIcon;
 };
 
-export const AttachmentsView = ({ tokens }: AttachmentsViewProps) => {
+export const AttachmentsView = ({ tokens, projectId }: AttachmentsViewProps) => {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [isAddAttachmentsModalOpen, setIsAddAttachmentsModalOpen] = useState(false);
+
+  // Fetch attachments from API
+  const projectIdNum = parseInt(projectId, 10);
+  const { data: apiData, isLoading, refetch } = useGetProjectAttachmentsQuery(projectIdNum);
+  
+  // Upload mutation
+  const [uploadAttachment] = useUploadProjectAttachmentMutation();
+
+  // Handle file upload
+  const handleUpload = async (files: File[]) => {
+    if (files.length === 0) return;
+
+    try {
+      // Upload each file (API expects single file with key "attachments")
+      for (const file of files) {
+        await uploadAttachment({
+          projectId: projectIdNum,
+          file: file
+        }).unwrap();
+      }
+      
+      // Refetch attachments after upload
+      refetch();
+      toast.success('Attachments uploaded successfully!');
+    } catch (error: any) {
+      console.error('Error uploading attachments:', error);
+      toast.error(error?.data?.message || 'Failed to upload attachments. Please try again.');
+    }
+  };
+
+  // Transform API data with N/A fallbacks
+  const attachmentsData = useMemo(() => {
+    if (apiData?.data) {
+      return apiData.data.map((attachment: any): AttachmentItem => {
+        // Extract file extension from file_type or file_path
+        const getFileType = (): AttachmentItem["fileType"] => {
+          const fileType = attachment.file_type?.toLowerCase() || "";
+          if (fileType.includes("pdf")) return "pdf";
+          if (fileType.includes("png")) return "png";
+          if (fileType.includes("jpg") || fileType.includes("jpeg")) return "jpeg";
+          if (fileType.includes("docx") || fileType.includes("document")) return "docx";
+          
+          // Fallback to file extension from path
+          const path = attachment.file_path || "";
+          if (path.endsWith(".pdf")) return "pdf";
+          if (path.endsWith(".png")) return "png";
+          if (path.endsWith(".jpg") || path.endsWith(".jpeg")) return "jpeg";
+          if (path.endsWith(".docx")) return "docx";
+          
+          return "png"; // default
+        };
+
+        // Extract filename from path
+        const getFileName = () => {
+          const path = attachment.file_path || "";
+          const parts = path.split("/");
+          return parts[parts.length - 1] || "N/A";
+        };
+
+        return {
+          id: String(attachment.id),
+          fileName: getFileName(),
+          fileType: getFileType(),
+          uploadedBy: attachment.uploaded_by?.name || "N/A",
+          uploadedById: attachment.uploaded_by_id || 0,
+          uploadedByImage: attachment.uploaded_by?.image || null,
+          uploadedByType: attachment.uploaded_by?.type || "N/A",
+          date: attachment.date_uploaded || "N/A",
+          lastActivity: attachment.last_activity || "N/A",
+          filePath: attachment.file_path || "",
+          isVisible: true,
+          previewUrl: attachment.file_path
+        };
+      });
+    }
+    return [];
+  }, [apiData]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -105,15 +139,20 @@ export const AttachmentsView = ({ tokens }: AttachmentsViewProps) => {
       </div>
 
       {/* Attachments Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {attachmentsData.map((attachment) => {
-          const FileIcon = getFileIcon(attachment.fileType);
-          const isImage = attachment.fileType === "png" || attachment.fileType === "jpg";
-          const isDocx = attachment.fileType === "docx";
-          const isPdf = attachment.fileType === "pdf";
-          const docIconColor = tokens.isDark ? "#FFFFFF" : "#071FD7";
+      {isLoading ? (
+        <div className="text-center py-12">
+          <p className={tokens.isDark ? "text-white/50" : "text-[#A3AED0]"}>Loading attachments...</p>
+        </div>
+      ) : attachmentsData.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {attachmentsData.map((attachment) => {
+            const FileIcon = getFileIcon(attachment.fileType);
+            const isImage = attachment.fileType === "png" || attachment.fileType === "jpg" || attachment.fileType === "jpeg";
+            const isDocx = attachment.fileType === "docx";
+            const isPdf = attachment.fileType === "pdf";
+            const docIconColor = tokens.isDark ? "#FFFFFF" : "#071FD7";
 
-          return (
+            return (
             <div
               key={attachment.id}
               className={`${tokens.cardBase} rounded-[20px] overflow-hidden transition-colors`}
@@ -128,14 +167,14 @@ export const AttachmentsView = ({ tokens }: AttachmentsViewProps) => {
                       }`}
                     >
                       <img 
-                        src={screenshotImage} 
-                        alt="Screenshot" 
-                        className="object-contain"
+                        src={attachment.filePath || screenshotImage} 
+                        alt={attachment.fileName} 
+                        className="object-contain max-w-full max-h-full"
                       />
                       {/* Hover Overlay with Eye Icon */}
                       <div 
                         className="absolute inset-0 bg-black/25 opacity-0 group-hover/image:opacity-100 rounded-[20px] transition-opacity duration-300 flex items-center justify-center cursor-pointer"
-                        onClick={() => setPreviewImage(screenshotImage)}
+                        onClick={() => setPreviewImage(attachment.filePath || screenshotImage)}
                       >
                         <EyeIcon className="h-8 w-8 text-white" />
                       </div>
@@ -272,6 +311,11 @@ export const AttachmentsView = ({ tokens }: AttachmentsViewProps) => {
           );
         })}
       </div>
+      ) : (
+        <div className="text-center py-12">
+          <p className={tokens.isDark ? "text-white/50" : "text-[#A3AED0]"}>No attachments found</p>
+        </div>
+      )}
 
       {/* Image Preview Modal */}
       {previewImage && (
@@ -309,10 +353,7 @@ export const AttachmentsView = ({ tokens }: AttachmentsViewProps) => {
         tokens={tokens}
         isOpen={isAddAttachmentsModalOpen}
         onClose={() => setIsAddAttachmentsModalOpen(false)}
-        onUpload={(files) => {
-          console.log("Uploaded files:", files);
-          // Handle file upload here
-        }}
+        onUpload={handleUpload}
       />
     </div>
   );

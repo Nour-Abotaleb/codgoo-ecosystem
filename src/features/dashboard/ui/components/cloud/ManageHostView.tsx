@@ -36,7 +36,7 @@ export const ManageHostView = ({ hostId: _hostId, tokens }: ManageHostViewProps)
       [
         { label: "Used space", value: "8 GB / 50 GB" },
         { label: "Renewal Date", value: "2026-05-12" },
-        { label: "Cost", value: "300 SAR / Year" },
+        { label: "Cost", value: "1,200 EGP / Year" },
         { label: "Number of sites", value: "3" }
       ] as const,
     []

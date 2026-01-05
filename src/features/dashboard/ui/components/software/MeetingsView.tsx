@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import { PlusCircleIcon, SearchIcon, DotsSwitcher, MeetingsIcon, MeetingSummaryIcon, ArrowRightIcon, MeetingCalendarIcon, MeetingClockIcon, MeetingReasonIcon, CloseIcon, EditIcon } from "@utilities/icons";
 import type { DashboardTokens } from "../../types";
+import { useGetMeetingsQuery, useGetMeetingSummaryQuery, useDeleteMeetingMutation, useCancelMeetingMutation, useJoinMeetingQuery } from "@features/dashboard/api/dashboard-api";
 import { AddMeetingModal } from "../modals/AddMeetingModal";
 import { EditMeetingModal } from "../modals/EditMeetingModal";
 import { DeleteRecordModal } from "../modals/DeleteRecordModal";
@@ -10,10 +11,10 @@ type MeetingsViewProps = {
   readonly tokens: DashboardTokens;
 };
 
-type MeetingStatus = "Completed" | "Confirmed" | "Canceled" | "Waiting";
+type MeetingStatus = "Completed" | "Confirmed" | "Canceled" | "Waiting" | "request_sent";
 
 type MeetingItem = {
-  readonly id: string;
+  readonly id: number | string;
   readonly title: string;
   readonly project: string;
   readonly status: MeetingStatus;
@@ -27,52 +28,10 @@ type MeetingItem = {
   readonly canceledBy?: string;
   readonly attendees: number;
   readonly attachment?: string;
+  readonly description?: string;
+  readonly start_time?: string;
+  readonly end_time?: string;
 };
-
-const meetingsData: readonly MeetingItem[] = [
-  {
-    id: "meet-1",
-    title: "Final prototype review",
-    project: "Marketly E-Commerce App",
-    status: "Completed",
-    summary: "Discussed Q4 campaigns and approved new ad budget.",
-    attachment: "Marketing-Summary.Pdf",
-    date: "5 Nov 2025",
-    time: "02:00 PM - 03:00 PM",
-    attendees: 2,
-  },
-  {
-    id: "meet-2",
-    title: "Backend Integration Discussion",
-    project: "CodeFlow Admin Portal",
-    status: "Canceled",
-    reason: "Client postponed delivery milestone.",
-    canceledDate: "5 Nov 2025",
-    time: "12 Nov 2025 — 1:00 PM",
-    date: "12 Nov 2025",
-    attendees: 0,
-  },
-  {
-    id: "meet-3",
-    title: "Final Prototype Review",
-    project: "FixMate Mobile App",
-    status: "Confirmed",
-    agenda: "Review final mobile UI before client delivery.",
-    date: "5 Nov 2025",
-    time: "12 Nov 2025 — 1:00 PM",
-    attendees: 2,
-  },
-  {
-    id: "meet-4",
-    title: "Client Feedback Session",
-    project: "GreenScape Landing Page",
-    status: "Waiting",
-    note: "Waiting for client confirmation.",
-    date: "5 Nov 2025",
-    time: "12 Nov 2025 — 1:00 PM",
-    attendees: 3,
-  },
-];
 
 const getStatusBadgeStyle = (status: MeetingStatus) => {
   switch (status) {
@@ -84,6 +43,8 @@ const getStatusBadgeStyle = (status: MeetingStatus) => {
       return "bg-[#FFF1F0] text-[#EE5D50]";
     case "Waiting":
       return "bg-[#FFEDD9] text-[#DF7C00]";
+    case "request_sent":
+      return "bg-[#E6F3FF] text-[#007AFF]";
     default:
       return "bg-[#0015B4] text-[#CCD3FF]";
   }
@@ -99,15 +60,27 @@ const getActionButtonLabel = (status: MeetingStatus) => {
       return "Reschedule";
     case "Waiting":
       return "Join";
+    case "request_sent":
+      return "Join";
     default:
       return "View";
   }
 };
 
 export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
+  const { data: apiData } = useGetMeetingsQuery();
+  const [selectedMeetingId, setSelectedMeetingId] = useState<number | null>(null);
+  const { data: summaryData } = useGetMeetingSummaryQuery(selectedMeetingId || 0, {
+    skip: !selectedMeetingId,
+  });
+  const { data: joinData } = useJoinMeetingQuery(selectedMeetingId || 0, {
+    skip: !selectedMeetingId,
+  });
+  const [deleteMeeting] = useDeleteMeetingMutation();
+  const [cancelMeeting] = useCancelMeetingMutation();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<MeetingStatus | "All">("All");
-  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [openMenuId, setOpenMenuId] = useState<string | number | null>(null);
   const [isAddMeetingModalOpen, setIsAddMeetingModalOpen] = useState(false);
   const [isEditMeetingModalOpen, setIsEditMeetingModalOpen] = useState(false);
   const [isDeleteRecordModalOpen, setIsDeleteRecordModalOpen] = useState(false);
@@ -115,7 +88,27 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
   const [selectedMeeting, setSelectedMeeting] = useState<MeetingItem | null>(null);
   const [meetingToDelete, setMeetingToDelete] = useState<MeetingItem | null>(null);
   const [meetingToView, setMeetingToView] = useState<MeetingItem | null>(null);
-  const menuRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+  const menuRefs = useRef<Map<string | number, HTMLDivElement>>(new Map());
+
+  // Transform API data to component format
+  const meetingsData = useMemo(() => {
+    if (apiData?.data && apiData.data.length > 0) {
+      return apiData.data.map((meeting: any) => ({
+        id: meeting.id,
+        title: meeting.meeting_name || "N/A",
+        project: meeting.project_name || "N/A",
+        status: (meeting.status || "request_sent") as MeetingStatus,
+        note: meeting.description || meeting.notes || "N/A",
+        date: meeting.start_time?.split(" ")[0] || "N/A",
+        time: `${meeting.start_time || "N/A"} - ${meeting.end_time || "N/A"}`,
+        attendees: 0,
+        description: meeting.description,
+        start_time: meeting.start_time,
+        end_time: meeting.end_time,
+      }));
+    }
+    return [];
+  }, [apiData]);
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -135,7 +128,7 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
   }, [openMenuId]);
 
   const filteredMeetings = useMemo(() => {
-    return meetingsData.filter((meeting) => {
+    return meetingsData.filter((meeting: MeetingItem) => {
       const matchesSearch =
         !searchQuery.trim() ||
         meeting.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -143,11 +136,23 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
       const matchesStatus = statusFilter === "All" || meeting.status === statusFilter;
       return matchesSearch && matchesStatus;
     });
-  }, [searchQuery, statusFilter]);
+  }, [searchQuery, statusFilter, meetingsData]);
 
-  const toggleMenu = (id: string) => {
+  const toggleMenu = (id: string | number) => {
     setOpenMenuId(openMenuId === id ? null : id);
   };
+
+  const handleJoinMeeting = (meetingId: number | string) => {
+    setSelectedMeetingId(meetingId as number);
+  };
+
+  // Open Jitsi URL when join data is available
+  useEffect(() => {
+    if (joinData?.data?.jitsi_url) {
+      window.open(joinData.data.jitsi_url, "_blank");
+      setSelectedMeetingId(null);
+    }
+  }, [joinData]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -174,7 +179,6 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
         </div>
 
         <div className="flex items-center gap-3">
-          
           {/* Create Meeting Button */}
           <button
             type="button"
@@ -185,7 +189,6 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
                 : "bg-[#071FD7] text-white hover:bg-[#071FD7]/90"
             }`}
           >
-            {/* <PlusCircleIcon className="h-5 w-5 text-white" /> */}
             <span>Create a meeting</span>
           </button>
           {/* Status Filter Dropdown */}
@@ -204,6 +207,7 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
               <option value="Confirmed">Confirmed</option>
               <option value="Canceled">Canceled</option>
               <option value="Waiting">Waiting</option>
+              <option value="request_sent">Request Sent</option>
             </select>
             <ArrowRightIcon
               className={`absolute right-3 top-1/2 transform -translate-y-1/2 rotate-90 h-4 w-4 pointer-events-none ${
@@ -216,7 +220,7 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
 
       {/* Meetings List */}
       <div className="flex flex-col">
-        {filteredMeetings.map((meeting, index) => (
+        {filteredMeetings.map((meeting: MeetingItem, index: number) => (
           <div key={meeting.id}>
             <div
               className={`${tokens.cardBase} rounded-[20px] overflow-hidden transition-colors`}
@@ -278,7 +282,7 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
                                   setMeetingToDelete(meeting);
                                   setIsDeleteRecordModalOpen(true);
                                 }}
-                                className="flex h-9 w-9 items-center justify-center rounded-full transition-colors curso"
+                                className="flex h-9 w-9 items-center justify-center rounded-full transition-colors"
                                 style={{ backgroundColor: tokens.isDark ? "rgba(255, 77, 77, 0.1)" : "rgb(255, 229, 222)" }}
                                 aria-label={`Delete ${meeting.title}`}
                               >
@@ -298,7 +302,7 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
                               >
                                 <EditIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: "#071FD7" }} />
                               </button>
-                            ) : meeting.status === "Confirmed" ? (
+                            ) : meeting.status === "Confirmed" || meeting.status === "request_sent" ? (
                               // DotsSwitcher with popup for Confirmed
                               <div
                                 className="relative"
@@ -350,6 +354,15 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
                                       </button>
                                       <button
                                         type="button"
+                                        onClick={async () => {
+                                          try {
+                                            await cancelMeeting(meeting.id as number).unwrap();
+                                            console.log("Meeting canceled:", meeting.id);
+                                            setOpenMenuId(null);
+                                          } catch (error) {
+                                            console.error("Error canceling meeting:", error);
+                                          }
+                                        }}
                                         className={`w-full text-left px-4 py-2 text-sm transition-colors ${
                                           tokens.isDark
                                             ? "text-red-400 hover:bg-white/10"
@@ -498,12 +511,19 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
                    <button
                      type="button"
                      onClick={() => {
-                       if (meeting.status === "Completed") {
+                       if (meeting.status === "Completed" || meeting.status === "request_sent") {
+                         setSelectedMeetingId(meeting.id as number);
                          setMeetingToView(meeting);
                          setIsViewSummaryModalOpen(true);
                        } else if (meeting.status === "Canceled" || meeting.status === "Confirmed") {
-                         setSelectedMeeting(meeting);
-                         setIsEditMeetingModalOpen(true);
+                         if (meeting.status === "Confirmed") {
+                           handleJoinMeeting(meeting.id);
+                         } else {
+                           setSelectedMeeting(meeting);
+                           setIsEditMeetingModalOpen(true);
+                         }
+                       } else if (meeting.status === "Waiting") {
+                         handleJoinMeeting(meeting.id);
                        }
                      }}
                      className={`px-4 py-2 min-w-[120px] rounded-full border font-medium transition-colors cursor-pointer ${
@@ -545,7 +565,6 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
         onClose={() => setIsAddMeetingModalOpen(false)}
         onAddMeeting={(data) => {
           console.log("Meeting data:", data);
-          // Handle meeting submission here
         }}
       />
 
@@ -558,6 +577,7 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
           setSelectedMeeting(null);
         }}
         meeting={selectedMeeting ? {
+          id: selectedMeeting.id,
           title: selectedMeeting.title,
           date: selectedMeeting.date,
           time: selectedMeeting.time,
@@ -565,7 +585,6 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
         } : undefined}
         onSave={(data) => {
           console.log("Updated meeting data:", data);
-          // Handle meeting update here
         }}
       />
 
@@ -578,9 +597,17 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
           setMeetingToDelete(null);
         }}
         recordName={meetingToDelete ? `${meetingToDelete.title} (${meetingToDelete.project})` : undefined}
-        onConfirm={() => {
-          console.log("Deleting meeting:", meetingToDelete?.id);
-          // Handle meeting deletion here
+        onConfirm={async () => {
+          if (meetingToDelete?.id) {
+            try {
+              await deleteMeeting(meetingToDelete.id as number).unwrap();
+              console.log("Meeting deleted:", meetingToDelete.id);
+              setIsDeleteRecordModalOpen(false);
+              setMeetingToDelete(null);
+            } catch (error) {
+              console.error("Error deleting meeting:", error);
+            }
+          }
         }}
       />
 
@@ -591,8 +618,22 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
         onClose={() => {
           setIsViewSummaryModalOpen(false);
           setMeetingToView(null);
+          setSelectedMeetingId(null);
         }}
-        meeting={meetingToView ? {
+        meeting={summaryData?.data ? {
+          title: summaryData.data.meeting_name,
+          project: summaryData.data.project_name,
+          date: summaryData.data.date,
+          time: `${summaryData.data.time?.start || "N/A"} - ${summaryData.data.time?.end || "N/A"}`,
+          duration: `${summaryData.data.duration_minutes || 0} min`,
+          platform: summaryData.data.meeting_platform || "N/A",
+          attendees: summaryData.data.employees?.map((emp: any) => ({
+            id: `${emp.id}`,
+            name: emp.name
+          })) || [],
+          notes: summaryData.data.notes || [],
+          actionLog: summaryData.data.action_log || []
+        } : meetingToView ? {
           title: meetingToView.title,
           project: meetingToView.project,
           date: meetingToView.date,
@@ -613,10 +654,10 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
         onAddMeeting={() => {
           setIsViewSummaryModalOpen(false);
           setMeetingToView(null);
+          setSelectedMeetingId(null);
           setIsAddMeetingModalOpen(true);
         }}
       />
     </div>
   );
 };
-

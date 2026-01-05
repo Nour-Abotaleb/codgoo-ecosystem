@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { i18n } from "@shared/config/i18n";
-import { ArrowRight, ActiveIcon, PendingIcon, UnpaidIcon, CalendarIcon, ClockIcon, PlusCircleIcon, SettingsIcon, CloseIcon, AllProjectsIcon, CompletedIcon, ProjectPendingIcon, DashboardAllProjectsIcon } from "@utilities/icons";
+import { ArrowRight, ActiveIcon, PendingIcon, UnpaidIcon, CalendarIcon, ClockIcon, SettingsIcon, CloseIcon, AllProjectsIcon, CompletedIcon, ProjectPendingIcon, DashboardAllProjectsIcon } from "@utilities/icons";
 import type { DashboardTokens, SoftwareDashboardData, DashboardHeroContent } from "../../types";
+import { useGetClientDashboardQuery } from "@features/dashboard/api/dashboard-api";
 import "@assets/images/software/Mobile.svg";
 
 type SoftwareDashboardOverviewProps = {
@@ -12,9 +13,11 @@ type SoftwareDashboardOverviewProps = {
 
 // Area Chart Component for Projects Overview
 const ProjectsAreaChart = ({ 
-  isDark = false 
+  isDark = false,
+  chartData = {}
 }: { 
   isDark?: boolean;
+  chartData?: Record<string, number>;
 }) => {
   const width = 450;
   const height = 100;
@@ -22,11 +25,18 @@ const ProjectsAreaChart = ({
   const chartWidth = width - padding.left - padding.right;
   const chartHeight = height - padding.top - padding.bottom;
 
-  // Sample data points for the week (Monday to Saturday)
-  const days = ["M", "T", "W", "T", "F", "S"];
-  // Data points that overlap - sometimes yellow is higher, sometimes blue is higher
-  const yellowData = [15, 55, 30, 55, 35, 55]; // Yellow area values
-  const blueData = [30, 45, 25, 40, 25, 40]; // Blue area values - overlaps with yellow
+  // Convert chart data to array format
+  const chartEntries = Object.entries(chartData).sort();
+  const days = chartEntries.length > 0 
+    ? chartEntries.map(([date]) => date.split("-")[1] || "")
+    : ["M", "T", "W", "T", "F", "S"];
+  
+  // Use actual data or fallback to sample data
+  const yellowData = chartEntries.length > 0 
+    ? chartEntries.map(([, value]) => value)
+    : [15, 55, 30, 55, 35, 55];
+  
+  const blueData = yellowData.map(v => Math.max(v * 0.7, 10)); // Derived from yellow data
 
   // Normalize data to fit chart height
   const maxValue = Math.max(...yellowData, ...blueData);
@@ -193,20 +203,33 @@ const ProjectsAreaChart = ({
 
 // Pie Chart Component - 3D style with labels outside each segment
 const PieChart = ({ 
-  items, 
-  size = 180,
+  invoiceStatus,
   isDark = false
 }: { 
-  items: SoftwareDashboardData["invoices"]; 
-  size?: number;
+  invoiceStatus?: { paid: number; unpaid: number; overdue: number };
   isDark?: boolean;
 }) => {
-  const padding = 50; // Extra space for labels outside
+  const size = 180;
+  const padding = 50;
   const chartSize = size + padding * 2;
   const radius = size / 2;
   const centerX = chartSize / 2;
   const centerY = chartSize / 2;
-  let currentAngle = -90; // Start from top
+
+  // Convert invoice status to items
+  const items = [
+    { status: "Paid", value: invoiceStatus?.paid || 0, color: "#A4AEB35E", percentage: 0 },
+    { status: "Unpaid", value: invoiceStatus?.unpaid || 0, color: "#091DE2", percentage: 0 },
+    { status: "Overdue", value: invoiceStatus?.overdue || 0, color: "#000000", percentage: 0 }
+  ];
+
+  // Calculate percentages
+  const total = items.reduce((sum, item) => sum + item.value, 0) || 1;
+  items.forEach(item => {
+    item.percentage = Math.round((item.value / total) * 100);
+  });
+
+  let currentAngle = -90;
 
   const segments = items.map((item) => {
     const percentage = item.percentage / 100;
@@ -333,8 +356,17 @@ export const SoftwareDashboardOverview = ({
   tokens
 }: SoftwareDashboardOverviewProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const { data: apiData } = useGetClientDashboardQuery();
   const isRTL = i18n.language === "ar";
   const cardClass = `rounded-[20px] px-6 py-4 transition-colors ${tokens.isDark ? tokens.cardBase : "bg-[#FCFDFF]"}`;
+
+  // Use API data if available, otherwise fall back to props
+  const dashboardData = apiData?.data;
+  const projectsData = dashboardData?.projects || (data as any)?.projects || [];
+  const tasksData = dashboardData?.tasks || { completed: 0, in_progress: 0, waiting_feedback: 0, canceled: 0 };
+  const invoiceData = dashboardData?.invoice_status || { paid: 0, unpaid: 0, overdue: 0 };
+  const chartData = dashboardData?.projects_summary?.chart || {};
+  const meetingsData = dashboardData?.meetings || [];
 
   // Preload hero image
   useEffect(() => {
@@ -404,7 +436,6 @@ export const SoftwareDashboardOverview = ({
                 imageLoaded ? "opacity-100" : "opacity-0"
               }`}
               loading="eager"
-              fetchPriority="high"
               onLoad={() => setImageLoaded(true)}
             />
           )}
@@ -430,13 +461,13 @@ export const SoftwareDashboardOverview = ({
         {/* Statistics Cards - 2 columns, 2 rows */}
         <div className="grid grid-cols-2 gap-4">
           {/* First Card - Dynamic Area Chart */}
-          <ProjectsAreaChart isDark={tokens.isDark} />
+          <ProjectsAreaChart isDark={tokens.isDark} chartData={chartData} />
           
           {/* Other Statistics Cards */}
           {[
-            { id: "completed", label: "Completed", value: "10 Tasks", icon: CompletedIcon },
-            { id: "ongoing", label: "Ongoing", value: "10 Tasks", icon: AllProjectsIcon },
-            { id: "pending", label: "Pending", value: "6 Tasks", icon: ProjectPendingIcon }
+            { id: "completed", label: "Completed", value: `${tasksData.completed} Tasks`, icon: CompletedIcon },
+            { id: "ongoing", label: "Ongoing", value: `${tasksData.in_progress} Tasks`, icon: AllProjectsIcon },
+            { id: "pending", label: "Pending", value: `${tasksData.waiting_feedback} Tasks`, icon: ProjectPendingIcon }
           ].map((stat) => {
             const Icon = stat.icon;
             const iconBaseColor = tokens.isDark ? "#FFFFFF" : "#2B3674";
@@ -478,14 +509,14 @@ export const SoftwareDashboardOverview = ({
                   Completed
                 </span>
                 <span className={`text-sm ${tokens.isDark ? "text-white/70" : "text-[#AAAAAA]"}`}>
-                  32 Tasks
+                  {tasksData.completed} Tasks
                 </span>
               </div>
               <div className="relative h-5 bg-[#EFEFEF] rounded-full overflow-hidden">
                 <div
                   className="h-full rounded-full transition-all duration-300"
                   style={{
-                    width: "95%",
+                    width: `${Math.min(tasksData.completed * 5, 100)}%`,
                     backgroundColor: "#34C759"
                   }}
                 />
@@ -499,14 +530,14 @@ export const SoftwareDashboardOverview = ({
                   In Progress
                 </span>
                 <span className={`text-sm ${tokens.isDark ? "text-white/70" : "text-[#AAAAAA]"}`}>
-                  54 Tasks
+                  {tasksData.in_progress} Tasks
                 </span>
               </div>
               <div className="relative h-5 bg-[#EFEFEF] rounded-full overflow-hidden">
                 <div
                   className="h-full rounded-full transition-all duration-300"
                   style={{
-                    width: "67%",
+                    width: `${Math.min(tasksData.in_progress * 5, 100)}%`,
                     backgroundColor: "#0015B4"
                   }}
                 />
@@ -520,14 +551,14 @@ export const SoftwareDashboardOverview = ({
                   Waiting Feedback
                 </span>
                 <span className={`text-sm ${tokens.isDark ? "text-white/70" : "text-[#AAAAAA]"}`}>
-                  12 Tasks
+                  {tasksData.waiting_feedback} Tasks
                 </span>
               </div>
               <div className="relative h-5 bg-[#EFEFEF] rounded-full overflow-hidden">
                 <div
                   className="h-full rounded-full transition-all duration-300"
                   style={{
-                    width: "33%",
+                    width: `${Math.min(tasksData.waiting_feedback * 5, 100)}%`,
                     backgroundColor: "#B48D00"
                   }}
                 />
@@ -541,14 +572,14 @@ export const SoftwareDashboardOverview = ({
                   Canceled
                 </span>
                 <span className={`text-sm ${tokens.isDark ? "text-white/70" : "text-[#AAAAAA]"}`}>
-                  0
+                  {tasksData.canceled}
                 </span>
               </div>
               <div className="relative h-5 bg-[#EFEFEF] rounded-full overflow-hidden">
                 <div
                   className="h-full rounded-full transition-all duration-300"
                   style={{
-                    width: "0%",
+                    width: `${Math.min(tasksData.canceled * 5, 100)}%`,
                     backgroundColor: "#9CA3AF"
                   }}
                 />
@@ -609,42 +640,33 @@ export const SoftwareDashboardOverview = ({
 
               {/* Event Cards positioned absolutely */}
               <div className="absolute inset-0 pointer-events-none">
-                {data.events.map((event, eventIndex) => {
-                  // Parse day and hour from event data
-                  const dayMatch = event.day?.match(/(\w+)\s+(\d+)/);
-                  const dayName = dayMatch?.[1] || "";
-                  const hourMatch = event.hour?.match(/(\d+):/);
-                  const hour = hourMatch ? parseInt(hourMatch[1]) : 10;
-                  
-                  // Map day names to column indices (Mon=0, Tues=1, etc.)
-                  const dayMap: Record<string, number> = {
-                    "Mon": 0, "Tues": 1, "Wed": 2, "Thu": 3, "Fri": 4, "Sat": 5, "Sun": 6
-                  };
-                  const colIndex = dayMap[dayName] ?? 1;
-                  
-                  // Calculate position (hour 9 = index 0, hour 10 = index 1, etc.)
-                  const rowIndex = hour - 9;
-                  
-                  // Card background colors (yellow, gray, black)
+                {meetingsData.map((meeting: any, eventIndex: number) => {
+                  // Card background colors with new palette
                   const cardColors = [
-                    tokens.isDark ? "bg-[#FFF9E6] text-black" : "bg-[#FFF9E6] text-[#2B3674]", // Light yellow
-                    tokens.isDark ? "bg-[#F5F5F5] text-black" : "bg-[#F5F5F5] text-[#2B3674]", // Light gray
+                    "bg-[#FFFAED] text-[#2B3674]", // Light yellow
+                    "bg-[#F4F4F4] text-[#2B3674]", // Light gray
                     "bg-[#000000] text-white" // Black
                   ];
                   const cardColor = cardColors[eventIndex % cardColors.length];
-                  // Icon color: black card always has yellow icons, light cards have black icons in dark mode
-                  const iconColor = eventIndex === 2 ? "#FFCE20" : (tokens.isDark ? "#000000" : "#2B3674");
+                  const iconColor = eventIndex === 2 ? "#FFCE20" : "#2B3674";
+
+                  // Parse time from meeting data
+                  const hourMatch = meeting.start?.match(/(\d+):/);
+                  const hour = hourMatch ? parseInt(hourMatch[1]) : 10;
+                  
+                  // Assume meetings are distributed across days (0-6)
+                  const colIndex = eventIndex % 7;
+                  const rowIndex = hour - 9;
                   
                   // Calculate position
                   const left = `calc(${(colIndex + 1) * (100 / 8)}% + 4px)`;
-                  // Vertical offsets: first card up, second down a bit, third down a bit more
-                  const verticalOffsets = [-12, 8, 16]; // pixels
-                  const offset = verticalOffsets[eventIndex] || 0;
-                  const top = `${rowIndex * 24 + offset}px`; // 24px = h-6
+                  const verticalOffsets = [-12, 8, 16];
+                  const offset = verticalOffsets[eventIndex % 3] || 0;
+                  const top = `${rowIndex * 24 + offset}px`;
                   
                   return (
                     <div
-                      key={event.id}
+                      key={eventIndex}
                       className={`absolute rounded-[20px] p-1.5 shadow-sm pointer-events-auto ${cardColor}`}
                       style={{
                         left,
@@ -653,38 +675,16 @@ export const SoftwareDashboardOverview = ({
                         maxWidth: "280px"
                       }}
                     >
-                      <h4 className="font-semibold text-[10px] mb-1 leading-tight">{event.title}</h4>
+                      <h4 className="font-semibold text-[10px] mb-1 leading-tight">{meeting.meeting_name}</h4>
                       <div className="space-y-0.5 text-[10px]">
                         <div className="flex items-center gap-1">
                           <CalendarIcon className="h-2.5 w-2.5" style={{ color: iconColor }} />
-                          <span className="leading-tight">{event.date}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <svg className="h-2.5 w-2.5" viewBox="0 0 16 16" fill="none" style={{ color: iconColor }}>
-                            <rect x="2" y="2" width="4" height="4" rx="1" fill="currentColor"/>
-                            <rect x="10" y="2" width="4" height="4" rx="1" fill="currentColor"/>
-                            <rect x="2" y="10" width="4" height="4" rx="1" fill="currentColor"/>
-                            <rect x="10" y="10" width="4" height="4" rx="1" fill="currentColor"/>
-                          </svg>
-                          <span className="leading-tight">{event.location}</span>
+                          <span className="leading-tight">{meeting.date}</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <ClockIcon className="h-2.5 w-2.5" style={{ color: iconColor }} />
-                          <span className="leading-tight">{event.time}</span>
+                          <span className="leading-tight">{meeting.start} - {meeting.end}</span>
                         </div>
-                      </div>
-                      <div className="flex items-center mt-1">
-                        {Array.from({ length: Math.min(4, event.attendees) }).map((_, i) => (
-                          <div
-                            key={i}
-                            className="w-4 h-4 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 border border-white -ml-1.5 first:ml-0"
-                          ></div>
-                        ))}
-                        {event.attendees > 4 && (
-                          <div className="w-4 h-4 rounded-full bg-gray-300 border border-white -ml-1.5 flex items-center justify-center">
-                            <PlusCircleIcon className="h-3 w-3" style={{ color: "#F4F4F4" }} />
-                          </div>
-                        )}
                       </div>
                     </div>
                   );
@@ -701,7 +701,7 @@ export const SoftwareDashboardOverview = ({
             </h3>
           </div>
           <div className="flex items-center justify-center py-2">
-            <PieChart items={data.invoices} isDark={tokens.isDark} />
+            <PieChart invoiceStatus={invoiceData} isDark={tokens.isDark} />
           </div>
         </div>
       </section>
@@ -732,7 +732,7 @@ export const SoftwareDashboardOverview = ({
                 </tr>
               </thead>
               <tbody>
-                {data.projects.map((project) => {
+                {projectsData.map((project: any) => {
                   const StatusIcon = getStatusIcon(project.status);
                   return (
                     <tr key={project.id} className={`${tokens.isDark ? "hover:bg-white/5" : "hover:bg-gray-50"}`}>

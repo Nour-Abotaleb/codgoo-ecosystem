@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { EditIcon, EmailIcon, PhoneIcon, SettingsIcon, CloseIcon, RefreshIcon, KeyIcon, PlusCircleIcon } from "@utilities/icons";
+import { EditIcon, EmailIcon, SettingsIcon, CloseIcon, RefreshIcon, KeyIcon, PlusCircleIcon } from "@utilities/icons";
 import type { DashboardTokens } from "../../types";
 import { TwoFactorAuthModal } from "../modals/TwoFactorAuthModal";
 import { AddNewEmailModal } from "../modals/AddNewEmailModal";
@@ -54,7 +54,7 @@ const ToggleSwitch = ({
 
 export const SettingsView = ({ tokens }: SettingsViewProps) => {
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(true);
-  const [twoFactorMethod, setTwoFactorMethod] = useState("Email");
+  const [twoFactorMethod, setTwoFactorMethod] = useState("low");
   const [currentEmail, setCurrentEmail] = useState("a----@g----.com");
   const [currentPhone, setCurrentPhone] = useState("+20 10*******");
   const [currentPassword] = useState("************");
@@ -101,7 +101,7 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
 
             {/* Method */}
             <div className="flex items-center justify-between">
-              <span className={labelClass}>Method</span>
+              <span className={labelClass}>Security Level</span>
               <button
                 type="button"
                 className="px-6 py-2 bg-[#EFEFFE] text-[#071FD7] text-sm font-semibold rounded-full"
@@ -110,25 +110,10 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
               </button>
             </div>
 
-            {/* Contact Information */}
-            <div className="flex flex-col gap-3 pt-4">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className={sectionTitleClass}>Contact Information</h2>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className={`flex h-9 w-9 items-center justify-center rounded-full ${tokens.isDark ? tokens.buttonGhost : ""}`} style={tokens.isDark ? {} : { backgroundColor: "#E6E9FB" }}>
-                  <EmailIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: "#071FD7" }} />
-                </div>
-                <span className={valueClass}>{currentEmail}</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className={`flex h-9 w-9 items-center justify-center rounded-full ${tokens.isDark ? tokens.buttonGhost : ""}`} style={tokens.isDark ? {} : { backgroundColor: "#E6E9FB" }}>
-                  <PhoneIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: "#071FD7" }} />
-                </div>
-                <span className={valueClass}>{currentPhone}</span>
-              </div>
-            </div>
           </div>
+                <p className={`text-sm mb-6 ${tokens.subtleText}`}>
+            Add an extra layer of security to your account
+          </p>
         </div>
 
         {/* Right Column: Account Security and Current Language Sections */}

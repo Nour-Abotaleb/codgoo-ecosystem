@@ -46,7 +46,7 @@ export const BundleSelectionView = ({ tokens }: BundleSelectionViewProps) => {
       // Get the monthly price as default display price
       const monthlyPrice = pkg.prices.find(p => p.name === "monthly");
       const displayPrice = monthlyPrice?.amount ?? pkg.prices[0]?.amount ?? 0;
-      const currency = monthlyPrice?.currency ?? pkg.prices[0]?.currency ?? "USD";
+      const currency = monthlyPrice?.currency ?? pkg.prices[0]?.currency ?? "EGP";
 
       return {
         id: pkg.id.toString(),
@@ -224,5 +224,6 @@ export const BundleSelectionView = ({ tokens }: BundleSelectionViewProps) => {
     </div>
   );
 };
+
 
 

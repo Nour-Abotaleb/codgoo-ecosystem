@@ -41,7 +41,7 @@ const manageNameserversData = {
     {
       id: "primary-available",
       domain: "mywebsite.com",
-      price: "45 SAR / year",
+      price: "99 EGP / year",
       priceValue: 45,
       available: true,
       ctaLabel: "Add To Cart"
@@ -49,7 +49,7 @@ const manageNameserversData = {
     {
       id: "primary-unavailable",
       domain: "mywebsite.com",
-      price: "45 SAR / year",
+      price: "99 EGP / year",
       priceValue: 45,
       available: false,
       ctaLabel: "Add To Cart"
@@ -59,7 +59,7 @@ const manageNameserversData = {
     {
       id: "suggestion-online",
       domain: "mywebsiteonline.com",
-      price: "45 SAR / year",
+      price: "99 EGP / year",
       priceValue: 45,
       available: true,
       ctaLabel: "Add To Cart"
@@ -67,7 +67,7 @@ const manageNameserversData = {
     {
       id: "suggestion-co",
       domain: "mywebsite.co",
-      price: "45 SAR / year",
+      price: "99 EGP / year",
       priceValue: 45,
       available: true,
       ctaLabel: "Add To Cart"
@@ -132,7 +132,7 @@ const ManageNameserverCheckoutPanel = ({
     }));
   };
 
-  const formatPrice = (value: number) => `${value} SAR`;
+  const formatPrice = (value: number) => `${value} EGP`;
 
   return (
     <div className={`${tokens.cardBase} rounded-[20px] px-6 py-4`}>
@@ -193,7 +193,7 @@ const ManageNameserverCheckoutPanel = ({
                 <span className={tokens.isDark ? "" : "text-[#3E3484]"}>
                   {option.priceValue}
                 </span>
-                {" SAR"}
+                {" EGP"}
               </span>
             </div>
             {nameserverAddOns.map((addOn) =>
@@ -205,7 +205,7 @@ const ManageNameserverCheckoutPanel = ({
                     <span className={tokens.isDark ? "" : "text-[#3E3484]"}>
                       {addOn.price}
                     </span>
-                    {" SAR"}
+                    {" EGP"}
                   </span>
                 </div>
               ) : null
@@ -218,7 +218,7 @@ const ManageNameserverCheckoutPanel = ({
                 <span className={tokens.isDark ? "" : "text-[#3E3484]"}>
                   {total}
                 </span>
-                {" SAR"}
+                {" EGP"}
               </span>
             </div>
           </div>
@@ -419,4 +419,6 @@ export const RegisterDomainView = ({ tokens }: RegisterDomainViewProps) => {
     />
   );
 };
+
+
 

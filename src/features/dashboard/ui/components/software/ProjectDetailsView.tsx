@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   OverviewIcon,
@@ -17,9 +17,10 @@ import { InvoicesView } from "./InvoicesView";
 import { AttachmentsView } from "./AttachmentsView";
 import type { DashboardTokens } from "../../types";
 import { useTabState } from "@shared/hooks/useTabState";
+import { useGetProjectOverviewQuery } from "@features/dashboard/api/dashboard-api";
 
 type ProjectDetailsViewProps = {
-  readonly project: ProjectCardData;
+  readonly projectId: string;
   readonly tokens: DashboardTokens;
   readonly onBack?: () => void;
   readonly onManage?: (projectId: string) => void;
@@ -34,64 +35,8 @@ const tabs: readonly { id: TabId; label: string; icon: React.ComponentType<React
   { id: "attachments", label: "Attachments", icon: AttachmentsIcon }
 ];
 
-type ProjectStat = {
-  readonly id: string;
-  readonly label: string;
-  readonly value: string;
-  readonly subtitle: string;
-  readonly icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-};
-
-type ProgressPhase = {
-  readonly name: string;
-  readonly percentage: number;
-  readonly color: string;
-};
-
-type ActivityItem = {
-  readonly id: string;
-  readonly message: string;
-};
-
-const projectStats: readonly ProjectStat[] = [
-  {
-    id: "progress",
-    label: "Project Progress",
-    value: "100%",
-    subtitle: "Completed",
-    icon: AllProjecs
-  },
-  {
-    id: "tasks",
-    label: "Open Tasks",
-    value: "2 / 3",
-    subtitle: "Tasks Done",
-    icon: projectsCompleted
-  },
-  {
-    id: "days",
-    label: "Days Left",
-    value: "12",
-    subtitle: "Days Remaining",
-    icon: DayRemaining
-  }
-];
-
-const progressPhases: readonly ProgressPhase[] = [
-  { name: "Planning", percentage: 100, color: "#071FD7" },
-  { name: "Design", percentage: 80, color: "#F8D20D" },
-  { name: "Development", percentage: 50, color: "#E00A48" },
-  { name: "Testing", percentage: 0, color: "#9CA3AF" }
-];
-
-const activities: readonly ActivityItem[] = [
-  { id: "1", message: "Task #12 completed by Yousef" },
-  { id: "2", message: "Invoice #122 issued" },
-  { id: "3", message: "Client approved proposal" }
-];
-
 export const ProjectDetailsView = ({
-  project,
+  projectId,
   tokens,
   onManage
 }: ProjectDetailsViewProps) => {
@@ -100,7 +45,121 @@ export const ProjectDetailsView = ({
   const [activeTab, setActiveTab] = useTabState<TabId>("overview");
   const [activeMilestoneTab, setActiveMilestoneTab] = useState(0);
   
-  const milestoneTabs = ["Milestone", "Milestone", "Milestone", "Milestone", "Milestone"];
+  // Fetch project overview from API
+  const projectIdNum = parseInt(projectId, 10);
+  const { data: apiData, isLoading } = useGetProjectOverviewQuery(projectIdNum);
+
+  // Transform API data with N/A fallbacks
+  const project = useMemo((): ProjectCardData | null => {
+    if (apiData?.data?.project) {
+      const proj = apiData.data.project;
+      // Map API status to valid ProjectCardData status
+      const mapStatus = (status: string): "Active" | "Pending" | "Completed" | "Ongoing" => {
+        const statusLower = status.toLowerCase();
+        if (statusLower === "completed") return "Completed";
+        if (statusLower === "pending" || statusLower === "requested") return "Pending";
+        if (statusLower === "ongoing") return "Ongoing";
+        return "Active";
+      };
+      
+      return {
+        id: String(proj.id),
+        name: proj.name || "N/A",
+        description: proj.notes || "N/A",
+        status: mapStatus(proj.status || "pending"),
+        team: [], // Team data not in overview endpoint
+        startDate: "N/A", // Not in overview endpoint
+        deadline: "N/A", // Not in overview endpoint
+        budget: "N/A", // Not in overview endpoint
+        tasks: {
+          completed: 0,
+          total: proj.open_tasks || 0
+        },
+        type: proj.type || "N/A",
+        lastUpdate: proj.last_update || "N/A"
+      };
+    }
+    return null;
+  }, [apiData]);
+
+  // Get milestones from API
+  const milestoneTabs = useMemo(() => {
+    if (apiData?.data?.project?.milestones) {
+      return apiData.data.project.milestones.map((m: any) => m.name || "Milestone");
+    }
+    return ["Milestone"];
+  }, [apiData]);
+
+  // Get project stats from API
+  const projectStats = useMemo(() => {
+    if (apiData?.data?.project) {
+      const proj = apiData.data.project;
+      const totalTasks = proj.milestones?.reduce((sum: number, m: any) => sum + (m.tasks?.length || 0), 0) || 0;
+      const completedTasks = proj.milestones?.reduce((sum: number, m: any) => 
+        sum + (m.tasks?.filter((t: any) => t.status === "completed").length || 0), 0) || 0;
+      
+      return [
+        {
+          id: "progress",
+          label: "Project Progress",
+          value: totalTasks > 0 ? `${Math.round((completedTasks / totalTasks) * 100)}%` : "0%",
+          subtitle: "Completed",
+          icon: AllProjecs
+        },
+        {
+          id: "tasks",
+          label: "Open Tasks",
+          value: `${completedTasks} / ${totalTasks}`,
+          subtitle: "Tasks Done",
+          icon: projectsCompleted
+        },
+        {
+          id: "days",
+          label: "Days Left",
+          value: proj.days_left ? Math.abs(Math.round(proj.days_left)).toString() : "N/A",
+          subtitle: proj.days_left && proj.days_left < 0 ? "Days Overdue" : "Days Remaining",
+          icon: DayRemaining
+        }
+      ];
+    }
+    return [
+      { id: "progress", label: "Project Progress", value: "N/A", subtitle: "Completed", icon: AllProjecs },
+      { id: "tasks", label: "Open Tasks", value: "N/A", subtitle: "Tasks Done", icon: projectsCompleted },
+      { id: "days", label: "Days Left", value: "N/A", subtitle: "Days Remaining", icon: DayRemaining }
+    ];
+  }, [apiData]);
+
+  // Get progress phases from API
+  const progressPhases = useMemo(() => {
+    if (apiData?.data?.project?.progress_timeline) {
+      const timeline = apiData.data.project.progress_timeline;
+      return [
+        { name: "Planning", percentage: timeline.planning || 0, color: "#071FD7" },
+        { name: "Design", percentage: timeline.design || 0, color: "#F8D20D" },
+        { name: "Development", percentage: timeline.development || 0, color: "#E00A48" },
+        { name: "Testing", percentage: timeline.testing || 0, color: "#9CA3AF" }
+      ];
+    }
+    return [
+      { name: "Planning", percentage: 0, color: "#071FD7" },
+      { name: "Design", percentage: 0, color: "#F8D20D" },
+      { name: "Development", percentage: 0, color: "#E00A48" },
+      { name: "Testing", percentage: 0, color: "#9CA3AF" }
+    ];
+  }, [apiData]);
+
+  // Get activities from API
+  const activities = useMemo(() => {
+    if (apiData?.data?.project?.activity_notes) {
+      return apiData.data.project.activity_notes.map((activity: any, index: number) => ({
+        id: String(index),
+        message: activity.message || "N/A",
+        date: activity.date || "N/A",
+        type: activity.type || "activity"
+      }));
+    }
+    return [];
+  }, [apiData]);
 
   useEffect(() => {
     const tabParam = searchParams.get("tab");
@@ -110,8 +169,26 @@ export const ProjectDetailsView = ({
   }, [searchParams]);
 
   const handleProposalsClick = () => {
-    navigate(`/dashboard/projects/${project.id}/proposals`);
+    if (project) {
+      navigate(`/dashboard/projects/${project.id}/proposals`);
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <p className={tokens.isDark ? "text-white/50" : "text-[#A3AED0]"}>Loading project details...</p>
+      </div>
+    );
+  }
+
+  if (!project) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <p className={tokens.isDark ? "text-white/50" : "text-[#A3AED0]"}>Project not found</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -284,7 +361,8 @@ export const ProjectDetailsView = ({
 
       {activeTab === "tasks" && (
         <TasksView 
-          tokens={tokens} 
+          tokens={tokens}
+          projectId={projectId}
           project={project}
           milestoneTabs={milestoneTabs}
           activeMilestoneTab={activeMilestoneTab}
@@ -292,9 +370,9 @@ export const ProjectDetailsView = ({
         />
       )}
 
-      {activeTab === "invoices" && <InvoicesView tokens={tokens} />}
+      {activeTab === "invoices" && <InvoicesView tokens={tokens} projectId={projectId} />}
 
-      {activeTab === "attachments" && <AttachmentsView tokens={tokens} />}
+      {activeTab === "attachments" && <AttachmentsView tokens={tokens} projectId={projectId} />}
 
       {activeTab !== "overview" && activeTab !== "tasks" && activeTab !== "invoices" && activeTab !== "attachments" && (
         <div

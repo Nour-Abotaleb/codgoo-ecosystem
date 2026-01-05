@@ -94,13 +94,13 @@ export const RegisterForm = () => {
   );
 
   return (
-    <form ref={formRef} className="flex flex-col gap-5" onSubmit={handleSubmit} noValidate>
+    <form ref={formRef} className="flex flex-col gap-3" onSubmit={handleSubmit} noValidate>
       {error && (
         <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
           {typeof error === "string" ? error : t("register.errors.registerFailed")}
         </div>
       )}
-      <div className="grid gap-5 grid-cols-1">
+      <div className="grid gap-4 grid-cols-1">
         <TextField
           name="name"
           label={t("register.fullName")}
@@ -121,7 +121,7 @@ export const RegisterForm = () => {
         <PhoneField label={t("register.phone")} name="phone" error={fieldErrors.phone} />
       </div>
 
-      <div className="grid gap-5 grid-cols-1">
+      <div className="grid gap-4 grid-cols-1">
         <PasswordField
           name="password"
           label={t("register.password")}
@@ -144,9 +144,9 @@ export const RegisterForm = () => {
         type="submit"
         disabled={loading}
         className={`mt-2 inline-flex h-14 items-center cursor-pointer justify-center rounded-[20px] text-base md:text-xl font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
-          isDark 
-            ? "bg-indigo-600 text-white hover:bg-indigo-700 focus-visible:outline-indigo-500" 
-            : "bg-black text-white hover:bg-gray-800 focus-visible:outline-slate-900"
+              isDark 
+              ? "bg-[#0f1217] text-white border-[#2a333e] border-1 hover:bg-white hover:text-black" 
+            : "bg-black text-white hover:bg-white hover:text-black  hover:border-[#2a333e] hover:border-1"
         }`}
       >
         {loading ? t("register.creating") : t("register.createButton")}

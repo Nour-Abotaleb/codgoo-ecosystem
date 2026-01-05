@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { DashboardTokens } from "../../types";
+import type { DashboardTokens, DashboardAppId } from "../types";
 import {
   AppBillingIcon,
   AppPaidIcon,
@@ -9,7 +9,7 @@ import {
   MasterIcon,
 } from "@utilities/icons";
 
-type AppSubscription = {
+type Subscription = {
   readonly id: string;
   readonly invoiceCode: string;
   readonly amount: string;
@@ -27,7 +27,7 @@ const statsConfig = [
   { id: "overdue", label: "Overdue", value: "1", icon: AppOverdueIcon },
 ] as const;
 
-const bundleSubscriptions: AppSubscription[] = [
+const bundleSubscriptions: Subscription[] = [
   {
     id: "bundle-1",
     invoiceCode: "INV-2025-001234",
@@ -50,7 +50,7 @@ const bundleSubscriptions: AppSubscription[] = [
   },
 ];
 
-const masterSubscriptions: AppSubscription[] = [
+const masterSubscriptions: Subscription[] = [
   {
     id: "master-1",
     invoiceCode: "INV-2025-001244",
@@ -80,7 +80,7 @@ const masterSubscriptions: AppSubscription[] = [
   },
 ];
 
-const statusBadgeClass = (status: AppSubscription["status"]) => {
+const statusBadgeClass = (status: Subscription["status"]) => {
   switch (status) {
     case "closed":
       return "bg-[#E2FFE9] text-[#34C759]";
@@ -93,8 +93,49 @@ const statusBadgeClass = (status: AppSubscription["status"]) => {
   }
 };
 
-export const AppBillingView = ({ tokens }: { readonly tokens: DashboardTokens }) => {
+const getAppColors = (activeAppId: DashboardAppId) => {
+  if (activeAppId === "app") {
+    return {
+      primary: "#0F6773",
+      cardBg: "#E7F0F1",
+      cardBgDark: "#0F1217",
+      textPrimary: "#0B6E75",
+      iconColor: "#0E8F9C",
+      buttonBg: "#0F6773",
+      buttonHover: "#0c7b85",
+    };
+  } else if (activeAppId === "software") {
+    return {
+      primary: "#071FD7",
+      cardBg: "#E6E9FB",
+      cardBgDark: "#0F1217",
+      textPrimary: "#071FD7",
+      iconColor: "#071FD7",
+      buttonBg: "#071FD7",
+      buttonHover: "#0518b0",
+    };
+  } else {
+    // cloud
+    return {
+      primary: "#584ABC",
+      cardBg: "#EEEDF8",
+      cardBgDark: "#0F1217",
+      textPrimary: "#584ABC",
+      iconColor: "#584ABC",
+      buttonBg: "#584ABC",
+      buttonHover: "#4a3d9e",
+    };
+  }
+};
+
+type UnifiedBillingViewProps = {
+  readonly tokens: DashboardTokens;
+  readonly activeAppId: DashboardAppId;
+};
+
+export const UnifiedBillingView = ({ tokens, activeAppId }: UnifiedBillingViewProps) => {
   const isDark = tokens.isDark;
+  const colors = getAppColors(activeAppId);
 
   // Combine all subscriptions
   const allSubscriptions = useMemo(() => {
@@ -110,7 +151,7 @@ export const AppBillingView = ({ tokens }: { readonly tokens: DashboardTokens })
           return (
             <div
               key={stat.id}
-              className={`${tokens.cardBase} rounded-[20px] p-6 transition-colors ${isDark ? "!bg-ransparent " : "!bg-white"}`}
+              className={`${tokens.cardBase} rounded-[20px] p-6 transition-colors ${isDark ? "!bg-[0F1217]" : "!bg-white"}`}
             >
               <div className="flex flex-col items-start gap-3">
                 <div className="">
@@ -132,7 +173,8 @@ export const AppBillingView = ({ tokens }: { readonly tokens: DashboardTokens })
           {allSubscriptions.map((sub) => (
             <div
               key={sub.id}
-              className={`rounded-[20px] overflow-hidden transition-colors ${isDark ? "!bg-[#0F1217] " : "!bg-[#E7F0F1]"}`}
+              className={`rounded-[20px] overflow-hidden transition-colors ${isDark ? `!bg-[${colors.cardBgDark}]` : `!bg-[${colors.cardBg}]`}`}
+              style={{ backgroundColor: isDark ? colors.cardBgDark : colors.cardBg }}
             >
               <div className="flex flex-col gap-3 px-4 py-4">
                 <div className="flex items-center justify-between">
@@ -143,17 +185,19 @@ export const AppBillingView = ({ tokens }: { readonly tokens: DashboardTokens })
                 </div>
 
                 <div className="flex items-end gap-1">
-                  <span className={`text-2xl font-semibold leading-none ${isDark ? "text-white" : "text-[#0B6E75]"}`}>{sub.amount}</span>
+                  <span className={`text-2xl font-semibold leading-none ${isDark ? "text-white" : ""}`} style={{ color: isDark ? "white" : colors.textPrimary }}>
+                    {sub.amount}
+                  </span>
                   <span className={`text-xs font-semibold mb-[2px] ${isDark ? "text-white/70" : "text-[#4B6470]"}`}>{sub.currency}</span>
                 </div>
 
                 <div className="flex items-center gap-2 text-sm font-semibold">
                   {sub.planName === "Professional Bundle" ? (
-                    <FilledBundleSubscriptionsIcon className={`h-4 w-4 ${isDark ? "text-white/80" : "text-[#0E8F9C]"}`} />
+                    <FilledBundleSubscriptionsIcon className={`h-4 w-4`} style={{ color: isDark ? "rgba(255,255,255,0.8)" : colors.iconColor }} />
                   ) : (
-                    <MasterIcon className={`h-4 w-4 ${isDark ? "text-white/80" : "text-[#0E8F9C]"}`} />
+                    <MasterIcon className={`h-4 w-4`} style={{ color: isDark ? "rgba(255,255,255,0.8)" : colors.iconColor }} />
                   )}
-                  <span className={isDark ? "text-white" : "text-[#0E8F9C]"}>{sub.planName}</span>
+                  <span style={{ color: isDark ? "white" : colors.iconColor }}>{sub.planName}</span>
                 </div>
 
                 <div className="flex items-center justify-between text-xs text-[#7A8A92]">
@@ -165,7 +209,10 @@ export const AppBillingView = ({ tokens }: { readonly tokens: DashboardTokens })
               <div className="flex items-center gap-3 px-4 pb-4">
                 <button
                   type="button"
-                  className="flex-1 rounded-full bg-[#0F6773] px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-[#0c7b85]"
+                  className="flex-1 rounded-full px-3 py-2 text-sm font-medium text-white transition-colors"
+                  style={{ backgroundColor: colors.buttonBg }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = colors.buttonHover)}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = colors.buttonBg)}
                 >
                   View Apps
                 </button>
@@ -174,8 +221,21 @@ export const AppBillingView = ({ tokens }: { readonly tokens: DashboardTokens })
                   className={`flex-1 rounded-full border px-3 py-2 text-sm font-medium transition-colors ${
                     isDark
                       ? "border-white/30 text-white/80 hover:bg-white/10"
-                      : "border-[#0F6773] text-[#0F6773] hover:bg-[#0F6773] hover:text-white"
+                      : ""
                   }`}
+                  style={!isDark ? { borderColor: colors.primary, color: colors.primary } : {}}
+                  onMouseEnter={(e) => {
+                    if (!isDark) {
+                      e.currentTarget.style.backgroundColor = colors.primary;
+                      e.currentTarget.style.color = "white";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isDark) {
+                      e.currentTarget.style.backgroundColor = "transparent";
+                      e.currentTarget.style.color = colors.primary;
+                    }
+                  }}
                 >
                   View Invoice
                 </button>
@@ -187,4 +247,3 @@ export const AppBillingView = ({ tokens }: { readonly tokens: DashboardTokens })
     </div>
   );
 };
-

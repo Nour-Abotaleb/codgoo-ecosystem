@@ -2,29 +2,9 @@ import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { SearchIcon, ArrowRight, FilterIcon, ArrowUpIcon } from "@utilities/icons";
 import type { DashboardTokens } from "../../types";
+import { useGetProductsQuery } from "@features/dashboard/api/dashboard-api";
 import productImg1 from "@assets/images/software/product-img1.svg";
-import productImg2 from "@assets/images/software/product-img2.svg";
-import productImg3 from "@assets/images/software/product-img3.svg";
 import productsBg from "@assets/images/software/products-bg.svg";
-
-type ProductItem = {
-  readonly id: string;
-  readonly name: string;
-  readonly category: string;
-  readonly image: string;
-};
-
-const productsData: readonly ProductItem[] = [
-  { id: "prod-1", name: "Mobile App", category: "Development", image: productImg1 },
-  { id: "prod-2", name: "Web Platform", category: "Development", image: productImg2 },
-  { id: "prod-3", name: "Dashboard System", category: "Development", image: productImg3 },
-  { id: "prod-4", name: "Mobile App", category: "Development", image: productImg1 },
-  { id: "prod-5", name: "Web Platform", category: "Development", image: productImg2 },
-  { id: "prod-6", name: "Dashboard System", category: "Development", image: productImg3 },
-  { id: "prod-7", name: "Mobile App", category: "Development", image: productImg1 },
-  { id: "prod-8", name: "Web Platform", category: "Development", image: productImg2 },
-  { id: "prod-9", name: "Dashboard System", category: "Development", image: productImg3 },
-];
 
 type ProductsViewProps = {
   readonly tokens: DashboardTokens;
@@ -32,9 +12,38 @@ type ProductsViewProps = {
 
 export const ProductsView = ({ tokens }: ProductsViewProps) => {
   const navigate = useNavigate();
+  const { data: apiData, isLoading, error, refetch } = useGetProductsQuery();
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 9;
+
+  // Use API data only
+  const productsData = useMemo(() => {
+    console.log("=== PRODUCTS DEBUG ===");
+    console.log("API Data:", apiData);
+    console.log("API Data Type:", typeof apiData);
+    console.log("Has products?:", apiData?.products);
+    console.log("Products length:", apiData?.products?.length);
+    console.log("Is Loading:", isLoading);
+    console.log("Error:", error);
+    console.log("Auth Token:", localStorage.getItem("auth_token"));
+    console.log("===================");
+    
+    if (apiData?.products && apiData.products.length > 0) {
+      return apiData.products.map((product: any) => ({
+        id: product.id,
+        name: product.name,
+        category: product.category_name || "General",
+        image: product.image || productImg1,
+        price: product.price,
+        description: product.description,
+        background_image: product.background_image,
+        type: product.type,
+      }));
+    }
+    return [];
+  }, [apiData, isLoading, error]);
+
   const totalPages = Math.ceil(productsData.length / pageSize);
 
   const filteredProducts = useMemo(() => {
@@ -48,7 +57,7 @@ export const ProductsView = ({ tokens }: ProductsViewProps) => {
         product.category.toLowerCase().includes(query)
       );
     });
-  }, [searchQuery]);
+  }, [searchQuery, productsData]);
 
   const paginatedProducts = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
@@ -205,6 +214,14 @@ export const ProductsView = ({ tokens }: ProductsViewProps) => {
         </div>
         <button
           type="button"
+          onClick={() => refetch()}
+          className={`flex h-12 px-4 items-center justify-center rounded-full ${tokens.isDark ? "bg-[#2E314166]" : "bg-white"} transition-colors hover:opacity-80`}
+          title="Refresh products"
+        >
+          <span className="text-xs font-medium">Refresh</span>
+        </button>
+        <button
+          type="button"
           className={`flex h-12 w-12 items-center justify-center rounded-full ${tokens.isDark ? "bg-[#2E314166]" : "bg-white"} transition-colors hover:opacity-80`}
           aria-label="Filter products"
         >
@@ -214,51 +231,68 @@ export const ProductsView = ({ tokens }: ProductsViewProps) => {
 
       {/* Products Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {paginatedProducts.map((product) => (
-          <div
-            key={product.id}
-            className={`${tokens.cardBase} rounded-[20px] overflow-hidden transition-colors ${tokens.isDark ? "bg-tansparent stroke " : "!bg-white"}`}
-          >
-            {/* Product Image */}
-            <div className="relative overflow-hidden">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full object-contain"
-              />
-            </div>
-
-            {/* Product Info */}
-            <div className="px-6 pt-6 pb-4 flex flex-col gap-4 relative">
-              <div className="flex items-center gap-4">
-                {/* Placeholder Circle */}
-                <div className={`w-24 h-24 rounded-full bg-[#7282FF] border-5 ${tokens.isDark ? "border-[#1E1B2E]" : "border-white"} absolute -top-5 left-3`}></div>
-
-                {/* Product Name and Category */}
-                <div className="flex flex-col gap-1 absolute top-3 left-30">
-                    <h4 className={`text-xl font-bold ${tokens.isDark ? "text-white" : "text-[#1B2559]"}`}>
-                    {product.name}
-                    </h4>
-                    <p className={`text-sm ${tokens.isDark ? "text-white/60" : "text-[#838593]"}`}>
-                    {product.category}
-                    </p>
-                </div>
-              </div>
-              {/* Learn More Link */}
-              <button
-                type="button"
-                onClick={() => navigate(`/dashboard/products/${product.id}`)}
-                className={`inline-flex items-center justify-end gap-2 text-sm font-medium mt-7 ${tokens.isDark ? "text-white/70 hover:text-white" : "text-[#838593] hover:text-[#071FD7]/80"} transition-colors`}
-              >
-                Learn More
-                  {/* Arrow Icon */}
-                  <div className="flex justify-end flex items-center justify-center text-center cursor-pointer flex-shrink-0">
-                     <ArrowUpIcon className="w-7 h-7 p-1 bg-gradient-to-b from-[#071FD766] to-[#071FD7] rounded-full" />
-                 </div>
-              </button>
-            </div>
+        {isLoading ? (
+          <div className="col-span-full text-center py-12">
+            <p className={tokens.isDark ? "text-white/50" : "text-[#A3AED0]"}>Loading products...</p>
           </div>
-        ))}
+        ) : error ? (
+          <div className="col-span-full text-center py-12">
+            <p className="text-red-500">Error loading products. Please check console for details.</p>
+            <p className={`text-xs mt-2 ${tokens.isDark ? "text-white/50" : "text-[#A3AED0]"}`}>
+              {JSON.stringify(error)}
+            </p>
+          </div>
+        ) : paginatedProducts.length > 0 ? (
+          paginatedProducts.map((product: any) => (
+            <div
+              key={product.id}
+              className={`${tokens.cardBase} rounded-[20px] overflow-hidden transition-colors ${tokens.isDark ? "bg-tansparent stroke " : "!bg-white"}`}
+            >
+              {/* Product Image */}
+              <div className="relative overflow-hidden">
+                <img
+                  src={product.image || productImg1}
+                  alt={product.name}
+                  className="w-full object-contain"
+                />
+              </div>
+
+              {/* Product Info */}
+              <div className="px-6 pt-6 pb-4 flex flex-col gap-4 relative">
+                <div className="flex items-center gap-4">
+                  {/* Placeholder Circle */}
+                  <div className={`w-24 h-24 rounded-full bg-[#7282FF] border-5 ${tokens.isDark ? "border-[#1E1B2E]" : "border-white"} absolute -top-5 left-3`}></div>
+
+                  {/* Product Name and Category */}
+                  <div className="flex flex-col gap-1 absolute top-3 left-30">
+                      <h4 className={`text-xl font-bold ${tokens.isDark ? "text-white" : "text-[#1B2559]"}`}>
+                      {product.name}
+                      </h4>
+                      <p className={`text-sm ${tokens.isDark ? "text-white/60" : "text-[#838593]"}`}>
+                      {product.category}
+                      </p>
+                  </div>
+                </div>
+                {/* Learn More Link */}
+                <button
+                  type="button"
+                  onClick={() => navigate(`/dashboard/products/${product.id}`)}
+                  className={`inline-flex items-center justify-end gap-2 text-sm font-medium mt-7 ${tokens.isDark ? "text-white/70 hover:text-white" : "text-[#838593] hover:text-[#071FD7]/80"} transition-colors`}
+                >
+                  Learn More
+                    {/* Arrow Icon */}
+                    <div className="flex justify-end flex items-center justify-center text-center cursor-pointer flex-shrink-0">
+                       <ArrowUpIcon className="w-7 h-7 p-1 bg-gradient-to-b from-[#071FD766] to-[#071FD7] rounded-full" />
+                   </div>
+                </button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="col-span-full text-center py-12">
+            <p className={tokens.isDark ? "text-white/50" : "text-[#A3AED0]"}>No products found</p>
+          </div>
+        )}
       </div>
 
       {/* Pagination */}

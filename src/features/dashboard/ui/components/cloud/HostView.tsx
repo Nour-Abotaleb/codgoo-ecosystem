@@ -18,16 +18,16 @@ type InvoiceItem = {
 };
 
 const invoicesData: InvoiceItem[] = [
-  { id: "inv-297", invoiceNumber: 297, date: "Tuesday, October 28th, 2025", total: "$19.75 USD", status: "Unpaid" },
-  { id: "inv-300", invoiceNumber: 300, date: "Tuesday, October 28th, 2025", total: "$19.75 USD", status: "Unpaid" },
-  { id: "inv-301", invoiceNumber: 301, date: "Tuesday, October 28th, 2025", total: "$19.75 USD", status: "Pending" },
-  { id: "inv-305", invoiceNumber: 305, date: "Tuesday, October 28th, 2025", total: "$19.75 USD", status: "Active" },
-  { id: "inv-306", invoiceNumber: 306, date: "Tuesday, October 28th, 2025", total: "$19.75 USD", status: "Active" },
-  { id: "inv-307", invoiceNumber: 307, date: "Tuesday, October 28th, 2025", total: "$19.75 USD", status: "Pending" },
-  { id: "inv-308", invoiceNumber: 308, date: "Tuesday, October 28th, 2025", total: "$19.75 USD", status: "Pending" },
-  { id: "inv-309", invoiceNumber: 309, date: "Tuesday, October 28th, 2025", total: "$19.75 USD", status: "Pending" },
-  { id: "inv-310", invoiceNumber: 310, date: "Tuesday, October 28th, 2025", total: "$19.75 USD", status: "Pending" },
-  { id: "inv-311", invoiceNumber: 311, date: "Tuesday, October 28th, 2025", total: "$19.75 USD", status: "Active" }
+  { id: "inv-297", invoiceNumber: 297, date: "Tuesday, October 28th, 2025", total: "750 EGP", status: "Unpaid" },
+  { id: "inv-300", invoiceNumber: 300, date: "Tuesday, October 28th, 2025", total: "750 EGP", status: "Unpaid" },
+  { id: "inv-301", invoiceNumber: 301, date: "Tuesday, October 28th, 2025", total: "750 EGP", status: "Pending" },
+  { id: "inv-305", invoiceNumber: 305, date: "Tuesday, October 28th, 2025", total: "750 EGP", status: "Active" },
+  { id: "inv-306", invoiceNumber: 306, date: "Tuesday, October 28th, 2025", total: "750 EGP", status: "Active" },
+  { id: "inv-307", invoiceNumber: 307, date: "Tuesday, October 28th, 2025", total: "750 EGP", status: "Pending" },
+  { id: "inv-308", invoiceNumber: 308, date: "Tuesday, October 28th, 2025", total: "750 EGP", status: "Pending" },
+  { id: "inv-309", invoiceNumber: 309, date: "Tuesday, October 28th, 2025", total: "750 EGP", status: "Pending" },
+  { id: "inv-310", invoiceNumber: 310, date: "Tuesday, October 28th, 2025", total: "750 EGP", status: "Pending" },
+  { id: "inv-311", invoiceNumber: 311, date: "Tuesday, October 28th, 2025", total: "750 EGP", status: "Active" }
 ];
 
 const renderStatusIcon = (status: InvoiceItem["status"]) => {
@@ -358,4 +358,5 @@ export const HostView = ({ tokens }: HostViewProps) => {
     </div>
   );
 };
+
 

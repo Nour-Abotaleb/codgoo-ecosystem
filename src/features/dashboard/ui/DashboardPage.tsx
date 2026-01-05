@@ -28,10 +28,8 @@ import { ProjectsView } from "./components/software/ProjectsView";
 import { ProjectDetailsView } from "./components/software/ProjectDetailsView";
 import { ProposalsView } from "./components/software/ProposalsView";
 import { TaskDetailView } from "./components/software/TaskDetailView";
-import { tasksData } from "./components/software/TasksView";
 import { MeetingsView } from "./components/software/MeetingsView";
-import { SettingsView } from "./components/software/SettingsView";
-import { SettingsView as AppSettingsView } from "./components/app/settings/SettingsView";
+import { GeneralSettingsView } from "./components/GeneralSettingsView";
 import { ProductsView } from "./components/software/ProductsView";
 import { ProductDetailsView } from "./components/software/ProductDetailsView";
 import { AppDashboardOverview } from "./components/app/AppDashboardOverview";
@@ -91,7 +89,7 @@ export const DashboardPage = () => {
       rating: app.rating?.average ?? 0,
       reviewCount: app.rating?.reviewsCount ?? 0,
       priceType: app.price?.amount === 0 ? "Free" : "Paid",
-      price: `${app.price?.amount ?? 0} ${app.price?.currency ?? "USD"}`,
+      price: `${app.price?.amount ?? 0} EGP`,
       icon: app.icon?.url ? (
         <img src={app.icon.url} alt={app.icon.alt || app.name} className="w-7 h-7" />
       ) : (
@@ -359,6 +357,7 @@ export const DashboardPage = () => {
             activeNavigationLabel={orderMatch ? t("header.order") : activeNavigationItem ? t(`navigation.${activeNavigationItem.id}`) : undefined}
             onToggleTheme={handleToggleTheme}
             onCartClick={() => navigate("/dashboard/order")}
+            onProfileClick={() => handleSelectNav("settings")}
           />
           {orderMatch ? (
             <OrderView tokens={tokens} />
@@ -420,65 +419,25 @@ export const DashboardPage = () => {
           ) : activeNavId === "projects" && activeApp.id === "software" ? (
             proposalsMatch ? (
               (() => {
-                // Find project from default projects or get from data source
-                const defaultProjects = [
-                  {
-                    id: "proj-1",
-                    name: "FixMate App",
-                    description:
-                      "Updated app interface, changed order and appointment tracking system, improved customer satisfaction",
-                    status: "Active" as const,
-                    team: [
-                      { id: "1", name: "John Doe" },
-                      { id: "2", name: "Jane Smith" },
-                      { id: "3", name: "Bob Wilson" }
-                    ],
-                    startDate: "15 Oct 2023",
-                    deadline: "20 Nov 2023",
-                    budget: "$5,000",
-                    tasks: { completed: 8, total: 10 },
-                    type: "Mobile",
-                    lastUpdate: "2 days ago"
-                  },
-                  {
-                    id: "proj-2",
-                    name: "FixMate App",
-                    description:
-                      "Updated app interface, changed order and appointment tracking system, improved customer satisfaction",
-                    status: "Active" as const,
-                    team: [
-                      { id: "1", name: "John Doe" },
-                      { id: "2", name: "Jane Smith" },
-                      { id: "3", name: "Bob Wilson" }
-                    ],
-                    startDate: "15 Oct 2023",
-                    deadline: "20 Nov 2023",
-                    budget: "$5,000",
-                    tasks: { completed: 8, total: 10 },
-                    type: "Mobile",
-                    lastUpdate: "2 days ago"
-                  },
-                  {
-                    id: "proj-3",
-                    name: "FixMate App",
-                    description:
-                      "Updated app interface, changed order and appointment tracking system, improved customer satisfaction",
-                    status: "Active" as const,
-                    team: [
-                      { id: "1", name: "John Doe" },
-                      { id: "2", name: "Jane Smith" },
-                      { id: "3", name: "Bob Wilson" }
-                    ],
-                    startDate: "15 Oct 2023",
-                    deadline: "20 Nov 2023",
-                    budget: "$5,000",
-                    tasks: { completed: 8, total: 10 },
-                    type: "Mobile",
-                    lastUpdate: "2 days ago"
-                  }
-                ];
                 const projectId = proposalsMatch.params.projectId;
-                const project = defaultProjects.find((p) => p.id === projectId) ?? defaultProjects[0];
+                const project = {
+                  id: projectId || "proj-1",
+                  name: "FixMate App",
+                  description:
+                    "Updated app interface, changed order and appointment tracking system, improved customer satisfaction",
+                  status: "Active" as const,
+                  team: [
+                    { id: "1", name: "John Doe" },
+                    { id: "2", name: "Jane Smith" },
+                    { id: "3", name: "Bob Wilson" }
+                  ],
+                  startDate: "15 Oct 2023",
+                  deadline: "20 Nov 2023",
+                  budget: "5,000 EGP",
+                  tasks: { completed: 8, total: 10 },
+                  type: "Mobile",
+                  lastUpdate: "2 days ago"
+                };
                 return (
                   <ProposalsView
                     project={project}
@@ -487,89 +446,20 @@ export const DashboardPage = () => {
                 );
               })()
             ) : projectDetailsMatch ? (
-              (() => {
-                // Find project from default projects or get from data source
-                const defaultProjects = [
-                  {
-                    id: "proj-1",
-                    name: "FixMate App",
-                    description:
-                      "Updated app interface, changed order and appointment tracking system, improved customer satisfaction",
-                    status: "Active" as const,
-                    team: [
-                      { id: "1", name: "John Doe" },
-                      { id: "2", name: "Jane Smith" },
-                      { id: "3", name: "Bob Wilson" }
-                    ],
-                    startDate: "15 Oct 2023",
-                    deadline: "20 Nov 2023",
-                    budget: "$5,000",
-                    tasks: { completed: 8, total: 10 },
-                    type: "Mobile",
-                    lastUpdate: "2 days ago"
-                  },
-                  {
-                    id: "proj-2",
-                    name: "FixMate App",
-                    description:
-                      "Updated app interface, changed order and appointment tracking system, improved customer satisfaction",
-                    status: "Active" as const,
-                    team: [
-                      { id: "1", name: "John Doe" },
-                      { id: "2", name: "Jane Smith" },
-                      { id: "3", name: "Bob Wilson" }
-                    ],
-                    startDate: "15 Oct 2023",
-                    deadline: "20 Nov 2023",
-                    budget: "$5,000",
-                    tasks: { completed: 8, total: 10 },
-                    type: "Mobile",
-                    lastUpdate: "2 days ago"
-                  },
-                  {
-                    id: "proj-3",
-                    name: "FixMate App",
-                    description:
-                      "Updated app interface, changed order and appointment tracking system, improved customer satisfaction",
-                    status: "Active" as const,
-                    team: [
-                      { id: "1", name: "John Doe" },
-                      { id: "2", name: "Jane Smith" },
-                      { id: "3", name: "Bob Wilson" }
-                    ],
-                    startDate: "15 Oct 2023",
-                    deadline: "20 Nov 2023",
-                    budget: "$5,000",
-                    tasks: { completed: 8, total: 10 },
-                    type: "Mobile",
-                    lastUpdate: "2 days ago"
-                  }
-                ];
-                const projectId = projectDetailsMatch.params.projectId;
-                const project = defaultProjects.find((p) => p.id === projectId) ?? defaultProjects[0];
-                return (
-                  <ProjectDetailsView
-                    project={project}
-                    tokens={tokens}
-                    onBack={() => navigate("/dashboard/projects")}
-                    onManage={() => {
-                      // Handle manage
-                    }}
-                  />
-                );
-              })()
+              <ProjectDetailsView
+                projectId={projectDetailsMatch.params.projectId || ""}
+                tokens={tokens}
+                onBack={() => navigate("/dashboard/projects")}
+                onManage={() => {
+                  // Handle manage
+                }}
+              />
             ) : taskDetailMatch ? (
-              (() => {
-                const taskId = taskDetailMatch.params.taskId;
-                const task = tasksData.find((t) => t.id === taskId) ?? tasksData[0];
-                return (
-                  <TaskDetailView
-                    task={task}
-                    tokens={tokens}
-                    onBack={() => navigate("/dashboard/projects")}
-                  />
-                );
-              })()
+              <TaskDetailView
+                taskId={taskDetailMatch.params.taskId || "1"}
+                tokens={tokens}
+                onBack={() => navigate("/dashboard/projects")}
+              />
             ) : (
               <ProjectsView
                 tokens={tokens}
@@ -638,10 +528,12 @@ export const DashboardPage = () => {
             ) : (
               <ProductsView tokens={tokens} />
             )
-          ) : activeNavId === "settings" && activeApp.id === "software" ? (
-            <SettingsView tokens={tokens} />
-          ) : activeNavId === "settings" && activeApp.id === "app" ? (
-            <AppSettingsView tokens={tokens} />
+          ) : activeNavId === "settings" ? (
+            <GeneralSettingsView 
+              tokens={tokens}
+              primaryColor={activeApp.id === "software" ? "#071FD7" : activeApp.id === "app" ? "#0F6773" : "#584ABC"}
+              buttonBackgroundColor={activeApp.id === "software" ? "#E6E9FB" : activeApp.id === "app" ? "#E7F0F1" : "#EEEDF8"}
+            />
           ) : (
             <div className={`${tokens.cardBase} rounded-[20px] p-10`}>
               <h2 className="text-2xl font-semibold">
@@ -657,5 +549,6 @@ export const DashboardPage = () => {
     </div>
   );
 };
+
 
 

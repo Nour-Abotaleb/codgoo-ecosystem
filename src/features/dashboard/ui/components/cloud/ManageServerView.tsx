@@ -39,7 +39,7 @@ export const ManageServerView = ({ service, tokens }: ManageServerViewProps) => 
       [
         { label: "Created On", value: "2025-05-12" },
         { label: "Renewal Date", value: "2026-05-12" },
-        { label: "Cost", value: "300 SAR / Year" },
+        { label: "Cost", value: "1,200 EGP / Year" },
         { label: "IP Address", value: "192.168.1.10" },
         { label: "OS", value: "192.168.1.10" }
       ] as const,

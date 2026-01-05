@@ -86,7 +86,6 @@ export const GeneralSettingsView = ({
   const [isPaymentMethodsModalOpen, setIsPaymentMethodsModalOpen] = useState(false);
   const [accountSharingData, setAccountSharingData] = useState<readonly AccountSharingItem[]>(initialAccountSharingData);
   const [profileImage, setProfileImage] = useState<string | null>(null);
-  const fileInputRef = useState<HTMLInputElement | null>(null)[1];
 
   const cardClass = `${tokens.cardBase} rounded-[20px] p-6 transition-colors`;
   const sectionTitleClass = `text-xl font-bold ${tokens.isDark ? "text-white" : "text-black"}`;
