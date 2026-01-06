@@ -94,8 +94,8 @@ export const LoginForm = () => {
         disabled={loading}
         className={`mt-2 inline-flex h-14 items-center justify-center cursor-pointer rounded-[20px] text-base md:text-xl font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
           isDark 
-            ? "bg-indigo-600 text-white hover:bg-indigo-700 focus-visible:outline-indigo-500" 
-            : "bg-black text-white hover:bg-gray-800 focus-visible:outline-slate-900"
+              ? "bg-[#0f1217] text-white border-[#2a333e] border-1 hover:bg-white hover:text-black" 
+            : "bg-black text-white hover:bg-white hover:text-black  hover:border-[#2a333e] hover:border-1"
         }`}
       >
         {loading ? t("login.loggingIn") : t("login.loginButton")}

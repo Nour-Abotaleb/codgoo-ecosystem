@@ -1,0 +1,105 @@
+/* Cairo Font - Local Files */
+@font-face {
+  font-family: 'Cairo';
+  src: url('/fonts/static/Cairo-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cairo';
+  src: url('/fonts/static/Cairo-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cairo';
+  src: url('/fonts/static/Cairo-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cairo';
+  src: url('/fonts/static/Cairo-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cairo';
+  src: url('/fonts/static/Cairo-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cairo';
+  src: url('/fonts/static/Cairo-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cairo';
+  src: url('/fonts/static/Cairo-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cairo';
+  src: url('/fonts/static/Cairo-ExtraLight.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Cairo CSS classes */
+.cairo-thin {
+  font-family: 'Cairo', sans-serif;
+  font-weight: 200;
+}
+
+.cairo-light {
+  font-family: 'Cairo', sans-serif;
+  font-weight: 300;
+}
+
+.cairo-regular {
+  font-family: 'Cairo', sans-serif;
+  font-weight: 400;
+}
+
+.cairo-medium {
+  font-family: 'Cairo', sans-serif;
+  font-weight: 500;
+}
+
+.cairo-semibold {
+  font-family: 'Cairo', sans-serif;
+  font-weight: 600;
+}
+
+.cairo-bold {
+  font-family: 'Cairo', sans-serif;
+  font-weight: 700;
+}
+
+.cairo-extrabold {
+  font-family: 'Cairo', sans-serif;
+  font-weight: 800;
+}
+
+.cairo-black {
+  font-family: 'Cairo', sans-serif;
+  font-weight: 900;
+}

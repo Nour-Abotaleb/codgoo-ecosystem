@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { DocstIcon, EmojiIcon } from "@utilities/icons";
 import type { DashboardTokens } from "../../types";
+import { useGetDiscussionMessagesQuery, useSendDiscussionMessageMutation } from "@features/dashboard/api/dashboard-api";
+import toast from "react-hot-toast";
 
 type DiscussionDetailScreenProps = {
   readonly discussion: {
@@ -29,40 +31,6 @@ type ChatMessage = {
   readonly hasFile?: boolean;
   readonly fileName?: string;
 };
-
-// Mock chat messages
-const chatMessages: readonly ChatMessage[] = [
-  {
-    id: "1",
-    author: "Ahmed Nasser",
-    content: "Hey team, I just pushed the latest updates to the staging environment.",
-    time: "9:24 AM",
-    isOutgoing: false
-  },
-  {
-    id: "2",
-    author: "Aml Atef",
-    content: "API_Documentation_v2.pdf",
-    time: "9:28 AM",
-    isOutgoing: false,
-    hasFile: true,
-    fileName: "API_Documentation_v2.pdf"
-  },
-  {
-    id: "3",
-    author: "Aml Atef",
-    content: "Don't forget about the sprint planning meeting at 2 PM today.",
-    time: "9:28 AM",
-    isOutgoing: false
-  },
-  {
-    id: "4",
-    author: "You",
-    content: "Great! I'll start testing the new features right away",
-    time: "9:24 AM",
-    isOutgoing: true
-  }
-];
 
 const getAvatarColor = (index: number, isDark: boolean) => {
   const colors = [
@@ -111,13 +79,76 @@ const SendIcon = (props: { className?: string }) => (
 
 export const DiscussionDetailScreen = ({ discussion, tokens, onBack }: DiscussionDetailScreenProps) => {
   const [messageText, setMessageText] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const handleSendMessage = () => {
+  // Fetch messages from API
+  const discussionIdNum = parseInt(discussion.id, 10);
+  const { data: apiData, isLoading, refetch } = useGetDiscussionMessagesQuery(discussionIdNum);
+
+  // Send message mutation
+  const [sendMessage, { isLoading: isSending }] = useSendDiscussionMessageMutation();
+
+  // Get current user ID from localStorage (assuming it's stored there)
+  const currentUserId = localStorage.getItem("user_id") || "148";
+
+  // Transform API messages data
+  const chatMessages = useMemo((): readonly ChatMessage[] => {
+    if (apiData?.data?.messages) {
+      return apiData.data.messages.map((msg: any) => {
+        const createdAt = new Date(msg.created_at);
+        const time = createdAt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+        const isOutgoing = String(msg.sender_id) === currentUserId;
+        
+        return {
+          id: String(msg.id),
+          author: msg.sender?.name || "N/A",
+          authorAvatar: msg.sender?.image || msg.sender?.photo || undefined,
+          content: msg.message || "N/A",
+          time: time,
+          isOutgoing: isOutgoing,
+          hasFile: msg.type === "file" && !!msg.file_path,
+          fileName: msg.file_path ? msg.file_path.split('/').pop() : undefined
+        };
+      });
+    }
+    return [];
+  }, [apiData, currentUserId]);
+
+  // Scroll to bottom when messages change
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [chatMessages]);
+
+  const handleSendMessage = async () => {
     if (messageText.trim()) {
-      // Handle send message logic here
-      setMessageText("");
+      try {
+        await sendMessage({
+          discussionId: discussionIdNum,
+          type: "text",
+          message: messageText.trim()
+        }).unwrap();
+        
+        toast.success("Message sent successfully!");
+        setMessageText("");
+        // Refetch messages to show the new message
+        refetch();
+      } catch (error: any) {
+        toast.error(error?.data?.message || "Failed to send message");
+      }
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className={`flex items-center justify-center h-screen ${tokens.cardBase} rounded-[20px]`}>
+        <p className={tokens.isDark ? "text-white/50" : "text-[#A3AED0]"}>Loading messages...</p>
+      </div>
+    );
+  }
 
   return (
     <div className={`flex flex-col h-screen ${tokens.cardBase} rounded-[20px] overflow-hidden`}>
@@ -252,6 +283,8 @@ export const DiscussionDetailScreen = ({ discussion, tokens, onBack }: Discussio
             </div>
           </div>
         ))}
+        {/* Scroll anchor */}
+        <div ref={messagesEndRef} />
       </div>
 
       {/* Message Input */}
@@ -301,15 +334,16 @@ export const DiscussionDetailScreen = ({ discussion, tokens, onBack }: Discussio
             <button
               type="button"
               onClick={handleSendMessage}
+              disabled={isSending || !messageText.trim()}
               className={`ml-auto px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                 tokens.isDark
-                  ? "bg-[#071FD7] text-white hover:bg-[#071FD7]/90"
-                  : "bg-[#071FD7] text-white hover:bg-[#071FD7]/90"
+                  ? "bg-[#071FD7] text-white hover:bg-[#071FD7]/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                  : "bg-[#071FD7] text-white hover:bg-[#071FD7]/90 disabled:opacity-50 disabled:cursor-not-allowed"
               }`}
             >
               <div className="flex items-center gap-1.5">
-                <span>Send</span>
-                <SendIcon className="h-4 w-4" />
+                <span>{isSending ? "Sending..." : "Send"}</span>
+                {!isSending && <SendIcon className="h-4 w-4" />}
               </div>
             </button>
           </div>

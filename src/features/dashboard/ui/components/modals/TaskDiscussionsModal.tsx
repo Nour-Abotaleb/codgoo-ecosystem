@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { CalendarIcon, TaskDiscussionIcon, CloseModalIcon } from "@utilities/icons";
 import type { DashboardTokens } from "../../types";
+import { useGetTaskDiscussionQuery } from "@features/dashboard/api/dashboard-api";
 
 type TaskDiscussionsModalProps = {
+  readonly taskId: string;
   readonly tokens: DashboardTokens;
   readonly isOpen: boolean;
   readonly onClose: () => void;
@@ -15,6 +17,7 @@ type DiscussionItem = {
   readonly author: string;
   readonly date: string;
   readonly time: string;
+  readonly status: string;
   readonly team: readonly {
     readonly id: string;
     readonly name: string;
@@ -26,47 +29,6 @@ type MemberTag = {
   readonly id: string;
   readonly name: string;
 };
-
-// Mock data
-const discussions: readonly DiscussionItem[] = [
-  {
-    id: "1",
-    name: "Discussion Name",
-    author: "Ahmed Saeed",
-    date: "12 Nov 2025",
-    time: "10:32 AM",
-    team: [
-      { id: "1", name: "John Doe" },
-      { id: "2", name: "Jane Smith" },
-      { id: "3", name: "Bob Wilson" }
-    ]
-  },
-  {
-    id: "2",
-    name: "Discussion Name",
-    author: "Ahmed Saeed",
-    date: "12 Nov 2025",
-    time: "10:32 AM",
-    team: [
-      { id: "1", name: "John Doe" },
-      { id: "2", name: "Jane Smith" },
-      { id: "3", name: "Bob Wilson" }
-    ]
-  },
-  {
-    id: "3",
-    name: "Discussion Name",
-    author: "Ahmed Saeed",
-    date: "12 Nov 2025",
-    time: "10:32 AM",
-    team: [
-      { id: "1", name: "John Doe" },
-      { id: "2", name: "Jane Smith" },
-      { id: "3", name: "Bob Wilson" }
-    ]
-  }
-];
-
 
 const getAvatarColor = (index: number, isDark: boolean) => {
   const colors = [
@@ -86,7 +48,7 @@ const getInitials = (name: string) => {
     .slice(0, 2);
 };
 
-export const TaskDiscussionsModal = ({ tokens, isOpen, onClose, onJoinDiscussion }: TaskDiscussionsModalProps) => {
+export const TaskDiscussionsModal = ({ taskId, tokens, isOpen, onClose, onJoinDiscussion }: TaskDiscussionsModalProps) => {
   const [discussionTitle, setDiscussionTitle] = useState("Website Review");
   const [members, setMembers] = useState<MemberTag[]>([
     { id: "1", name: "Ahmed Nasser" },
@@ -94,6 +56,41 @@ export const TaskDiscussionsModal = ({ tokens, isOpen, onClose, onJoinDiscussion
     { id: "3", name: "Asmaa Hassan" }
   ]);
   const [memberInput, setMemberInput] = useState("");
+
+  // Fetch discussions from API
+  const taskIdNum = parseInt(taskId, 10);
+  const { data: apiData } = useGetTaskDiscussionQuery(taskIdNum, {
+    skip: !isOpen // Only fetch when modal is open
+  });
+
+  // Transform API discussions data
+  const discussions = useMemo((): readonly DiscussionItem[] => {
+    if (apiData?.discussions) {
+      return apiData.discussions.map((disc: any) => {
+        // API already provides formatted date like "04 Jan 2026 01:28 PM"
+        const createdAt = disc.created_at || "N/A";
+        // Split into date and time parts
+        const parts = createdAt.split(' ');
+        const date = parts.length >= 4 ? `${parts[0]} ${parts[1]} ${parts[2]}` : createdAt;
+        const time = parts.length >= 5 ? `${parts[3]} ${parts[4]}` : "";
+        
+        return {
+          id: String(disc.id),
+          name: disc.message || "N/A",
+          author: disc.created_by?.name || "N/A",
+          date: date,
+          time: time,
+          status: disc.status || "N/A",
+          team: disc.team?.map((t: any) => ({
+            id: String(t.id),
+            name: t.name || "N/A",
+            avatar: t.avatar || undefined
+          })) || []
+        };
+      });
+    }
+    return [];
+  }, [apiData]);
 
   const handleJoinDiscussion = (discussionId: string) => {
     const discussion = discussions.find((d) => d.id === discussionId);
@@ -129,10 +126,10 @@ export const TaskDiscussionsModal = ({ tokens, isOpen, onClose, onJoinDiscussion
       />
 
       {/* Modal */}
-      <div className={`relative w-full max-w-xl ${tokens.cardBase} ${tokens.isDark ? "bg-[#232637]" : "bg-white"} rounded-[20px] max-h-[90vh] overflow-hidden flex flex-col`}>
+      <div className={`relative w-full max-w-xl ${tokens.cardBase} ${tokens.isDark ? "bg-[#0F1217]" : "bg-white"} rounded-[20px] max-h-[90vh] overflow-hidden flex flex-col`}>
             {/* Header */}
             <div className={`flex items-center justify-between px-6 pt-6 pb-4 flex-shrink-0 rounded-t-2xl ${
-              tokens.isDark ? "bg-[#232637]" : "bg-[#FFFEF7]"
+              tokens.isDark ? "bg-[#0F1217]" : "bg-[#FFFEF7]"
             }`}>
           <div className="flex items-center gap-3">
             <div className={`flex h-9 w-9 items-center justify-center rounded-full ${tokens.isDark ? tokens.buttonGhost : ""}`} style={tokens.isDark ? {} : { backgroundColor: "#E6E9FB" }}>
@@ -156,19 +153,35 @@ export const TaskDiscussionsModal = ({ tokens, isOpen, onClose, onJoinDiscussion
         <div className="flex-1 overflow-y-auto scrollbar-hide pt-4 px-6 pb-6">
             {/* Discussions List */}
         <div className="flex flex-col gap-4 mb-6">
-          {discussions.map((discussion) => (
+          {discussions.length === 0 ? (
+            <div className={`${tokens.isDark ? "bg-[#1A1D29]" : "bg-[#F4F5FF]"} rounded-[20px] p-6 text-center`}>
+              <p className={`text-sm ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"}`}>
+                No discussions found for this task
+              </p>
+            </div>
+          ) : (
+            discussions.map((discussion) => (
             <div
               key={discussion.id}
               className={`${tokens.isDark ? "bg-[#1A1D29]" : "bg-[#F4F5FF]"} rounded-[20px] p-4`}
             >
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
-                  {/* Discussion Name */}
-                  <h3 className={`text-base md:text-lg font-bold ${tokens.isDark ? "text-white" : "text-black"}`}>
-                    {discussion.name}
-                  </h3>
+                  {/* Discussion Name and Status */}
+                  <div className="flex items-center gap-2 flex-1">
+                    <h3 className={`text-base md:text-lg font-bold ${tokens.isDark ? "text-white" : "text-black"}`}>
+                      {discussion.name}
+                    </h3>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      discussion.status?.toLowerCase() === "open"
+                        ? tokens.isDark ? "bg-green-500/10 text-green-400" : "bg-green-100 text-green-700"
+                        : tokens.isDark ? "bg-gray-500/10 text-gray-400" : "bg-gray-100 text-gray-700"
+                    }`}>
+                      {discussion.status}
+                    </span>
+                  </div>
                   
-                  {/* Team and Join Button */}
+                  {/* Team */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className={`text-sm ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"}`}>team:</span>
@@ -240,7 +253,8 @@ export const TaskDiscussionsModal = ({ tokens, isOpen, onClose, onJoinDiscussion
                 </div>
               </div>
             </div>
-          ))}
+          ))
+          )}
         </div>
 
         {/* Add Discussion Section */}
@@ -254,7 +268,7 @@ export const TaskDiscussionsModal = ({ tokens, isOpen, onClose, onJoinDiscussion
             <label 
               className={`absolute left-4 -top-2.5 px-2 text-sm font-medium z-10 ${
                 tokens.isDark 
-                  ? "text-white/70 bg-[#232637]" 
+                  ? "text-white/70 bg-[#0F1217]" 
                   : "text-black bg-white"
               }`}
             >
@@ -278,7 +292,7 @@ export const TaskDiscussionsModal = ({ tokens, isOpen, onClose, onJoinDiscussion
             <label 
               className={`absolute left-4 -top-2.5 px-2 text-sm font-medium z-10 ${
                 tokens.isDark 
-                  ? "text-white/70 bg-[#232637]" 
+                  ? "text-white/70 bg-[#0F1217]" 
                   : "text-black bg-white"
               }`}
             >

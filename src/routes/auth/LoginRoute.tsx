@@ -25,13 +25,13 @@ export const LoginRoute = () => {
   <AuthTemplate
     title={t("login.title")}
     bottomSlot={
-      <span className={`text-base md:text-lg text-center transition-colors ${
-        isDark ? "text-gray-300" : "text-black"
+      <span className={`text-base md:text-lg text-center  transition-colors ${
+        isDark ? "text-white" : "text-black"
       }`}>
         {t("login.noAccount")}{" "}
         <Link
           to="/register"
-          className="font-medium text-indigo-500 hover:text-indigo-600 underline"
+          className="font-medium  underline"
         >
           {t("login.registerNow")}
         </Link>

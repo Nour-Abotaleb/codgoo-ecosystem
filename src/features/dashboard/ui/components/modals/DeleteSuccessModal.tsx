@@ -24,7 +24,7 @@ export const DeleteSuccessModal = ({
       />
 
       {/* Modal */}
-      <div className={`relative w-full max-w-lg ${tokens.cardBase} ${tokens.isDark ? "bg-[#232637]" : "bg-white"} rounded-[20px] p-6 max-h-[90vh] overflow-hidden flex flex-col`}>
+      <div className={`relative w-full max-w-lg ${tokens.cardBase} ${tokens.isDark ? "bg-[#0F1217]" : "bg-white"} rounded-[20px] p-6 max-h-[90vh] overflow-hidden flex flex-col`}>
         {/* Close Button */}
         <button
           type="button"

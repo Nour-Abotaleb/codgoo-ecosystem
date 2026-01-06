@@ -24,7 +24,7 @@ const packages: Package[] = [
   {
     id: "basic",
     title: "Basic",
-    price: "$4.99 USD / Monthly",
+    price: "199 EGP / Monthly",
     features: [
       { label: "1 Website" },
       { label: "10 GB Storage" },
@@ -37,7 +37,7 @@ const packages: Package[] = [
   {
     id: "plus",
     title: "Plus",
-    price: "$5.23 USD / Monthly",
+    price: "249 EGP / Monthly",
     features: [
       { label: "10 Website" },
       { label: "25 GB Storage" },
@@ -50,7 +50,7 @@ const packages: Package[] = [
   {
     id: "pro",
     title: "Pro",
-    price: "$6.23 USD / Monthly",
+    price: "299 EGP / Monthly",
     features: [
       { label: "Unlimited Website" },
       { label: "100 GB Storage" },
@@ -63,7 +63,7 @@ const packages: Package[] = [
   {
     id: "enterprise",
     title: "Enterprise",
-    price: "$6.23 USD / Monthly",
+    price: "299 EGP / Monthly",
     features: [
       { label: "Unlimited Website" },
       { label: "Unlimited Storage" },
@@ -180,4 +180,5 @@ export const OrderView = ({ tokens }: OrderViewProps) => {
     </div>
   );
 };
+
 

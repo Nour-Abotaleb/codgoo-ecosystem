@@ -45,10 +45,10 @@ export const AddAttachmentsModal = ({
       />
 
       {/* Modal */}
-      <div className={`relative w-full max-w-xl ${tokens.cardBase} ${tokens.isDark ? "bg-[#232637]" : "bg-white"} rounded-[20px] max-h-[90vh] overflow-hidden flex flex-col`}>
+      <div className={`relative w-full max-w-xl ${tokens.cardBase} ${tokens.isDark ? "bg-[#0F1217]" : "bg-white"} rounded-[20px] max-h-[90vh] overflow-hidden flex flex-col`}>
         {/* Header */}
         <div className={`flex items-center justify-between px-6 pt-6 pb-4 flex-shrink-0 rounded-t-2xl ${
-          tokens.isDark ? "bg-[#232637]" : "bg-[#FFFEF7]"
+          tokens.isDark ? "bg-[#0F1217]" : "bg-[#FFFEF7]"
         }`}>
           <div className="flex items-center gap-3">
             <div
@@ -106,13 +106,13 @@ export const AddAttachmentsModal = ({
               >
                 <UploadIcon className={`h-8 w-8 ${tokens.isDark ? "text-white/70" : ""}`} />
                 <span className={`text-xs font-medium ${tokens.isDark ? "text-white/70" : "text-[#191D23]"}`}>
-                  Click to upload Attachments (PDF, DOC, DOCX)
+                  Click to upload Attachments (PDF, DOC, DOCX, PNG, JPG)
                 </span>
                 <input
                   id="file-upload"
                   type="file"
                   multiple
-                  accept=".pdf,.doc,.docx"
+                  accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
                   onChange={handleFileUpload}
                   className="hidden"
                 />

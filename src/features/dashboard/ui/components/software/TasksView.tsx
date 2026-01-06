@@ -10,9 +10,11 @@ import {
 } from "@utilities/icons";
 import { TaskCard, type TaskItem } from "./TaskCard";
 import type { DashboardTokens } from "../../types";
+import { useGetProjectOverviewQuery } from "@features/dashboard/api/dashboard-api";
 
 type TasksViewProps = {
   readonly tokens: DashboardTokens;
+  readonly projectId: string;
   readonly project?: {
     readonly startDate: string;
     readonly deadline: string;
@@ -30,115 +32,20 @@ type TaskStat = {
   readonly icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
 };
 
-// TaskItem type is now exported from TaskCard.tsx
-
-const taskStats: readonly TaskStat[] = [
-  {
-    id: "all",
-    label: "All taskes",
-    value: "6",
-    icon: AllTasksIcon
-  },
-  {
-    id: "complete",
-    label: "Complete",
-    value: "7",
-    icon: CompletedTasksIcon
-  },
-  {
-    id: "in-progress",
-    label: "In Progress",
-    value: "7",
-    icon: InProgressTasksIcon
-  },
-  {
-    id: "awaiting-feedback",
-    label: "Awaiting Feedback",
-    value: "6",
-    icon: AwaitingFeedbackIcon
-  },
-  {
-    id: "not-started",
-    label: "Not Started",
-    value: "6",
-    icon: NotStartedTasksIcon
-  }
-];
-
-// eslint-disable-next-line react-refresh/only-export-components
-export const tasksData: readonly TaskItem[] = [
-  {
-    id: "task-1",
-    code: 1,
-    name: "Task Name",
-    description: "Lorem Ipsum Is Simply Dummy Text Of The Printing And Typesetting Industry. Lorem Ipsum Has Been The Industry's Standard Dummy.",
-    priority: "High",
-    startDate: "2024-03-17",
-    deadline: "2024-03-17",
-    createdDate: "5 Nov 2025",
-    dueDate: "30 Nov 2025",
-    assignedTo: "Asmaa, Aya",
-    team: [
-      { id: "1", name: "John Doe" },
-      { id: "2", name: "Jane Smith" },
-      { id: "3", name: "Bob Wilson" }
-    ],
-    progress: { completed: 7, total: 10, percentage: 70 },
-    status: "Completed"
-  },
-  {
-    id: "task-2",
-    code: 2,
-    name: "Task Name",
-    description: "Lorem Ipsum Is Simply Dummy Text Of The Printing And Typesetting Industry. Lorem Ipsum Has Been The Industry's Standard Dummy.",
-    priority: "High",
-    startDate: "2024-03-17",
-    deadline: "2024-03-17",
-    createdDate: "5 Nov 2025",
-    dueDate: "30 Nov 2025",
-    assignedTo: "Asmaa, Aya",
-    team: [
-      { id: "1", name: "John Doe" },
-      { id: "2", name: "Jane Smith" }
-    ],
-    progress: { completed: 8, total: 10, percentage: 80 },
-    status: "Completed"
-  },
-  {
-    id: "task-3",
-    code: 3,
-    name: "Task Name",
-    description: "Lorem Ipsum Is Simply Dummy Text Of The Printing And Typesetting Industry. Lorem Ipsum Has Been The Industry's Standard Dummy.",
-    priority: "High",
-    startDate: "2024-03-17",
-    deadline: "2024-03-17",
-    createdDate: "5 Nov 2025",
-    dueDate: "30 Nov 2025",
-    assignedTo: "Asmaa, Aya",
-    team: [
-      { id: "1", name: "John Doe" },
-      { id: "2", name: "Jane Smith" },
-      { id: "3", name: "Bob Wilson" }
-    ],
-    progress: { completed: 5, total: 10, percentage: 50 },
-    status: "Waiting Feedback"
-  }
-];
-
 
 // CircularProgress, getAvatarColor, and getInitials are now in TaskCard.tsx
 
-const TasksCards = ({ tokens, searchQuery, onViewTask }: { readonly tokens: DashboardTokens; readonly searchQuery: string; readonly onViewTask?: (taskId: string) => void }) => {
+const TasksCards = ({ tokens, searchQuery, onViewTask, tasks }: { readonly tokens: DashboardTokens; readonly searchQuery: string; readonly onViewTask?: (taskId: string) => void; readonly tasks: readonly TaskItem[] }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 9;
   const navigate = useNavigate();
 
   const filteredTasks = useMemo(() => {
     if (!searchQuery.trim()) {
-      return tasksData;
+      return tasks;
     }
     const query = searchQuery.toLowerCase();
-    return tasksData.filter((task) => {
+    return tasks.filter((task) => {
       return (
         task.code.toString().includes(query) ||
         task.name.toLowerCase().includes(query) ||
@@ -146,7 +53,7 @@ const TasksCards = ({ tokens, searchQuery, onViewTask }: { readonly tokens: Dash
         task.status.toLowerCase().includes(query)
       );
     });
-  }, [searchQuery]);
+  }, [searchQuery, tasks]);
 
   const paginatedTasks = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
@@ -279,6 +186,7 @@ const TasksCards = ({ tokens, searchQuery, onViewTask }: { readonly tokens: Dash
 
 export const TasksView = ({ 
   tokens, 
+  projectId,
   project,
   milestoneTabs = ["Milestone", "Milestone", "Milestone", "Milestone", "Milestone"],
   activeMilestoneTab = 0,
@@ -286,6 +194,124 @@ export const TasksView = ({
 }: TasksViewProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const iconBaseColor = tokens.isDark ? "#FFFFFF" : "#2B3674";
+  
+  // Fetch project overview from API
+  const projectIdNum = parseInt(projectId, 10);
+  const { data: apiData, isLoading } = useGetProjectOverviewQuery(projectIdNum);
+
+  // Map API task status to component status
+  const mapTaskStatus = (status: string): "Completed" | "In Progress" | "Not Started" | "Waiting Feedback" => {
+    const statusLower = status.toLowerCase();
+    if (statusLower === "completed") return "Completed";
+    if (statusLower === "in_progress" || statusLower === "in progress") return "In Progress";
+    if (statusLower === "not_started" || statusLower === "not started") return "Not Started";
+    return "Waiting Feedback";
+  };
+
+  // Transform API tasks data
+  const tasksData = useMemo((): readonly TaskItem[] => {
+    if (apiData?.data?.project?.milestones && activeMilestoneTab < apiData.data.project.milestones.length) {
+      const milestone = apiData.data.project.milestones[activeMilestoneTab];
+      if (milestone?.tasks) {
+        return milestone.tasks.map((task: any) => ({
+          id: String(task.id),
+          code: task.id,
+          name: task.title || "N/A",
+          description: "N/A", // Not in API
+          priority: "Medium" as const, // Not in API, default to Medium
+          startDate: "N/A", // Not in API
+          deadline: "N/A", // Not in API
+          createdDate: "N/A", // Not in API
+          dueDate: task.updated_at || "N/A",
+          assignedTo: task.assignees?.map((a: any) => a.name).join(", ") || "N/A",
+          team: task.assignees?.map((a: any) => ({
+            id: String(a.id),
+            name: a.name || "N/A"
+          })) || [],
+          progress: { completed: 0, total: 0, percentage: 0 }, // Not in API
+          status: mapTaskStatus(task.status || "not_started")
+        }));
+      }
+    }
+    return [];
+  }, [apiData, activeMilestoneTab]);
+
+  // Calculate task statistics from API data
+  const taskStats = useMemo((): readonly TaskStat[] => {
+    const allTasks = apiData?.data?.project?.milestones?.flatMap((m: any) => m.tasks || []) || [];
+    const completed = allTasks.filter((t: any) => t.status?.toLowerCase() === "completed").length;
+    const inProgress = allTasks.filter((t: any) => t.status?.toLowerCase() === "in_progress" || t.status?.toLowerCase() === "in progress").length;
+    const notStarted = allTasks.filter((t: any) => t.status?.toLowerCase() === "not_started" || t.status?.toLowerCase() === "not started").length;
+    const waitingFeedback = allTasks.filter((t: any) => 
+      t.status?.toLowerCase() !== "completed" && 
+      t.status?.toLowerCase() !== "in_progress" && 
+      t.status?.toLowerCase() !== "in progress" &&
+      t.status?.toLowerCase() !== "not_started" &&
+      t.status?.toLowerCase() !== "not started"
+    ).length;
+
+    return [
+      {
+        id: "all",
+        label: "All taskes",
+        value: String(allTasks.length),
+        icon: AllTasksIcon
+      },
+      {
+        id: "complete",
+        label: "Complete",
+        value: String(completed),
+        icon: CompletedTasksIcon
+      },
+      {
+        id: "in-progress",
+        label: "In Progress",
+        value: String(inProgress),
+        icon: InProgressTasksIcon
+      },
+      {
+        id: "awaiting-feedback",
+        label: "Awaiting Feedback",
+        value: String(waitingFeedback),
+        icon: AwaitingFeedbackIcon
+      },
+      {
+        id: "not-started",
+        label: "Not Started",
+        value: String(notStarted),
+        icon: NotStartedTasksIcon
+      }
+    ];
+  }, [apiData]);
+
+  // Get current milestone data
+  const currentMilestone = useMemo(() => {
+    if (apiData?.data?.project?.milestones && activeMilestoneTab < apiData.data.project.milestones.length) {
+      const milestone = apiData.data.project.milestones[activeMilestoneTab];
+      return {
+        name: milestone.name || "N/A",
+        phase: milestone.phase || "N/A",
+        status: milestone.status || "N/A",
+        startDate: milestone.start_date || "N/A",
+        endDate: milestone.end_date || "N/A"
+      };
+    }
+    return {
+      name: "N/A",
+      phase: "N/A",
+      status: "N/A",
+      startDate: "N/A",
+      endDate: "N/A"
+    };
+  }, [apiData, activeMilestoneTab]);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <p className={tokens.isDark ? "text-white/50" : "text-[#A3AED0]"}>Loading tasks...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -342,51 +368,43 @@ export const TasksView = ({
                 <h2 className={`text-2xl md:text-3xl font-bold ${
                   tokens.isDark ? "text-white" : "text-[#2B3674]"
                 }`}>
-                  Milestone Name
+                  {currentMilestone.name}
                 </h2>
                 <p className={`text-sm md:text-base ${tokens.subtleText}`}>
-                  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy.
+                  Phase: {currentMilestone.phase}
                 </p>
               </div>
               <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                tokens.isDark ? "bg-green-500/10 text-green-400" : "bg-green-100 text-green-700"
+                currentMilestone.status.toLowerCase() === "completed"
+                  ? tokens.isDark ? "bg-green-500/10 text-green-400" : "bg-green-100 text-green-700"
+                  : tokens.isDark ? "bg-blue-500/10 text-blue-400" : "bg-blue-100 text-blue-700"
               }`}>
-                Completed
+                {currentMilestone.status}
               </span>
             </div>
 
             {/* Milestone Details Card */}
             <div className={`rounded-[20px] p-4 ${tokens.isDark ? tokens.surfaceMuted : ''}`} style={tokens.isDark ? {} : { backgroundColor: '#FCF6D4' }}>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-2">
                   <span className={`text-base font-semibold ${
                     tokens.isDark ? "text-white" : "text-[#232323]"
                   }`}>
-                    {project.startDate}
+                    {currentMilestone.startDate}
                   </span>
                   <span className={`text-sm md:text-base font-medium ${
                     tokens.isDark ? tokens.subtleText : "text-[#718EBF]"
-                  }`}>Start</span>
+                  }`}>Start Date</span>
                 </div>
                 <div className="flex flex-col gap-2">
                   <span className={`text-base font-semibold ${
                     tokens.isDark ? "text-white" : "text-[#232323]"
                   }`}>
-                    {project.deadline}
+                    {currentMilestone.endDate}
                   </span>
                   <span className={`text-sm md:text-base font-medium ${
                     tokens.isDark ? tokens.subtleText : "text-[#718EBF]"
-                  }`}>Deadline</span>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <span className={`text-base font-semibold ${
-                    tokens.isDark ? "text-white" : "text-[#232323]"
-                  }`}>
-                    {project.budget}
-                  </span>
-                  <span className={`text-sm md:text-base font-medium ${
-                    tokens.isDark ? tokens.subtleText : "text-[#718EBF]"
-                  }`}>Budget</span>
+                  }`}>End Date</span>
                 </div>
               </div>
             </div>
@@ -400,7 +418,7 @@ export const TasksView = ({
               }`}>
                 Tasks
               </h2>
-              {/* <div
+              <div
                 className={`flex h-11 items-center gap-3 rounded-full border ${tokens.divider} bg-transparent stroke px-4 text-[var(--color-search-text)] transition-colors sm:max-w-xs`}
               >
                 <SearchIcon className="h-5 w-5 text-[var(--color-search-placeholder)]" />
@@ -411,9 +429,9 @@ export const TasksView = ({
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="flex-1 bg-transparent text-sm text-[var(--color-search-text)] placeholder:text-[var(--color-search-placeholder)] focus:outline-none"
                 />
-              </div> */}
+              </div>
             </div>
-            <TasksCards tokens={tokens} searchQuery={searchQuery} />
+            <TasksCards tokens={tokens} searchQuery={searchQuery} tasks={tasksData} />
           </div>
         </div>
       )}
@@ -438,7 +456,7 @@ export const TasksView = ({
               />
             </div>
           </div>
-          <TasksCards tokens={tokens} searchQuery={searchQuery} />
+          <TasksCards tokens={tokens} searchQuery={searchQuery} tasks={tasksData} />
         </div>
       )}
     </div>

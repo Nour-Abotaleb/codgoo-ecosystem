@@ -256,7 +256,7 @@ export const marketplaceApi = baseApi.injectEndpoints({
     }),
     upgradeBundle: builder.mutation<UpgradeBundleResponse, { currentBundleId: number; upgradeBundleId: number; applications: number[] }>({
       query: ({ currentBundleId, upgradeBundleId, applications }) => ({
-        url: `Marketplace/Bundle/${currentBundleId}`,
+        url: `Marketplace/bundle/${currentBundleId}`,
         method: "PATCH",
         body: {
           bundleId: upgradeBundleId,

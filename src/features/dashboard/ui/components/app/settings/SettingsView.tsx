@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { EditIcon, EmailIcon, PhoneIcon, SettingsIcon, CloseIcon, KeyIcon, PlusCircleIcon, CardIcon } from "@utilities/icons";
+import { EditIcon, EmailIcon, SettingsIcon, CloseIcon, KeyIcon, PlusCircleIcon, CardIcon } from "@utilities/icons";
 import type { DashboardTokens } from "../../../types";
 import { TwoFactorAuthModal } from "./modals/TwoFactorAuthModal";
 import { AddNewEmailModal } from "./modals/AddNewEmailModal";
@@ -114,24 +114,6 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
               </button>
             </div>
 
-            {/* Contact Information */}
-            <div className="flex flex-col gap-3 pt-4">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className={sectionTitleClass}>Contact Information</h2>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className={`flex h-9 w-9 items-center justify-center rounded-full ${tokens.isDark ? tokens.buttonGhost : ""}`} style={tokens.isDark ? {} : { backgroundColor: APP_COLORS.buttonBackground }}>
-                  <EmailIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: APP_COLORS.primary }} />
-                </div>
-                <span className={valueClass}>{currentEmail}</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className={`flex h-9 w-9 items-center justify-center rounded-full ${tokens.isDark ? tokens.buttonGhost : ""}`} style={tokens.isDark ? {} : { backgroundColor: APP_COLORS.buttonBackground }}>
-                  <PhoneIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: APP_COLORS.primary }} />
-                </div>
-                <span className={valueClass}>{currentPhone}</span>
-              </div>
-            </div>
           </div>
         </div>
 

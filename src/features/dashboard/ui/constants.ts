@@ -47,7 +47,7 @@ export const serverServices: readonly ServerService[] = [
     id: "srv-001",
     product: "11aveafrica.com",
     plan: "(Starter cPanel)",
-    pricing: "$30.00 USD",
+    pricing: "$30.00 EGP",
     billingCycle: "Monthly",
     nextDueDate: "2026-03-17",
     status: "Pending"
@@ -56,7 +56,7 @@ export const serverServices: readonly ServerService[] = [
     id: "srv-002",
     product: "5545dd.com",
     plan: "(Pro)",
-    pricing: "$30.00 USD",
+    pricing: "$30.00 EGP",
     billingCycle: "Quarterly",
     nextDueDate: "2026-03-17",
     status: "Active"
@@ -65,7 +65,7 @@ export const serverServices: readonly ServerService[] = [
     id: "srv-003",
     product: "5545dd.com",
     plan: "(Pro)",
-    pricing: "$30.00 USD",
+    pricing: "$30.00 EGP",
     billingCycle: "Triennially",
     nextDueDate: "2026-03-17",
     status: "Pending"
@@ -74,7 +74,7 @@ export const serverServices: readonly ServerService[] = [
     id: "srv-004",
     product: "5545dd.com",
     plan: "(Pro)",
-    pricing: "$30.00 USD",
+    pricing: "$30.00 EGP",
     billingCycle: "Monthly",
     nextDueDate: "2026-03-17",
     status: "Active"
@@ -83,7 +83,7 @@ export const serverServices: readonly ServerService[] = [
     id: "srv-005",
     product: "5545dd.com",
     plan: "(Pro)",
-    pricing: "$30.00 USD",
+    pricing: "$30.00 EGP",
     billingCycle: "Monthly",
     nextDueDate: "2026-03-17",
     status: "Active"
@@ -92,7 +92,7 @@ export const serverServices: readonly ServerService[] = [
     id: "srv-006",
     product: "5545dd.com",
     plan: "(Pro)",
-    pricing: "$30.00 USD",
+    pricing: "$30.00 EGP",
     billingCycle: "Monthly",
     nextDueDate: "2026-03-17",
     status: "Pending"
@@ -101,7 +101,7 @@ export const serverServices: readonly ServerService[] = [
     id: "srv-007",
     product: "5545dd.com",
     plan: "(Pro)",
-    pricing: "$30.00 USD",
+    pricing: "$30.00 EGP",
     billingCycle: "Monthly",
     nextDueDate: "2026-03-17",
     status: "Pending"
@@ -110,7 +110,7 @@ export const serverServices: readonly ServerService[] = [
     id: "srv-008",
     product: "5545dd.com",
     plan: "(Pro)",
-    pricing: "$30.00 USD",
+    pricing: "$30.00 EGP",
     billingCycle: "Monthly",
     nextDueDate: "2026-03-17",
     status: "Pending"
@@ -119,7 +119,7 @@ export const serverServices: readonly ServerService[] = [
     id: "srv-009",
     product: "5545dd.com",
     plan: "(Pro)",
-    pricing: "$30.00 USD",
+    pricing: "$30.00 EGP",
     billingCycle: "Monthly",
     nextDueDate: "2026-03-17",
     status: "Pending"
@@ -128,7 +128,7 @@ export const serverServices: readonly ServerService[] = [
     id: "srv-010",
     product: "5545dd.com",
     plan: "(Pro)",
-    pricing: "$30.00 USD",
+    pricing: "$30.00 EGP",
     billingCycle: "Monthly",
     nextDueDate: "2026-03-17",
     status: "Active"
@@ -245,21 +245,21 @@ export const dashboardContent: Record<DashboardAppId, DashboardDataset> = {
         id: "sherd",
         server: "Sherd Hosten",
         type: "PHP Hosting",
-        cost: "300 SAR / Year",
+        cost: "300 EGP / Year",
         renewal: "25 Oct 2026"
       },
       {
         id: "wp-cloud",
         server: "WP Cloud",
         type: "WordPress Hosting",
-        cost: "300 SAR / Year",
+        cost: "300 EGP / Year",
         renewal: "10 Nov 2025"
       },
       {
         id: "mysql-pro",
         server: "MySQL Pro",
         type: "Node.js VPS",
-        cost: "520 SAR / Year",
+        cost: "520 EGP / Year",
         renewal: "12 Dec 2025"
       }
     ]),

@@ -24,6 +24,7 @@ type DashboardHeaderProps = {
   readonly subtitle?: string;
   readonly onToggleTheme: () => void;
   readonly onCartClick?: () => void;
+  readonly onProfileClick?: () => void;
 };
 
 type ActiveIcon = "notification" | "theme" | "cart" | "language" | "fullscreen" | null;
@@ -34,7 +35,8 @@ export const DashboardHeader = ({
   activeNavigationLabel,
   // subtitle,
   onToggleTheme,
-  onCartClick
+  onCartClick,
+  onProfileClick
 }: DashboardHeaderProps) => {
   const { i18n: i18nInstance, t } = useTranslation("dashboard");
   const [activeIcon, setActiveIcon] = useState<ActiveIcon>(null);
@@ -227,11 +229,18 @@ export const DashboardHeader = ({
             )}
           </button>
 
-          <img
-            src={userAvatar}
-            alt="User avatar"
-            className="h-10 w-10 rounded-full object-cover"
-          />
+          <button
+            type="button"
+            onClick={onProfileClick}
+            className="flex h-10 w-10 items-center justify-center rounded-full overflow-hidden hover:opacity-80 transition-opacity cursor-pointer"
+            aria-label="Profile Settings"
+          >
+            <img
+              src={userAvatar}
+              alt="User avatar"
+              className="h-full w-full rounded-full object-cover"
+            />
+          </button>
         </div>
       </div>
     </header>

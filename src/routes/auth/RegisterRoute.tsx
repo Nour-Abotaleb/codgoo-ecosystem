@@ -26,12 +26,12 @@ export const RegisterRoute = () => {
     title={t("register.title")}
     bottomSlot={
       <span className={`text-base md:text-lg text-center transition-colors ${
-        isDark ? "text-gray-300" : "text-black"
+        isDark ? "text-white" : "text-black"
       }`}>
         {t("register.haveAccount")}{" "}
         <Link
           to="/login"
-          className="font-medium text-indigo-500 hover:text-indigo-600 underline"
+          className="font-medium  underline"
         >
           {t("register.logIn")}
         </Link>

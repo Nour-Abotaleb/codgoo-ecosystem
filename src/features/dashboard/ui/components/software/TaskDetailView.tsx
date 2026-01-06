@@ -3,9 +3,9 @@ import { TaskCard, type TaskItem } from "./TaskCard";
 import { EyeIcon } from "@utilities/icons";
 import { TaskDiscussionsModal } from "../modals/TaskDiscussionsModal";
 import { DiscussionDetailScreen } from "./DiscussionDetailScreen";
-import screenshotImage from "@assets/images/software/screenshot.svg";
 import envelopeImage from "@assets/images/software/envelope.svg";
 import type { DashboardTokens } from "../../types";
+import { useGetTaskDetailsQuery } from "@features/dashboard/api/dashboard-api";
 
 type DiscussionItem = {
   readonly id: string;
@@ -21,7 +21,7 @@ type DiscussionItem = {
 };
 
 type TaskDetailViewProps = {
-  readonly task: TaskItem;
+  readonly taskId: string;
   readonly tokens: DashboardTokens;
   readonly onBack?: () => void;
 };
@@ -35,37 +35,105 @@ type ScreenItem = {
 
 type ScreenTab = "completed" | "remaining";
 
-// Mock screens data - in real app this would come from props or API
-const mockScreens: readonly ScreenItem[] = [
-  { id: "1", name: "Screen Name", image: screenshotImage, status: "completed" },
-  { id: "2", name: "Screen Name", image: screenshotImage, status: "completed" },
-  { id: "3", name: "Screen Name", image: screenshotImage, status: "completed" },
-  { id: "4", name: "Screen Name", image: screenshotImage, status: "completed" },
-  { id: "5", name: "Screen Name", image: screenshotImage, status: "in-progress" },
-  { id: "6", name: "Screen Name", status: "pending" }, 
-  { id: "7", name: "Screen Name", image: screenshotImage, status: "completed" },
-  { id: "8", name: "Screen Name", status: "pending" }, 
-];
-
-export const TaskDetailView = ({ task, tokens }: TaskDetailViewProps) => {
+export const TaskDetailView = ({ taskId, tokens }: TaskDetailViewProps) => {
   const [activeTab, setActiveTab] = useState<ScreenTab>("completed");
   const [isDiscussionsModalOpen, setIsDiscussionsModalOpen] = useState(false);
   const [selectedDiscussion, setSelectedDiscussion] = useState<DiscussionItem | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
+  // Fetch task details from API
+  const taskIdNum = parseInt(taskId, 10);
+  const { data: apiData, isLoading } = useGetTaskDetailsQuery(taskIdNum);
+
+  // Map API status to component status
+  const mapTaskStatus = (status: string): "Completed" | "In Progress" | "Not Started" | "Waiting Feedback" => {
+    const statusLower = status.toLowerCase();
+    if (statusLower === "completed") return "Completed";
+    if (statusLower === "in_progress" || statusLower === "in progress") return "In Progress";
+    if (statusLower === "not_started" || statusLower === "not started") return "Not Started";
+    return "Waiting Feedback";
+  };
+
+  // Transform API data to TaskItem
+  const task = useMemo((): TaskItem | null => {
+    if (apiData?.data?.task) {
+      const taskData = apiData.data.task;
+      return {
+        id: String(taskData.id),
+        code: taskData.id,
+        name: taskData.label || "N/A",
+        description: taskData.description || "N/A",
+        priority: (taskData.priority === "High" || taskData.priority === "Medium" || taskData.priority === "Low") 
+          ? taskData.priority 
+          : "Medium",
+        startDate: taskData.start_date || "N/A",
+        deadline: taskData.due_date || "N/A",
+        createdDate: "N/A", // Not in API
+        dueDate: taskData.due_date || "N/A",
+        assignedTo: apiData.data.team?.map((t: any) => t.name).join(", ") || "N/A",
+        team: apiData.data.team?.map((t: any) => ({
+          id: String(t.id),
+          name: t.name || "N/A",
+          avatar: t.image || undefined
+        })) || [],
+        progress: {
+          completed: taskData.progress || 0,
+          total: 100,
+          percentage: taskData.progress || 0
+        },
+        status: mapTaskStatus(taskData.status || "not_started")
+      };
+    }
+    return null;
+  }, [apiData]);
+
+  // Transform API screens data
+  const screens = useMemo((): readonly ScreenItem[] => {
+    if (apiData?.data?.screens) {
+      const completed = apiData.data.screens.completed?.map((screen: any) => ({
+        id: String(screen.id),
+        name: screen.name || screen.screen_code || "N/A",
+        image: screen.image || undefined,
+        status: "completed" as const
+      })) || [];
+
+      const remaining = apiData.data.screens.remaining?.map((screen: any) => ({
+        id: String(screen.id),
+        name: screen.name || screen.screen_code || "N/A",
+        image: screen.image || undefined,
+        status: screen.implemented ? "in-progress" as const : "pending" as const
+      })) || [];
+
+      return [...completed, ...remaining];
+    }
+    return [];
+  }, [apiData]);
+
   const filteredScreens = useMemo(() => {
     if (activeTab === "completed") {
-      // Only show screens with status exactly "completed"
-      return mockScreens.filter((screen) => screen.status === "completed");
+      return screens.filter((screen) => screen.status === "completed");
     } else {
-      // Remaining tab: show only in-progress and pending screens (explicitly exclude completed)
-      return mockScreens.filter((screen) => {
-        if (!screen.status) return false; // Exclude screens without status
-        if (screen.status === "completed") return false; // Explicitly exclude completed
-        return screen.status === "in-progress" || screen.status === "pending";
-      });
+      return screens.filter((screen) => 
+        screen.status === "in-progress" || screen.status === "pending"
+      );
     }
-  }, [activeTab]);
+  }, [activeTab, screens]);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <p className={tokens.isDark ? "text-white/50" : "text-[#A3AED0]"}>Loading task details...</p>
+      </div>
+    );
+  }
+
+  if (!task) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <p className={tokens.isDark ? "text-white/50" : "text-[#A3AED0]"}>Task not found</p>
+      </div>
+    );
+  }
 
   const customButtons = (
     <div className="flex flex-row gap-3 items-center">
@@ -242,6 +310,7 @@ export const TaskDetailView = ({ task, tokens }: TaskDetailViewProps) => {
 
       {/* Task Discussions Modal */}
       <TaskDiscussionsModal
+        taskId={taskId}
         tokens={tokens}
         isOpen={isDiscussionsModalOpen}
         onClose={() => setIsDiscussionsModalOpen(false)}

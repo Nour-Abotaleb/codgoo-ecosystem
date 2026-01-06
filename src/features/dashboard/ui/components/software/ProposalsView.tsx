@@ -63,7 +63,7 @@ export const ProposalsView = ({ tokens, project }: ProposalsViewProps) => {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: "USD",
+      currency: "EGP",
       minimumFractionDigits: 2
     }).format(amount);
   };

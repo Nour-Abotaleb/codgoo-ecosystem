@@ -1,12 +1,10 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import type { DashboardTokens } from "../../types";
 import {
   AppBillingIcon,
   AppPaidIcon,
   AppUnpaidIcon,
   AppOverdueIcon,
-  BundleSubscriptionsIcon,
-  MasterStrokeIcon,
   FilledBundleSubscriptionsIcon,
   MasterIcon,
 } from "@utilities/icons";
@@ -21,8 +19,6 @@ type AppSubscription = {
   readonly dueDate: string;
   readonly meta?: string;
 };
-
-type AppBillingTab = "bundle" | "master";
 
 const statsConfig = [
   { id: "all", label: "All", value: "6", icon: AppBillingIcon },
@@ -98,12 +94,12 @@ const statusBadgeClass = (status: AppSubscription["status"]) => {
 };
 
 export const AppBillingView = ({ tokens }: { readonly tokens: DashboardTokens }) => {
-  const [activeTab, setActiveTab] = useState<AppBillingTab>("bundle");
   const isDark = tokens.isDark;
 
-  const subscriptions = useMemo(() => {
-    return activeTab === "bundle" ? bundleSubscriptions : masterSubscriptions;
-  }, [activeTab]);
+  // Combine all subscriptions
+  const allSubscriptions = useMemo(() => {
+    return [...bundleSubscriptions, ...masterSubscriptions];
+  }, []);
 
   return (
     <div className="flex flex-col gap-6">
@@ -130,93 +126,62 @@ export const AppBillingView = ({ tokens }: { readonly tokens: DashboardTokens })
         })}
       </div>
 
-      {/* Tabs */}
+      {/* All Subscriptions Grid */}
       <div className={`${tokens.cardBase} rounded-[20px]  transition-colors ${isDark ? "bg-transparent" : "!bg-white"}`}>
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-wrap items-center gap-6">
-            {[
-              { id: "bundle" as AppBillingTab, label: "Bundle Subscriptions", icon: BundleSubscriptionsIcon },
-              { id: "master" as AppBillingTab, label: "Master Subscriptions", icon: MasterStrokeIcon },
-            ].map((tab) => {
-              const isActive = activeTab === tab.id;
-              const Icon = tab.icon;
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`relative flex items-center gap-2 pb-2 text-sm md:text-base font-semibold transition-colors ${
-                    isActive
-                      ? isDark ? "text-white/70" : "text-black"
-                      : isDark
-                        ? "text-white/60"
-                        : "text-black"
-                  }`}
-                >
-                  <Icon className="h-5 w-5" />
-                  {tab.label}
-                  {isActive ? <span className="absolute inset-x-0 -bottom-[2px] h-0.5 rounded-full bg-[#0E8F9C]" /> : null}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Subscriptions Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-            {subscriptions.map((sub) => (
-              <div
-                key={sub.id}
-                className={`rounded-[20px] overflow-hidden transition-colors ${isDark ? "!bg-[#0F1217] " : "!bg-[#E7F0F1]"}`}
-              >
-                <div className="flex flex-col gap-3 px-4 py-4">
-                  <div className="flex items-center justify-between">
-                    <span className={`text-sm font-medium ${isDark ? "text-white/80" : "text-[#4B6470]"}`}>{sub.invoiceCode}</span>
-                    <span className={`px-4 py-1.5 rounded-full text-sm font-medium ${statusBadgeClass(sub.status)}`}>
-                      {sub.status}
-                    </span>
-                  </div>
-
-                  <div className="flex items-end gap-1">
-                    <span className={`text-2xl font-semibold leading-none ${isDark ? "text-white" : "text-[#0B6E75]"}`}>{sub.amount}</span>
-                    <span className={`text-xs font-semibold mb-[2px] ${isDark ? "text-white/70" : "text-[#4B6470]"}`}>{sub.currency}</span>
-                  </div>
-
-                  <div className="flex items-center gap-2 text-sm font-semibold">
-                    {sub.planName === "Professional Bundle" ? (
-                      <FilledBundleSubscriptionsIcon className={`h-4 w-4 ${isDark ? "text-white/80" : "text-[#0E8F9C]"}`} />
-                    ) : (
-                      <MasterIcon className={`h-4 w-4 ${isDark ? "text-white/80" : "text-[#0E8F9C]"}`} />
-                    )}
-                    <span className={isDark ? "text-white" : "text-[#0E8F9C]"}>{sub.planName}</span>
-                  </div>
-
-                  <div className="flex items-center justify-between text-xs text-[#7A8A92]">
-                    <span className={isDark ? "text-white/60" : "text-[#7A8A92]"}>{sub.meta ?? "bundle"}</span>
-                    <span className={isDark ? "text-white/60" : "text-[#7A8A92]"}>Due date: {sub.dueDate}</span>
-                  </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {allSubscriptions.map((sub) => (
+            <div
+              key={sub.id}
+              className={`rounded-[20px] overflow-hidden transition-colors ${isDark ? "!bg-[#0F1217] " : "!bg-[#E7F0F1]"}`}
+            >
+              <div className="flex flex-col gap-3 px-4 py-4">
+                <div className="flex items-center justify-between">
+                  <span className={`text-sm font-medium ${isDark ? "text-white/80" : "text-[#4B6470]"}`}>{sub.invoiceCode}</span>
+                  <span className={`px-4 py-1.5 rounded-full text-sm font-medium ${statusBadgeClass(sub.status)}`}>
+                    {sub.status}
+                  </span>
                 </div>
 
-                <div className="flex items-center gap-3 px-4 pb-4">
-                  <button
-                    type="button"
-                    className="flex-1 rounded-full bg-[#0F6773] px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-[#0c7b85]"
-                  >
-                    View Apps
-                  </button>
-                  <button
-                    type="button"
-                    className={`flex-1 rounded-full border px-3 py-2 text-sm font-medium transition-colors ${
-                      isDark
-                        ? "border-white/30 text-white/80 hover:bg-white/10"
-                        : "border-[#0F6773] text-[#0F6773] hover:bg-[#0F6773] hover:text-white"
-                    }`}
-                  >
-                    View Invoice
-                  </button>
+                <div className="flex items-end gap-1">
+                  <span className={`text-2xl font-semibold leading-none ${isDark ? "text-white" : "text-[#0B6E75]"}`}>{sub.amount}</span>
+                  <span className={`text-xs font-semibold mb-[2px] ${isDark ? "text-white/70" : "text-[#4B6470]"}`}>{sub.currency}</span>
+                </div>
+
+                <div className="flex items-center gap-2 text-sm font-semibold">
+                  {sub.planName === "Professional Bundle" ? (
+                    <FilledBundleSubscriptionsIcon className={`h-4 w-4 ${isDark ? "text-white/80" : "text-[#0E8F9C]"}`} />
+                  ) : (
+                    <MasterIcon className={`h-4 w-4 ${isDark ? "text-white/80" : "text-[#0E8F9C]"}`} />
+                  )}
+                  <span className={isDark ? "text-white" : "text-[#0E8F9C]"}>{sub.planName}</span>
+                </div>
+
+                <div className="flex items-center justify-between text-xs text-[#7A8A92]">
+                  <span className={isDark ? "text-white/60" : "text-[#7A8A92]"}>{sub.meta ?? "bundle"}</span>
+                  <span className={isDark ? "text-white/60" : "text-[#7A8A92]"}>Due date: {sub.dueDate}</span>
                 </div>
               </div>
-            ))}
-          </div>
+
+              <div className="flex items-center gap-3 px-4 pb-4">
+                <button
+                  type="button"
+                  className="flex-1 rounded-full bg-[#0F6773] px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-[#0c7b85]"
+                >
+                  View Apps
+                </button>
+                <button
+                  type="button"
+                  className={`flex-1 rounded-full border px-3 py-2 text-sm font-medium transition-colors ${
+                    isDark
+                      ? "border-white/30 text-white/80 hover:bg-white/10"
+                      : "border-[#0F6773] text-[#0F6773] hover:bg-[#0F6773] hover:text-white"
+                  }`}
+                >
+                  View Invoice
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

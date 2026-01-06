@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+import toast from "react-hot-toast";
 import {
   BillingInvoicesIcon,
   PaidInvoicesIcon,
@@ -6,16 +8,11 @@ import {
   BankTasksIcon,
 } from "@utilities/icons";
 import type { DashboardTokens } from "../../types";
+import { useGetProjectInvoicesQuery } from "@features/dashboard/api/dashboard-api";
 
 type InvoicesViewProps = {
   readonly tokens: DashboardTokens;
-};
-
-type InvoiceStat = {
-  readonly id: string;
-  readonly label: string;
-  readonly value: string;
-  readonly icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  readonly projectId: string;
 };
 
 type InvoiceItem = {
@@ -26,91 +23,9 @@ type InvoiceItem = {
   readonly createdDate: string;
   readonly dueDate: string;
   readonly status: "Paid" | "Unpaid" | "Overdue";
+  readonly projectName?: string;
+  readonly clientName?: string;
 };
-
-const invoiceStats: readonly InvoiceStat[] = [
-  {
-    id: "all",
-    label: "All",
-    value: "6",
-    icon: BillingInvoicesIcon,
-  },
-  {
-    id: "paid",
-    label: "Paid",
-    value: "3",
-    icon: PaidInvoicesIcon,
-  },
-  {
-    id: "unpaid",
-    label: "Unpaid",
-    value: "2",
-    icon: UnPaidInvoicesIcon,
-  },
-  {
-    id: "overdue",
-    label: "Overdue",
-    value: "1",
-    icon: OverdueInvoicesIcon,
-  },
-];
-
-const invoicesData: readonly InvoiceItem[] = [
-  {
-    id: "inv-1",
-    invoiceNumber: 12,
-    amount: "347.00$",
-    paymentMethod: "Bank Transfer",
-    createdDate: "5 Nov 2025",
-    dueDate: "30 Nov 2025",
-    status: "Paid",
-  },
-  {
-    id: "inv-2",
-    invoiceNumber: 13,
-    amount: "521.50$",
-    paymentMethod: "Bank Transfer",
-    createdDate: "4 Nov 2025",
-    dueDate: "29 Nov 2025",
-    status: "Paid",
-  },
-  {
-    id: "inv-3",
-    invoiceNumber: 14,
-    amount: "892.25$",
-    paymentMethod: "Bank Transfer",
-    createdDate: "3 Nov 2025",
-    dueDate: "28 Nov 2025",
-    status: "Paid",
-  },
-  {
-    id: "inv-4",
-    invoiceNumber: 15,
-    amount: "234.75$",
-    paymentMethod: "Bank Transfer",
-    createdDate: "2 Nov 2025",
-    dueDate: "27 Nov 2025",
-    status: "Overdue",
-  },
-  {
-    id: "inv-5",
-    invoiceNumber: 16,
-    amount: "456.00$",
-    paymentMethod: "Bank Transfer",
-    createdDate: "1 Nov 2025",
-    dueDate: "26 Nov 2025",
-    status: "Unpaid",
-  },
-  {
-    id: "inv-6",
-    invoiceNumber: 17,
-    amount: "678.90$",
-    paymentMethod: "Bank Transfer",
-    createdDate: "31 Oct 2025",
-    dueDate: "25 Nov 2025",
-    status: "Unpaid",
-  },
-];
 
 const getStatusBadgeStyle = (status: InvoiceItem["status"]) => {
   switch (status) {
@@ -125,8 +40,117 @@ const getStatusBadgeStyle = (status: InvoiceItem["status"]) => {
   }
 };
 
-export const InvoicesView = ({ tokens }: InvoicesViewProps) => {
+export const InvoicesView = ({ tokens, projectId }: InvoicesViewProps) => {
   const iconBaseColor = tokens.isDark ? "#FFFFFF" : "#2B3674";
+  
+  // Fetch invoices from API
+  const projectIdNum = parseInt(projectId, 10);
+  const { data: apiData, isLoading } = useGetProjectInvoicesQuery(projectIdNum);
+
+  // Handle view invoice PDF with proper authentication
+  const handleViewInvoice = async (invoiceId: string) => {
+    const baseUrl = import.meta.env.VITE_API_URL || "https://back.codgoo.com/codgoo/public/api";
+    const token = localStorage.getItem("auth_token");
+    
+    if (!token) {
+      toast.error("No authentication token found");
+      return;
+    }
+
+    try {
+      // Fetch PDF with authentication headers
+      const response = await fetch(`${baseUrl}/client/view-invoice/${invoiceId}?format=pdf`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/pdf',
+          'API-Password': 'Nf:upZTg^7A?Hj'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch invoice PDF');
+      }
+
+      // Get the PDF blob
+      const blob = await response.blob();
+      
+      // Create a URL for the blob
+      const blobUrl = window.URL.createObjectURL(blob);
+      
+      // Open in new tab
+      window.open(blobUrl, '_blank');
+      
+      // Clean up the blob URL after a delay
+      setTimeout(() => window.URL.revokeObjectURL(blobUrl), 100);
+    } catch (error: any) {
+      console.error('Error viewing invoice:', error);
+      toast.error(error?.message || 'Failed to load invoice. Please try again.');
+    }
+  };
+
+  // Transform API data with N/A fallbacks
+  const invoicesData = useMemo(() => {
+    if (apiData?.data) {
+      return apiData.data.map((invoice: any): InvoiceItem => {
+        // Map API status to valid status type
+        const mapStatus = (status: string): "Paid" | "Unpaid" | "Overdue" => {
+          const statusLower = status.toLowerCase();
+          if (statusLower === "paid") return "Paid";
+          if (statusLower === "overdue") return "Overdue";
+          return "Unpaid";
+        };
+
+        return {
+          id: String(invoice.id),
+          invoiceNumber: invoice.id || 0,
+          amount: invoice.amount ? `${invoice.amount} EGP` : "N/A",
+          paymentMethod: invoice.payment_method || "N/A",
+          createdDate: invoice.created_at || "N/A",
+          dueDate: invoice.due_date || "N/A",
+          status: mapStatus(invoice.status || "unpaid"),
+          projectName: invoice.project_name || "N/A",
+          clientName: invoice.client_name || "N/A"
+        };
+      });
+    }
+    return [];
+  }, [apiData]);
+
+  // Calculate invoice stats from API data
+  const invoiceStats = useMemo(() => {
+    const total = invoicesData.length;
+    const paid = invoicesData.filter(inv => inv.status === "Paid").length;
+    const unpaid = invoicesData.filter(inv => inv.status === "Unpaid").length;
+    const overdue = invoicesData.filter(inv => inv.status === "Overdue").length;
+
+    return [
+      {
+        id: "all",
+        label: "All",
+        value: String(total),
+        icon: BillingInvoicesIcon,
+      },
+      {
+        id: "paid",
+        label: "Paid",
+        value: String(paid),
+        icon: PaidInvoicesIcon,
+      },
+      {
+        id: "unpaid",
+        label: "Unpaid",
+        value: String(unpaid),
+        icon: UnPaidInvoicesIcon,
+      },
+      {
+        id: "overdue",
+        label: "Overdue",
+        value: String(overdue),
+        icon: OverdueInvoicesIcon,
+      },
+    ];
+  }, [invoicesData]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -153,8 +177,13 @@ export const InvoicesView = ({ tokens }: InvoicesViewProps) => {
       </div>
 
       {/* Invoices Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {invoicesData.map((invoice) => (
+      {isLoading ? (
+        <div className="text-center py-12">
+          <p className={tokens.isDark ? "text-white/50" : "text-[#A3AED0]"}>Loading invoices...</p>
+        </div>
+      ) : invoicesData.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {invoicesData.map((invoice) => (
           <div
             key={invoice.id}
             className={`${tokens.cardBase} rounded-[20px] overflow-hidden transition-colors ${tokens.isDark ? "bg-[#0F1217]" : "!bg-[#F4F5FF]"}`}
@@ -221,6 +250,7 @@ export const InvoicesView = ({ tokens }: InvoicesViewProps) => {
                 </button>
                 <button
                   type="button"
+                  onClick={() => handleViewInvoice(invoice.id)}
                   className={`flex-1 px-2 py-2.5 rounded-full text-sm font-medium transition-colors cursor-pointer ${
                     tokens.isDark
                       ? "border border-white/70 text-white/70 hover:bg-white/10"
@@ -236,6 +266,11 @@ export const InvoicesView = ({ tokens }: InvoicesViewProps) => {
           </div>
         ))}
       </div>
+      ) : (
+        <div className="text-center py-12">
+          <p className={tokens.isDark ? "text-white/50" : "text-[#A3AED0]"}>No invoices found</p>
+        </div>
+      )}
     </div>
   );
 };
