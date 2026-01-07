@@ -1,7 +1,9 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { CloseModalIcon, KeyIcon, EyePasswordIcon, EyePasswordHideIcon } from "@utilities/icons";
 import type { DashboardTokens } from "../../types";
 import { getModalInputClass } from "../../utils/modalStyles";
+import { useChangePasswordMutation } from "../../../api/dashboard-api";
 
 type ChangePasswordModalProps = {
   readonly tokens: DashboardTokens;
@@ -12,23 +14,51 @@ type ChangePasswordModalProps = {
     newPassword: string;
     confirmPassword: string;
   }) => void;
+  readonly primaryColor?: string;
 };
 
 export const ChangePasswordModal = ({
   tokens,
   isOpen,
   onClose,
-  onSave
+  onSave,
+  primaryColor = "#071FD7"
 }: ChangePasswordModalProps) => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [isCurrentPasswordVisible, setIsCurrentPasswordVisible] = useState(true);
+  const [isCurrentPasswordVisible, setIsCurrentPasswordVisible] = useState(false);
   const [isNewPasswordVisible, setIsNewPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
+  const [changePassword, { isLoading }] = useChangePasswordMutation();
 
-  const handleSave = () => {
-    if (currentPassword.trim() && newPassword.trim() && confirmPassword.trim()) {
+  const handleSave = async () => {
+    if (!currentPassword.trim()) {
+      toast.error("Please enter your current password");
+      return;
+    }
+    if (!newPassword.trim()) {
+      toast.error("Please enter a new password");
+      return;
+    }
+    if (!confirmPassword.trim()) {
+      toast.error("Please confirm your new password");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error("New passwords do not match");
+      return;
+    }
+
+    try {
+      await changePassword({
+        current_password: currentPassword.trim(),
+        new_password: newPassword.trim(),
+        new_password_confirmation: confirmPassword.trim()
+      }).unwrap();
+
+      toast.success("Password changed successfully");
+      
       if (onSave) {
         onSave({
           currentPassword: currentPassword.trim(),
@@ -40,6 +70,10 @@ export const ChangePasswordModal = ({
       setNewPassword("");
       setConfirmPassword("");
       onClose();
+    } catch (error: any) {
+      console.error("Failed to change password:", error);
+      const errorMessage = error?.data?.message || "Failed to change password";
+      toast.error(errorMessage);
     }
   };
 
@@ -65,12 +99,12 @@ export const ChangePasswordModal = ({
           {/* Modal */}
           <div className={`relative w-full max-w-xl ${tokens.cardBase} ${tokens.isDark ? "bg-[#0F1217]" : "bg-white"} rounded-[20px] max-h-[90vh] overflow-hidden flex flex-col`}>
             {/* Header */}
-            <div className={`flex items-center justify-between px-6 pt-6 pb-4 flex-shrink-0 rounded-t-2xl ${
+            <div className={`flex flex-wrap items-center justify-between px-6 pt-6 pb-4 flex-shrink-0 rounded-t-2xl ${
               tokens.isDark ? "bg-[#0F1217]" : "bg-[#FFFEF7]"
             }`}>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 <div className={`flex h-9 w-9 items-center justify-center rounded-full ${tokens.isDark ? tokens.buttonGhost : ""}`} style={tokens.isDark ? {} : { backgroundColor: "#E6E9FB" }}>
-                  <KeyIcon className={`h-5 w-5`} style={tokens.isDark ? {} : { color: "#071FD7" }} />
+                  <KeyIcon className={`h-5 w-5`} style={tokens.isDark ? {} : { color: primaryColor }} />
                 </div>
                 <h2 className={`text-lg md:text-xl font-semibold ${tokens.isDark ? "text-white" : "text-black"}`}>
                   Change Password
@@ -104,9 +138,9 @@ export const ChangePasswordModal = ({
                     <input
                       type={isCurrentPasswordVisible ? "text" : "password"}
                       value={currentPassword}
-                      readOnly
+                      onChange={(e) => setCurrentPassword(e.target.value)}
                       className={`${inputClass} pe-12`}
-                      placeholder="123456789"
+                      placeholder="Enter current password"
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
                           handleSave();
@@ -120,9 +154,9 @@ export const ChangePasswordModal = ({
                       aria-label={isCurrentPasswordVisible ? "Hide password" : "Show password"}
                     >
                       {isCurrentPasswordVisible ? (
-                        <EyePasswordIcon className="h-5 w-5" style={{ color: "#071FD7" }} />
+                        <EyePasswordIcon className="h-5 w-5" style={{ color: primaryColor }} />
                       ) : (
-                        <EyePasswordHideIcon className="h-5 w-5" style={{ color: "#071FD7" }} />
+                        <EyePasswordHideIcon className="h-5 w-5" style={{ color: primaryColor }} />
                       )}
                     </button>
                   </div>
@@ -159,9 +193,9 @@ export const ChangePasswordModal = ({
                       aria-label={isNewPasswordVisible ? "Hide password" : "Show password"}
                     >
                       {isNewPasswordVisible ? (
-                        <EyePasswordIcon className={`h-5 w-5 ${tokens.isDark ? "text-white/70" : "text-gray-500"}`} />
+                        <EyePasswordIcon className={`h-5 w-5 ${tokens.isDark ? "text-white/70" : "text-black"}`} />
                       ) : (
-                        <EyePasswordHideIcon className={`h-5 w-5 ${tokens.isDark ? "text-white/70" : "text-gray-500"}`} />
+                        <EyePasswordHideIcon className={`h-5 w-5 ${tokens.isDark ? "text-white/70" : "text-black"}`} />
                       )}
                     </button>
                   </div>
@@ -198,9 +232,9 @@ export const ChangePasswordModal = ({
                       aria-label={isConfirmPasswordVisible ? "Hide password" : "Show password"}
                     >
                       {isConfirmPasswordVisible ? (
-                        <EyePasswordIcon className={`h-5 w-5 ${tokens.isDark ? "text-white/70" : "text-gray-500"}`} />
+                        <EyePasswordIcon className={`h-5 w-5 ${tokens.isDark ? "text-white/70" : "text-black"}`} />
                       ) : (
-                        <EyePasswordHideIcon className={`h-5 w-5 ${tokens.isDark ? "text-white/70" : "text-gray-500"}`} />
+                        <EyePasswordHideIcon className={`h-5 w-5 ${tokens.isDark ? "text-white/70" : "text-black"}`} />
                       )}
                     </button>
                   </div>
@@ -213,18 +247,22 @@ export const ChangePasswordModal = ({
               <button
                 type="button"
                 onClick={handleSave}
-                className="w-full py-3.5 rounded-full font-semibold transition-colors bg-[#071FD7] text-white hover:bg-[#071FD7]/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isLoading}
+                className="w-full py-3.5 rounded-full font-semibold transition-colors text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{ backgroundColor: primaryColor }}
               >
-                Change Password
+                {isLoading ? "Changing..." : "Change Password"}
               </button>
               <button
                 type="button"
                 onClick={handleClose}
+                disabled={isLoading}
                 className={`w-full px-6 py-2.5 rounded-full text-base font-medium transition-colors ${
                   tokens.isDark
                     ? "border border-white/20 text-white hover:bg-white/10 bg-transparent"
-                    : "border border-[#071FD7] text-[#071FD7] hover:bg-[#071FD7]/10 bg-white"
+                    : "bg-transparent hover:opacity-80"
                 }`}
+                style={tokens.isDark ? {} : { color: primaryColor, borderWidth: "1px", borderStyle: "solid", borderColor: primaryColor }}
               >
                 Cancel
               </button>

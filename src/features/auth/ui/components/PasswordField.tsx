@@ -53,7 +53,7 @@ export const PasswordField = ({
             required={required}
             style={autofillStyles}
             className={`h-full w-full border-none bg-transparent px-5 text-sm md:text-base focus:outline-none transition-colors ${
-              isDark ? 'text-white placeholder:text-gray-500' : 'text-slate-700 placeholder:text-[color:var(--color-auth-placeholder)]'
+              isDark ? 'text-white placeholder:text-black' : 'text-slate-700 placeholder:text-[color:var(--color-auth-placeholder)]'
             }`}
           />
           <button

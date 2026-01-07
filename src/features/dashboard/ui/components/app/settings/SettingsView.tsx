@@ -79,7 +79,7 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
         {/* Left Column: Two-Factor Authentication Section */}
         <div className={`${cardClass} flex flex-col h-full`}>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between">
             <h2 className={sectionTitleClass}>Two-Factor Authentication (2FA)</h2>
             <button
               type="button"
@@ -97,13 +97,13 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
 
           <div className="flex flex-col gap-4">
             {/* Status Toggle */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between">
               <span className={sectionTitleClass}>Status</span>
               <ToggleSwitch checked={twoFactorEnabled} onChange={setTwoFactorEnabled} />
             </div>
 
             {/* Method */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between">
               <span className={labelClass}>Method</span>
               <button
                 type="button"
@@ -125,8 +125,8 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
 
           <div className="flex flex-col gap-6">
             {/* Current Email */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center justify-between">
+              <div className="flex flex-wrap items-center gap-3">
                 <div className={`flex h-9 w-9 items-center justify-center rounded-full ${tokens.isDark ? tokens.buttonGhost : ""}`} style={tokens.isDark ? {} : { backgroundColor: APP_COLORS.buttonBackground }}>
                   <EmailIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: APP_COLORS.primary }} />
                 </div>
@@ -147,8 +147,8 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
             </div>
 
             {/* Password */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center justify-between">
+              <div className="flex flex-wrap items-center gap-3">
                 <div className={`flex h-9 w-9 items-center justify-center rounded-full ${tokens.isDark ? tokens.buttonGhost : ""}`} style={tokens.isDark ? {} : { backgroundColor: APP_COLORS.buttonBackground }}>
                   <KeyIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: APP_COLORS.primary }} />
                 </div>
@@ -172,7 +172,7 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
 
         {/* Payment Methods Section */}
         <div className={cardClass}>
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex flex-wrap items-center justify-between mb-4">
           <h2 className={sectionTitleClass}>Payment Methods</h2>
           <button
             type="button"
@@ -185,7 +185,7 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
           </button>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <div className={`flex h-9 w-9 items-center justify-center rounded-full ${tokens.isDark ? tokens.buttonGhost : ""}`} style={tokens.isDark ? {} : { backgroundColor: APP_COLORS.buttonBackground }}>
             <CardIcon className={`h-5 w-5`} style={tokens.isDark ? {} : { color: APP_COLORS.primary }} />
           </div>
@@ -202,12 +202,12 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
 
       {/* Account Sharing Section */}
       <div className={cardClass}>
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-wrap items-center justify-between mb-6">
           <h2 className={sectionTitleClass}>Account Sharing</h2>
           <button
             type="button"
             onClick={() => setIsAddNewEmailModalOpen(true)}
-            className="px-4 py-2.5 text-white text-sm font-semibold rounded-full flex items-center gap-2"
+            className="px-4 py-2.5 text-white text-sm font-semibold rounded-full flex flex-wrap items-center gap-2"
             style={{ backgroundColor: APP_COLORS.primary }}
           >
             <PlusCircleIcon className="h-5 w-5 text-white" />
@@ -220,11 +220,11 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
           <table className="w-full">
             <thead>
               <tr className={`border-b ${tokens.divider}`}>
-                <th className="text-left py-3 px-4 text-sm text-[#B6B6B6] font-medium">EMAIL</th>
-                <th className="text-left py-3 px-4 text-sm text-[#B6B6B6] font-medium">SOFTWARE SERVICES</th>
-                <th className="text-left py-3 px-4 text-sm text-[#B6B6B6] font-medium">APPS SERVICES</th>
-                <th className="text-left py-3 px-4 text-sm text-[#B6B6B6] font-medium">Cloud Services</th>
-                <th className="text-left py-3 px-4 text-sm text-[#B6B6B6] font-medium">ACTIONS</th>
+                <th className=" py-3 px-4 text-sm text-[#B6B6B6] font-medium text-start">EMAIL</th>
+                <th className=" py-3 px-4 text-sm text-[#B6B6B6] font-medium text-start">SOFTWARE SERVICES</th>
+                <th className=" py-3 px-4 text-sm text-[#B6B6B6] font-medium text-start">APPS SERVICES</th>
+                <th className=" py-3 px-4 text-sm text-[#B6B6B6] font-medium text-start">Cloud Services</th>
+                <th className=" py-3 px-4 text-sm text-[#B6B6B6] font-medium text-start">ACTIONS</th>
               </tr>
             </thead>
             <tbody>
@@ -235,7 +235,7 @@ export const SettingsView = ({ tokens }: SettingsViewProps) => {
                   <td className={`py-3 px-4 ${valueClass}`}>{item.appsServices}</td>
                   <td className={`py-3 px-4 ${valueClass}`}>{item.cloudServices}</td>
                   <td className="py-3 px-4">
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <button
                         type="button"
                         className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${tokens.isDark ? tokens.buttonGhost : ""}`}

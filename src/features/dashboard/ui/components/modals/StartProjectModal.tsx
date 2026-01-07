@@ -149,10 +149,10 @@ export const StartProjectModal = ({
           {/* Modal */}
           <div className={`relative w-full max-w-xl ${tokens.cardBase} ${tokens.isDark ? "bg-[#0F1217]" : "bg-white"} rounded-[20px] max-h-[90vh] overflow-hidden flex flex-col`}>
             {/* Header */}
-            <div className={`flex items-center justify-between px-6 pt-6 pb-4 flex-shrink-0 rounded-t-2xl ${
+            <div className={`flex flex-wrap items-center justify-between px-6 pt-6 pb-4 flex-shrink-0 rounded-t-2xl ${
               tokens.isDark ? "bg-[#0F1217]" : "bg-[#FFFEF7]"
             }`}>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 <div className={`flex h-9 w-9 items-center justify-center rounded-full ${tokens.isDark ? tokens.buttonGhost : ""}`} style={tokens.isDark ? {} : { backgroundColor: "#E6E9FB" }}>
                   <StartProjectIcon className={`h-5 w-5`} style={tokens.isDark ? {} : { color: "#071FD7" }} />
                 </div>
@@ -214,7 +214,7 @@ export const StartProjectModal = ({
                       type="button"
                       onClick={() => setIsCategoryOpen(!isCategoryOpen)}
                       disabled={categoriesLoading}
-                      className={`w-full px-4 py-3.5 rounded-[20px] border text-left flex items-center justify-between ${
+                      className={`w-full px-4 py-3.5 rounded-[20px] border text-left flex flex-wrap items-center justify-between ${
                         tokens.isDark
                           ? "bg-transparent border-white/20 text-white"
                           : `bg-transparent border-[#E6E6E6] ${categoryId ? "!text-black" : "!text-black"} placeholder:text-black`
@@ -241,12 +241,12 @@ export const StartProjectModal = ({
                       <div
                         className={`absolute z-20 w-full mt-2 rounded-[20px] border shadow-lg max-h-60 overflow-y-auto ${
                           tokens.isDark
-                            ? "border-white/20"
+                            ? "bg-[#0F1217] border-white/20"
                             : "bg-white border-[#E6E6E6]"
                         }`}
                       >
                         {categories.length === 0 ? (
-                          <div className="px-4 py-3 text-sm text-center text-gray-500">
+                          <div className="px-4 py-3 text-sm text-center text-black">
                             No categories available
                           </div>
                         ) : (

@@ -127,7 +127,7 @@ export const ManageHostView = ({ hostId: _hostId, tokens }: ManageHostViewProps)
   const labelClass = `text-base font-regular text-[#718EBF]`;
   const sectionTitleClass = "text-lg md:text-xl lg:text-2xl font-semibold";
   const statusBadgeClass =
-    "inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium";
+    "inline-flex flex-wrap items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium";
 
   const renderStatusIcon = (status: "Active" | "Pending" | "Resolved" | "In Progress" | "Not Installed") => {
     if (status === "Active" || status === "Resolved") {
@@ -160,7 +160,7 @@ export const ManageHostView = ({ hostId: _hostId, tokens }: ManageHostViewProps)
       {/* Host Details Header */}
       <div className={`${tokens.cardBase} ${cardClass}`}>
         <div className="mb-6 flex flex-col justify-between gap-3 md:flex-row md:items-center border-b border-dashed border-[#A3AED0] pb-6">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <span
               className={`${tokens.buttonGhost} inline-flex h-16 w-16 items-center justify-center rounded-full`}
             >
@@ -208,7 +208,7 @@ export const ManageHostView = ({ hostId: _hostId, tokens }: ManageHostViewProps)
               >
                 <action.Icon className={`h-5 w-5 md:h-6 md:w-6 ${tokens.isDark ? "" : "[&_path]:fill-[#584ABC]"}`} />
               </span>
-              <div className="flex items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center justify-between gap-3">
                 <span className="text-base font-light text-[var(--color-card-text)]">
                   {action.label}
                 </span>
@@ -241,9 +241,9 @@ export const ManageHostView = ({ hostId: _hostId, tokens }: ManageHostViewProps)
             {recentTickets.map((ticket) => (
               <div
                 key={ticket.id}
-                className="flex items-center justify-between rounded-[20px] px-4 py-1.5"
+                className="flex flex-wrap items-center justify-between rounded-[20px] px-4 py-1.5"
               >
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <span className={`h-2 w-2 rounded-full ${tokens.isDark ? "bg-white" : "bg-[#584ABC]"}`} />
                   <div>
                     <p className={`text-sm font-semibold ${tokens.isDark ? "text-[var(--color-card-text)]" : "text-[#584ABC]"}`}>
@@ -303,11 +303,11 @@ export const ManageHostView = ({ hostId: _hostId, tokens }: ManageHostViewProps)
 
       {/* Linked Websites */}
       <div className={`${tokens.cardBase} ${cardClass}`}>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between">
           <h2 className={sectionTitleClass}>Linked Websites</h2>
           <button
             type="button"
-            className={`${tokens.buttonFilled} inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold`}
+            className={`${tokens.buttonFilled} inline-flex flex-wrap items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold`}
           >
             <PlusCircleIcon className="h-5 w-5" />
             Add New Website

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { DeleteIcon } from "@utilities/icons";
 import type { DashboardTokens } from "../../types";
 
@@ -5,7 +6,7 @@ export type ProjectCardData = {
   readonly id: string;
   readonly name: string;
   readonly description: string;
-  readonly status: "Active" | "Pending" | "Completed" | "Ongoing";
+  readonly status: string;
   readonly team: readonly {
     readonly id: string;
     readonly name: string;
@@ -28,6 +29,7 @@ type ProjectCardProps = {
   readonly onViewDetails?: (projectId: string) => void;
   readonly onManage?: (projectId: string) => void;
   readonly onProposals?: (projectId: string) => void;
+  readonly onContract?: (projectId: string) => void;
 };
 
 export const ProjectCard = ({
@@ -35,13 +37,20 @@ export const ProjectCard = ({
   tokens,
   onViewDetails,
   onManage,
-  onProposals
+  onProposals,
+  onContract
 }: ProjectCardProps) => {
-  const statusColors = {
-    Active: tokens.isDark ? "bg-green-500/10 text-green-400" : "bg-green-100 text-green-700",
-    Pending: tokens.isDark ? "bg-yellow-500/10 text-yellow-400" : "bg-yellow-100 text-yellow-700",
-    Completed: tokens.isDark ? "bg-blue-500/10 text-blue-400" : "bg-blue-100 text-blue-700",
-    Ongoing: tokens.isDark ? "bg-purple-500/10 text-purple-400" : "bg-purple-100 text-purple-700"
+  const { t } = useTranslation("landing");
+  const statusColors: Record<string, string> = {
+    active: tokens.isDark ? "bg-green-500/10 text-green-400" : "bg-green-100 text-green-700",
+    pending: tokens.isDark ? "bg-yellow-500/10 text-yellow-400" : "bg-yellow-100 text-yellow-700",
+    completed: tokens.isDark ? "bg-blue-500/10 text-blue-400" : "bg-blue-100 text-blue-700",
+    ongoing: tokens.isDark ? "bg-purple-500/10 text-purple-400" : "bg-purple-100 text-purple-700",
+    requested: tokens.isDark ? "bg-orange-500/10 text-orange-400" : "bg-orange-100 text-orange-700"
+  };
+
+  const getStatusColor = (status: string) => {
+    return statusColors[status.toLowerCase()] || (tokens.isDark ? "bg-gray-500/10 text-gray-400" : "bg-gray-100 text-gray-700");
   };
 
   const getAvatarColor = (index: number) => {
@@ -118,7 +127,7 @@ export const ProjectCard = ({
     <div className={`${tokens.cardBase} rounded-[20px] p-6`}>
       <div className="flex flex-col gap-4">
         {/* Title, Description, Team Section with Chart */}
-        <div className="flex items-center justify-between gap-6">
+        <div className="flex items-center flex-wrap justify-between gap-6">
           <div className="flex flex-col gap-4 flex-1">
             {/* Title and Description Section */}
             <div className="flex flex-col gap-2">
@@ -129,7 +138,7 @@ export const ProjectCard = ({
                   {project.name}
                 </h3>
                 <span
-                  className={`px-3 py-1 rounded-full text-sm font-medium ${statusColors[project.status]}`}
+                  className={`px-3 py-1 rounded-full text-sm font-medium capitalize ${getStatusColor(project.status)}`}
                 >
                   {project.status}
                 </span>
@@ -139,7 +148,7 @@ export const ProjectCard = ({
               </p>
             </div>
             {/* Team Section */}
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <span className={`text-sm md:text-base font-medium ${tokens.subtleText} text-[#718EBF]`}>team:</span>
               <div className="flex -space-x-2">
                 {project.team.slice(0, 3).map((member, index) => (
@@ -173,25 +182,25 @@ export const ProjectCard = ({
           <div className={`rounded-[20px] p-4 flex-1 ${tokens.isDark ? tokens.surfaceMuted : ''}`} style={tokens.isDark ? {} : { backgroundColor: '#FCF6D4' }}>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 items-center">
               <div className="flex flex-col gap-2">
-                <span className="text-sm md:text-base ${tokens.isDark ? 'text-[#718EBF]' : 'text-[#232323]'} font-medium">Start</span>
+                <span className={`text-sm md:text-base ${tokens.isDark ? 'text-[#718EBF]' : 'text-[#232323]'} font-medium`}>{t("dashboard.project.start")}</span>
                 <span className="text-sm font-medium text-[#718EBF]">{project.startDate}</span>
               </div>
               <div className="flex flex-col gap-2">
-                <span className="text-sm md:text-base ${tokens.isDark ? 'text-[#718EBF]' : 'text-[#232323]'} font-medium">Deadline</span>
+                <span className={`text-sm md:text-base ${tokens.isDark ? 'text-[#718EBF]' : 'text-[#232323]'} font-medium`}>{t("dashboard.project.deadline")}</span>
                 <span className="text-sm font-medium text-[#718EBF]">{project.deadline}</span>
               </div>
               <div className="flex flex-col gap-2">
-                <span className="text-sm md:text-base ${tokens.isDark ? 'text-[#718EBF]' : 'text-[#232323]'} font-medium">Budget</span>
+                <span className={`text-sm md:text-base ${tokens.isDark ? 'text-[#718EBF]' : 'text-[#232323]'} font-medium`}>{t("dashboard.project.budget")}</span>
                 <span className="text-sm font-medium text-[#718EBF]">{project.budget}</span>
               </div>
               <div className="flex flex-col gap-2">
-                <span className="text-sm md:text-base ${tokens.isDark ? 'text-[#718EBF]' : 'text-[#232323]'} font-medium">Tasks</span>
+                <span className={`text-sm md:text-base ${tokens.isDark ? 'text-[#718EBF]' : 'text-[#232323]'} font-medium`}>{t("dashboard.overview.tasks")}</span>
                 <span className="text-sm font-medium text-[#718EBF]">
                   {project.tasks.completed} / {project.tasks.total}
                 </span>
               </div>
               <div className="flex flex-col gap-2">
-                <span className="text-sm md:text-base ${tokens.isDark ? 'text-[#718EBF]' : 'text-[#232323]'} font-medium">Type</span>
+                <span className={`text-sm md:text-base ${tokens.isDark ? 'text-[#718EBF]' : 'text-[#232323]'} font-medium`}>{t("dashboard.project.type")}</span>
                 <span className="text-sm font-medium text-[#718EBF]">{project.type}</span>
               </div>
               <div className="flex items-center flex-col gap-2 cursor-pointer">
@@ -204,7 +213,7 @@ export const ProjectCard = ({
                 >
                   <DeleteIcon className="h-4 w-4" style={{ color: '#FF0000' }} />
                 </button>
-                <span className="text-sm text-[#718EBF] font-medium">Manage</span>
+                <span className="text-sm text-[#718EBF] font-medium">{t("dashboard.project.manage")}</span>
               </div>
             </div>
           </div>
@@ -213,24 +222,25 @@ export const ProjectCard = ({
             <div className="flex flex-row gap-3 items-center">
               <button
                 type="button"
-                className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-sm md:text-base font-medium transition-colors cursor-pointer ${
+                onClick={() => onContract?.(project.id)}
+                className={`flex flex-wrap items-center gap-2 px-6 py-2.5 rounded-full text-sm md:text-base font-medium transition-colors cursor-pointer ${
                   tokens.isDark
                     ? "bg-white/10 text-white/90 hover:bg-white/20"
                     : "bg-[#071FD7] text-white hover:bg-[#071FD7]/90 hover:text-white"
                 }`}
               >
-                <span>Contract</span>
+                <span>{t("dashboard.project.contract")}</span>
               </button>
               <button
                 type="button"
                 onClick={() => onProposals?.(project.id)}
-                className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-sm md:text-base font-medium transition-colors cursor-pointer ${
+                className={`flex flex-wrap items-center gap-2 px-6 py-2.5 rounded-full text-sm md:text-base font-medium transition-colors cursor-pointer ${
                   tokens.isDark
                     ? "border border-white/70 text-white/70 hover:bg-white/10"
                     : "border border-[#071FD7] text-[#071FD7] hover:bg-[#071FD7]/90 hover:text-white"
                 }`}
               >
-                <span>Proposals</span>
+                <span>{t("dashboard.project.proposals")}</span>
               </button>
             </div>
           )}
@@ -238,7 +248,7 @@ export const ProjectCard = ({
 
         {/* Footer */}
         {onViewDetails && (
-          <div className="flex items-center justify-between pt-2">
+          <div className="flex flex-wrap items-center justify-between pt-2">
             <span className={`text-sm md:text-base ${tokens.subtleText} text-[#636786]`}>
               Last update: {project.lastUpdate}
             </span>
@@ -251,7 +261,7 @@ export const ProjectCard = ({
                   : "border border-[#071FD7] text-[#071FD7] hover:bg-[#071FD7]/90 hover:text-white"
               }`}
             >
-              View Details
+              {t("dashboard.project.viewDetails")}
             </button>
           </div>
         )}

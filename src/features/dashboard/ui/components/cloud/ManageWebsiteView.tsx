@@ -150,7 +150,7 @@ export const ManageWebsiteView = ({ tokens }: ManageWebsiteViewProps) => {
     "rounded-[20px] p-6 transition-colors";
   const labelClass = `text-base font-regular text-[#718EBF]`;
   const statusBadgeClass =
-    "inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium";
+    "inline-flex flex-wrap items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium";
 
   const usageMetricIcons: Record<string, typeof ServerIcon> = {
     memory: MemoryIcon,
@@ -164,7 +164,7 @@ export const ManageWebsiteView = ({ tokens }: ManageWebsiteViewProps) => {
       {/* Website Details Header */}
       <div className={`${tokens.cardBase} ${cardClass}`}>
         <div className="mb-6 flex flex-col justify-between gap-3 md:flex-row md:items-center border-b border-dashed border-[#A3AED0] pb-6">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <span
               className={`${tokens.buttonGhost} inline-flex h-16 w-16 items-center justify-center rounded-full`}
             >
@@ -212,7 +212,7 @@ export const ManageWebsiteView = ({ tokens }: ManageWebsiteViewProps) => {
               >
                 <action.Icon className={`h-5 w-5 md:h-6 md:w-6 ${tokens.isDark ? "" : "[&_path]:fill-[#584ABC]"}`} />
               </span>
-              <div className="flex items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center justify-between gap-3">
                 <span className="text-base font-light text-[var(--color-card-text)]">
                   {action.label}
                 </span>
@@ -237,7 +237,7 @@ export const ManageWebsiteView = ({ tokens }: ManageWebsiteViewProps) => {
       <div className="grid gap-4 lg:grid-cols-2">
         {/* PageSpeed Insights */}
         <div className={`${tokens.cardBase} rounded-[20px] px-6 py-4`}>
-          <div className="flex items-center gap-3 mb-6">
+          <div className="flex flex-wrap items-center gap-3 mb-6">
             <span className={`flex h-10 w-10 items-center justify-center rounded-full ${
               tokens.isDark ? "bg-white/10" : "bg-[#E6E3FF]"
             }`}>
@@ -250,7 +250,7 @@ export const ManageWebsiteView = ({ tokens }: ManageWebsiteViewProps) => {
             <div className="flex-1 flex flex-col justify-between">
               <div>
                 <p className={`text-xl font-semibold ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>Desktop Device</p>
-                <div className="flex items-center gap-2 mt-2">
+                <div className="flex flex-wrap items-center gap-2 mt-2">
                   <span className={`flex h-6 w-6 items-center justify-center rounded-full ${
                     tokens.isDark ? "bg-white/10" : "bg-[#E6E3FF]"
                   }`}>
@@ -328,7 +328,7 @@ export const ManageWebsiteView = ({ tokens }: ManageWebsiteViewProps) => {
               <div className="flex items-center justify-center cursor-pointer">
               <button
                 type="button"
-                className={`bg-white text-[#584ABC] cursor-pointer flex items-center gap-2 rounded-full px-8 py-2.5 text-sm font-semibold`}
+                className={`bg-white text-[#584ABC] cursor-pointer flex flex-wrap items-center gap-2 rounded-full px-8 py-2.5 text-sm font-semibold`}
               >
                 See details
               </button>

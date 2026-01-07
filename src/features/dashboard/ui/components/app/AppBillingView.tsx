@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import type { DashboardTokens } from "../../types";
 import {
   AppBillingIcon,
@@ -94,6 +95,7 @@ const statusBadgeClass = (status: AppSubscription["status"]) => {
 };
 
 export const AppBillingView = ({ tokens }: { readonly tokens: DashboardTokens }) => {
+  const { t } = useTranslation("landing");
   const isDark = tokens.isDark;
 
   // Combine all subscriptions
@@ -135,10 +137,10 @@ export const AppBillingView = ({ tokens }: { readonly tokens: DashboardTokens })
               className={`rounded-[20px] overflow-hidden transition-colors ${isDark ? "!bg-[#0F1217] " : "!bg-[#E7F0F1]"}`}
             >
               <div className="flex flex-col gap-3 px-4 py-4">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between">
                   <span className={`text-sm font-medium ${isDark ? "text-white/80" : "text-[#4B6470]"}`}>{sub.invoiceCode}</span>
                   <span className={`px-4 py-1.5 rounded-full text-sm font-medium ${statusBadgeClass(sub.status)}`}>
-                    {sub.status}
+                    {sub.status === "closed" ? t("dashboard.billing.closed") : sub.status === "active" ? t("dashboard.billing.active") : t("dashboard.billing.pending")}
                   </span>
                 </div>
 
@@ -147,7 +149,7 @@ export const AppBillingView = ({ tokens }: { readonly tokens: DashboardTokens })
                   <span className={`text-xs font-semibold mb-[2px] ${isDark ? "text-white/70" : "text-[#4B6470]"}`}>{sub.currency}</span>
                 </div>
 
-                <div className="flex items-center gap-2 text-sm font-semibold">
+                <div className="flex flex-wrap items-center gap-2 text-sm font-semibold">
                   {sub.planName === "Professional Bundle" ? (
                     <FilledBundleSubscriptionsIcon className={`h-4 w-4 ${isDark ? "text-white/80" : "text-[#0E8F9C]"}`} />
                   ) : (
@@ -156,18 +158,18 @@ export const AppBillingView = ({ tokens }: { readonly tokens: DashboardTokens })
                   <span className={isDark ? "text-white" : "text-[#0E8F9C]"}>{sub.planName}</span>
                 </div>
 
-                <div className="flex items-center justify-between text-xs text-[#7A8A92]">
-                  <span className={isDark ? "text-white/60" : "text-[#7A8A92]"}>{sub.meta ?? "bundle"}</span>
-                  <span className={isDark ? "text-white/60" : "text-[#7A8A92]"}>Due date: {sub.dueDate}</span>
+                <div className="flex flex-wrap items-center justify-between text-xs text-[#7A8A92]">
+                  <span className={isDark ? "text-white/60" : "text-[#7A8A92]"}>{sub.meta ?? t("dashboard.billing.bundle")}</span>
+                  <span className={isDark ? "text-white/60" : "text-[#7A8A92]"}>{t("dashboard.invoice.dueDate")}: {sub.dueDate}</span>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 px-4 pb-4">
+              <div className="flex flex-wrap items-center gap-3 px-4 pb-4">
                 <button
                   type="button"
                   className="flex-1 rounded-full bg-[#0F6773] px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-[#0c7b85]"
                 >
-                  View Apps
+                  {t("dashboard.billing.viewApps")}
                 </button>
                 <button
                   type="button"

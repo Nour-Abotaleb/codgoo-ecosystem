@@ -156,7 +156,7 @@ export const DiscussionDetailView = ({ discussion, tokens }: DiscussionDetailVie
   return (
     <div className="flex flex-col h-full">
       {/* Discussion Header */}
-      <div className="flex items-center justify-between mb-6 flex-shrink-0">
+      <div className="flex flex-wrap items-center justify-between mb-6 flex-shrink-0">
         <div className="flex flex-col gap-1">
           <h3 className={`text-2xl md:text-3xl font-bold ${tokens.isDark ? "text-white" : "text-black"}`}>
             {discussion.name}
@@ -165,7 +165,7 @@ export const DiscussionDetailView = ({ discussion, tokens }: DiscussionDetailVie
             Team Communication
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <span className={`text-sm ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"}`}>team:</span>
           <div className="flex -space-x-2">
             {discussion.team.slice(0, 3).map((member, index) => (
@@ -231,7 +231,7 @@ export const DiscussionDetailView = ({ discussion, tokens }: DiscussionDetailVie
                 }`}
               >
                 {message.hasFile ? (
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <AttachmentsIcon className="h-4 w-4" />
                     <span className="text-sm">{message.fileName}</span>
                   </div>
@@ -278,7 +278,7 @@ export const DiscussionDetailView = ({ discussion, tokens }: DiscussionDetailVie
       {/* Message Input */}
       <div className="flex-shrink-0">
         <div
-          className={`flex items-center gap-2 px-4 py-3 rounded-[20px] border ${
+          className={`flex flex-wrap items-center gap-2 px-4 py-3 rounded-[20px] border ${
             tokens.isDark
               ? "bg-[#1A1D29] border-white/20"
               : "bg-white border-gray-200"

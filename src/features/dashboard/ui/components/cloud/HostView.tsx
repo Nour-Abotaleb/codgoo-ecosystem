@@ -130,7 +130,7 @@ export const HostView = ({ tokens }: HostViewProps) => {
     }
 
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
           onClick={() => handlePageChange(1)}
@@ -232,7 +232,7 @@ export const HostView = ({ tokens }: HostViewProps) => {
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <div
-              className={`flex h-11 flex-1 items-center gap-3 rounded-full border ${tokens.divider} bg-transparent stroke px-4 text-[var(--color-search-text)] transition-colors sm:w-72`}
+              className={`flex h-11 flex-1 items-center gap-3 rounded-full border ${tokens.divider} bg-transparent stroke px-4 text-[var(--color-search-text)] py-2 transition-colors sm:w-72`}
             >
               <SearchIcon className="h-5 w-5 text-[var(--color-search-placeholder)]" />
               <input
@@ -292,7 +292,7 @@ export const HostView = ({ tokens }: HostViewProps) => {
                     }}
                   >
                     <td className="rounded-l-xl px-6 py-4 transition-colors">
-                      <div className="flex items-center gap-3">
+                      <div className="flex flex-wrap items-center gap-3">
                         <input
                           type="checkbox"
                           checked={isSelected}
@@ -344,7 +344,7 @@ export const HostView = ({ tokens }: HostViewProps) => {
         <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-[var(--color-border-divider)] pt-4 text-xs text-[var(--color-sidebar-nav-idle-text)] transition-colors sm:flex-row">
           {renderPagination()}
 
-          <div className="flex items-center gap-2 text-sm text-[var(--color-page-text)]">
+          <div className="flex flex-wrap items-center gap-2 text-sm text-[var(--color-page-text)]">
             <span>Showing</span>
             <select className="rounded-lg border border-[var(--color-border-divider)] px-2 py-1 text-sm focus:outline-none">
               <option value="20">20</option>

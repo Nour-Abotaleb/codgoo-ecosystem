@@ -129,9 +129,9 @@ export const CheckoutView = ({
   return (
     <div className="flex flex-col gap-4">
       {/* Header */}
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <div 
-          className={`flex items-center gap-2 cursor-pointer ${tokens.isDark ? "bg-[#2a2a2a] text-[#34D8D6]" : "bg-[#E7F0F1] text-[#0F6773]"} rounded-full p-2 w-12 h-12 justify-center`}
+          className={`flex flex-wrap items-center gap-2 cursor-pointer ${tokens.isDark ? "bg-[#2a2a2a] text-[#34D8D6]" : "bg-[#E7F0F1] text-[#0F6773]"} rounded-full p-2 w-12 h-12 justify-center`}
           onClick={onBack}
         >
           <ArrowRight className="w-4 h-4 md:w-5 md:h-5 rotate-180" />
@@ -146,7 +146,7 @@ export const CheckoutView = ({
         <div className="lg:col-span-2 flex flex-col gap-4">
           {/* Billing Information */}
           <div className={`${tokens.cardBase} rounded-[20px] p-6`}>
-            <div className={`flex items-center gap-3 mb-6 px-6 py-4 -mx-6 -mt-6 ${tokens.isDark ? "bg-[#1F2733]" : "bg-[#E7F0F1]"} rounded-t-[24px]`}>
+            <div className={`flex flex-wrap items-center gap-3 mb-6 px-6 py-4 -mx-6 -mt-6 ${tokens.isDark ? "bg-[#1F2733]" : "bg-[#E7F0F1]"} rounded-t-[24px]`}>
               <div className={`${tokens.isDark ? "bg-[#1a1a1a] text-[#34D8D6]" : "bg-white text-[#0F6773]"} rounded-full p-2.5`}>
                 <MasterIcon className="w-6 h-6" />
               </div>
@@ -224,7 +224,7 @@ export const CheckoutView = ({
 
           {/* Payment Method */}
           <div className={`${tokens.cardBase} rounded-[20px] p-6`}>
-            <div className={`flex items-center gap-3 mb-6 px-6 py-4 -mx-6 -mt-6 ${tokens.isDark ? "bg-[#1F2733]" : "bg-[#E7F0F1]"} rounded-t-[24px]`}>
+            <div className={`flex flex-wrap items-center gap-3 mb-6 px-6 py-4 -mx-6 -mt-6 ${tokens.isDark ? "bg-[#1F2733]" : "bg-[#E7F0F1]"} rounded-t-[24px]`}>
               <div className={`${tokens.isDark ? "bg-[#1a1a1a] text-[#34D8D6]" : "bg-white text-[#0F6773]"} rounded-full p-2.5`}>
                 <CreditCardIcon className="w-6 h-6" />
               </div>
@@ -241,8 +241,8 @@ export const CheckoutView = ({
                     : `${tokens.isDark ? "bg-[#2a2a2a] border border-[#E8E8E866]" : "bg-[#FAFAFA] border border-[#E8E8E8]"}`
                 }`}
               >
-                <div className="flex items-center justify-between flex-1">
-                  <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center justify-between flex-1">
+                  <div className="flex flex-wrap items-center gap-3">
                     <div className={`${paymentMethod === "credit-card" 
                       ? `${tokens.isDark ? "bg-[#1F2733] text-[#34D8D6]" : "bg-[#BAD5D9] text-[#0F6773]"}`
                       : `${tokens.isDark ? "bg-[#1F2733] text-gray-400" : "bg-[#E7F0F1] text-[#5F5F5F]"}`
@@ -282,8 +282,8 @@ export const CheckoutView = ({
                     : `${tokens.isDark ? "bg-[#2a2a2a] border border-[#E8E8E866]" : "bg-[#FAFAFA] border border-[#E8E8E8]"}`
                 }`}
               >
-                <div className="flex items-center justify-between flex-1">
-                  <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center justify-between flex-1">
+                  <div className="flex flex-wrap items-center gap-3">
                     <div className={`${paymentMethod === "digital-wallet" 
                       ? `${tokens.isDark ? "bg-[#1F2733] text-[#34D8D6]" : "bg-[#BAD5D9] text-[#0F6773]"}`
                       : `${tokens.isDark ? "bg-[#1F2733] text-gray-400" : "bg-[#E7F0F1] text-[#5F5F5F]"}`
@@ -323,8 +323,8 @@ export const CheckoutView = ({
                     : `${tokens.isDark ? "bg-[#2a2a2a] border border-[#E8E8E866]" : "bg-[#FAFAFA] border border-[#E8E8E8]"}`
                 }`}
               >
-                <div className="flex items-center justify-between flex-1">
-                  <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center justify-between flex-1">
+                  <div className="flex flex-wrap items-center gap-3">
                     <div className={`${paymentMethod === "bank-transfer" 
                       ? `${tokens.isDark ? "bg-[#1F2733] text-[#34D8D6]" : "bg-[#BAD5D9] text-[#0F6773]"}`
                       : `${tokens.isDark ? "bg-[#1F2733] text-gray-400" : "bg-[#E7F0F1] text-[#5F5F5F]"}`
@@ -369,8 +369,8 @@ export const CheckoutView = ({
                   setShowUploadModal(true);
                 }}
               >
-                <div className="flex items-center justify-between flex-1">
-                  <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center justify-between flex-1">
+                  <div className="flex flex-wrap items-center gap-3">
                     <div className={`${paymentMethod === "offline-payment" 
                       ? `${tokens.isDark ? "bg-[#1F2733] text-[#34D8D6]" : "bg-[#BAD5D9] text-[#0F6773]"}`
                       : `${tokens.isDark ? "bg-[#1F2733] text-gray-400" : "bg-[#E7F0F1] text-[#5F5F5F]"}`
@@ -416,8 +416,8 @@ export const CheckoutView = ({
 
             {/* Bundle Item */}
             <div className="flex flex-col gap-3 mb-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3 flex-1">
+              <div className="flex flex-wrap items-center justify-between">
+                <div className="flex flex-wrap items-center gap-3 flex-1">
                   <div className={`w-12 h-12 rounded-full flex items-center justify-center ${tokens.isDark ? "bg-[#2a2a2a] text-[#34D8D6]" : "bg-[#E7F0F1] text-[#0F6773]"}`}>
                     <MasterIcon className="w-6 h-6" />
                   </div>
@@ -430,7 +430,7 @@ export const CheckoutView = ({
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <button
                     type="button"
                     className="text-[#F4371A] bg-[#FFDED9] rounded-full w-10 h-10 flex items-center justify-center"
@@ -502,7 +502,7 @@ export const CheckoutView = ({
               className={`w-full py-2.5 rounded-full font-semibold text-base transition-colors ${
                 agreedToTerms && !isUploading
                   ? "bg-[#0F6773] text-white hover:bg-[#0d5a65] cursor-pointer"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-gray-300 text-black cursor-not-allowed"
               }`}
             >
               {isUploading ? "Uploading..." : "Confirm Payment"}
@@ -515,7 +515,7 @@ export const CheckoutView = ({
           {/* Security Features */}
           <div className="mt-4 space-y-3">
             <div className={`${tokens.isDark ? "bg-[#2a2a2a]" : "bg-white"} rounded-[20px] px-4 py-6 flex flex-col items-start gap-3`}>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 <div className={`${tokens.isDark ? "bg-[#1F2733] text-[#34D8D6]" : "bg-[#E7F0F1] text-[#0F6773]"} rounded-full p-2.5 flex-shrink-0`}>
                   <SecurityIcon className="w-6 h-6" />
                 </div>
@@ -530,7 +530,7 @@ export const CheckoutView = ({
                 </span>
             </div>
             <div className={`${tokens.isDark ? "bg-[#2a2a2a]" : "bg-white"} rounded-[20px] px-4 py-6 flex flex-col items-start gap-3`}>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 <div className={`${tokens.isDark ? "bg-[#1F2733] text-[#34D8D6]" : "bg-[#E7F0F1] text-[#0F6773]"} rounded-full p-2.5 flex-shrink-0 flex items-center justify-center`}>
                   <div className="w-5 h-5 bg-[#0F6773] rounded-full flex items-center justify-center">
                     <CheckIcon className="w-4 h-4 text-white" />
@@ -554,7 +554,7 @@ export const CheckoutView = ({
       {showUploadModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className={`${tokens.isDark ? "bg-[#1F2733]" : "bg-white"} rounded-[20px] p-6 max-w-md w-full`}>
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-wrap items-center justify-between mb-6">
               <h3 className={`text-xl font-bold ${tokens.isDark ? "text-white" : "text-[#142133]"}`}>
                 Upload Payment Proof
               </h3>
@@ -602,13 +602,13 @@ export const CheckoutView = ({
                     : "border-gray-300 bg-gray-50 hover:bg-gray-100"
                 }`}>
                   <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                    <svg className={`w-12 h-12 mb-4 ${tokens.isDark ? "text-gray-400" : "text-gray-500"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className={`w-12 h-12 mb-4 ${tokens.isDark ? "text-gray-400" : "text-black"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                     </svg>
                     <p className={`mb-2 text-sm ${tokens.isDark ? "text-gray-300" : "text-gray-700"}`}>
                       <span className="font-semibold">Click to upload</span> or drag and drop
                     </p>
-                    <p className={`text-xs ${tokens.isDark ? "text-gray-400" : "text-gray-500"}`}>
+                    <p className={`text-xs ${tokens.isDark ? "text-gray-400" : "text-black"}`}>
                       PNG, JPG or JPEG (MAX. 5MB)
                     </p>
                   </div>

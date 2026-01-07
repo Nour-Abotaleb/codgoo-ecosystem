@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { SearchIcon, ArrowRight, FilterIcon, ArrowUpIcon } from "@utilities/icons";
 import type { DashboardTokens } from "../../types";
@@ -11,11 +12,13 @@ type ProductsViewProps = {
 };
 
 export const ProductsView = ({ tokens }: ProductsViewProps) => {
+  const { t } = useTranslation("landing");
   const navigate = useNavigate();
   const { data: apiData, isLoading, error, refetch } = useGetProductsQuery();
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 9;
+  const isRTL = document.documentElement.dir === "rtl";
 
   // Use API data only
   const productsData = useMemo(() => {
@@ -169,26 +172,26 @@ export const ProductsView = ({ tokens }: ProductsViewProps) => {
       <div className={`${tokens.cardBase} rounded-[20px] overflow-hidden transition-colors relative ${tokens.isDark ? "bg-[#1E1B2E]" : "bg-[#2B3674]"}`}>
         <img
           src={productsBg}
-          alt="Product illustration"
+          alt={t("dashboard.product.productIllustration")}
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="relative flex flex-col md:flex-row items-center justify-between p-6 md:p-8 z-10">
+        <div className="relative flex flex-col flex-wrap md:flex-row items-center justify-between p-6 md:p-8 z-10 w-full">
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <h3 className="text-3xl md:text-4xl lg:text-[46px] font-regular text-white leading-tight">
-                Most Used Product: <span className="text-nowrap font-extrabold">Smart <br /> CRM System</span>
+                {t("dashboard.product.mostUsedProduct")}: <span className="text-nowrap font-extrabold">Smart <br /> CRM System</span>
               </h3>
             </div>
-            <div className="flex items-start justify-between gap-70">
+            <div className="flex flex-col md:flex-row items-start md:justify-between md:gap-70">
                 <p className="text-white/70 text-sm md:text-base lg:text-xl font-light">
-                    Trusted by 120+ businesses
+                    {t("dashboard.product.trustedBy")}
                 </p>
                 <button
                 type="button"
-                className="inline-flex items-center gap-2 rounded-full cursor-pointer border border-white text-white px-6 py-2.5 text-sm md:text-base font-medium hover:bg-white/10 transition-colors w-fit"
+                className="inline-flex flex-wrap items-center gap-2 rounded-full cursor-pointer border border-white text-white px-6 py-2.5 text-sm md:text-base font-medium hover:bg-white/10 transition-colors w-fit"
                 >
-                View Product
-                <ArrowRight className="h-4 w-4" />
+                {t("dashboard.product.viewProduct")}
+                <ArrowRight className={`h-4 w-4 ${isRTL ? "rotate-180" : ""}`} />
                 </button>
             </div>
           </div>
@@ -196,9 +199,9 @@ export const ProductsView = ({ tokens }: ProductsViewProps) => {
       </div>
 
       {/* Search Bar */}
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap justify-between items-center gap-3">
         <div
-          className={`flex h-12 w-full items-center gap-3 rounded-full bg-transparent stroke px-4 text-[var(--color-search-text)] transition-colors`}
+          className={`flex  h-12 w-[85%] items-center gap-3 rounded-full bg-transparent stroke px-4 text-[var(--color-search-text)] transition-colors`}
         >
           <SearchIcon className="h-5 w-5 text-[#A7A7A7]" />
           <input
@@ -218,7 +221,7 @@ export const ProductsView = ({ tokens }: ProductsViewProps) => {
           className={`flex h-12 px-4 items-center justify-center rounded-full ${tokens.isDark ? "bg-[#2E314166]" : "bg-white"} transition-colors hover:opacity-80`}
           title="Refresh products"
         >
-          <span className="text-xs font-medium">Refresh</span>
+          <span className="text-xs font-medium">{t("dashboard.product.refresh")}</span>
         </button>
         <button
           type="button"
@@ -230,7 +233,7 @@ export const ProductsView = ({ tokens }: ProductsViewProps) => {
       </div>
 
       {/* Products Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
         {isLoading ? (
           <div className="col-span-full text-center py-12">
             <p className={tokens.isDark ? "text-white/50" : "text-[#A3AED0]"}>Loading products...</p>
@@ -246,7 +249,9 @@ export const ProductsView = ({ tokens }: ProductsViewProps) => {
           paginatedProducts.map((product: any) => (
             <div
               key={product.id}
-              className={`${tokens.cardBase} rounded-[20px] overflow-hidden transition-colors ${tokens.isDark ? "bg-tansparent stroke " : "!bg-white"}`}
+                                onClick={() => navigate(`/dashboard/products/${product.id}`)}
+
+              className={`${tokens.cardBase}  cursor-pointer rounded-[20px] overflow-hidden transition-colors ${tokens.isDark ? "bg-tansparent stroke " : "!bg-white"}`}
             >
               {/* Product Image */}
               <div className="relative overflow-hidden">
@@ -258,13 +263,12 @@ export const ProductsView = ({ tokens }: ProductsViewProps) => {
               </div>
 
               {/* Product Info */}
-              <div className="px-6 pt-6 pb-4 flex flex-col gap-4 relative">
+              <div className="px-6 pt-6 pb-4 flex flex-col relative">
                 <div className="flex items-center gap-4">
                   {/* Placeholder Circle */}
-                  <div className={`w-24 h-24 rounded-full bg-[#7282FF] border-5 ${tokens.isDark ? "border-[#1E1B2E]" : "border-white"} absolute -top-5 left-3`}></div>
 
                   {/* Product Name and Category */}
-                  <div className="flex flex-col gap-1 absolute top-3 left-30">
+                  <div className="flex flex-col gap-1 ">
                       <h4 className={`text-xl font-bold ${tokens.isDark ? "text-white" : "text-[#1B2559]"}`}>
                       {product.name}
                       </h4>
@@ -276,12 +280,11 @@ export const ProductsView = ({ tokens }: ProductsViewProps) => {
                 {/* Learn More Link */}
                 <button
                   type="button"
-                  onClick={() => navigate(`/dashboard/products/${product.id}`)}
-                  className={`inline-flex items-center justify-end gap-2 text-sm font-medium mt-7 ${tokens.isDark ? "text-white/70 hover:text-white" : "text-[#838593] hover:text-[#071FD7]/80"} transition-colors`}
+                  className={`inline-flex items-center justify-end gap-2 text-sm font-medium  ${tokens.isDark ? "text-white/70 hover:text-white" : "text-[#838593] hover:text-[#071FD7]/80"} transition-colors`}
                 >
-                  Learn More
+                  {t("dashboard.product.learnMore")}
                     {/* Arrow Icon */}
-                    <div className="flex justify-end flex items-center justify-center text-center cursor-pointer flex-shrink-0">
+                    <div className="flex justify-end flex items-center justify-center text-center flex-shrink-0">
                        <ArrowUpIcon className="w-7 h-7 p-1 bg-gradient-to-b from-[#071FD766] to-[#071FD7] rounded-full" />
                    </div>
                 </button>

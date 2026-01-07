@@ -67,21 +67,21 @@ export const MarketplaceView = ({ tokens, onItemClick }: MarketplaceViewProps) =
     <div className="flex flex-col gap-6">
       {/* Special Bundles Banner */}
       <div className="relative w-full">
-        <img src={marketplaceBg} alt="Special Bundles" className="w-full" />
-        <div className="absolute inset-0 flex items-center justify-between p-6 md:p-8">
-          <div className="flex items-center gap-4 flex-1">
+        <img src={marketplaceBg} alt="Special Bundles" className="w-full hidden md:block md:h-36 rounded-[20px] object-cover w-full" />
+        <div className="md:absolute bg-[#093F46] md:bg-transparent  rounded-[20px]  inset-0 flex flex-wrap items-center justify-between py-2 md:py-0 px-6 md:px-8">
+          <div className="flex items-center gap-4 flex-1 ">
             <div className="flex-shrink-0 bg-[#3A656B] w-16 h-16 rounded-full flex items-center justify-center">
-              <FilledBundleSubscriptionsIcon className="w-8 h-8 text-white" />
+              <FilledBundleSubscriptionsIcon className="w-8 h-8 !text-white" />
             </div>
             <div className="flex flex-col gap-2">
               <h2 className="text-2xl md:text-3xl font-bold text-white">Special Bundles</h2>
               <p className="text-sm md:text-base text-[#E7E7E7] font-light">Save big with our curated product bundles</p>
             </div>
           </div>
-          <div className="flex items-center gap-2 relative mt-8">
+          <div className="flex flex-wrap items-center gap-2 relative mt-8">
             <button
               type="button"
-              className="flex items-center gap-2 px-4 py-2 md:px-6 md:py-2.5 border border-white text-white rounded-full font-regular text-sm md:text-base hover:bg-white/90 hover:text-[#0F6773] cursor-pointer transition-colors"
+              className="flex flex-wrap items-center gap-2 px-4 py-2 md:px-6 md:py-2.5 border border-white text-white rounded-full font-regular text-sm md:text-base hover:bg-white/90 hover:text-[#0F6773] cursor-pointer transition-colors"
               onClick={() => navigate("/dashboard/marketplace/bundles")}
             >
               <span>Discover our bundle</span>
@@ -92,7 +92,7 @@ export const MarketplaceView = ({ tokens, onItemClick }: MarketplaceViewProps) =
       </div>
 
       {/* Category Tabs */}
-      <div className="flex items-center justify-between mt-2">
+      <div className="flex flex-wrap items-center justify-between mt-2">
         <div className="flex items-center gap-6">
           {[
             { id: "General" as Category, label: "General Services Apps", icon: GeneralServicesIcon },
@@ -105,7 +105,7 @@ export const MarketplaceView = ({ tokens, onItemClick }: MarketplaceViewProps) =
                 key={tab.id}
                 type="button"
                 onClick={() => setActiveCategory(tab.id)}
-                className={`relative flex items-center gap-2 pb-3 text-sm md:text-base font-semibold transition-colors ${
+                className={`relative flex flex-wrap items-center gap-2 pb-3 text-sm md:text-base font-semibold transition-colors ${
                   isActive
                     ? tokens.isDark ? "text-white/70" : "text-black"
                     : tokens.isDark
@@ -124,7 +124,7 @@ export const MarketplaceView = ({ tokens, onItemClick }: MarketplaceViewProps) =
         </div>
         <button
           type="button"
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+          className={`flex flex-wrap items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
             tokens.isDark
               ? "bg-white/10 text-white/70 hover:text-white"
               : "bg-white text-black"

@@ -128,7 +128,7 @@ export const MarketingDashboardOverview = ({
             key={stat.id}
             className={`${cardClass} flex flex-col gap-2 px-4 py-7`}
           >
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <div 
                 className={`flex items-center justify-center rounded-full p-2 ${tokens.isDark ? "bg-[var(--color-icon-surface)]" : ""}`}
                 style={tokens.isDark ? {} : { backgroundColor: bgColor }}

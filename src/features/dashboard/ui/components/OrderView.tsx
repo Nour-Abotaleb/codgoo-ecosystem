@@ -127,7 +127,7 @@ export const OrderView = ({ tokens }: OrderViewProps) => {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
             {packages.map((pkg) => (
               <div key={pkg.id} className={cardClass}>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <div className={`flex items-center justify-center rounded-full p-2 ${tokens.isDark ? "bg-[var(--color-icon-surface)]" : "bg-[#EEEDF8]"}`}>
                   <DiamondIcon 
                     className={`h-6 w-6 ${tokens.isDark ? "[&_path]:fill-white" : "[&_path]:fill-[#584ABC]"}`}
@@ -144,7 +144,7 @@ export const OrderView = ({ tokens }: OrderViewProps) => {
 
               <ul className="flex flex-col gap-2 flex-1">
                 {pkg.features.map((feature, index) => (
-                  <div key={index} className="flex items-center gap-2">
+                  <div key={index} className="flex flex-wrap items-center gap-2">
                     <span className={`h-0.5 w-0.5 rounded-full flex items-center justify-center ${tokens.isDark ? "bg-white/10" : "bg-[#584ABC]"}`}>
                     </span>
                      <li key={index} className={`text-sm md:text-base font-regular ${tokens.subtleText}`}>
@@ -157,7 +157,7 @@ export const OrderView = ({ tokens }: OrderViewProps) => {
               <div className="flex flex-col gap-3 mt-auto">
                 <button
                   type="button"
-                  className={`flex items-center gap-2 text-sm font-bold ${tokens.isDark ? "text-white" : "text-[#584ABC]"} hover:opacity-80 transition-opacity`}
+                  className={`flex flex-wrap items-center gap-2 text-sm font-bold ${tokens.isDark ? "text-white" : "text-[#584ABC]"} hover:opacity-80 transition-opacity`}
                 >
                   View All
                   <ArrowRight

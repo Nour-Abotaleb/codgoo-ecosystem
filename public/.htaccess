@@ -1,5 +1,19 @@
 Options -MultiViews
 RewriteEngine On
+
+# Don't rewrite files or directories that exist
 RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Don't rewrite asset files
+RewriteCond %{REQUEST_URI} !^/assets/
+
+# Route everything else to index.html
 RewriteRule ^ index.html [QSA,L]
+
+# Ensure correct MIME types for JavaScript modules
+<IfModule mod_mime.c>
+  AddType application/javascript .js .mjs
+  AddType text/css .css
+</IfModule>
 

@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   SearchIcon,
   AllTasksIcon,
@@ -104,7 +105,7 @@ const TasksCards = ({ tokens, searchQuery, onViewTask, tasks }: { readonly token
   //   }
 
   //   return (
-  //     <div className="flex items-center gap-2">
+  //     <div className="flex flex-wrap items-center gap-2">
   //       <button
   //         type="button"
   //         onClick={() => handlePageChange(1)}
@@ -192,6 +193,7 @@ export const TasksView = ({
   activeMilestoneTab = 0,
   onMilestoneTabChange
 }: TasksViewProps) => {
+  const { t } = useTranslation("landing");
   const [searchQuery, setSearchQuery] = useState("");
   const iconBaseColor = tokens.isDark ? "#FFFFFF" : "#2B3674";
   
@@ -213,29 +215,41 @@ export const TasksView = ({
     if (apiData?.data?.project?.milestones && activeMilestoneTab < apiData.data.project.milestones.length) {
       const milestone = apiData.data.project.milestones[activeMilestoneTab];
       if (milestone?.tasks) {
-        return milestone.tasks.map((task: any) => ({
-          id: String(task.id),
-          code: task.id,
-          name: task.title || "N/A",
-          description: "N/A", // Not in API
-          priority: "Medium" as const, // Not in API, default to Medium
-          startDate: "N/A", // Not in API
-          deadline: "N/A", // Not in API
-          createdDate: "N/A", // Not in API
-          dueDate: task.updated_at || "N/A",
-          assignedTo: task.assignees?.map((a: any) => a.name).join(", ") || "N/A",
-          team: task.assignees?.map((a: any) => ({
-            id: String(a.id),
-            name: a.name || "N/A"
-          })) || [],
-          progress: { completed: 0, total: 0, percentage: 0 }, // Not in API
-          status: mapTaskStatus(task.status || "not_started")
-        }));
+        return milestone.tasks.map((task: any) => {
+          // Calculate screens progress
+          const screens = task.screens || [];
+          const totalScreens = screens.length;
+          const implementedScreens = screens.filter((s: any) => s.implemented === 1).length;
+          const screensPercentage = totalScreens > 0 ? Math.round((implementedScreens / totalScreens) * 100) : 0;
+
+          return {
+            id: String(task.id),
+            code: task.id,
+            name: task.title || "N/A",
+            description: task.description || "N/A",
+            priority: task.priority || "Medium",
+            startDate: "N/A", // Not in API
+            deadline: "N/A", // Not in API
+            createdDate: "N/A", // Not in API
+            dueDate: task.updated_at || "N/A",
+            assignedTo: task.assignees?.map((a: any) => a.name).join(", ") || "N/A",
+            team: task.assignees?.map((a: any) => ({
+              id: String(a.id),
+              name: a.name || "N/A"
+            })) || [],
+            progress: { 
+              completed: implementedScreens, 
+              total: totalScreens, 
+              percentage: screensPercentage 
+            },
+            status: mapTaskStatus(task.status || "not_started")
+          };
+        });
       }
     }
     return [];
   }, [apiData, activeMilestoneTab]);
-
+  
   // Calculate task statistics from API data
   const taskStats = useMemo((): readonly TaskStat[] => {
     const allTasks = apiData?.data?.project?.milestones?.flatMap((m: any) => m.tasks || []) || [];
@@ -253,42 +267,43 @@ export const TasksView = ({
     return [
       {
         id: "all",
-        label: "All taskes",
+        label: t("dashboard.overview.allTasks"),
         value: String(allTasks.length),
         icon: AllTasksIcon
       },
       {
         id: "complete",
-        label: "Complete",
+        label: t("dashboard.overview.completed"),
         value: String(completed),
         icon: CompletedTasksIcon
       },
       {
         id: "in-progress",
-        label: "In Progress",
+        label: t("dashboard.overview.inProgress"),
         value: String(inProgress),
         icon: InProgressTasksIcon
       },
       {
         id: "awaiting-feedback",
-        label: "Awaiting Feedback",
+        label: t("dashboard.overview.waitingFeedback"),
         value: String(waitingFeedback),
         icon: AwaitingFeedbackIcon
       },
       {
         id: "not-started",
-        label: "Not Started",
+        label: t("dashboard.overview.notStarted"),
         value: String(notStarted),
         icon: NotStartedTasksIcon
       }
     ];
-  }, [apiData]);
+  }, [apiData, t]);
 
   // Get current milestone data
   const currentMilestone = useMemo(() => {
     if (apiData?.data?.project?.milestones && activeMilestoneTab < apiData.data.project.milestones.length) {
       const milestone = apiData.data.project.milestones[activeMilestoneTab];
       return {
+        id: milestone.id,
         name: milestone.name || "N/A",
         phase: milestone.phase || "N/A",
         status: milestone.status || "N/A",
@@ -297,6 +312,7 @@ export const TasksView = ({
       };
     }
     return {
+      id: 0,
       name: "N/A",
       phase: "N/A",
       status: "N/A",
@@ -347,7 +363,7 @@ export const TasksView = ({
                 key={index}
                 type="button"
                 onClick={() => onMilestoneTabChange?.(index)}
-                className={`pb-2 px-1 flex items-center gap-2 text-sm md:text-base font-medium transition-colors whitespace-nowrap cursor-pointer ${
+                className={`pb-2 px-1 flex flex-wrap items-center gap-2 text-sm md:text-base font-medium transition-colors whitespace-nowrap cursor-pointer ${
                   activeMilestoneTab === index
                     ? tokens.isDark
                       ? "text-white border-b-2 border-white"
@@ -394,7 +410,7 @@ export const TasksView = ({
                   </span>
                   <span className={`text-sm md:text-base font-medium ${
                     tokens.isDark ? tokens.subtleText : "text-[#718EBF]"
-                  }`}>Start Date</span>
+                  }`}>{t("dashboard.project.startDate")}</span>
                 </div>
                 <div className="flex flex-col gap-2">
                   <span className={`text-base font-semibold ${

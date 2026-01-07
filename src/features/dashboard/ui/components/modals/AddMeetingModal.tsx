@@ -66,8 +66,30 @@ export const AddMeetingModal = ({
   const [uniqueDates, setUniqueDates] = useState<string[]>([]);
   const projectRef = useRef<HTMLDivElement>(null);
   const taskRef = useRef<HTMLDivElement>(null);
+  const datesScrollRef = useRef<HTMLDivElement>(null);
+  const slotsScrollRef = useRef<HTMLDivElement>(null);
 
   const projects: Project[] = projectsData?.data?.projects || [];
+
+  const scrollDates = (direction: 'left' | 'right') => {
+    if (datesScrollRef.current) {
+      const scrollAmount = 300;
+      datesScrollRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const scrollSlots = (direction: 'left' | 'right') => {
+    if (slotsScrollRef.current) {
+      const scrollAmount = 300;
+      slotsScrollRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   // Extract unique dates and update filtered slots when date changes
   useEffect(() => {
@@ -242,10 +264,10 @@ export const AddMeetingModal = ({
           {/* Modal */}
           <div className={`relative w-full max-w-xl ${tokens.cardBase} ${tokens.isDark ? "bg-[#0F1217]" : "bg-white"} rounded-[20px] max-h-[90vh] overflow-hidden flex flex-col`}>
             {/* Header */}
-            <div className={`flex items-center justify-between px-6 pt-6 pb-4 flex-shrink-0 rounded-t-2xl ${
+            <div className={`flex flex-wrap items-center justify-between px-6 pt-6 pb-4 flex-shrink-0 rounded-t-2xl ${
               tokens.isDark ? "bg-[#0F1217]" : "bg-[#FFFEF7]"
             }`}>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 <div
                   className={`flex h-9 w-9 items-center justify-center rounded-full ${
                     tokens.isDark ? tokens.buttonGhost : ""
@@ -285,7 +307,35 @@ export const AddMeetingModal = ({
                     }`}>
                       Select Date
                     </label>
-                    <div className="overflow-x-auto scrollbar-hide px-6">
+                    {/* Left Arrow */}
+                    <button
+                      type="button"
+                      onClick={() => scrollDates('left')}
+                      className={`absolute left-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                        tokens.isDark
+                          ? "bg-[#2E3141] text-white hover:bg-[#3E4151]"
+                          : "bg-white text-[#2B3674] hover:bg-gray-100 shadow-md"
+                      }`}
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                    </button>
+                    {/* Right Arrow */}
+                    <button
+                      type="button"
+                      onClick={() => scrollDates('right')}
+                      className={`absolute right-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                        tokens.isDark
+                          ? "bg-[#2E3141] text-white hover:bg-[#3E4151]"
+                          : "bg-white text-[#2B3674] hover:bg-gray-100 shadow-md"
+                      }`}
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                    <div ref={datesScrollRef} className="overflow-x-auto scrollbar-hide px-12">
                       <div className="flex gap-3 pb-2">
                         {uniqueDates.map((date) => {
                           const dateObj = new Date(date);
@@ -324,7 +374,35 @@ export const AddMeetingModal = ({
                     }`}>
                       Available Times
                     </label>
-                    <div className="overflow-x-auto scrollbar-hide px-6">
+                    {/* Left Arrow */}
+                    <button
+                      type="button"
+                      onClick={() => scrollSlots('left')}
+                      className={`absolute left-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                        tokens.isDark
+                          ? "bg-[#2E3141] text-white hover:bg-[#3E4151]"
+                          : "bg-white text-[#2B3674] hover:bg-gray-100 shadow-md"
+                      }`}
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                    </button>
+                    {/* Right Arrow */}
+                    <button
+                      type="button"
+                      onClick={() => scrollSlots('right')}
+                      className={`absolute right-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                        tokens.isDark
+                          ? "bg-[#2E3141] text-white hover:bg-[#3E4151]"
+                          : "bg-white text-[#2B3674] hover:bg-gray-100 shadow-md"
+                      }`}
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                    <div ref={slotsScrollRef} className="overflow-x-auto scrollbar-hide px-12">
                       <div className="flex gap-3 pb-2">
                         {filteredSlots.map((slot, idx) => (
                           <button
@@ -422,7 +500,7 @@ export const AddMeetingModal = ({
                       <button
                         type="button"
                         onClick={() => setIsProjectOpen(!isProjectOpen)}
-                        className={`${inputClass} pe-12 text-left flex items-center justify-between ${
+                        className={`${inputClass} pe-12 text-left flex flex-wrap items-center justify-between ${
                           !projectName ? "text-black" : ""
                         }`}
                       >
@@ -478,7 +556,7 @@ export const AddMeetingModal = ({
                       <button
                         type="button"
                         onClick={() => setIsTaskOpen(!isTaskOpen)}
-                        className={`${inputClass} pe-12 text-left flex items-center justify-between ${
+                        className={`${inputClass} pe-12 text-left flex flex-wrap items-center justify-between ${
                           !selectedTaskName ? "text-black" : ""
                         }`}
                       >
@@ -571,7 +649,7 @@ export const AddMeetingModal = ({
                     : "border border-[#071FD7] text-[#071FD7] hover:bg-[#071FD7]/10 bg-white"
                 }`}
               >
-                Back
+                Cancel
               </button>
             </div>
           </div>

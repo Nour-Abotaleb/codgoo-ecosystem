@@ -61,10 +61,10 @@ export const ChangeEmailModal = ({
           {/* Modal */}
           <div className={`relative w-full max-w-xl ${tokens.cardBase} ${tokens.isDark ? "bg-[#0F1217]" : "bg-white"} rounded-[20px] max-h-[90vh] overflow-hidden flex flex-col`}>
             {/* Header */}
-            <div className={`flex items-center justify-between px-6 pt-6 pb-4 flex-shrink-0 rounded-t-2xl ${
+            <div className={`flex flex-wrap items-center justify-between px-6 pt-6 pb-4 flex-shrink-0 rounded-t-2xl ${
               tokens.isDark ? "bg-[#0F1217]" : "bg-[#FFFEF7]"
             }`}>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 <div className={`flex h-9 w-9 items-center justify-center rounded-full ${tokens.isDark ? tokens.buttonGhost : ""}`} style={tokens.isDark ? {} : { backgroundColor: APP_COLORS.buttonBackground }}>
                   <EmailIcon className={`h-5 w-5`} style={tokens.isDark ? {} : { color: APP_COLORS.primary }} />
                 </div>
@@ -172,9 +172,9 @@ export const ChangeEmailModal = ({
                       aria-label={isPasswordVisible ? "Hide password" : "Show password"}
                     >
                       {isPasswordVisible ? (
-                        <EyePasswordIcon className={`h-5 w-5 ${tokens.isDark ? "text-white/70" : "text-gray-500"}`} />
+                        <EyePasswordIcon className={`h-5 w-5 ${tokens.isDark ? "text-white/70" : "text-black"}`} />
                       ) : (
-                        <EyePasswordHideIcon className={`h-5 w-5 ${tokens.isDark ? "text-white/70" : "text-gray-500"}`} />
+                        <EyePasswordHideIcon className={`h-5 w-5 ${tokens.isDark ? "text-white/70" : "text-black"}`} />
                       )}
                     </button>
                   </div>

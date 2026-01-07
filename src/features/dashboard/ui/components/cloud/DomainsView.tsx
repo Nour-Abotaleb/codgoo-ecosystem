@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -41,6 +42,7 @@ const renderStatusIcon = (status: DomainItem["status"]) => {
 
 
 export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
+  const { t } = useTranslation("landing");
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<DomainTab>("all");
   const [openActionsId, setOpenActionsId] = useState<string | null>(null);
@@ -182,7 +184,7 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
     }
 
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
           onClick={() => handlePageChange(1)}
@@ -274,7 +276,7 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
             </div> */}
             
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3 text-sm font-medium">
+            <div className="flex flex-wrap items-center gap-3 text-sm font-medium">
               <button
                 type="button"
                 onClick={() => setActiveTab("all")}
@@ -356,7 +358,7 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
                         className="text-sm"
                       >
                         <td className="rounded-l-xl px-6 py-4 transition-colors">
-                          <div className="flex items-center gap-3">
+                          <div className="flex flex-wrap items-center gap-3">
                             <input
                               type="checkbox"
                               className="h-4 w-4 rounded border-[var(--color-border-divider)] bg-transparent accent-[#584ABC] transition-colors"
@@ -373,7 +375,7 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
                         <td className="px-6 py-4 transition-colors">
                           <p className="font-medium">{domain.registrationDate}</p>
                           <p className={`mt-1 text-xs ${tokens.subtleText}`}>
-                            Created via Codgoo Cloud
+                            {t("dashboard.domain.createdViaCodgooCloud")}
                           </p>
                         </td>
                         <td className="px-6 py-4 transition-colors">
@@ -384,7 +386,7 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
                         </td>
                         <td className="px-6 py-4 transition-colors">
                           <span
-                            className={`inline-flex items-center gap-2 rounded-full px-2 py-1 text-sm font-semibold}`}
+                            className={`inline-flex flex-wrap items-center gap-2 rounded-full px-2 py-1 text-sm font-semibold}`}
                           >
                             
                             {(autoRenewStatus[domain.id] ?? domain.autoRenew) ? "Enabled" : "Disabled"}
@@ -401,7 +403,7 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
                           </span>
                         </td>
                         <td className="rounded-r-xl px-6 py-4 transition-colors">
-                          <div className="flex items-center gap-3">
+                          <div className="flex flex-wrap items-center gap-3">
                             <button
                               type="button"
                               className={manageButtonClass}
@@ -445,7 +447,7 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
                                       </li>
                                     ))}
                                     <li className="border-t border-[var(--color-border-divider)] mt-1 pt-1">
-                                      <div className="flex items-center justify-between px-4 py-2">
+                                      <div className="flex flex-wrap items-center justify-between px-4 py-2">
                                         <span className={`text-sm font-medium ${
                                           tokens.isDark ? "text-slate-100" : "text-black"
                                         }`}>
@@ -494,7 +496,7 @@ export const DomainsView = ({ domains, tokens }: DomainsViewProps) => {
             <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-[var(--color-border-divider)] pt-4 text-xs text-[var(--color-sidebar-nav-idle-text)] transition-colors sm:flex-row">
               {renderPagination()}
 
-              <div className="flex items-center gap-2 text-sm text-[var(--color-page-text)]">
+              <div className="flex flex-wrap items-center gap-2 text-sm text-[var(--color-page-text)]">
                 <span>Showing</span>
                 <select className="rounded-lg border border-[var(--color-border-divider)] px-2 py-1 text-sm focus:outline-none">
                   <option value="20">20</option>

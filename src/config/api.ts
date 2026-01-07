@@ -27,6 +27,9 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
       // Remove Authorization header if no token
       delete config.headers.Authorization;
     }
+    // Add Accept-Language header with current language from localStorage
+    const language = localStorage.getItem("locale") || "en";
+    config.headers["Accept-Language"] = language;
   }
   return config;
 });

@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import type { DashboardTokens, DashboardAppId } from "../types";
 import {
   AppBillingIcon,
@@ -20,12 +21,7 @@ type Subscription = {
   readonly meta?: string;
 };
 
-const statsConfig = [
-  { id: "all", label: "All", value: "6", icon: AppBillingIcon },
-  { id: "paid", label: "Paid", value: "3", icon: AppPaidIcon },
-  { id: "unpaid", label: "Unpaid", value: "2", icon: AppUnpaidIcon },
-  { id: "overdue", label: "Overdue", value: "1", icon: AppOverdueIcon },
-] as const;
+// Stats config will be created inside component to use translation
 
 const bundleSubscriptions: Subscription[] = [
   {
@@ -134,8 +130,17 @@ type UnifiedBillingViewProps = {
 };
 
 export const UnifiedBillingView = ({ tokens, activeAppId }: UnifiedBillingViewProps) => {
+  const { t } = useTranslation("landing");
   const isDark = tokens.isDark;
   const colors = getAppColors(activeAppId);
+
+  // Stats config with translations
+  const statsConfig = [
+    { id: "all", label: t("dashboard.overview.all"), value: "6", icon: AppBillingIcon },
+    { id: "paid", label: t("dashboard.status.paid"), value: "3", icon: AppPaidIcon },
+    { id: "unpaid", label: t("dashboard.status.unpaid"), value: "2", icon: AppUnpaidIcon },
+    { id: "overdue", label: t("dashboard.status.overdue"), value: "1", icon: AppOverdueIcon },
+  ] as const;
 
   // Combine all subscriptions
   const allSubscriptions = useMemo(() => {
@@ -151,7 +156,7 @@ export const UnifiedBillingView = ({ tokens, activeAppId }: UnifiedBillingViewPr
           return (
             <div
               key={stat.id}
-              className={`${tokens.cardBase} rounded-[20px] p-6 transition-colors ${isDark ? "!bg-[0F1217]" : "!bg-white"}`}
+              className={`${tokens.cardBase} rounded-[20px] p-6 transition-colors ${isDark ? "!bg-[0F1217]" : ""}`}
             >
               <div className="flex flex-col items-start gap-3">
                 <div className="">
@@ -177,10 +182,10 @@ export const UnifiedBillingView = ({ tokens, activeAppId }: UnifiedBillingViewPr
               style={{ backgroundColor: isDark ? colors.cardBgDark : colors.cardBg }}
             >
               <div className="flex flex-col gap-3 px-4 py-4">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between">
                   <span className={`text-sm font-medium ${isDark ? "text-white/80" : "text-[#4B6470]"}`}>{sub.invoiceCode}</span>
                   <span className={`px-4 py-1.5 rounded-full text-sm font-medium ${statusBadgeClass(sub.status)}`}>
-                    {sub.status}
+                    {sub.status === "closed" ? t("dashboard.billing.closed") : sub.status === "active" ? t("dashboard.billing.active") : t("dashboard.billing.pending")}
                   </span>
                 </div>
 
@@ -191,7 +196,7 @@ export const UnifiedBillingView = ({ tokens, activeAppId }: UnifiedBillingViewPr
                   <span className={`text-xs font-semibold mb-[2px] ${isDark ? "text-white/70" : "text-[#4B6470]"}`}>{sub.currency}</span>
                 </div>
 
-                <div className="flex items-center gap-2 text-sm font-semibold">
+                <div className="flex flex-wrap items-center gap-2 text-sm font-semibold">
                   {sub.planName === "Professional Bundle" ? (
                     <FilledBundleSubscriptionsIcon className={`h-4 w-4`} style={{ color: isDark ? "rgba(255,255,255,0.8)" : colors.iconColor }} />
                   ) : (
@@ -200,13 +205,13 @@ export const UnifiedBillingView = ({ tokens, activeAppId }: UnifiedBillingViewPr
                   <span style={{ color: isDark ? "white" : colors.iconColor }}>{sub.planName}</span>
                 </div>
 
-                <div className="flex items-center justify-between text-xs text-[#7A8A92]">
-                  <span className={isDark ? "text-white/60" : "text-[#7A8A92]"}>{sub.meta ?? "bundle"}</span>
-                  <span className={isDark ? "text-white/60" : "text-[#7A8A92]"}>Due date: {sub.dueDate}</span>
+                <div className="flex flex-wrap items-center justify-between text-xs text-[#7A8A92]">
+                  <span className={isDark ? "text-white/60" : "text-[#7A8A92]"}>{sub.meta ?? t("dashboard.billing.bundle")}</span>
+                  <span className={isDark ? "text-white/60" : "text-[#7A8A92]"}>{t("dashboard.invoice.dueDate")}: {sub.dueDate}</span>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 px-4 pb-4">
+              <div className="flex flex-wrap items-center gap-3 px-4 pb-4">
                 <button
                   type="button"
                   className="flex-1 rounded-full px-3 py-2 text-sm font-medium text-white transition-colors"
@@ -214,7 +219,7 @@ export const UnifiedBillingView = ({ tokens, activeAppId }: UnifiedBillingViewPr
                   onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = colors.buttonHover)}
                   onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = colors.buttonBg)}
                 >
-                  View Apps
+                  {t("dashboard.billing.viewApps")}
                 </button>
                 <button
                   type="button"
@@ -237,7 +242,7 @@ export const UnifiedBillingView = ({ tokens, activeAppId }: UnifiedBillingViewPr
                     }
                   }}
                 >
-                  View Invoice
+                  {t("dashboard.invoice.viewInvoice")}
                 </button>
               </div>
             </div>

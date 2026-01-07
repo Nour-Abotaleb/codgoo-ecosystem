@@ -92,7 +92,7 @@ export const ManageDomainView = ({ tokens }: ManageDomainViewProps) => {
       <div className="relative overflow-hidden rounded-[20px]">
         <img src={domainsBg} alt="" className="w-full max-h-[260px] " />
         <div className="absolute inset-0 p-6 flex items-start flex-col justify-center gap-2 text-white">
-          <div className="flex items-center gap-2 text-2xl md:text-3xl lg:text-[44px]">
+          <div className="flex flex-wrap items-center gap-2 text-2xl md:text-3xl lg:text-[44px]">
             <h2 className="font-semibold">Congrats!</h2>
             <p className="font-extralight">
               Your domain checklist is complete
@@ -110,8 +110,8 @@ export const ManageDomainView = ({ tokens }: ManageDomainViewProps) => {
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,2fr)]">
           {/* Domain Overview Card */}
           <div className="rounded-[20px] border border-[var(--color-border-divider)] bg-[var(--color-shell-bg)] px-6 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center justify-between">
+              <div className="flex flex-wrap items-center gap-3">
                 <span className={`flex h-12 w-12 items-center justify-center rounded-full ${
                   tokens.isDark
                     ? "bg-white/10"
@@ -124,7 +124,7 @@ export const ManageDomainView = ({ tokens }: ManageDomainViewProps) => {
                 <p className="text-lg font-semibold text-[var(--color-page-text)]">{domain.name}</p>
               </div>
               <div>
-                <div className="mt-1 flex items-center gap-2 bg-[#E2FFE9] rounded-full px-4 py-1.5">
+                <div className="mt-1 flex flex-wrap items-center gap-2 bg-[#E2FFE9] rounded-full px-4 py-1.5">
                   <span className="w-2 h-2 rounded-full bg-[#34C759]"></span>
                   <span className="text-sm font-medium text-[#34C759]">{domain.status}</span>
                 </div>
@@ -161,26 +161,26 @@ export const ManageDomainView = ({ tokens }: ManageDomainViewProps) => {
               </button>
             </div>
             <dl className="mt-6 flex flex-col gap-4 text-sm">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-wrap items-center justify-between">
                 <dt className={tokens.subtleText}>Trademark Monitoring</dt>
                 <dd className="bg-[#E2FFE9] text-[#34C759] inline-flex items-center rounded-full px-4 py-2 text-xs font-semibold">Enabled</dd>
               </div>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-wrap items-center justify-between">
                 <dt className={tokens.subtleText}>Domain Privacy</dt>
                 <dd className="bg-[#FFFCD4] text-[#82880E] inline-flex items-center rounded-full px-4 py-2 text-xs font-semibold">Disabled</dd>
               </div>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-wrap items-center justify-between">
                 <dt className={tokens.subtleText}>Domain Lock</dt>
                 <dd className="bg-[#E2FFE9] text-[#34C759] inline-flex items-center rounded-full px-4 py-2 text-xs font-semibold">No Threats</dd>
               </div>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-wrap items-center justify-between">
                 <dt className={tokens.subtleText}>Expiry Alerts</dt>
                 <dd className="bg-[#E2FFE9] text-[#34C759] inline-flex items-center rounded-full px-4 py-2 text-xs font-semibold">Enabled</dd>
               </div>
             </dl>
             <button
               type="button"
-              className="mt-6 inline-flex items-center gap-2 cursor-pointer text-sm md:text-base font-medium text-[#8D79FF] transition hover:text-[#ABA0FF]"
+              className="mt-6 inline-flex flex-wrap items-center gap-2 cursor-pointer text-sm md:text-base font-medium text-[#8D79FF] transition hover:text-[#ABA0FF]"
             >
               <BrandProtectionIcon className="h-4 w-4" />
               Learn More About Brand Protection
@@ -206,7 +206,7 @@ export const ManageDomainView = ({ tokens }: ManageDomainViewProps) => {
                 <div className="flex items-center cursor-pointer">
                   <button
                     type="button"
-                    className={`bg-white text-[#584ABC] cursor-pointer flex items-center gap-2 rounded-full px-10 py-3 text-sm font-semibold`}
+                    className={`bg-white text-[#584ABC] cursor-pointer flex flex-wrap items-center gap-2 rounded-full px-10 py-3 text-sm font-semibold`}
                   >
                     Try Now
                   </button>
@@ -234,11 +234,11 @@ export const ManageDomainView = ({ tokens }: ManageDomainViewProps) => {
                 Quickly manage your DNS records and verify domain ownership.
               </p>
               <div className="mt-4 flex flex-col gap-3 text-sm">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between">
                   <span className="text-[var(--color-page-text)]">ns1.dns-parking.com</span>
                   <span className="bg-[#E2FFE9] text-[#34C759] inline-flex items-center rounded-full px-4 py-2 text-xs font-semibold">Active</span>
                 </div>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between">
                   <span className="text-[var(--color-page-text)]">ns2.dns-parking.com</span>
                   <span className="bg-[#E2FFE9] text-[#34C759] inline-flex items-center rounded-full px-4 py-2 text-xs font-semibold">Active</span>
                 </div>
@@ -248,13 +248,13 @@ export const ManageDomainView = ({ tokens }: ManageDomainViewProps) => {
             <div>
               <h3 className={`text-lg md:text-xl font-semibold ${tokens.isDark ? "text-[var(--color-page-text)]" : "text-[#2B3674]"}`}>Contact Information</h3>
               <div className={`mt-2 text-sm ${tokens.subtleText}`}>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <span className={`${tokens.buttonGhost} flex h-8 w-8 items-center justify-center rounded-full`}>
                     <EmailIcon className="h-4 w-4" />
                   </span>
                   <p>aml****@gmail.com</p>
                 </div>
-                <div className="flex items-center gap-2 mt-2">
+                <div className="flex flex-wrap items-center gap-2 mt-2">
                   <span className={`${tokens.buttonGhost} flex h-8 w-8 items-center justify-center rounded-full`}>
                     <PhoneIcon className="h-4 w-4" />
                   </span>
@@ -265,7 +265,7 @@ export const ManageDomainView = ({ tokens }: ManageDomainViewProps) => {
 
             <div>
               <h3 className={`text-lg md:text-xl font-semibold ${tokens.isDark ? "text-[var(--color-page-text)]" : "text-[#2B3674]"}`}>Privacy Protection</h3>
-              <div className="mt-3 flex items-center justify-between">
+              <div className="mt-3 flex flex-wrap items-center justify-between">
                 <span className={`text-sm font-medium ${tokens.subtleText}`}>Status</span>
                 <span className={`bg-[#EEEDF8] text-[#362D73] inline-flex items-center rounded-full px-4 py-2 text-xs font-semibold`}>
                   Enabled

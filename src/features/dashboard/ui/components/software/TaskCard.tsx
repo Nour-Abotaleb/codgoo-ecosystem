@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import type { DashboardTokens } from "../../types";
 
 export type TaskItem = {
@@ -103,6 +104,7 @@ const getInitials = (name: string) => {
 };
 
 export const TaskCard = ({ task, tokens, onViewTask, showViewButton = true, customButtons }: TaskCardProps) => {
+  const { t } = useTranslation("landing");
   const statusColors = {
     Completed: tokens.isDark ? "bg-green-500/10 text-green-400" : "bg-green-100 text-green-700",
     "In Progress": tokens.isDark ? "bg-blue-500/10 text-blue-400" : "bg-blue-100 text-blue-700",
@@ -150,7 +152,7 @@ export const TaskCard = ({ task, tokens, onViewTask, showViewButton = true, cust
                 {task.description}
               </p>
               {/* Team Section */}
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <span className={`text-sm md:text-base font-medium ${tokens.subtleText} text-[#718EBF]`}>team:</span>
                 <div className="flex -space-x-2">
                   {task.team.slice(0, 3).map((member, index) => (
@@ -188,17 +190,17 @@ export const TaskCard = ({ task, tokens, onViewTask, showViewButton = true, cust
 
       {/* Bottom Section with Different Background */}
       {(showViewButton || customButtons) && (
-        <div className={`flex items-center justify-between px-6 py-4 border-t border-dashed ${
+        <div className={`flex flex-wrap items-center justify-between px-6 py-4 border-t border-dashed ${
           tokens.isDark ? "border-[#2E3141] bg-[#0F1217]" : "border-[#E2E8FF] bg-[#FFFEF7]"
         }`}>
           <div className="flex items-center gap-6">
             <span className={`text-base text-[#718EBF]`}>
-              Created at: <span className={tokens.isDark ? "text-white" : "text-black"}>
+              {t("dashboard.task.createdAt")}: <span className={tokens.isDark ? "text-white" : "text-black"}>
                 {task.createdDate}
               </span>
             </span>
             <span className={`text-base text-[#718EBF]`}>
-              Due date: <span className={tokens.isDark ? "text-white" : "text-black"}>{task.dueDate}</span>
+              {t("dashboard.task.dueDate")}: <span className={tokens.isDark ? "text-white" : "text-black"}>{task.dueDate}</span>
             </span>
           </div>
           {customButtons ? (
@@ -213,7 +215,7 @@ export const TaskCard = ({ task, tokens, onViewTask, showViewButton = true, cust
                   : "bg-[#071FD7] text-white hover:bg-[#071FD7]/90"
               }`}
             >
-              View Task
+              {t("dashboard.task.viewTask")}
             </button>
           ) : null}
         </div>

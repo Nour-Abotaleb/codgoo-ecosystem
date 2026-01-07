@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import { PlusCircleIcon, PDFIcon, FileCodeIcon, CopyIcon, EyeFilledIcon, DocstIcon, FilePDFIcon, ImgIcon, EyeIcon } from "@utilities/icons";
 import screenshotImage from "@assets/images/software/screenshot.svg";
@@ -40,6 +41,7 @@ const getFileIcon = (fileType: AttachmentItem["fileType"]) => {
 };
 
 export const AttachmentsView = ({ tokens, projectId }: AttachmentsViewProps) => {
+  const { t } = useTranslation("landing");
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [isAddAttachmentsModalOpen, setIsAddAttachmentsModalOpen] = useState(false);
 
@@ -127,21 +129,21 @@ export const AttachmentsView = ({ tokens, projectId }: AttachmentsViewProps) => 
         <button
           type="button"
           onClick={() => setIsAddAttachmentsModalOpen(true)}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-full font-medium transition-colors cursor-pointer ${
+          className={`flex flex-wrap items-center gap-2 px-4 py-2.5 rounded-full font-medium transition-colors cursor-pointer ${
             tokens.isDark
               ? "bg-[#071FD7] text-white hover:bg-[#071FD7]/90"
               : "bg-[#071FD7] text-white hover:bg-[#071FD7]/90"
           }`}
         >
           <PlusCircleIcon className="h-5 w-5 text-white" />
-          <span>Add Attachment</span>
+          <span>{t("dashboard.attachment.addAttachment")}</span>
         </button>
       </div>
 
       {/* Attachments Grid */}
       {isLoading ? (
         <div className="text-center py-12">
-          <p className={tokens.isDark ? "text-white/50" : "text-[#A3AED0]"}>Loading attachments...</p>
+          <p className={tokens.isDark ? "text-white/50" : "text-[#A3AED0]"}>{t("dashboard.attachment.loadingAttachments")}</p>
         </div>
       ) : attachmentsData.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -201,8 +203,8 @@ export const AttachmentsView = ({ tokens, projectId }: AttachmentsViewProps) => 
                 {/* Content Area */}
                 <div className={`px-4 pb-4 flex flex-col gap-3 ${tokens.isDark ? "border-b border-dashed border-[#2E3141]" : "border-b border-dashed border-[#E2E8FF]"}`}>
                   {/* File Name with Toggle */}
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex flex-wrap items-center gap-2 flex-1 min-w-0">
                       {isDocx ? (
                         <svg
                           className="h-5 w-5 flex-shrink-0"
@@ -271,22 +273,22 @@ export const AttachmentsView = ({ tokens, projectId }: AttachmentsViewProps) => 
               </div>
 
             {/* Metadata */}
-            <div className={`flex items-center justify-between px-4 py-2 ${tokens.isDark ? "bg-transparent " : "bg-[#FFFEF7]"}`}>
+            <div className={`flex flex-wrap items-center justify-between px-4 py-2 ${tokens.isDark ? "bg-transparent " : "bg-[#FFFEF7]"}`}>
               <div className="flex items-start flex-col gap-2">
                 <span className={`text-sm font-medium ${tokens.isDark ? "text-white" : "text-[#071FD7]"}`}>
                   {attachment.uploadedBy}
                 </span>
-                <span className={`text-sm ${tokens.isDark ? "text-white/60" : "text-[#718EBF]"}`}>Uploaded by</span>
+                <span className={`text-sm ${tokens.isDark ? "text-white/60" : "text-[#718EBF]"}`}>{t("dashboard.attachment.uploadedBy")}</span>
               </div>
               <div className="flex items-start flex-col gap-2">
                 <span className={`text-sm font-medium ${tokens.isDark ? "text-white" : "text-[#071FD7]"}`}>
                   {attachment.date}
                 </span>
-                <span className={`text-sm ${tokens.isDark ? "text-white/60" : "text-[#718EBF]"}`}>Date</span>
+                <span className={`text-sm ${tokens.isDark ? "text-white/60" : "text-[#718EBF]"}`}>{t("dashboard.attachment.date")}</span>
               </div>
               {/* Manage Section */}
               <div className="flex flex-col gap-2 items-start">
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <button
                     type="button"
                     className="p-1.5 rounded-full transition-colors"
@@ -304,7 +306,7 @@ export const AttachmentsView = ({ tokens, projectId }: AttachmentsViewProps) => 
                     <CopyIcon className="h-4 w-4 text-[#718EBF]" />
                   </button>
                 </div>
-                <span className={`text-sm text-[#718EBF]`}>Manage</span>
+                <span className={`text-sm text-[#718EBF]`}>{t("dashboard.project.manage")}</span>
               </div>
             </div>
           </div>
@@ -313,7 +315,7 @@ export const AttachmentsView = ({ tokens, projectId }: AttachmentsViewProps) => 
       </div>
       ) : (
         <div className="text-center py-12">
-          <p className={tokens.isDark ? "text-white/50" : "text-[#A3AED0]"}>No attachments found</p>
+          <p className={tokens.isDark ? "text-white/50" : "text-[#A3AED0]"}>{t("dashboard.attachment.noAttachmentsFound")}</p>
         </div>
       )}
 

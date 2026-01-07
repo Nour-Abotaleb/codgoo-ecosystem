@@ -166,7 +166,7 @@ const ManageNameserverCheckoutPanel = ({
                 key={addOn.id}
                 className="flex cursor-pointer items-center justify-between gap-2 px-4 py-3 transition-colors hover:border-[var(--color-sidebar-border)]"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                   <input
                     type="checkbox"
                     checked={!!selectedAddOns[addOn.id]}
@@ -187,7 +187,7 @@ const ManageNameserverCheckoutPanel = ({
           <div className={`flex flex-col gap-3 text-base ${
             tokens.isDark ? "text-[var(--color-page-text)]" : "text-[#A3AED0]"
           }`}>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between">
               <span>Base Domain</span>
               <span>
                 <span className={tokens.isDark ? "" : "text-[#3E3484]"}>
@@ -198,7 +198,7 @@ const ManageNameserverCheckoutPanel = ({
             </div>
             {nameserverAddOns.map((addOn) =>
               selectedAddOns[addOn.id] ? (
-                <div key={addOn.id} className="flex items-center justify-between text-sm">
+                <div key={addOn.id} className="flex flex-wrap items-center justify-between text-sm">
                   <span>{addOn.label}</span>
                   <span>
                     +
@@ -210,7 +210,7 @@ const ManageNameserverCheckoutPanel = ({
                 </div>
               ) : null
             )}
-            <div className={`flex items-center justify-between text-base font-semibold ${
+            <div className={`flex flex-wrap items-center justify-between text-base font-semibold ${
               tokens.isDark ? "text-[var(--color-page-text)]" : "text-[#A3AED0]"
             }`}>
               <span>Total</span>
@@ -227,7 +227,7 @@ const ManageNameserverCheckoutPanel = ({
         <div className="mt-8 flex justify-end">
           <button
             type="button"
-            className={`${tokens.buttonFilled} inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold`}
+            className={`${tokens.buttonFilled} inline-flex flex-wrap items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold`}
           >
             <ProceedIcon className="h-5 w-5" />
             Proceed To Checkout
@@ -330,7 +330,7 @@ const ManageNameserversSearchPanel = ({
                     aria-disabled={isDisabled}
                   >
                     <div className="flex flex-col gap-2">
-                      <div className="flex items-center gap-3">
+                      <div className="flex flex-wrap items-center gap-3">
                         <span className={`flex h-10 w-10 items-center justify-center rounded-full ${
                           tokens.isDark
                             ? "bg-white/10"
@@ -360,7 +360,7 @@ const ManageNameserversSearchPanel = ({
                       {item.available ? (
                         <button
                           type="button"
-                          className={`${tokens.buttonFilled} inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-light`}
+                          className={`${tokens.buttonFilled} inline-flex flex-wrap items-center gap-2 rounded-full px-5 py-2 text-sm font-light`}
                           onClick={(event) => {
                             event.stopPropagation();
                             onOpenCheckout(item);

@@ -103,7 +103,7 @@ const WebsiteCard = ({
       </div>
 
       {/* Technology Type */}
-      <div className="mb-6 flex items-center gap-2">
+      <div className="mb-6 flex flex-wrap items-center gap-2">
         <TechIcon 
           className={`h-4 w-4 ${tokens.isDark ? "" : "[&_path]:fill-[#584ABC]"}`}
         />
@@ -118,7 +118,7 @@ const WebsiteCard = ({
             e.stopPropagation();
             navigate(`/dashboard/manage-website/${site.id}`);
           }}
-          className={`${tokens.isDark ? "bg-transparent stroke" : "bg-white"} transition text-[#584ABC] w-[100%] flex justify-center cursor-pointer flex items-center gap-2 rounded-full px-8 py-3 text-sm md:text-base font-semibold`}
+          className={`${tokens.isDark ? "bg-transparent stroke" : "bg-white"} transition text-[#584ABC] w-[100%] flex justify-center cursor-pointer flex flex-wrap items-center gap-2 rounded-full px-8 py-3 text-sm md:text-base font-semibold`}
         >
           Dashboard
         </button>
@@ -194,7 +194,7 @@ export const WebsitesView = ({ sites, tokens }: WebsitesViewProps) => {
     }
 
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
           onClick={() => handlePageChange(1)}
@@ -299,7 +299,7 @@ export const WebsitesView = ({ sites, tokens }: WebsitesViewProps) => {
               <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-[var(--color-border-divider)] pt-4 text-xs text-[var(--color-sidebar-nav-idle-text)] transition-colors sm:flex-row">
                 {renderPagination()}
 
-                <div className="flex items-center gap-2 text-sm text-[var(--color-page-text)]">
+                <div className="flex flex-wrap items-center gap-2 text-sm text-[var(--color-page-text)]">
                   <span>Showing</span>
                   <select className="rounded-lg border border-[var(--color-border-divider)] px-2 py-1 text-sm focus:outline-none">
                     <option value="12">12</option>

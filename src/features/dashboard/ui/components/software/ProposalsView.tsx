@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import type { DashboardTokens } from "../../types";
 import type { ProjectCardData } from "./ProjectCard";
@@ -23,12 +24,7 @@ type ProposalItem = {
 type SummaryTab = "summary" | "discussion";
 type TabId = "overview" | "tasks" | "invoices" | "attachments";
 
-const tabs: readonly { id: TabId; label: string; icon: React.ComponentType<React.SVGProps<SVGSVGElement>> }[] = [
-  { id: "overview", label: "OverView", icon: OverviewIcon },
-  { id: "tasks", label: "Tasks", icon: TasksIcon },
-  { id: "invoices", label: "Invoices", icon: ProjectInvoiceIcon },
-  { id: "attachments", label: "Attachments", icon: AttachmentsIcon }
-];
+// Tabs will be created inside component to use translation
 
 const proposalItems: readonly ProposalItem[] = [
   {
@@ -57,8 +53,17 @@ const subTotal = proposalItems.reduce((sum, item) => sum + item.amount, 0);
 const total = subTotal;
 
 export const ProposalsView = ({ tokens, project }: ProposalsViewProps) => {
+  const { t } = useTranslation("landing");
   const navigate = useNavigate();
   const [activeSummaryTab, setActiveSummaryTab] = useState<SummaryTab>("summary");
+  
+  // Tabs with translations
+  const tabs: readonly { id: TabId; label: string; icon: React.ComponentType<React.SVGProps<SVGSVGElement>> }[] = [
+    { id: "overview", label: t("dashboard.tabs.overview"), icon: OverviewIcon },
+    { id: "tasks", label: t("dashboard.tabs.tasks"), icon: TasksIcon },
+    { id: "invoices", label: t("dashboard.tabs.invoices"), icon: ProjectInvoiceIcon },
+    { id: "attachments", label: t("dashboard.tabs.attachments"), icon: AttachmentsIcon }
+  ];
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -84,7 +89,7 @@ export const ProposalsView = ({ tokens, project }: ProposalsViewProps) => {
               key={tab.id}
               type="button"
               onClick={() => handleTabClick(tab.id)}
-              className={`pb-2 px-1 flex items-center gap-2 text-sm md:text-base font-medium transition-colors whitespace-nowrap cursor-pointer ${
+              className={`pb-2 px-1 flex flex-wrap items-center gap-2 text-sm md:text-base font-medium transition-colors whitespace-nowrap cursor-pointer ${
                 isActive
                   ? tokens.isDark
                     ? "text-white border-b-3 border-white"
@@ -112,13 +117,13 @@ export const ProposalsView = ({ tokens, project }: ProposalsViewProps) => {
         </div>
         <button
           type="button"
-          className={`flex items-center gap-2 px-8 py-2 rounded-full font-medium transition-colors cursor-pointer ${
+          className={`flex flex-wrap items-center gap-2 px-8 py-2 rounded-full font-medium transition-colors cursor-pointer ${
             tokens.isDark
               ? "border border-white/70 text-white/90"
               : "border border-[#071FD7] text-[#071FD7]"
           }`}
         >
-          <span>Download</span>
+          <span>{t("dashboard.proposal.download")}</span>
         </button>
       </div>
 
@@ -132,11 +137,11 @@ export const ProposalsView = ({ tokens, project }: ProposalsViewProps) => {
                 <thead>
                   <tr className={`border-b ${tokens.isDark ? "border-white/20" : "border-[#E6E6E6]"}`}>
                     <th className={`text-left py-4 px-6 text-sm font-semibold ${tokens.subtleText}`}>#</th>
-                    <th className={`text-left py-4 px-6 text-sm font-semibold ${tokens.subtleText}`}>ITEM</th>
-                    <th className={`text-center py-4 px-6 text-sm font-semibold ${tokens.subtleText}`}>Qty</th>
-                    <th className={`text-right py-4 px-6 text-sm font-semibold ${tokens.subtleText}`}>RATE</th>
-                    <th className={`text-right py-4 px-6 text-sm font-semibold ${tokens.subtleText}`}>TAX</th>
-                    <th className={`text-right py-4 px-6 text-sm font-semibold ${tokens.subtleText}`}>AMOUNT</th>
+                    <th className={`text-left py-4 px-6 text-sm font-semibold ${tokens.subtleText}`}>{t("dashboard.proposal.item")}</th>
+                    <th className={`text-center py-4 px-6 text-sm font-semibold ${tokens.subtleText}`}>{t("dashboard.proposal.qty")}</th>
+                    <th className={`text-right py-4 px-6 text-sm font-semibold ${tokens.subtleText}`}>{t("dashboard.proposal.rate")}</th>
+                    <th className={`text-right py-4 px-6 text-sm font-semibold ${tokens.subtleText}`}>{t("dashboard.proposal.tax")}</th>
+                    <th className={`text-right py-4 px-6 text-sm font-semibold ${tokens.subtleText}`}>{t("dashboard.proposal.amount")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -174,7 +179,7 @@ export const ProposalsView = ({ tokens, project }: ProposalsViewProps) => {
                 <tfoot>
                   <tr>
                     <td colSpan={5} className={`py-4 px-6 text-right font-semibold ${tokens.subtleText} ${tokens.isDark ? "!text-white" : "!text-[#2B3674]"}`}>
-                      Sub Total
+                      {t("dashboard.proposal.subTotal")}
                     </td>
                     <td className={`py-4 px-6 text-right font-semibold ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
                       {formatCurrency(subTotal)}
@@ -182,7 +187,7 @@ export const ProposalsView = ({ tokens, project }: ProposalsViewProps) => {
                   </tr>
                   <tr>
                     <td colSpan={5} className={`py-4 px-6 text-right font-semibold ${tokens.subtleText} ${tokens.isDark ? "!text-white" : "!text-[#2B3674]"}`}>
-                      Total
+                      {t("dashboard.proposal.total")}
                     </td>
                     <td className={`py-4 px-6 text-right font-semibold text-lg ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
                       {formatCurrency(total)}
@@ -231,7 +236,7 @@ export const ProposalsView = ({ tokens, project }: ProposalsViewProps) => {
                     : tokens.subtleText
                 }`}
               >
-                Summary
+                {t("dashboard.proposal.summary")}
               </button>
               <button
                 type="button"
@@ -244,7 +249,7 @@ export const ProposalsView = ({ tokens, project }: ProposalsViewProps) => {
                     : tokens.subtleText
                 }`}
               >
-                Discussion
+                {t("dashboard.proposal.discussion")}
               </button>
             </div>
 
@@ -255,7 +260,7 @@ export const ProposalsView = ({ tokens, project }: ProposalsViewProps) => {
                   {/* TechNova Solutions */}
                   <div className="flex flex-col gap-3">
                     <div className="flex flex-col gap-2">
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <TechNovaIcon className={`w-5 h-5 ${tokens.isDark ? "text-white" : "text-[#071FD7]"}`} />
                         <span className={`font-semibold ${tokens.isDark ? "text-white" : "text-black"}`}>
                           TechNova Solutions
@@ -269,11 +274,11 @@ export const ProposalsView = ({ tokens, project }: ProposalsViewProps) => {
 
                   {/* Proposal Information */}
                   <div className="flex flex-col gap-3">
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <div className="flex flex-wrap items-center gap-2">
                         <ProposalInfoIcon className={`w-auto ${tokens.isDark ? "text-white" : "text-[#071FD7]"}`} />
                       <span className={`font-semibold ${tokens.isDark ? "text-white" : "text-black"}`}>
-                        Proposal Information
+                        {t("dashboard.proposal.proposalInformation")}
                       </span>
                       </div>
                     </div>
@@ -281,12 +286,12 @@ export const ProposalsView = ({ tokens, project }: ProposalsViewProps) => {
 
                   {/* Client */}
                   <div className="flex flex-col gap-3">
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-3">
                       <div className="flex flex-col">
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <ClientIcon className="w-4 h-4" />
                         <span className={`font-semibold ${tokens.isDark ? "text-white" : "text-black"}`}>
-                          Client
+                          {t("dashboard.proposal.client")}
                         </span>
                       </div>
                         <span className={`text-sm ${tokens.isDark ? "text-white/70" : "text-[#68696D]"}`}>
@@ -298,13 +303,13 @@ export const ProposalsView = ({ tokens, project }: ProposalsViewProps) => {
                       </div>
                     </div>
                     <div className="flex flex-col gap-2">
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                        <PhoneIcon className={`w-4 h-4 ${tokens.isDark ? "text-white/70" : "text-[#071FD7]"}`} />
                         <span className={`text-sm ${tokens.isDark ? "text-white/70" : "text-[#071FD7]"}`}>
                           +20 10 8877 5544
                         </span>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <EmailIcon className={`w-4 h-4 ${tokens.isDark ? "text-white/70" : "text-[#071FD7]"}`} />
                         <span className={`text-sm ${tokens.isDark ? "text-white/70" : "text-[#071FD7]"}`}>
                           info@elnile.com

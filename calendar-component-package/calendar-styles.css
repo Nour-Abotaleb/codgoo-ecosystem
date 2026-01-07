@@ -1,0 +1,156 @@
+/* ========================================
+   CALENDAR COMPONENT STYLES
+   ======================================== */
+
+/* Calendar Header Arrows */
+.vc-header .vc-arrow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--vc-header-arrow-color);
+  width: 28px;
+  height: 28px !important;
+  margin: 0;
+  padding: 0;
+  border-radius: 50% !important;
+}
+
+/* RTL Arrow Direction */
+[dir="rtl"] .vc-header .vc-arrow {
+  transform: rotate(180deg) !important;
+}
+
+/* Calendar Title (Month/Year) */
+.vc-title {
+  font-size: 12px;
+  font-weight: 500;
+  color: #000 !important;
+  font-family: "Montserrat Arabic", sans-serif;
+}
+
+/* Day Numbers */
+.vc-day-content {
+  font-size: 14px;
+  font-weight: 500;
+  color: black;
+  font-family: "Montserrat Arabic", sans-serif;
+  outline: none;
+  border-radius: 30%;
+}
+
+/* Weekday Labels (Mon, Tue, etc.) */
+.vc-weekday {
+  color: #b3b3b3 !important;
+  font-size: 10px !important;
+  font-weight: 400 !important;
+}
+
+/* Calendar Background */
+.vc-blue {
+  background-color: #ffffff !important;
+}
+
+/* Highlight Colors */
+.vc-day-content
+  .vc-focusable
+  .vc-focus
+  .vc-attr
+  .vc-attr
+  .vc-highlight-content-solid
+  .vc-blue {
+  color: #ffd036 !important;
+}
+
+/* Selected Day Styling */
+.vc-day.vc-selected .vc-day-content {
+  background-color: #000 !important;
+  color: white !important;
+}
+
+/* Calendar Theme Colors */
+.vc-light.vc-attr,
+.vc-light .vc-attr {
+  --vc-highlight-outline-bg: #ffd036 !important;
+  --vc-highlight-outline-border: #ffd036 !important;
+  --vc-highlight-outline-content-color: #ffd036 !important;
+  --vc-highlight-light-bg: var(--vc-accent-200) !important;
+  --vc-highlight-solid-bg: #ffd036 !important;
+  --vc-highlight-solid-content-color: #ffd036 !important;
+  --vc-dot-bg: var(--vc-accent-600) !important;
+  --vc-bar-bg: var(--vc-accent-600) !important;
+}
+
+/* Focus State */
+.vc-focus:focus-within {
+  outline: 0;
+  box-shadow: #ffd036 0px 0px 0px 2px !important;
+  color: #ffd036 !important;
+}
+
+/* RTL Calendar Arrow Rotation */
+.rtl-calendar ::v-deep(.vc-prev .vc-arrow-content),
+.rtl-calendar ::v-deep(.vc-next .vc-arrow-content) {
+  transform: rotate(180deg) !important;
+  transition: transform 0.3s ease;
+}
+
+/* ======= Responsive: Small Screens ======= */
+@media (max-width: 640px) {
+  .vc-header .vc-arrow {
+    width: 28px !important;
+    height: 28px !important;
+  }
+
+  .vc-title {
+    font-size: 12px !important;
+  }
+
+  .vc-day-content {
+    font-size: 12px !important;
+  }
+
+  .vc-weekday {
+    font-size: 10px !important;
+  }
+
+  .vc-day-content
+    .vc-focusable
+    .vc-focus
+    .vc-attr
+    .vc-attr
+    .vc-highlight-content-solid
+    .vc-blue {
+    color: #ffd036 !important;
+  }
+
+  .vc-day.vc-selected .vc-day-content {
+    background-color: #FFD036 !important;
+    color: #000 !important;
+  }
+
+  .vc-light.vc-attr,
+  .vc-light .vc-attr {
+    --vc-highlight-outline-bg: #ffd036 !important;
+    --vc-highlight-outline-border: #ffd036 !important;
+    --vc-highlight-outline-content-color: #ffd036 !important;
+    --vc-highlight-light-bg: var(--vc-accent-200) !important;
+    --vc-highlight-solid-content-color: var(--vc-white) !important;
+    --vc-dot-bg: var(--vc-accent-600) !important;
+    --vc-bar-bg: var(--vc-accent-600) !important;
+  }
+
+  .vc-focus:focus-within {
+    outline: 0;
+    box-shadow: #ffd036 0px 0px 0px 2px !important;
+    color: #ffd036 !important;
+  }
+
+  .vc-day.vc-selected .vc-day-content {
+    background-color: #FFD036 !important;
+    color: #000 !important;
+  }
+
+  .vc-highlight .vc-highlight-bg-solid {
+    background-color: #ffd036 !important;
+  }
+}

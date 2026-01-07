@@ -16,14 +16,14 @@ export const baseApi = createApi({
         console.warn("No auth token found in localStorage");
       }
       
-      headers.set("Content-Type", "application/json");
       headers.set("Accept", "application/json");
       headers.set("API-Password", "Nf:upZTg^7A?Hj");
+      headers.set("Accept-Language", localStorage.getItem("locale") || "en");
       
       return headers;
     },
   }),
-  tagTypes: [], // Add your cache tags here as needed
+  tagTypes: ["Projects", "Meetings", "Dashboard", "ClientEmails", "PaymentMethods"], // Add your cache tags here as needed
   endpoints: () => ({}), // Endpoints will be injected from feature slices
 });
 

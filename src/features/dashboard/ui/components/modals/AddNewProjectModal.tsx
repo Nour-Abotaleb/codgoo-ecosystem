@@ -1,10 +1,19 @@
 import { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { CloseModalIcon, ProjectIcon, ProductsCalendarIcon, UploadIcon } from "@utilities/icons";
+import { CloseModalIcon, ProjectIcon, UploadIcon } from "@utilities/icons";
 import type { DashboardTokens } from "../../types";
 import { getModalInputClass } from "../../utils/modalStyles";
-import { useGetProjectCategoriesQuery, useCreateProjectMutation } from "@features/dashboard/api/dashboard-api";
+import { useGetProjectCategoriesQuery, useCreateProjectMutation, useGetAvailableSlotsQuery } from "@features/dashboard/api/dashboard-api";
 import toast from "react-hot-toast";
+
+type AvailableSlot = {
+  readonly slot_id: number;
+  readonly date: string;
+  readonly start_time: string;
+  readonly end_time: string;
+  readonly status: boolean;
+};
 
 type AddNewProjectModalProps = {
   readonly tokens: DashboardTokens;
@@ -17,20 +26,29 @@ export const AddNewProjectModal = ({
   isOpen,
   onClose
 }: AddNewProjectModalProps) => {
+  const { t } = useTranslation("landing");
   const navigate = useNavigate();
   const [projectName, setProjectName] = useState("");
   const [categoryId, setCategoryId] = useState("");
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
   const [note, setNote] = useState("");
   const [description, setDescription] = useState("");
   const [attachment, setAttachment] = useState<File | null>(null);
+  const [meetingName, setMeetingName] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedSlot, setSelectedSlot] = useState<AvailableSlot | null>(null);
+  const [filteredSlots, setFilteredSlots] = useState<AvailableSlot[]>([]);
+  const [uniqueDates, setUniqueDates] = useState<string[]>([]);
   const categoryRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const datesScrollRef = useRef<HTMLDivElement>(null);
+  const slotsScrollRef = useRef<HTMLDivElement>(null);
 
-  // Fetch categories from API
+  // Fetch categories and slots from API
   const { data: categoriesData, isLoading: categoriesLoading } = useGetProjectCategoriesQuery();
+  const { data: slotsData } = useGetAvailableSlotsQuery();
   
   // Create project mutation
   const [createProject, { isLoading: isCreating }] = useCreateProjectMutation();
@@ -54,30 +72,84 @@ export const AddNewProjectModal = ({
     };
   }, [isCategoryOpen]);
 
+  // Extract unique dates and update filtered slots when date changes
+  useEffect(() => {
+    if (slotsData?.data) {
+      const slots = slotsData.data as AvailableSlot[];
+      
+      // Get unique dates sorted
+      const dates = Array.from(new Set(slots.map(slot => slot.date))).sort();
+      setUniqueDates(dates);
+      
+      // If a date is selected, filter slots for that date
+      if (selectedDate) {
+        const filtered = slots.filter(slot => slot.date === selectedDate);
+        setFilteredSlots(filtered);
+      }
+    }
+  }, [slotsData, selectedDate]);
+
+  const scrollDates = (direction: 'left' | 'right') => {
+    if (datesScrollRef.current) {
+      const scrollAmount = 300;
+      datesScrollRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const scrollSlots = (direction: 'left' | 'right') => {
+    if (slotsScrollRef.current) {
+      const scrollAmount = 300;
+      slotsScrollRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const handleDateSelect = (date: string) => {
+    setSelectedDate(date);
+    setSelectedSlot(null);
+  };
+
+  const handleSlotSelect = (slot: AvailableSlot) => {
+    setSelectedSlot(slot);
+  };
+
   const handleAdd = async () => {
     if (!projectName.trim()) {
-      toast.error("Please enter project name");
+      toast.error(t("dashboard.messages.pleaseEnterProjectName"));
       return;
     }
     if (!categoryId) {
-      toast.error("Please select a category");
+      toast.error(t("dashboard.messages.pleaseSelectCategory"));
       return;
     }
-    
-    // Validate dates if both are provided
-    if (startTime && endTime) {
-      const start = new Date(startTime);
-      const end = new Date(endTime);
-      if (end <= start) {
-        toast.error("End time must be after start time");
-        return;
-      }
+    if (!meetingName.trim()) {
+      toast.error(t("dashboard.messages.pleaseEnterMeetingName"));
+      return;
     }
 
     try {
       const formData = new FormData();
       formData.append("name", projectName.trim());
       formData.append("category", categoryId);
+      formData.append("meeting_name", meetingName.trim());
+      
+      // Add dates only if provided
+      if (startDate.trim()) {
+        formData.append("start_time", startDate);
+      }
+      if (endDate.trim()) {
+        formData.append("end_time", endDate);
+      }
+      
+      // Add slot_id if a slot is selected
+      if (selectedSlot) {
+        formData.append("slot_id", String(selectedSlot.slot_id));
+      }
       
       if (description.trim()) {
         formData.append("description", description.trim());
@@ -85,25 +157,19 @@ export const AddNewProjectModal = ({
       if (note.trim()) {
         formData.append("note", note.trim());
       }
-      if (startTime.trim()) {
-        formData.append("start_time", startTime.trim());
-      }
-      if (endTime.trim()) {
-        formData.append("end_time", endTime.trim());
-      }
       if (attachment) {
         formData.append("attachment", attachment);
       }
 
       await createProject(formData).unwrap();
       
-      toast.success("Project created successfully!");
+      toast.success(t("dashboard.messages.projectCreatedSuccessfully", { defaultValue: "Project created successfully!" }));
       handleClose();
       
       // Redirect to meetings page
       navigate("/dashboard/meetings");
     } catch (error: any) {
-      const errorMessage = error?.data?.message || error?.data?.errors?.end_time?.[0] || "Failed to create project";
+      const errorMessage = error?.data?.message || t("dashboard.messages.failedToCreateProject");
       toast.error(errorMessage);
     }
   };
@@ -125,12 +191,15 @@ export const AddNewProjectModal = ({
   const handleClose = () => {
     setProjectName("");
     setCategoryId("");
-    setStartTime("");
-    setEndTime("");
     setNote("");
     setDescription("");
     setAttachment(null);
+    setMeetingName("");
+    setStartDate("");
+    setEndDate("");
     setIsCategoryOpen(false);
+    setSelectedDate(null);
+    setSelectedSlot(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -152,15 +221,15 @@ export const AddNewProjectModal = ({
       {/* Modal */}
       <div className={`relative w-full max-w-xl ${tokens.cardBase} ${tokens.isDark ? "bg-[#0F1217]" : "bg-white"} rounded-[20px] max-h-[90vh] overflow-hidden flex flex-col`}>
         {/* Header */}
-        <div className={`flex items-center justify-between px-6 pt-6 pb-4 flex-shrink-0 rounded-t-2xl ${
+        <div className={`flex flex-wrap items-center justify-between px-6 pt-6 pb-4 flex-shrink-0 rounded-t-2xl ${
           tokens.isDark ? "bg-[#0F1217]" : "bg-[#FFFEF7]"
         }`}>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <div className={`flex h-9 w-9 items-center justify-center rounded-full ${tokens.isDark ? tokens.buttonGhost : ""}`} style={tokens.isDark ? {} : { backgroundColor: "#E6E9FB" }}>
               <ProjectIcon className={`h-5 w-5`} style={tokens.isDark ? {} : { color: "#071FD7" }} />
             </div>
             <h2 className={`text-lg md:text-xl font-semibold ${tokens.isDark ? "text-white" : "text-black"}`}>
-              Add New Project
+              {t("dashboard.modal.addNewProject")}
             </h2>
           </div>
           <button
@@ -176,6 +245,141 @@ export const AddNewProjectModal = ({
         {/* Content */}
         <div className="flex-1 overflow-y-auto scrollbar-hide pt-6 px-6">
           <div className="flex flex-col gap-6">
+
+
+            {/* Available Dates - Swiper */}
+            {uniqueDates.length > 0 && (
+              <div className="relative -mx-6">
+                <label className={`text-sm font-medium mb-3 block px-6 ${
+                  tokens.isDark ? "text-white/70" : "text-black"
+                }`}>
+                  {t("dashboard.modal.selectDateOptional")}
+                </label>
+                {/* Left Arrow */}
+                <button
+                  type="button"
+                  onClick={() => scrollDates('left')}
+                  className={`absolute left-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                    tokens.isDark
+                      ? "bg-[#2E3141] text-white hover:bg-[#3E4151]"
+                      : "bg-white text-[#2B3674] hover:bg-gray-100 shadow-md"
+                  }`}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                {/* Right Arrow */}
+                <button
+                  type="button"
+                  onClick={() => scrollDates('right')}
+                  className={`absolute right-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                    tokens.isDark
+                      ? "bg-[#2E3141] text-white hover:bg-[#3E4151]"
+                      : "bg-white text-[#2B3674] hover:bg-gray-100 shadow-md"
+                  }`}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+                <div ref={datesScrollRef} className="overflow-x-auto scrollbar-hide px-12">
+                  <div className="flex gap-3 pb-2">
+                    {uniqueDates.map((date) => {
+                      const dateObj = new Date(date);
+                      const dayName = dateObj.toLocaleDateString("en-US", { weekday: "short" });
+                      const dayNum = dateObj.getDate();
+                      return (
+                        <button
+                          key={date}
+                          type="button"
+                          onClick={() => handleDateSelect(date)}
+                          className={`flex-shrink-0 px-4 py-3 rounded-[15px] text-center min-w-[calc(33.333%-8px)] transition-all ${
+                            selectedDate === date
+                              ? tokens.isDark
+                                ? "bg-[#4318FF] text-white"
+                                : "bg-[#4318FF] text-white"
+                              : tokens.isDark
+                              ? "bg-[#2E3141] text-white/70 hover:bg-[#2E3141]/80"
+                              : "bg-[#F0F0F0] text-[#2B3674] hover:bg-[#E0E0E0]"
+                          }`}
+                        >
+                          <div className="text-xs font-medium">{dayName}</div>
+                          <div className="text-sm font-bold">{dayNum}</div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Available Slots for Selected Date - Swiper */}
+            {selectedDate && filteredSlots.length > 0 && (
+              <div className="relative -mx-6">
+                <label className={`text-sm font-medium mb-3 block px-6 ${
+                  tokens.isDark ? "text-white/70" : "text-black"
+                }`}>
+                  {t("dashboard.modal.availableTimesOptional")}
+                </label>
+                {/* Left Arrow */}
+                <button
+                  type="button"
+                  onClick={() => scrollSlots('left')}
+                  className={`absolute left-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                    tokens.isDark
+                      ? "bg-[#2E3141] text-white hover:bg-[#3E4151]"
+                      : "bg-white text-[#2B3674] hover:bg-gray-100 shadow-md"
+                  }`}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                {/* Right Arrow */}
+                <button
+                  type="button"
+                  onClick={() => scrollSlots('right')}
+                  className={`absolute right-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                    tokens.isDark
+                      ? "bg-[#2E3141] text-white hover:bg-[#3E4151]"
+                      : "bg-white text-[#2B3674] hover:bg-gray-100 shadow-md"
+                  }`}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+                <div ref={slotsScrollRef} className="overflow-x-auto scrollbar-hide px-12">
+                  <div className="flex gap-3 pb-2">
+                    {filteredSlots.map((slot, idx) => (
+                      <button
+                        key={`${slot.slot_id}-${idx}`}
+                        type="button"
+                        onClick={() => handleSlotSelect(slot)}
+                        className={`flex-shrink-0 px-4 py-3 rounded-[15px] text-center min-w-[calc(33.333%-8px)] transition-all ${
+                          selectedSlot?.slot_id === slot.slot_id && selectedSlot?.date === slot.date && selectedSlot?.start_time === slot.start_time
+                            ? tokens.isDark
+                              ? "bg-[#4318FF] text-white"
+                              : "bg-[#4318FF] text-white"
+                            : tokens.isDark
+                            ? "bg-[#2E3141] text-white/70 hover:bg-[#2E3141]/80"
+                            : "bg-[#F0F0F0] text-[#2B3674] hover:bg-[#E0E0E0]"
+                        }`}
+                      >
+                        <div className="text-xs font-medium">
+                          {slot.start_time.substring(0, 5)}
+                        </div>
+                        <div className="text-xs">
+                          {slot.end_time.substring(0, 5)}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Project Name Input */}
             <div className="relative">
               <label 
@@ -185,14 +389,14 @@ export const AddNewProjectModal = ({
                     : "text-black bg-white"
                 }`}
               >
-                Project Name
+                {t("dashboard.modal.projectName")}
               </label>
               <input
                 type="text"
                 value={projectName}
                 onChange={(e) => setProjectName(e.target.value)}
                 className={inputClass}
-                placeholder="Website Review"
+                placeholder={t("dashboard.modal.websiteReview")}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     handleAdd();
@@ -210,14 +414,14 @@ export const AddNewProjectModal = ({
                     : "text-black bg-white"
                 }`}
               >
-                Project Category
+                {t("dashboard.modal.projectCategory")}
               </label>
               <div className="relative" ref={categoryRef}>
                 <button
                   type="button"
                   onClick={() => setIsCategoryOpen(!isCategoryOpen)}
                   disabled={categoriesLoading}
-                  className={`w-full px-4 py-3.5 rounded-[20px] border text-left flex items-center justify-between ${
+                  className={`w-full px-4 py-3.5 rounded-[20px] border text-left flex flex-wrap items-center justify-between ${
                     tokens.isDark
                       ? "bg-transparent border-white/20 text-white"
                       : `bg-transparent border-[#E6E6E6] ${categoryId ? "!text-black" : "!text-black"} placeholder:text-black`
@@ -225,10 +429,10 @@ export const AddNewProjectModal = ({
                 >
                   <span className={categoryId ? "" : "text-black/50"}>
                     {categoriesLoading 
-                      ? "Loading categories..." 
+                      ? t("dashboard.modal.loadingCategories") 
                       : categoryId 
-                        ? categories.find((c: any) => String(c.id) === categoryId)?.name || "Select Category"
-                        : "Select Category"
+                        ? categories.find((c: any) => String(c.id) === categoryId)?.name || t("dashboard.modal.selectCategory")
+                        : t("dashboard.modal.selectCategory")
                     }
                   </span>
                   <svg
@@ -244,13 +448,13 @@ export const AddNewProjectModal = ({
                   <div
                     className={`absolute z-20 w-full mt-2 rounded-[20px] border shadow-lg max-h-60 overflow-y-auto ${
                       tokens.isDark
-                        ? "border-white/20"
+                        ? "bg-[#0F1217] border-white/20"
                         : "bg-white border-[#E6E6E6]"
                     }`}
                   >
                     {categories.length === 0 ? (
-                      <div className="px-4 py-3 text-sm text-center text-gray-500">
-                        No categories available
+                      <div className="px-4 py-3 text-sm text-center text-black">
+                        {t("dashboard.modal.noCategoriesAvailable")}
                       </div>
                     ) : (
                       categories.map((category: any) => (
@@ -276,9 +480,35 @@ export const AddNewProjectModal = ({
               </div>
             </div>
 
-            {/* Start Time and End Time */}
+
+            {/* Meeting Name */}
+            <div className="relative">
+              <label 
+                className={`absolute left-4 -top-2.5 px-2 text-sm font-medium z-10 ${
+                  tokens.isDark 
+                    ? "text-white/70 bg-[#0F1217]" 
+                    : "text-black bg-white"
+                }`}
+              >
+                {t("dashboard.modal.meetingName")}
+              </label>
+              <input
+                type="text"
+                value={meetingName}
+                onChange={(e) => setMeetingName(e.target.value)}
+                className={inputClass}
+                placeholder={t("dashboard.modal.meetingName")}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleAdd();
+                  }
+                }}
+              />
+            </div>
+
+            {/* Start Date and End Date */}
             <div className="grid grid-cols-2 gap-4">
-              {/* Start Time */}
+              {/* Start Date */}
               <div className="relative">
                 <label 
                   className={`absolute left-4 -top-2.5 px-2 text-sm font-medium z-10 ${
@@ -287,15 +517,14 @@ export const AddNewProjectModal = ({
                       : "text-black bg-white"
                   }`}
                 >
-                  Start Time
+                  {t("dashboard.project.startDate")}
                 </label>
                 <div className="relative">
                   <input
                     type="date"
-                    value={startTime}
-                    onChange={(e) => setStartTime(e.target.value)}
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
                     className={inputClass}
-                    placeholder="2026-01-06"
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         handleAdd();
@@ -303,12 +532,14 @@ export const AddNewProjectModal = ({
                     }}
                   />
                   <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                    <ProductsCalendarIcon className={`h-5 w-5 ${tokens.isDark ? "text-white/50" : "text-black/50"}`} />
+                    <svg className={`h-5 w-5 ${tokens.isDark ? "text-white/50" : "text-black/50"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
                   </div>
                 </div>
               </div>
 
-              {/* End Time */}
+              {/* End Date */}
               <div className="relative">
                 <label 
                   className={`absolute left-4 -top-2.5 px-2 text-sm font-medium z-10 ${
@@ -317,15 +548,14 @@ export const AddNewProjectModal = ({
                       : "text-black bg-white"
                   }`}
                 >
-                  End Time
+                  {t("dashboard.modal.endDate")}
                 </label>
                 <div className="relative">
                   <input
                     type="date"
-                    value={endTime}
-                    onChange={(e) => setEndTime(e.target.value)}
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
                     className={inputClass}
-                    placeholder="2026-01-06"
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         handleAdd();
@@ -333,11 +563,15 @@ export const AddNewProjectModal = ({
                     }}
                   />
                   <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                    <ProductsCalendarIcon className={`h-5 w-5 ${tokens.isDark ? "text-white/50" : "text-black/50"}`} />
+                    <svg className={`h-5 w-5 ${tokens.isDark ? "text-white/50" : "text-black/50"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
                   </div>
                 </div>
               </div>
             </div>
+
+
 
             {/* Note */}
             <div className="relative">
@@ -348,13 +582,13 @@ export const AddNewProjectModal = ({
                     : "text-black bg-white"
                 }`}
               >
-                Note
+                {t("dashboard.modal.note")}
               </label>
               <textarea
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 className={`${inputClass} min-h-[80px] resize-none`}
-                placeholder="Add a note"
+                placeholder={t("dashboard.settings.addNote")}
               />
             </div>
 
@@ -367,13 +601,13 @@ export const AddNewProjectModal = ({
                     : "text-black bg-white"
                 }`}
               >
-                Project Description
+                {t("dashboard.modal.projectDescription")}
               </label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 className={`${inputClass} min-h-[100px] resize-none`}
-                placeholder="Description"
+                placeholder={t("dashboard.settings.description")}
               />
             </div>
 
@@ -386,7 +620,7 @@ export const AddNewProjectModal = ({
                     : "text-black bg-white"
                 }`}
               >
-                Attachment (Optional)
+                {t("dashboard.modal.attachmentOptional")}
               </label>
               <label
                 htmlFor="project-file-upload"
@@ -398,7 +632,7 @@ export const AddNewProjectModal = ({
               >
                 <UploadIcon className={`h-8 w-8 ${tokens.isDark ? "text-white/70" : ""}`} />
                 <span className={`text-xs font-medium ${tokens.isDark ? "text-white/70" : "text-[#191D23]"}`}>
-                  Click to upload Attachment (PDF, DOC, DOCX, PNG, JPG)
+                  {t("dashboard.modal.clickToUploadAttachment")}
                 </span>
                 <input
                   id="project-file-upload"
@@ -409,7 +643,7 @@ export const AddNewProjectModal = ({
                   accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
                 />
                 {attachment && (
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className={`text-xs ${tokens.isDark ? "text-white" : "text-black"}`}>
                       {attachment.name}
                     </span>
@@ -421,7 +655,7 @@ export const AddNewProjectModal = ({
                       }}
                       className={`text-xs ${tokens.isDark ? "text-red-400 hover:text-red-300" : "text-red-600 hover:text-red-700"}`}
                     >
-                      Remove
+                      {t("dashboard.modal.remove")}
                     </button>
                   </div>
                 )}
@@ -442,7 +676,7 @@ export const AddNewProjectModal = ({
                 : "bg-[#071FD7] text-white hover:bg-[#071FD7]/90 disabled:opacity-50 disabled:cursor-not-allowed"
             }`}
           >
-            {isCreating ? "Creating..." : "Add New Project"}
+            {isCreating ? t("dashboard.modal.creating") : t("dashboard.modal.addNewProjectRequestMeeting")}
           </button>
           <button
             type="button"
@@ -454,11 +688,10 @@ export const AddNewProjectModal = ({
                 : "border-[#071FD7] text-[#071FD7] hover:bg-[#071FD7]/5 disabled:opacity-50 disabled:cursor-not-allowed"
             }`}
           >
-            Cancel
+            {t("dashboard.modal.cancel")}
           </button>
         </div>
       </div>
     </div>
   );
 };
-

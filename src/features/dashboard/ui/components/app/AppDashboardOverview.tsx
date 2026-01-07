@@ -10,6 +10,7 @@ type AppDashboardOverviewProps = {
   readonly hero: DashboardHeroContent;
   readonly tokens: DashboardTokens;
   readonly onNavigateToMarketplace?: () => void;
+  readonly onGoToSupport?: () => void;
 };
 
 // Donut Chart Component for App Categories
@@ -156,7 +157,7 @@ const CategoryDonutChart = ({
         {items.map((item, index) => {
           const segment = segments[index];
           return (
-            <div key={index} className="flex items-center gap-2">
+            <div key={index} className="flex flex-wrap items-center gap-2">
               {segment.gradient ? (
                 <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: `linear-gradient(135deg, ${segment.gradient.from} 0%, ${segment.gradient.to} 100%)` }}></div>
               ) : (
@@ -209,7 +210,8 @@ export const AppDashboardOverview = ({
   data,
   hero,
   tokens,
-  onNavigateToMarketplace
+  onNavigateToMarketplace,
+  onGoToSupport
 }: AppDashboardOverviewProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const isRTL = i18n.language === "ar";
@@ -303,7 +305,7 @@ export const AppDashboardOverview = ({
               key={stat.id}
               className={`${cardClass} flex flex-col gap-2 px-4 py-7`}
             >
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 <div 
                   className={`flex items-center justify-center rounded-full p-2 ${tokens.isDark ? "bg-[var(--color-icon-surface)]" : ""}`}
                   style={tokens.isDark ? {} : { backgroundColor: bgColor }}
@@ -327,7 +329,7 @@ export const AppDashboardOverview = ({
       {/* Subscriptions Overview */}
       <section>
         <div className={cardClass}>
-          <div className="flex items-center justify-between gap-2 mb-4">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
             <h3 className={`text-lg lg:text-xl font-bold ${tokens.isDark ? "text-[var(--color-page-text)]" : "text-[#2B3674]"}`}>
               Subscriptions Overview
             </h3>
@@ -376,7 +378,7 @@ export const AppDashboardOverview = ({
                         <h4 className="text-base font-semibold text-[var(--color-page-text)] mb-2">
                           {subscription.name}
                         </h4>
-                        <div className="flex items-center justify-between">
+                        <div className="flex flex-wrap items-center justify-between">
                           <div className="flex items-center gap-4">
                             <div className="flex items-center gap-1">
                               {(() => {
@@ -429,7 +431,7 @@ export const AppDashboardOverview = ({
       <section className="grid gap-6 lg:grid-cols-[2fr_1fr]">
         {/* Quick Access */}
         <div className={cardClass}>
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <h3 className={`text-lg lg:text-xl font-bold ${tokens.isDark ? "text-[var(--color-page-text)]" : "text-[#2B3674]"}`}>
               Quick Access
             </h3>
@@ -495,6 +497,7 @@ export const AppDashboardOverview = ({
             <div className="flex items-center w-full mt-auto">
               <button
                 type="button"
+                onClick={onGoToSupport}
                 className="flex h-11 flex-1 items-center justify-center gap-2 rounded-full bg-white px-4 text-sm font-semibold text-[#0F6773] transition hover:opacity-90"
               >
                 <span>Go to Support</span>
@@ -511,7 +514,7 @@ export const AppDashboardOverview = ({
       <section className="grid gap-6 lg:grid-cols-2">
         {/* App Categories */}
         <div className={`${cardClass} overflow-hidden`}>
-          <div className="flex items-center justify-between gap-2 mb-4">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
             <h3 className={`text-lg lg:text-xl font-bold ${tokens.isDark ? "text-[var(--color-page-text)]" : "text-[#2B3674]"}`}>
               App Categories
             </h3>
@@ -523,7 +526,7 @@ export const AppDashboardOverview = ({
 
         {/* Recent Activity */}
         <div className={cardClass}>
-          <div className="flex items-center justify-between gap-2 mb-4">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
             <h3 className={`text-lg lg:text-xl font-bold ${tokens.isDark ? "text-[var(--color-page-text)]" : "text-[#2B3674]"}`}>
               Recent Activity
             </h3>
