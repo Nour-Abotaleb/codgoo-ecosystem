@@ -116,7 +116,7 @@ export const ServerServicesView = ({
     }
 
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
           onClick={() => handlePageChange(1)}
@@ -263,10 +263,10 @@ export const ServerServicesView = ({
                 return (
                   <tr key={service.id} className="text-sm">
                     <td className={`whitespace-nowrap px-6 py-3 pe-6 rounded-l-xl  transition-colors ${tokens.isDark ? "bg-[#0F1217]" : ""}`}>
-                      <div className="flex items-center gap-3">
+                      <div className="flex flex-wrap items-center gap-3">
                         <input
                           type="checkbox"
-                          className="h-4 w-4 rounded border-[var(--color-border-divider)] bg-transparent accent-[#584ABC] text-gray-500 transition-colors"
+                          className="h-4 w-4 rounded border-[var(--color-border-divider)] bg-transparent accent-[#584ABC] text-black transition-colors"
                           aria-label={`Select ${service.product}`}
                         />
                         <div className="flex gap-1 font-medium">
@@ -299,7 +299,7 @@ export const ServerServicesView = ({
                       </span>
                     </td>
                     <td className="whitespace-nowrap px-6 py-3 rounded-r-xl  transition-colors">
-                      <div className="flex items-center gap-3">
+                      <div className="flex flex-wrap items-center gap-3">
                         <button
                           type="button"
                           className={manageButtonClass}
@@ -328,7 +328,7 @@ export const ServerServicesView = ({
           <div className="mt-6 flex flex-col items-center justify-between gap-4 border-t border-[var(--color-border-divider)] pt-4 text-xs text-[var(--color-sidebar-nav-idle-text)] transition-colors sm:flex-row">
             {renderPagination()}
 
-            <div className="flex items-center gap-2 text-sm text-[var(--color-page-text)]">
+            <div className="flex flex-wrap items-center gap-2 text-sm text-[var(--color-page-text)]">
               <span>Showing</span>
               <select className="rounded-lg border border-[var(--color-border-divider)] px-2 py-1 text-sm focus:outline-none">
                 <option value="20">20</option>

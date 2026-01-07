@@ -63,7 +63,7 @@ export const BundleSelectionView = ({ tokens }: BundleSelectionViewProps) => {
   }, [data]);
   return (
     <div className="flex flex-col gap-8">
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <div className="flex flex-col gap-2 flex-1">
           <h1 className={`text-2xl font-bold ${tokens.isDark ? "text-white" : "text-[#142133]"}`}>
             Build Your Custom Bundle
@@ -75,7 +75,7 @@ export const BundleSelectionView = ({ tokens }: BundleSelectionViewProps) => {
       </div>
 
       <div className="flex flex-col gap-2 items-center">
-        <div className="flex items-center gap-2 text-xs md:text-sm text-[#208483] bg-[#EBFBFB] px-8 py-2.5 rounded-full">
+        <div className="flex flex-wrap items-center gap-2 text-xs md:text-sm text-[#208483] bg-[#EBFBFB] px-8 py-2.5 rounded-full">
             <FilledBundleSubscriptionsIcon className="h-5 w-5 text-[#208483]" />
           Step 1: Choose Your Bundle
         </div>
@@ -94,7 +94,7 @@ export const BundleSelectionView = ({ tokens }: BundleSelectionViewProps) => {
             <div key={i} className={`${tokens.cardBase} rounded-[20px] overflow-hidden flex flex-col animate-pulse`}>
               {/* Header Skeleton */}
               <div className={`p-4 ${tokens.isDark ? "bg-[#2a3a3a]" : "bg-gradient-to-br from-[#043F45]/20 to-[#25A9A6]/20"}`}>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                   <div className={`h-14 w-14 rounded-full ${tokens.isDark ? "bg-[#3a4a4a]" : "bg-[#386B70]/30"}`} />
                 </div>
                 <div className="flex flex-col mt-3 gap-2">
@@ -108,7 +108,7 @@ export const BundleSelectionView = ({ tokens }: BundleSelectionViewProps) => {
               <div className={`p-4 flex-1 ${tokens.isDark ? "bg-[#1a2a2a]" : "bg-[#FAFAFA]"}`}>
                 <div className="space-y-3">
                   {[1, 2, 3, 4].map((j) => (
-                    <div key={j} className="flex items-center gap-2">
+                    <div key={j} className="flex flex-wrap items-center gap-2">
                       <div className={`h-6 w-6 rounded-full ${tokens.isDark ? "bg-[#2a3a3a]" : "bg-[#67C6D2]/30"}`} />
                       <div className={`h-4 rounded ${tokens.isDark ? "bg-[#2a3a3a]" : "bg-gray-200"}`} style={{ width: `${60 + j * 10}%` }} />
                     </div>
@@ -144,7 +144,7 @@ export const BundleSelectionView = ({ tokens }: BundleSelectionViewProps) => {
                   {bundle.badge}
                 </span>
               ) : null}
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 <div className="h-14 w-14 rounded-full bg-[#386B70] flex items-center justify-center">
                   {idx % 3 === 0 ? (
                     <FilledBundleSubscriptionsIcon className="h-7 w-7 text-white" />
@@ -183,7 +183,7 @@ export const BundleSelectionView = ({ tokens }: BundleSelectionViewProps) => {
 
             <div className="px-4 pb-4">
               <div className="bg-[#EBFBFB] text-[#249796] rounded-[20px] px-4 py-3 text-sm font-medium flex flex-col items-start gap-2 justify-between">
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M3.67063 12.9386L7.44563 16.7136C8.99563 18.2636 11.5123 18.2636 13.0706 16.7136L16.729 13.0553C18.279 11.5053 18.279 8.98864 16.729 7.43031L12.9456 3.66364C12.154 2.87197 11.0623 2.44697 9.94563 2.50531L5.77896 2.70531C4.1123 2.78031 2.7873 4.10531 2.70396 5.76364L2.50396 9.93031C2.45396 11.0553 2.87896 12.147 3.67063 12.9386Z" stroke="#208483" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                         <path d="M8.11263 10.1882C9.26322 10.1882 10.196 9.25541 10.196 8.10482C10.196 6.95422 9.26322 6.02148 8.11263 6.02148C6.96204 6.02148 6.0293 6.95422 6.0293 8.10482C6.0293 9.25541 6.96204 10.1882 8.11263 10.1882Z" stroke="#208483" strokeWidth="1.5" strokeLinecap="round"/>
@@ -191,7 +191,7 @@ export const BundleSelectionView = ({ tokens }: BundleSelectionViewProps) => {
                     </svg>
                     <span className="text-sm font-medium text-black">Estimated Savings</span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <span className="font-medium text-base md:text-lg">{bundle.savings}</span>
                   <span className="text-sm font-light">{bundle.savingsNote}</span>
                 </div>

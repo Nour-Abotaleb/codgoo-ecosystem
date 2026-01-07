@@ -115,7 +115,7 @@ export const SoftwareBillingView = ({ tokens, searchQuery, onSearchChange }: { r
   return (
     <div className="flex flex-col gap-6">
       {/* Search Bar */}
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <div
             className={`flex h-12 w-full items-center gap-3 rounded-full border ${tokens.isDark ? "border-[#2E314166]" : "border-[#DBDBDB]"} bg-transparent stroke px-4 text-[var(--color-search-text)] transition-colors`}
           >
@@ -140,7 +140,7 @@ export const SoftwareBillingView = ({ tokens, searchQuery, onSearchChange }: { r
             {/* Top Section */}
             <div className="flex flex-col gap-3 px-4 py-4">
               {/* Invoice ID */}
-              <div className="flex items-center justify-between">
+              <div className="flex flex-wrap items-center justify-between">
                 <span className={`text-sm font-medium ${tokens.isDark ? "text-white" : "text-[#607DAE]"}`}>
                   #{invoice.invoiceId}
                 </span>
@@ -173,7 +173,7 @@ export const SoftwareBillingView = ({ tokens, searchQuery, onSearchChange }: { r
                 <span className={`text-sm font-medium ${tokens.isDark ? "text-white/60" : "text-[#718EBF]"}`}>
                   {invoice.invoiceNo}
                 </span>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <span className={`text-sm ${tokens.isDark ? "text-white/60" : "text-[#718EBF]"}`}>Due date:</span>
                   <span className={`text-sm font-medium ${tokens.isDark ? "text-white" : "text-black"}`}>
                     {invoice.dueDate}
@@ -182,7 +182,7 @@ export const SoftwareBillingView = ({ tokens, searchQuery, onSearchChange }: { r
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center gap-3 pt-2">
+              <div className="flex flex-wrap items-center gap-3 pt-2">
                 <button
                   type="button"
                   className={`flex-1 px-2 py-2.5 rounded-full text-sm font-medium transition-colors cursor-pointer ${

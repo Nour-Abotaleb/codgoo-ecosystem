@@ -49,6 +49,7 @@ export interface ProjectsApiResponse {
     projects: Array<{
       id: number;
       name: string;
+      status: string;
       description: string;
       team: Array<{
         id: number;
@@ -58,14 +59,26 @@ export interface ProjectsApiResponse {
       start_date: string | null;
       deadline: string | null;
       budget: string | null;
-      proposals: Array<any>;
+      proposals: Array<{
+        id: number;
+        project_id: number;
+        title: string;
+        status: string;
+        description: string;
+        created_at: string;
+        updated_at: string;
+      }>;
       tasks: {
         completed: number;
         total: number;
         percentage: number;
       };
-      contract: any;
-      status: string;
+      contract: {
+        id: number;
+        status: string;
+        signed_at: string | null;
+        file_path: string;
+      } | null;
       type: string;
       last_update: string;
     }>;
@@ -79,6 +92,16 @@ export interface ProjectOverviewApiResponse {
     project: {
       id: number;
       name: string;
+      contract?: {
+        id: number;
+        project_id: number;
+        admin_id: number;
+        file_path: string;
+        status: string;
+        signed_at: string;
+        created_at: string;
+        updated_at: string | null;
+      };
       milestones: Array<{
         id: number;
         name: string;
@@ -90,10 +113,22 @@ export interface ProjectOverviewApiResponse {
           id: number;
           title: string;
           status: string;
+          description: string;
+          priority: string;
           updated_at: string;
           assignees: Array<{
             id: number;
             name: string;
+          }>;
+          screens: Array<{
+            id: number;
+            name: string;
+            screen_code: string;
+            comment: string;
+            integrated: number;
+            implemented: number;
+            dev_mode: number;
+            backend_approved: boolean;
           }>;
         }>;
       }>;
@@ -421,6 +456,51 @@ export interface CreateProjectApiResponse {
   };
 }
 
+// Employees API Response Types
+export interface EmployeesApiResponse {
+  status: boolean;
+  message: string;
+  data: Array<{
+    id: number;
+    name: string;
+    phone: string;
+    email: string;
+    role: string;
+    image: string;
+    created_at: string | null;
+  }>;
+}
+
+// Create Task API Response Types
+export interface CreateTaskApiResponse {
+  status: boolean;
+  message: string;
+  data?: {
+    id: number;
+    label: string;
+    description: string;
+    start_date: string;
+    due_date: string;
+    priority: string;
+    milestone_id: number;
+    created_at: string;
+    updated_at: string;
+  };
+}
+
+// Create Task Discussion API Response Types
+export interface CreateTaskDiscussionApiResponse {
+  status: boolean;
+  message: string;
+  data?: {
+    id: number;
+    task_id: number;
+    message: string;
+    created_at: string;
+    updated_at: string;
+  };
+}
+
 // Available Slots API Response Types
 export interface AvailableSlotsApiResponse {
   status: boolean;
@@ -434,6 +514,66 @@ export interface AvailableSlotsApiResponse {
   }>;
 }
 
+// Client Settings API Response Types
+export interface ClientSettingsApiResponse {
+  status: boolean;
+  message: string;
+  data: {
+    client: {
+      id: number;
+      username: string;
+      name: string;
+      email: string;
+      phone: string;
+      photo: string | null;
+      company_name: string | null;
+      website: string | null;
+      address: string | null;
+      city: string | null;
+      country: string | null;
+      created_at: string;
+      updated_at: string;
+      deleted_at: string | null;
+      device_token: string | null;
+    };
+    token: string;
+    type: string;
+  };
+}
+
+// Two-Factor Auth API Response Types
+export interface TwoFactorApiResponse {
+  status: boolean;
+  data: {
+    id: number;
+    client_id: number;
+    enabled: boolean;
+    method: string;
+    secret: string | null;
+    created_at: string;
+    updated_at: string;
+  };
+}
+
+// Payment Methods API Response Types
+export interface PaymentMethodsApiResponse {
+  status: boolean;
+  data: Array<{
+    id: number;
+    client_id: number;
+    card_number: string;
+    card_last_four: string;
+    card_brand: string;
+    expiry_date: string;
+    expiry_month: number;
+    expiry_year: number;
+    remember_card: number;
+    default: boolean;
+    created_at: string;
+    updated_at: string;
+  }>;
+}
+
 export const dashboardApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getClientDashboard: builder.query<DashboardApiResponse, void>({
@@ -441,12 +581,14 @@ export const dashboardApi = baseApi.injectEndpoints({
         url: "dashboard",
         method: "GET",
       }),
+      providesTags: ["Dashboard"],
     }),
     getClientProjects: builder.query<ProjectsApiResponse, void>({
       query: () => ({
         url: "dashboard/projects",
         method: "GET",
       }),
+      providesTags: ["Projects"],
     }),
     getProjectOverview: builder.query<ProjectOverviewApiResponse, number>({
       query: (projectId) => ({
@@ -474,13 +616,28 @@ export const dashboardApi = baseApi.injectEndpoints({
     }),
     sendDiscussionMessage: builder.mutation<
       { status: boolean; message: string },
-      { discussionId: number; type: string; message: string }
+      { discussionId: number; type: string; message: string; file?: File }
     >({
-      query: ({ discussionId, type, message }) => ({
-        url: `discussions/${discussionId}/messages`,
-        method: "POST",
-        body: { type, message },
-      }),
+      query: ({ discussionId, type, message, file }) => {
+        const formData = new FormData();
+        formData.append("type", type);
+        
+        if (type === "file" && file) {
+          formData.append("file", file);
+          if (message) {
+            formData.append("message", message);
+          }
+        } else {
+          formData.append("message", message);
+        }
+
+        return {
+          url: `discussions/${discussionId}/messages`,
+          method: "POST",
+          body: formData,
+          formData: true,
+        };
+      },
     }),
     getProjectAttachments: builder.query<ProjectAttachmentsApiResponse, number>({
       query: (projectId) => ({
@@ -529,6 +686,7 @@ export const dashboardApi = baseApi.injectEndpoints({
         url: "meetings",
         method: "GET",
       }),
+      providesTags: ["Meetings"],
     }),
     getMeetingSummary: builder.query<MeetingSummaryApiResponse, number>({
       query: (meetingId) => ({
@@ -541,12 +699,14 @@ export const dashboardApi = baseApi.injectEndpoints({
         url: `meetings/${meetingId}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["Meetings", "Dashboard"],
     }),
     cancelMeeting: builder.mutation<{ status: boolean; message: string }, number>({
       query: (meetingId) => ({
         url: `meetings/${meetingId}/cancel`,
         method: "PATCH",
       }),
+      invalidatesTags: ["Meetings", "Dashboard"],
     }),
     addMeetingNotes: builder.mutation<
       { status: boolean; message: string },
@@ -582,6 +742,7 @@ export const dashboardApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["Meetings", "Dashboard"],
     }),
     rescheduleMeeting: builder.mutation<
       { status: boolean; message: string },
@@ -602,6 +763,7 @@ export const dashboardApi = baseApi.injectEndpoints({
         method: "PUT",
         body: data,
       }),
+      invalidatesTags: ["Meetings", "Dashboard"],
     }),
     joinMeeting: builder.query<MeetingSummaryApiResponse, number>({
       query: (meetingId) => ({
@@ -624,6 +786,183 @@ export const dashboardApi = baseApi.injectEndpoints({
         method: "POST",
         body: formData,
       }),
+      invalidatesTags: ["Projects", "Dashboard"],
+    }),
+    getAllEmployees: builder.query<EmployeesApiResponse, void>({
+      query: () => ({
+        url: "all-employees",
+        method: "GET",
+      }),
+    }),
+    createTask: builder.mutation<
+      CreateTaskApiResponse,
+      {
+        label: string;
+        description: string;
+        start_date: string;
+        due_date: string;
+        assigned_employees: number[];
+        priority: string;
+        milestone_id: number;
+      }
+    >({
+      query: (data) => ({
+        url: "tasks",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    createTaskDiscussion: builder.mutation<
+      CreateTaskDiscussionApiResponse,
+      {
+        taskId: number;
+        message: string;
+        members: Array<{
+          id: number;
+          type: string;
+        }>;
+      }
+    >({
+      query: ({ taskId, message, members }) => ({
+        url: `tasks/${taskId}/discussions`,
+        method: "POST",
+        body: { message, members },
+      }),
+    }),
+    getClientSettings: builder.query<ClientSettingsApiResponse, void>({
+      query: () => ({
+        url: "settings",
+        method: "GET",
+      }),
+    }),
+    getTwoFactor: builder.query<TwoFactorApiResponse, void>({
+      query: () => ({
+        url: "two-factor",
+        method: "GET",
+      }),
+    }),
+    enableTwoFactor: builder.mutation<TwoFactorApiResponse, { method: string }>({
+      query: (data) => ({
+        url: "two-factor/enable",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    verifyTwoFactor: builder.mutation<{ status: boolean; message: string }, { code: string }>({
+      query: (data) => ({
+        url: "two-factor/verify",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    disableTwoFactor: builder.mutation<{ status: boolean; message: string }, { password: string }>({
+      query: (data) => ({
+        url: "two-factor/disable",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    addClientEmail: builder.mutation<{ status: boolean; message: string; data?: { id: number; email: string } }, { email: string }>({
+      query: (data) => ({
+        url: "emails",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["ClientEmails"],
+    }),
+    getClientEmails: builder.query<{
+      status: boolean;
+      data: Array<{
+        id: number;
+        client_id: number;
+        email: string;
+        verified: boolean;
+        verification_code: string | null;
+        verified_at: string | null;
+        created_at: string;
+        updated_at: string;
+      }>;
+    }, void>({
+      query: () => ({
+        url: "emails",
+        method: "GET",
+      }),
+      providesTags: ["ClientEmails"],
+    }),
+    verifyClientEmail: builder.mutation<{ status: boolean; message: string }, { emailId: number; otp: string }>({
+      query: ({ emailId, otp }) => ({
+        url: `emails/${emailId}/verify`,
+        method: "POST",
+        body: { otp },
+      }),
+      invalidatesTags: ["ClientEmails"],
+    }),
+    deleteClientEmail: builder.mutation<{ status: boolean; message: string }, number>({
+      query: (emailId) => ({
+        url: `emails/${emailId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["ClientEmails"],
+    }),
+    changeEmail: builder.mutation<{ status: boolean; message: string }, { new_email: string; password: string }>({
+      query: (data) => ({
+        url: "change-email",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    changePassword: builder.mutation<
+      { status: boolean; message: string },
+      { current_password: string; new_password: string; new_password_confirmation: string }
+    >({
+      query: (data) => ({
+        url: "change-password",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    changeProfile: builder.mutation<
+      { status: boolean; message: string },
+      { name?: string; photo?: File }
+    >({
+      query: (data) => {
+        const formData = new FormData();
+        if (data.name) {
+          formData.append("name", data.name);
+        }
+        if (data.photo) {
+          formData.append("photo", data.photo);
+        }
+        return {
+          url: "change-profile",
+          method: "POST",
+          body: formData,
+        };
+      },
+    }),
+    addPaymentMethod: builder.mutation<
+      { status: boolean; message: string },
+      {
+        card_number: string;
+        expiry_date: string;
+        security_code: string;
+        remember_card: boolean;
+        default: boolean;
+      }
+    >({
+      query: (data) => ({
+        url: "payment-methods",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["PaymentMethods"],
+    }),
+    getPaymentMethods: builder.query<PaymentMethodsApiResponse, void>({
+      query: () => ({
+        url: "payment-methods",
+        method: "GET",
+      }),
+      providesTags: ["PaymentMethods"],
     }),
   }),
   overrideExisting: false,
@@ -652,5 +991,22 @@ export const {
   useRescheduleMeetingMutation,
   useJoinMeetingQuery,
   useGetProjectCategoriesQuery,
-  useCreateProjectMutation
+  useCreateProjectMutation,
+  useGetAllEmployeesQuery,
+  useCreateTaskMutation,
+  useCreateTaskDiscussionMutation,
+  useGetClientSettingsQuery,
+  useGetTwoFactorQuery,
+  useEnableTwoFactorMutation,
+  useVerifyTwoFactorMutation,
+  useDisableTwoFactorMutation,
+  useAddClientEmailMutation,
+  useGetClientEmailsQuery,
+  useVerifyClientEmailMutation,
+  useDeleteClientEmailMutation,
+  useChangeEmailMutation,
+  useChangePasswordMutation,
+  useChangeProfileMutation,
+  useAddPaymentMethodMutation,
+  useGetPaymentMethodsQuery
 } = dashboardApi;

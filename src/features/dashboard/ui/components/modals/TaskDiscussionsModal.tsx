@@ -1,7 +1,8 @@
 import { useState, useMemo } from "react";
+import toast from "react-hot-toast";
 import { CalendarIcon, TaskDiscussionIcon, CloseModalIcon } from "@utilities/icons";
 import type { DashboardTokens } from "../../types";
-import { useGetTaskDiscussionQuery } from "@features/dashboard/api/dashboard-api";
+import { useGetTaskDiscussionQuery, useGetAllEmployeesQuery, useCreateTaskDiscussionMutation } from "@features/dashboard/api/dashboard-api";
 
 type TaskDiscussionsModalProps = {
   readonly taskId: string;
@@ -25,11 +26,6 @@ type DiscussionItem = {
   }[];
 };
 
-type MemberTag = {
-  readonly id: string;
-  readonly name: string;
-};
-
 const getAvatarColor = (index: number, isDark: boolean) => {
   const colors = [
     isDark ? "#4F46E5" : "#6366F1",
@@ -50,18 +46,41 @@ const getInitials = (name: string) => {
 
 export const TaskDiscussionsModal = ({ taskId, tokens, isOpen, onClose, onJoinDiscussion }: TaskDiscussionsModalProps) => {
   const [discussionTitle, setDiscussionTitle] = useState("Website Review");
-  const [members, setMembers] = useState<MemberTag[]>([
-    { id: "1", name: "Ahmed Nasser" },
-    { id: "2", name: "Aml Atef" },
-    { id: "3", name: "Asmaa Hassan" }
-  ]);
+  const [selectedMembers, setSelectedMembers] = useState<Set<number>>(new Set());
   const [memberInput, setMemberInput] = useState("");
 
   // Fetch discussions from API
   const taskIdNum = parseInt(taskId, 10);
-  const { data: apiData } = useGetTaskDiscussionQuery(taskIdNum, {
+  const { data: apiData, refetch } = useGetTaskDiscussionQuery(taskIdNum, {
     skip: !isOpen // Only fetch when modal is open
   });
+
+  // Fetch employees from API
+  const { data: employeesData, isLoading: isLoadingEmployees } = useGetAllEmployeesQuery(undefined, {
+    skip: !isOpen // Only fetch when modal is open
+  });
+
+  // Create discussion mutation
+  const [createDiscussion, { isLoading: isCreating }] = useCreateTaskDiscussionMutation();
+
+  // Filter employees based on search input
+  const filteredEmployees = useMemo(() => {
+    if (!employeesData?.data) return [];
+    if (!memberInput.trim()) return employeesData.data;
+    
+    const searchLower = memberInput.toLowerCase();
+    return employeesData.data.filter(emp => 
+      emp.name.toLowerCase().includes(searchLower) ||
+      emp.email.toLowerCase().includes(searchLower) ||
+      emp.role.toLowerCase().includes(searchLower)
+    );
+  }, [employeesData, memberInput]);
+
+  // Get selected employees details
+  const selectedEmployeesDetails = useMemo(() => {
+    if (!employeesData?.data) return [];
+    return employeesData.data.filter(emp => selectedMembers.has(emp.id));
+  }, [employeesData, selectedMembers]);
 
   // Transform API discussions data
   const discussions = useMemo((): readonly DiscussionItem[] => {
@@ -100,19 +119,54 @@ export const TaskDiscussionsModal = ({ taskId, tokens, isOpen, onClose, onJoinDi
     }
   };
 
-  const handleAddMember = () => {
-    if (memberInput.trim()) {
-      const newMember: MemberTag = {
-        id: Date.now().toString(),
-        name: memberInput.trim()
-      };
-      setMembers([...members, newMember]);
-      setMemberInput("");
-    }
+  const handleAddMember = (employeeId: number) => {
+    setSelectedMembers(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(employeeId)) {
+        newSet.delete(employeeId);
+      } else {
+        newSet.add(employeeId);
+      }
+      return newSet;
+    });
   };
 
-  const handleRemoveMember = (id: string) => {
-    setMembers(members.filter((member) => member.id !== id));
+  const handleCreateDiscussion = async () => {
+    if (!discussionTitle.trim()) {
+      toast.error("Please enter a discussion title");
+      return;
+    }
+
+    if (selectedMembers.size === 0) {
+      toast.error("Please select at least one member");
+      return;
+    }
+
+    try {
+      const members = Array.from(selectedMembers).map(id => ({
+        id,
+        type: "App\\Models\\Employee"
+      }));
+
+      await createDiscussion({
+        taskId: taskIdNum,
+        message: discussionTitle.trim(),
+        members
+      }).unwrap();
+
+      // Reset form
+      setDiscussionTitle("Website Review");
+      setSelectedMembers(new Set());
+      setMemberInput("");
+      
+      // Refetch discussions
+      refetch();
+      
+      toast.success("Discussion created successfully!");
+    } catch (error: any) {
+      console.error("Failed to create discussion:", error);
+      toast.error(error?.data?.message || "Failed to create discussion. Please try again.");
+    }
   };
 
   if (!isOpen) return null;
@@ -128,10 +182,10 @@ export const TaskDiscussionsModal = ({ taskId, tokens, isOpen, onClose, onJoinDi
       {/* Modal */}
       <div className={`relative w-full max-w-xl ${tokens.cardBase} ${tokens.isDark ? "bg-[#0F1217]" : "bg-white"} rounded-[20px] max-h-[90vh] overflow-hidden flex flex-col`}>
             {/* Header */}
-            <div className={`flex items-center justify-between px-6 pt-6 pb-4 flex-shrink-0 rounded-t-2xl ${
+            <div className={`flex flex-wrap items-center justify-between px-6 pt-6 pb-4 flex-shrink-0 rounded-t-2xl ${
               tokens.isDark ? "bg-[#0F1217]" : "bg-[#FFFEF7]"
             }`}>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <div className={`flex h-9 w-9 items-center justify-center rounded-full ${tokens.isDark ? tokens.buttonGhost : ""}`} style={tokens.isDark ? {} : { backgroundColor: "#E6E9FB" }}>
               <TaskDiscussionIcon className={`h-5 w-5`} style={tokens.isDark ? {} : { color: "#071FD7" }} />
             </div>
@@ -166,9 +220,9 @@ export const TaskDiscussionsModal = ({ taskId, tokens, isOpen, onClose, onJoinDi
               className={`${tokens.isDark ? "bg-[#1A1D29]" : "bg-[#F4F5FF]"} rounded-[20px] p-4`}
             >
               <div className="flex flex-col gap-2">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between">
                   {/* Discussion Name and Status */}
-                  <div className="flex items-center gap-2 flex-1">
+                  <div className="flex flex-wrap items-center gap-2 flex-1">
                     <h3 className={`text-base md:text-lg font-bold ${tokens.isDark ? "text-white" : "text-black"}`}>
                       {discussion.name}
                     </h3>
@@ -182,8 +236,8 @@ export const TaskDiscussionsModal = ({ taskId, tokens, isOpen, onClose, onJoinDi
                   </div>
                   
                   {/* Team */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center justify-between">
+                    <div className="flex flex-wrap items-center gap-2">
                       <span className={`text-sm ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"}`}>team:</span>
                       <div className="flex -space-x-2">
                         {discussion.team.slice(0, 3).map((member, index) => (
@@ -213,9 +267,9 @@ export const TaskDiscussionsModal = ({ taskId, tokens, isOpen, onClose, onJoinDi
                   By: {discussion.author}
                 </p>
 
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between">
                   {/* Date and Time */}
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <CalendarIcon className={`h-4 w-4 ${tokens.isDark ? "text-blue-400" : "text-[#071FD7]"}`} />
                     <span className={`text-sm ${tokens.isDark ? "text-blue-400" : "text-[#071FD7]"}`}>
                       {discussion.date.split(" ").map((part, index) => {
@@ -298,39 +352,72 @@ export const TaskDiscussionsModal = ({ taskId, tokens, isOpen, onClose, onJoinDi
             >
               Members
             </label>
-            <div className={`flex flex-wrap gap-2 p-3 min-h-[48px] rounded-[20px] border ${
+            <div className={`flex flex-col gap-2 p-3 min-h-[48px] rounded-[20px] border ${
               tokens.isDark
                 ? "bg-[#1A1D29] border-white/20"
                 : "border-gray-200 bg-white"
             }`}>
-              {members.map((member) => (
-                <span
-                  key={member.id}
-                  onClick={() => handleRemoveMember(member.id)}
-                  className={`px-3 py-1.5 rounded-full text-sm font-medium cursor-pointer transition-colors ${
-                    tokens.isDark
-                      ? "bg-[#2A2D39] text-white border border-white/20 hover:bg-[#3A3D49]"
-                      : "bg-black text-white hover:bg-gray-800"
-                  }`}
-                >
-                  {member.name}
-                </span>
-              ))}
+              {/* Selected Members Tags Inside Input */}
+              {selectedEmployeesDetails.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {selectedEmployeesDetails.map((employee) => (
+                    <span
+                      key={employee.id}
+                      onClick={() => handleAddMember(employee.id)}
+                      className={`px-3 py-1.5 rounded-full text-sm font-medium cursor-pointer transition-colors ${
+                        tokens.isDark
+                          ? "bg-[#071FD7] text-white border border-[#071FD7] hover:bg-[#071FD7]/90"
+                          : "bg-[#071FD7] text-white border border-[#071FD7] hover:bg-[#071FD7]/90"
+                      }`}
+                    >
+                      {employee.name} ×
+                    </span>
+                  ))}
+                </div>
+              )}
+              
+              {/* Search Input */}
               <input
                 type="text"
                 value={memberInput}
                 onChange={(e) => setMemberInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleAddMember();
-                  }
-                }}
                 className={`flex-1 min-w-[120px] bg-transparent border-none outline-none text-sm ${
-                  tokens.isDark ? "text-white placeholder:text-white/50" : "text-[#2B3674] placeholder:text-gray-400"
+                  tokens.isDark ? "text-white placeholder:text-white/50" : "text-black placeholder:text-gray-400"
                 }`}
-                placeholder="Add member name..."
+                placeholder="Search employees..."
               />
+            </div>
+            
+            {/* All Employees as Selectable Tags Below Input */}
+            <div className="flex flex-wrap gap-2 mt-3">
+              {isLoadingEmployees ? (
+                <span className={`text-sm ${tokens.isDark ? "text-white/70" : "text-black"}`}>
+                  Loading employees...
+                </span>
+              ) : filteredEmployees.length > 0 ? (
+                filteredEmployees.map((employee) => (
+                  <span
+                    key={employee.id}
+                    onClick={() => handleAddMember(employee.id)}
+                    className={`px-3 py-1.5 rounded-full text-sm font-medium cursor-pointer transition-colors ${
+                      selectedMembers.has(employee.id)
+                        ? tokens.isDark
+                          ? "bg-[#071FD7] text-white border border-[#071FD7]"
+                          : "bg-[#071FD7] text-white border border-[#071FD7]"
+                        : tokens.isDark
+                          ? "bg-[#2A2D39] text-white border border-white/20 hover:bg-[#3A3D49]"
+                          : "bg-white text-black border border-gray-300 hover:bg-gray-50"
+                    }`}
+                  >
+                    {employee.name}
+                    {selectedMembers.has(employee.id) && " ✓"}
+                  </span>
+                ))
+              ) : (
+                <span className={`text-sm ${tokens.isDark ? "text-white/70" : "text-black"}`}>
+                  No employees found
+                </span>
+              )}
             </div>
           </div>
 
@@ -338,18 +425,21 @@ export const TaskDiscussionsModal = ({ taskId, tokens, isOpen, onClose, onJoinDi
           <div className="flex flex-col gap-3 mt-4">
             <button
               type="button"
-              className={`w-full px-6 py-3 rounded-full text-base font-medium transition-colors ${
+              onClick={handleCreateDiscussion}
+              disabled={isCreating}
+              className={`w-full px-6 py-3 rounded-full text-base font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                 tokens.isDark
                   ? "bg-[#071FD7] text-white hover:bg-[#071FD7]/90"
                   : "bg-[#071FD7] text-white hover:bg-[#071FD7]/90"
               }`}
             >
-              Add Discussions
+              {isCreating ? "Creating..." : "Add Discussions"}
             </button>
             <button
               type="button"
               onClick={onClose}
-              className={`w-full px-6 py-2.5 rounded-full text-base font-medium transition-colors ${
+              disabled={isCreating}
+              className={`w-full px-6 py-2.5 rounded-full text-base font-medium transition-colors disabled:opacity-50 ${
                 tokens.isDark
                   ? "border border-white/20 text-white hover:bg-white/10"
                   : "border border-[#071FD7] text-[#071FD7] hover:bg-[#071FD7]/10"

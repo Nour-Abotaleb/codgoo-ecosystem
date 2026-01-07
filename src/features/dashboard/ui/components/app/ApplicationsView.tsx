@@ -43,7 +43,7 @@ export const ApplicationsView = ({
       {/* Header */}
       <div className="flex flex-col gap-4">
         {/* Tabs with Preview Icons */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between">
           <div className="flex items-center gap-6">
             {[
               { id: "General" as AppCategory, label: "General Services Apps", icon: GeneralServicesIcon },
@@ -56,7 +56,7 @@ export const ApplicationsView = ({
                   key={tab.id}
                   type="button"
                   onClick={() => setActiveTab(tab.id)}
-                  className={`relative flex items-center gap-2 pb-3 text-sm md:text-base font-semibold transition-colors ${
+                  className={`relative flex flex-wrap items-center gap-2 pb-3 text-sm md:text-base font-semibold transition-colors ${
                       isActive
                       ? isDark ? "text-white/70" : "text-black"
                       : isDark
@@ -71,7 +71,7 @@ export const ApplicationsView = ({
               );
             })}
           </div>
-          <div className={`flex items-center gap-2 rounded-lg p-1 ${tokens.isDark ? "bg-white/10" : "bg-[#E9F5F4]"}`}>
+          <div className={`flex flex-wrap items-center gap-2 rounded-lg p-1 ${tokens.isDark ? "bg-white/10" : "bg-[#E9F5F4]"}`}>
             <button
               type="button"
               onClick={() => setViewMode("grid")}
@@ -106,7 +106,7 @@ export const ApplicationsView = ({
         </div>
 
         {/* Section Title */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <span className={`text-lg font-semibold ${tokens.isDark ? "text-white" : "text-[#1A3341]"}`}>
             Professional Bundle
           </span>
@@ -157,7 +157,7 @@ export const ApplicationsView = ({
               key={item.id}
               className={`rounded-[20px] ${tokens.isDark ? "bg-[#0F1217]" : "bg-white"} p-4`}
             >
-              <div className="flex items-center justify-between gap-4">
+              <div className="flex flex-wrap items-center justify-between gap-4">
                 <div className="flex flex-col flex-1 min-w-0">
                   <span className={`text-base md:text-xl font-semibold ${tokens.isDark ? "text-white" : "text-black"}`}>
                     {item.name}
@@ -182,7 +182,7 @@ export const ApplicationsView = ({
                 <span className={`text-[15px] font-medium ${tokens.isDark ? "text-white" : "text-[#1A3341]"}`}>
                   {item.price.amount} {item.price.currency}
                 </span>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <div className="flex items-center">
                     {Array.from({ length: 5 }).map((_, i) => (
                       <span

@@ -4,6 +4,21 @@ import type { DashboardTokens } from "../../types";
 import { useGetDiscussionMessagesQuery, useSendDiscussionMessageMutation } from "@features/dashboard/api/dashboard-api";
 import toast from "react-hot-toast";
 
+// Simple emoji picker data
+const EMOJI_LIST = [
+  "😀", "😃", "😄", "😁", "😆", "😅", "🤣", "😂", "🙂", "🙃",
+  "😉", "😊", "😇", "🥰", "😍", "🤩", "😘", "😗", "😚", "😙",
+  "😋", "😛", "😜", "🤪", "😝", "🤑", "🤗", "🤭", "🤫", "🤔",
+  "🤐", "🤨", "😐", "😑", "😶", "😏", "😒", "🙄", "😬", "🤥",
+  "😌", "😔", "😪", "🤤", "😴", "😷", "🤒", "🤕", "🤢", "🤮",
+  "👍", "👎", "👌", "✌️", "🤞", "🤟", "🤘", "🤙", "👈", "👉",
+  "👆", "👇", "☝️", "✋", "🤚", "🖐️", "🖖", "👋", "🤝", "💪",
+  "🙏", "✍️", "💅", "🤳", "💃", "🕺", "👯", "🧘", "🛀", "🛌",
+  "❤️", "🧡", "💛", "💚", "💙", "💜", "🖤", "💔", "❣️", "💕",
+  "💞", "💓", "💗", "💖", "💘", "💝", "💟", "☮️", "✝️", "☪️",
+  "🔥", "⭐", "🌟", "✨", "⚡", "💥", "💫", "💦", "💨", "🌈"
+];
+
 type DiscussionDetailScreenProps = {
   readonly discussion: {
     readonly id: string;
@@ -28,7 +43,8 @@ type ChatMessage = {
   readonly content: string;
   readonly time: string;
   readonly isOutgoing: boolean;
-  readonly hasFile?: boolean;
+  readonly type: "text" | "file" | "mixed";
+  readonly fileUrl?: string;
   readonly fileName?: string;
 };
 
@@ -79,7 +95,11 @@ const SendIcon = (props: { className?: string }) => (
 
 export const DiscussionDetailScreen = ({ discussion, tokens, onBack }: DiscussionDetailScreenProps) => {
   const [messageText, setMessageText] = useState("");
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const emojiPickerRef = useRef<HTMLDivElement>(null);
 
   // Fetch messages from API
   const discussionIdNum = parseInt(discussion.id, 10);
@@ -103,11 +123,12 @@ export const DiscussionDetailScreen = ({ discussion, tokens, onBack }: Discussio
           id: String(msg.id),
           author: msg.sender?.name || "N/A",
           authorAvatar: msg.sender?.image || msg.sender?.photo || undefined,
-          content: msg.message || "N/A",
+          content: msg.message || "",
           time: time,
           isOutgoing: isOutgoing,
-          hasFile: msg.type === "file" && !!msg.file_path,
-          fileName: msg.file_path ? msg.file_path.split('/').pop() : undefined
+          type: msg.type || "text",
+          fileUrl: msg.file?.url || undefined,
+          fileName: msg.file?.name || undefined
         };
       });
     }
@@ -123,8 +144,59 @@ export const DiscussionDetailScreen = ({ discussion, tokens, onBack }: Discussio
     scrollToBottom();
   }, [chatMessages]);
 
+  // Close emoji picker when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target as Node)) {
+        setShowEmojiPicker(false);
+      }
+    };
+
+    if (showEmojiPicker) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showEmojiPicker]);
+
+  const handleEmojiSelect = (emoji: string) => {
+    setMessageText(prev => prev + emoji);
+    setShowEmojiPicker(false);
+  };
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      toast.success(`File selected: ${file.name}`);
+    }
+  };
+
   const handleSendMessage = async () => {
-    if (messageText.trim()) {
+    if (selectedFile) {
+      // Send file (type: "file" if no message, type: "mixed" if has message)
+      try {
+        await sendMessage({
+          discussionId: discussionIdNum,
+          type: "file",
+          message: messageText.trim() || "",
+          file: selectedFile
+        }).unwrap();
+        
+        toast.success("File sent successfully!");
+        setMessageText("");
+        setSelectedFile(null);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+        refetch();
+      } catch (error: any) {
+        toast.error(error?.data?.message || "Failed to send file");
+      }
+    } else if (messageText.trim()) {
+      // Send text message
       try {
         await sendMessage({
           discussionId: discussionIdNum,
@@ -134,7 +206,6 @@ export const DiscussionDetailScreen = ({ discussion, tokens, onBack }: Discussio
         
         toast.success("Message sent successfully!");
         setMessageText("");
-        // Refetch messages to show the new message
         refetch();
       } catch (error: any) {
         toast.error(error?.data?.message || "Failed to send message");
@@ -153,7 +224,7 @@ export const DiscussionDetailScreen = ({ discussion, tokens, onBack }: Discussio
   return (
     <div className={`flex flex-col h-screen ${tokens.cardBase} rounded-[20px] overflow-hidden`}>
       {/* Header */}
-      <div className={`flex items-center justify-between px-6 py-4 border-b ${tokens.isDark ? "border-white/10" : "border-[#E9E9E9]"} flex-shrink-0`}>
+      <div className={`flex flex-wrap items-center justify-between px-6 py-4 border-b ${tokens.isDark ? "border-white/10" : "border-[#E9E9E9]"} flex-shrink-0`}>
         <div className="flex items-center gap-4">
           {onBack && (
             <button
@@ -192,7 +263,7 @@ export const DiscussionDetailScreen = ({ discussion, tokens, onBack }: Discussio
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <span className={`text-sm ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"}`}>team:</span>
           <div className="flex -space-x-2">
             {discussion.team.slice(0, 3).map((member, index) => (
@@ -249,7 +320,7 @@ export const DiscussionDetailScreen = ({ discussion, tokens, onBack }: Discussio
                 </div>
               )}
               <div className={`flex flex-col gap-1 ${message.isOutgoing ? "items-end" : "items-start"} max-w-[70%]`}>
-                <div
+              <div
                 className={`rounded-tl-2xl rounded-tr-2xl rounded-br-2xl px-4 py-4 ${
                   message.isOutgoing
                     ? tokens.isDark
@@ -260,13 +331,46 @@ export const DiscussionDetailScreen = ({ discussion, tokens, onBack }: Discussio
                     : "bg-[#F4F5FF] text-black"
                 }`}
               >
-                {message.hasFile ? (
-                  <div className="flex items-center gap-1">
-                    <DocstIcon className={`h-5 w-5 ${tokens.isDark ? "text-white" : "text-black"}`} />
-                    <span className="text-sm">{message.fileName}</span>
-                  </div>
-                ) : (
+                {/* Text content */}
+                {message.content && (
                   <p className="text-sm">{message.content}</p>
+                )}
+                {/* File content - check if image */}
+                {message.fileUrl && (
+                  (() => {
+                    const isImage = /\.(jpg|jpeg|png|gif|webp|svg|bmp)$/i.test(message.fileName || message.fileUrl);
+                    if (isImage) {
+                      return (
+                        <a
+                          href={message.fileUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={message.content ? "mt-2 block" : "block"}
+                        >
+                          <img
+                            src={message.fileUrl}
+                            alt=""
+                            className="max-w-full max-h-64 rounded-lg object-contain cursor-pointer hover:opacity-90 transition-opacity"
+                          />
+                        </a>
+                      );
+                    }
+                    return (
+                      <a
+                        href={message.fileUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`flex flex-wrap items-center gap-2 ${message.content ? "mt-2" : ""} hover:opacity-80`}
+                      >
+                        <DocstIcon className="h-5 w-5" />
+                        <span className="text-sm underline">{message.fileName || "File"}</span>
+                      </a>
+                    );
+                  })()
+                )}
+                {/* Fallback if no content */}
+                {!message.content && !message.fileUrl && (
+                  <p className="text-sm text-opacity-50">Empty message</p>
                 )}
               </div>
               <div className="flex items-start gap-1">
@@ -296,12 +400,37 @@ export const DiscussionDetailScreen = ({ discussion, tokens, onBack }: Discussio
               : "bg-white border-[#E9E9E9]"
           }`}
         >
+          {/* Selected File Preview */}
+          {selectedFile && (
+            <div className={`flex flex-wrap items-center gap-2 px-3 py-2 rounded-lg ${
+              tokens.isDark ? "bg-[#2A2D39]" : "bg-[#F4F5FF]"
+            }`}>
+              <DocstIcon className={`h-4 w-4 ${tokens.isDark ? "text-white" : "text-black"}`} />
+              <span className={`text-sm flex-1 ${tokens.isDark ? "text-white" : "text-black"}`}>
+                {selectedFile.name}
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedFile(null);
+                  if (fileInputRef.current) {
+                    fileInputRef.current.value = "";
+                  }
+                }}
+                className={`text-sm ${tokens.isDark ? "text-white/70 hover:text-white" : "text-[#718EBF] hover:text-black"}`}
+              >
+                ×
+              </button>
+            </div>
+          )}
+          
           <input
             type="text"
             value={messageText}
             onChange={(e) => setMessageText(e.target.value)}
-            onKeyPress={(e) => {
-              if (e.key === "Enter") {
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
                 handleSendMessage();
               }
             }}
@@ -310,31 +439,76 @@ export const DiscussionDetailScreen = ({ discussion, tokens, onBack }: Discussio
               tokens.isDark ? "text-white placeholder-white/50" : "text-[#2B3674] placeholder-[#68696D]"
             }`}
           />
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 relative">
+            {/* Hidden file input */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              onChange={handleFileSelect}
+              className="hidden"
+              accept="image/*,.pdf,.doc,.docx,.txt"
+            />
+            
+            {/* File upload button */}
             <button
               type="button"
+              onClick={() => fileInputRef.current?.click()}
               className={`p-1.5 rounded transition-colors ${
                 tokens.isDark
                   ? "text-white/70 hover:text-white hover:bg-white/10"
                   : "text-[#718EBF] bg-[#FFFCE5]"
               }`}
+              title="Attach file"
             >
               <DocstIcon className={`h-5 w-5 ${tokens.isDark ? "text-white" : "text-black"}`} />
             </button>
+            
+            {/* Emoji picker button */}
             <button
               type="button"
+              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
               className={`p-1.5 rounded transition-colors ${
                 tokens.isDark
                   ? "text-white/70 hover:text-white hover:bg-white/10"
                   : "text-black hover:text-[#2B3674] hover:bg-gray-100"
               }`}
+              title="Add emoji"
             >
               <EmojiIcon className="h-6 w-6" />
             </button>
+
+            {/* Emoji Picker Popup */}
+            {showEmojiPicker && (
+              <div
+                ref={emojiPickerRef}
+                className={`absolute bottom-full left-0 mb-2 p-3 rounded-lg shadow-lg border z-50 ${
+                  tokens.isDark
+                    ? "bg-[#1A1D29] border-white/20"
+                    : "bg-white border-[#E9E9E9]"
+                }`}
+                style={{ width: "280px", maxHeight: "200px", overflowY: "auto" }}
+              >
+                <div className="grid grid-cols-10 gap-1">
+                  {EMOJI_LIST.map((emoji, index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      onClick={() => handleEmojiSelect(emoji)}
+                      className={`text-xl p-1 rounded hover:bg-opacity-10 transition-colors ${
+                        tokens.isDark ? "hover:bg-white" : "hover:bg-gray-200"
+                      }`}
+                    >
+                      {emoji}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            
             <button
               type="button"
               onClick={handleSendMessage}
-              disabled={isSending || !messageText.trim()}
+              disabled={isSending || (!messageText.trim() && !selectedFile)}
               className={`ml-auto px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                 tokens.isDark
                   ? "bg-[#071FD7] text-white hover:bg-[#071FD7]/90 disabled:opacity-50 disabled:cursor-not-allowed"

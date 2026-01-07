@@ -30,6 +30,7 @@ import { ProposalsView } from "./components/software/ProposalsView";
 import { TaskDetailView } from "./components/software/TaskDetailView";
 import { MeetingsView } from "./components/software/MeetingsView";
 import { GeneralSettingsView } from "./components/GeneralSettingsView";
+import { SupportView } from "./components/SupportView";
 import { ProductsView } from "./components/software/ProductsView";
 import { ProductDetailsView } from "./components/software/ProductDetailsView";
 import { AppDashboardOverview } from "./components/app/AppDashboardOverview";
@@ -52,7 +53,7 @@ import { getDefaultDashboard, getCurrentDashboard, setCurrentDashboard } from ".
 import { setDashboardAppId } from "@shared/theme";
 
 export const DashboardPage = () => {
-  const { t, i18n: i18nInstance } = useTranslation("dashboard");
+  const { t } = useTranslation(["dashboard", "landing"]);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
@@ -62,7 +63,7 @@ export const DashboardPage = () => {
     // First try to get the current dashboard (last active), then fall back to default
     return getCurrentDashboard() ?? getDefaultDashboard();
   });
-  const isRTL = i18nInstance.language === "ar";
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   
   // Only fetch if user is authenticated
   const token = localStorage.getItem("auth_token");
@@ -152,6 +153,10 @@ export const DashboardPage = () => {
   // }, [dispatch, activeApp.theme]);
 
   useEffect(() => {
+    // Don't reset if activeNavId is "support" (it's a special route not in navigation items)
+    if (activeNavId === "support") {
+      return;
+    }
     if (!navigationItems.some((item) => item.id === activeNavId)) {
       setActiveNavId(navigationItems[0]?.id ?? "");
     }
@@ -238,6 +243,19 @@ export const DashboardPage = () => {
       return;
     }
 
+    // Handle product details route
+    if (path.includes("/products/") && path.split("/").length > 3) {
+      if (activeNavId !== "products") {
+        setActiveNavId("products");
+      }
+      // Products are only in software app
+      if (activeAppId !== "software") {
+        setActiveAppId("software");
+        setCurrentDashboard("software");
+      }
+      return;
+    }
+
     // Handle marketplace detail route
     if (path.includes("/marketplace/") && path.split("/").length > 3) {
       if (activeNavId !== "marketplace") {
@@ -258,6 +276,15 @@ export const DashboardPage = () => {
     const pathParts = path.split("/").filter(Boolean);
     if (pathParts.length >= 2 && pathParts[0] === "dashboard") {
       const routeNavId = pathParts[1];
+      
+      // Handle support route separately (not in navigation items)
+      if (routeNavId === "support") {
+        if (activeNavId !== "support") {
+          setActiveNavId("support");
+        }
+        return;
+      }
+      
       // Check if this route corresponds to a valid nav item
       const matchingNavItem = navigationItems.find((item) => item.id === routeNavId);
       if (matchingNavItem && activeNavId !== routeNavId) {
@@ -338,7 +365,7 @@ export const DashboardPage = () => {
   };
 
   return (
-    <div className={`dashboard flex w-full ${tokens.rootClass}`}>
+    <div className={`dashboard flex mb-16 md:mb-0  w-full ${tokens.rootClass}`}>
         <DashboardSidebar
           apps={dashboardApps}
           activeAppId={activeApp.id}
@@ -347,10 +374,12 @@ export const DashboardPage = () => {
           activeNavId={activeNavId}
           onSelectNav={handleSelectNav}
           tokens={tokens}
+          isOpen={sidebarOpen}
+          onToggle={() => setSidebarOpen(!sidebarOpen)}
         />
 
-        <section className={`flex min-h-screen flex-1 flex-col  rounded-[20px] m-6 transition-all duration-300 ${isRTL ? "lg:mr-64" : "lg:ml-64"} ${isDark ? "bg-[#13181E]" :"bg-[#F8F8F8]"}`} >
-        <div className="flex flex-col gap-4 px-6 py-3 text-start">
+        <section className={`flex min-h-screen flex-1 flex-col rounded-[20px] mx-3  md:mx-2 my-3 sm:my-6 md:my-6 overflow-hidden transition-all duration-300 ${isDark ? "bg-[#13181E]" :"bg-[#F8F8F8]"}`} >
+        <div className="flex flex-col gap-4 px-2 sm:px-4 md:px-6 py-3 text-start overflow-x-hidden">
           <DashboardHeader
             tokens={tokens}
             activeApp={activeApp}
@@ -358,6 +387,7 @@ export const DashboardPage = () => {
             onToggleTheme={handleToggleTheme}
             onCartClick={() => navigate("/dashboard/order")}
             onProfileClick={() => handleSelectNav("settings")}
+            onSidebarToggle={() => setSidebarOpen(!sidebarOpen)}
           />
           {orderMatch ? (
             <OrderView tokens={tokens} />
@@ -374,6 +404,7 @@ export const DashboardPage = () => {
                 hero={dataset.hero}
                 tokens={tokens}
                 onNavigateToMarketplace={() => handleSelectNav("marketplace")}
+                onGoToSupport={() => handleSelectNav("support")}
               />
             ) : (
               <DashboardOverview
@@ -466,8 +497,8 @@ export const DashboardPage = () => {
                 onAddProject={() => {
                   // Handle add project
                 }}
-                onViewDetails={(projectId) => {
-                  navigate(`/dashboard/projects/${projectId}`);
+                onViewDetails={(projectId, projectData) => {
+                  navigate(`/dashboard/projects/${projectId}`, { state: { project: projectData } });
                 }}
                 onManage={() => {
                   // Handle manage
@@ -495,9 +526,9 @@ export const DashboardPage = () => {
               if (!selectedItem) {
                 return (
                   <div className={`${tokens.cardBase} rounded-[20px] p-10`}>
-                    <h2 className="text-2xl font-semibold">Item not found</h2>
+                    <h2 className="text-2xl font-semibold">{t("dashboard.messages.itemNotFound", { ns: "landing" })}</h2>
                     <p className={`mt-3 text-sm ${tokens.subtleText}`}>
-                      The marketplace item you're looking for doesn't exist.
+                      {t("dashboard.messages.itemDoesNotExist", { ns: "landing" })}
                     </p>
                   </div>
                 );
@@ -534,13 +565,18 @@ export const DashboardPage = () => {
               primaryColor={activeApp.id === "software" ? "#071FD7" : activeApp.id === "app" ? "#0F6773" : "#584ABC"}
               buttonBackgroundColor={activeApp.id === "software" ? "#E6E9FB" : activeApp.id === "app" ? "#E7F0F1" : "#EEEDF8"}
             />
+          ) : activeNavId === "support" ? (
+            <SupportView 
+              tokens={tokens}
+              primaryColor={activeApp.id === "software" ? "#071FD7" : activeApp.id === "app" ? "#0F6773" : "#584ABC"}
+            />
           ) : (
             <div className={`${tokens.cardBase} rounded-[20px] p-10`}>
               <h2 className="text-2xl font-semibold">
-                {activeNavigationItem?.label ?? "Coming Soon"}
+                {activeNavigationItem?.label ?? t("dashboard.overview.comingSoon", { ns: "landing" })}
               </h2>
               <p className={`mt-3 text-sm ${tokens.subtleText}`}>
-                This section is under construction. Switch to the Servers tab to explore the available screen.
+                {t("dashboard.overview.underConstruction", { ns: "landing" })}
               </p>
             </div>
           )}

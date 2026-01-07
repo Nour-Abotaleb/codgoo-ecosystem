@@ -1,7 +1,9 @@
 import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { TaskCard, type TaskItem } from "./TaskCard";
 import { EyeIcon } from "@utilities/icons";
 import { TaskDiscussionsModal } from "../modals/TaskDiscussionsModal";
+import { CreateMeetingModal } from "../modals/CreateMeetingModal";
 import { DiscussionDetailScreen } from "./DiscussionDetailScreen";
 import envelopeImage from "@assets/images/software/envelope.svg";
 import type { DashboardTokens } from "../../types";
@@ -36,14 +38,16 @@ type ScreenItem = {
 type ScreenTab = "completed" | "remaining";
 
 export const TaskDetailView = ({ taskId, tokens }: TaskDetailViewProps) => {
+  const { t } = useTranslation("landing");
   const [activeTab, setActiveTab] = useState<ScreenTab>("completed");
   const [isDiscussionsModalOpen, setIsDiscussionsModalOpen] = useState(false);
+  const [isCreateMeetingModalOpen, setIsCreateMeetingModalOpen] = useState(false);
   const [selectedDiscussion, setSelectedDiscussion] = useState<DiscussionItem | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   // Fetch task details from API
   const taskIdNum = parseInt(taskId, 10);
-  const { data: apiData, isLoading } = useGetTaskDetailsQuery(taskIdNum);
+  const { data: apiData, isLoading, refetch } = useGetTaskDetailsQuery(taskIdNum);
 
   // Map API status to component status
   const mapTaskStatus = (status: string): "Completed" | "In Progress" | "Not Started" | "Waiting Feedback" => {
@@ -122,7 +126,7 @@ export const TaskDetailView = ({ taskId, tokens }: TaskDetailViewProps) => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className={tokens.isDark ? "text-white/50" : "text-[#A3AED0]"}>Loading task details...</p>
+        <p className={tokens.isDark ? "text-white/50" : "text-[#A3AED0]"}>{t("dashboard.task.loadingTaskDetails")}</p>
       </div>
     );
   }
@@ -130,7 +134,7 @@ export const TaskDetailView = ({ taskId, tokens }: TaskDetailViewProps) => {
   if (!task) {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className={tokens.isDark ? "text-white/50" : "text-[#A3AED0]"}>Task not found</p>
+        <p className={tokens.isDark ? "text-white/50" : "text-[#A3AED0]"}>{t("dashboard.task.taskNotFound")}</p>
       </div>
     );
   }
@@ -140,23 +144,24 @@ export const TaskDetailView = ({ taskId, tokens }: TaskDetailViewProps) => {
       <button
         type="button"
         onClick={() => setIsDiscussionsModalOpen(true)}
-        className={`flex items-center gap-2 px-8 py-2.5 rounded-full text-sm md:text-base font-medium transition-colors cursor-pointer ${
+        className={`flex flex-wrap items-center gap-2 px-8 py-2.5 rounded-full text-sm md:text-base font-medium transition-colors cursor-pointer ${
           tokens.isDark
             ? "bg-white/10 text-white/90 hover:bg-white/20"
             : "bg-[#071FD7] text-white hover:bg-[#071FD7]/90 hover:text-white"
         }`}
       >
-        <span>Discussions</span>
+        <span>{t("dashboard.task.discussions")}</span>
       </button>
       <button
         type="button"
-        className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-sm md:text-base font-medium transition-colors cursor-pointer ${
+        onClick={() => setIsCreateMeetingModalOpen(true)}
+        className={`flex flex-wrap items-center gap-2 px-6 py-2.5 rounded-full text-sm md:text-base font-medium transition-colors cursor-pointer ${
           tokens.isDark
             ? "border border-white/70 text-white/70 hover:bg-white/10"
             : "border border-[#071FD7] text-[#071FD7] hover:bg-[#071FD7]/90 hover:text-white"
         }`}
       >
-        <span>Create Meeting</span>
+        <span>{t("dashboard.task.createMeeting")}</span>
       </button>
     </div>
   );
@@ -185,8 +190,8 @@ export const TaskDetailView = ({ taskId, tokens }: TaskDetailViewProps) => {
       {/* Screens Section */}
       <div className="flex flex-col gap-4 mt-4">
         <div className="flex flex-col items-start justify-between gap-4">
-          <h2 className={`text-lg md:text-xl font-semibold ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
-            Screens
+            <h2 className={`text-lg md:text-xl font-semibold ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
+            {t("dashboard.task.screens")}
           </h2>
           
           {/* Tabs */}
@@ -194,7 +199,7 @@ export const TaskDetailView = ({ taskId, tokens }: TaskDetailViewProps) => {
             <button
               type="button"
               onClick={() => setActiveTab("completed")}
-              className={`pb-2 px-1 flex items-center gap-2 text-sm md:text-base font-medium transition-colors whitespace-nowrap cursor-pointer ${
+              className={`pb-2 px-1 flex flex-wrap items-center gap-2 text-sm md:text-base font-medium transition-colors whitespace-nowrap cursor-pointer ${
                 activeTab === "completed"
                   ? tokens.isDark
                     ? "text-white border-b-2 border-white"
@@ -202,12 +207,12 @@ export const TaskDetailView = ({ taskId, tokens }: TaskDetailViewProps) => {
                   : tokens.subtleText
               }`}
             >
-              <span>Completed Screens</span>
+              <span>{t("dashboard.task.completedScreens")}</span>
             </button>
             <button
               type="button"
               onClick={() => setActiveTab("remaining")}
-              className={`pb-2 px-1 flex items-center gap-2 text-sm md:text-base font-medium transition-colors whitespace-nowrap cursor-pointer ${
+              className={`pb-2 px-1 flex flex-wrap items-center gap-2 text-sm md:text-base font-medium transition-colors whitespace-nowrap cursor-pointer ${
                 activeTab === "remaining"
                   ? tokens.isDark
                     ? "text-white border-b-2 border-white"
@@ -215,7 +220,7 @@ export const TaskDetailView = ({ taskId, tokens }: TaskDetailViewProps) => {
                   : tokens.subtleText
               }`}
             >
-              <span>Remaining Screens</span>
+              <span>{t("dashboard.task.remainingScreens")}</span>
             </button>
           </div>
         </div>
@@ -252,7 +257,7 @@ export const TaskDetailView = ({ taskId, tokens }: TaskDetailViewProps) => {
                             ? "bg-blue-500/20 text-blue-400"
                             : "bg-[#CCD3FF] text-[#071FD7]"
                         }`}>
-                          In Progress
+                          {t("dashboard.status.inProgress")}
                         </span>
                       </div>
                     )}
@@ -279,7 +284,7 @@ export const TaskDetailView = ({ taskId, tokens }: TaskDetailViewProps) => {
                           ? "bg-yellow-500/20 text-yellow-400"
                           : "bg-[#FFF6D5] text-[#B48D00]"
                       }`}>
-                        Planned
+                        {t("dashboard.task.planned")}
                       </span>
                     </div>
                   </>
@@ -317,6 +322,20 @@ export const TaskDetailView = ({ taskId, tokens }: TaskDetailViewProps) => {
         onJoinDiscussion={handleJoinDiscussion}
       />
 
+      {/* Create Meeting Modal */}
+      {apiData?.data?.task && apiData?.data?.project && (
+        <CreateMeetingModal
+          tokens={tokens}
+          isOpen={isCreateMeetingModalOpen}
+          onClose={() => setIsCreateMeetingModalOpen(false)}
+          projectId={apiData.data.project.id}
+          taskId={taskIdNum}
+          onMeetingCreated={() => {
+            refetch();
+          }}
+        />
+      )}
+
       {/* Image Preview Modal */}
       {previewImage && (
         <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
@@ -350,4 +369,3 @@ export const TaskDetailView = ({ taskId, tokens }: TaskDetailViewProps) => {
     </>
   );
 };
-

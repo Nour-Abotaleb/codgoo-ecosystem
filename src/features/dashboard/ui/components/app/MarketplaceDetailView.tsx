@@ -90,7 +90,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
         <div className="flex flex-col gap-4">
           {/* Application Header */}
           <div className={`${tokens.cardBase} rounded-[20px] p-4`}>
-            <div className="flex items-start gap-4">
+            <div className="flex flex-col md:flex-row flex-wrap items-start gap-4">
               {/* Icon */}
               <div className="flex-shrink-0">
                 <div
@@ -115,7 +115,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
                 </p>
 
                 {/* Action Buttons */}
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                   <button
                     type="button"
                     onClick={handleSubscribe}
@@ -143,7 +143,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
 
           {/* Rating Card */}
           <div className={`${tokens.cardBase} rounded-[20px] p-4`}>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <div className="flex items-center">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <span
@@ -179,7 +179,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
           {/* Tabs and Content Card */}
           <div className={`${tokens.cardBase} rounded-[20px] p-4`}>
             {/* Tabs */}
-            <div className="flex items-center gap-2 border-b mb-6" style={{ borderColor: tokens.isDark ? "rgba(255,255,255,0.1)" : "#E6E9FB" }}>
+            <div className="flex flex-wrap items-center gap-2 border-b mb-6" style={{ borderColor: tokens.isDark ? "rgba(255,255,255,0.1)" : "#E6E9FB" }}>
               {tabs.map((tab) => (
                 <button
                   key={tab}
@@ -462,19 +462,19 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
               Supported Integrations
             </h3>
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 <SnapchatColoredIcon className="w-6 h-6" />
                 <span className={`font-medium ${tokens.isDark ? "text-white" : "text-[#111111]"}`}>
                   Snapchat
                 </span>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 <MarketPlaceCartIcon className="w-6 h-6" />
                 <span className={`font-medium ${tokens.isDark ? "text-white" : "text-[#111111]"}`}>
                   Shopify
                 </span>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 <WoocommerceIcon className="w-6 h-6" />
                 <span className={`font-medium ${tokens.isDark ? "text-white" : "text-[#111111]"}`}>
                   WooCommerce
@@ -498,7 +498,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
                 >
                   <div className="flex items-center gap-1 mb-3">
                     <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-400 to-purple-500" />
-                    <div className="flex items-center justify-between gap-5">
+                    <div className="flex flex-wrap items-center justify-between gap-5">
                       <p className={`font-medium flex items-center text-sm gap-1 ${tokens.isDark ? "text-white" : "text-black"}`}>
                         Michael Brown
                       </p>
@@ -549,7 +549,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
 
           {/* Details */}
           <div className="flex flex-col gap-4 mb-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between">
               <span className={`text-sm font-semibold ${tokens.isDark ? "text-white/70" : "text-[#5F5F5F]"}`}>
                 Category
               </span>
@@ -557,7 +557,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
                 Marketing & Advertising
               </span>
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between">
               <span className={`text-sm font-semibold ${tokens.isDark ? "text-white/70" : "text-[#5F5F5F]"}`}>
                 Last Update
               </span>
@@ -565,7 +565,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
                 Sep 15, 2024
               </span>
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between">
               <span className={`text-sm font-semibold ${tokens.isDark ? "text-white/70" : "text-[#5F5F5F]"}`}>
                 Installs
               </span>
@@ -573,7 +573,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
                 5,000+
               </span>
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between">
               <span className={`text-sm font-semibold ${tokens.isDark ? "text-white/70" : "text-[#5F5F5F]"}`}>
                 Version
               </span>
@@ -581,7 +581,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
                 2.1.0
               </span>
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between">
               <span className={`text-sm font-semibold ${tokens.isDark ? "text-white/70" : "text-[#5F5F5F]"}`}>
                 Size
               </span>
@@ -605,7 +605,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
             <div className="flex flex-col gap-3">
               <button
                 type="button"
-                className="flex items-center gap-3 text-sm font-medium transition-colors"
+                className="flex flex-wrap items-center gap-3 text-sm font-medium transition-colors"
                 style={{ color: "#0F6773" }}
               >
                 <EmailIcon className="h-5 w-5" />
@@ -613,7 +613,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
               </button>
               <button
                 type="button"
-                className="flex items-center gap-3 text-sm font-medium transition-colors"
+                className="flex flex-wrap items-center gap-3 text-sm font-medium transition-colors"
                 style={{ color: "#0F6773" }}
               >
                 <FileCodeIcon className="h-5 w-5" />
@@ -621,7 +621,7 @@ export const MarketplaceDetailView = ({ item, tokens }: MarketplaceDetailViewPro
               </button>
               <button
                 type="button"
-                className="flex items-center gap-3 text-sm font-medium transition-colors"
+                className="flex flex-wrap items-center gap-3 text-sm font-medium transition-colors"
                 style={{ color: "#0F6773" }}
               >
                 <PhoneIcon className="h-5 w-5" />

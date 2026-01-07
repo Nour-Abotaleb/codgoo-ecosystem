@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 // import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { i18n } from "@shared/config/i18n";
@@ -36,7 +37,7 @@ import type {
   DashboardTokens
 } from "../types";
 import { PlaceholderIcon } from "./PlaceholderIcon";
-import { getDefaultDashboard, setDefaultDashboard } from "../utils/dashboardPreferences";
+import { getDefaultDashboard } from "../utils/dashboardPreferences";
 
 // Import logos for Electron compatibility
 import logoCloud from "/logo-cloud.svg";
@@ -51,6 +52,8 @@ type DashboardSidebarProps = {
   readonly activeNavId: string;
   readonly onSelectNav: (id: string) => void;
   readonly tokens: DashboardTokens;
+  readonly isOpen?: boolean;
+  readonly onToggle?: () => void;
 };
 
 export const DashboardSidebar = ({
@@ -60,13 +63,36 @@ export const DashboardSidebar = ({
   navigationItems,
   activeNavId,
   onSelectNav,
-  tokens
+  tokens,
+  isOpen = false,
+  onToggle
 }: DashboardSidebarProps) => {
   // const navigate = useNavigate();
   const { logout } = useAuth();
   const [isSwitcherOpen, setSwitcherOpen] = useState(false);
-  const [defaultDashboard, setDefaultDashboardState] = useState<DashboardAppId>(() => getDefaultDashboard());
+  const [_defaultDashboard, setDefaultDashboardState] = useState<DashboardAppId>(() => getDefaultDashboard());
   const switcherRef = useRef<HTMLDivElement>(null);
+  const popoverRef = useRef<HTMLDivElement>(null);
+  const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
+  const { t } = useTranslation(["dashboard", "landing"]);
+  const isRTL = i18n.language === "ar";
+
+  // Sync with localStorage when switcher opens and calculate popover position
+  useEffect(() => {
+    if (isSwitcherOpen) {
+      const currentDefault = getDefaultDashboard();
+      setDefaultDashboardState(currentDefault);
+      
+      // Calculate popover position based on button position
+      if (switcherRef.current) {
+        const rect = switcherRef.current.getBoundingClientRect();
+        setPopoverPosition({
+          top: rect.bottom + 12, // 12px = mt-3 equivalent
+          left: isRTL ? rect.right - 256 : rect.left // 256px = w-64 equivalent
+        });
+      }
+    }
+  }, [isSwitcherOpen, isRTL]);
 
   useEffect(() => {
     if (!isSwitcherOpen) {
@@ -75,9 +101,11 @@ export const DashboardSidebar = ({
 
     const handleClick = (event: MouseEvent) => {
       if (
-        switcherRef.current &&
         event.target instanceof Node &&
-        !switcherRef.current.contains(event.target)
+        switcherRef.current &&
+        !switcherRef.current.contains(event.target) &&
+        popoverRef.current &&
+        !popoverRef.current.contains(event.target)
       ) {
         setSwitcherOpen(false);
       }
@@ -88,7 +116,7 @@ export const DashboardSidebar = ({
   }, [isSwitcherOpen]);
 
   const popoverBaseClass =
-    "bg-[var(--color-popover-bg)] text-[color:var(--color-popover-text)] ring-[color:var(--color-popover-ring)]";
+    "bg-[var(--color-popover-bg)]  text-[color:var(--color-popover-text)] ring-[color:var(--color-popover-ring)]";
   const popoverActiveClass =
     "bg-[var(--color-popover-active-bg)] text-[color:var(--color-popover-active-text)]";
   const popoverIdleClass =
@@ -146,15 +174,40 @@ export const DashboardSidebar = ({
   //   ? appNavBackground
   //   : cloudNavBackground;
 
-  const { t } = useTranslation("dashboard");
-  const isRTL = i18n.language === "ar";
-
   return (
-    <aside
-      className={`dashboard__sidebar fixed inset-y-0 ${isRTL ? "right-0" : "left-0"} z-20 hidden min-h-screen w-64 pe-1 flex-col pt-6 lg:flex ${tokens.sidebarClass}`}
-    >
-      <div className={`relative flex justify-center gap-6  mx-2 rounded-[20px] p-4  ${
-                tokens.isDark ? 'bg-tranparent' : 'bg-[#F9FBFD]'
+    <>
+      {/* Overlay for mobile when sidebar is open */}
+      <div
+        className={`fixed inset-0 z-[9998] bg-black/50 transition-opacity duration-300 xl:hidden ${
+          isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={onToggle}
+      />
+
+      {/* Sidebar */}
+      <aside
+        className={`dashboard__sidebar hidden lg:flex fixed inset-y-0 md:ps-4 ${isRTL ? "right-0" : "left-0"} z-[9999] h-screen w-64 pe-1 flex-col pt-6 transition-transform duration-300 ${tokens.sidebarClass} ${
+          isOpen ? "translate-x-0" : isRTL ? "translate-x-full" : "-translate-x-full"
+        } lg:translate-x-0 lg:relative lg:inset-auto lg:z-auto`}
+        style={{
+          display: isOpen ? "flex" : "none",
+        }}
+      >
+        <style>{`
+          @media (min-width: 1024px) {
+            .dashboard__sidebar {
+              display: flex !important;
+              position: relative !important;
+              inset: auto !important;
+              z-index: auto !important;
+            }
+          }
+        `}</style>
+        
+        {/* Top Section: Logo and Items */}
+        <div className="flex-1 flex flex-col overflow-y-auto">
+      <div className={`relative flex justify-center gap-6 mx-2 rounded-[20px] p-4 hidden xl:flex ${
+                tokens.isDark ? 'bg-transparent' : 'bg-[#F9FBFD]'
               }`}>
         <img 
           src={activeLogo} 
@@ -162,7 +215,7 @@ export const DashboardSidebar = ({
           className="h-10 w-auto object-contain"
           fetchPriority="high"
         />
-        <div ref={switcherRef} className="relative">
+        <div ref={switcherRef} className="relative z-[99999]">
           <button
             type="button"
             aria-haspopup="true"
@@ -185,21 +238,23 @@ export const DashboardSidebar = ({
           >
             <DotsSwitcher className="h-6 w-6 cursor-pointer" />
           </button>
-          {isSwitcherOpen && (
+          {isSwitcherOpen && createPortal(
             <div
-              className={`absolute ${isRTL ? "right-0" : "left-0"} z-9 mt-3 w-64 rounded-xl p-2 shadow-2xl backdrop-blur ${popoverBaseClass}`}
+              ref={popoverRef}
+              className={`fixed z-[99999] w-64 rounded-xl p-2 shadow-xl backdrop-blur ${popoverBaseClass}`}
+              style={{
+                top: `${popoverPosition.top}px`,
+                [isRTL ? "left" : "left"]: `${popoverPosition.left}px`
+              }}
             >
               <ul className="space-y-2">
                 {apps.map((app) => {
-                  // Map to correct dashboard based on label
-                  const targetAppId = app.id === "cloud"
-                    ? "cloud"  // "Codgoo App" -> opens cloud dashboard
-                    : app.id === "app"
-                    ? "software"  // "Codgoo Software" -> opens software dashboard
-                    : "app";  // "Codgoo App" -> opens app dashboard
+                  // Use the app.id directly as targetAppId since they should match DashboardAppId
+                  const targetAppId = app.id;
                   
                   const isActive = targetAppId === activeAppId;
-                  const isDefault = targetAppId === defaultDashboard;
+                  // Show check icon for currently active dashboard instead of default
+                  const isDefault = isActive;
 
                   return (
                     <li key={app.id}>
@@ -218,7 +273,7 @@ export const DashboardSidebar = ({
                             src={
                               app.id === "cloud"
                                 ? logoCloud
-                                : app.id === "app"
+                                : app.id === "software"
                                 ? logoSoftware
                                 : logoApp
                             }
@@ -227,46 +282,88 @@ export const DashboardSidebar = ({
                             fetchPriority="high"
                           />
                           <span className="text-sm font-medium">
-                            {app.id === "cloud"
-                              ? "Codgoo App"
-                              : app.id === "app"
-                              ? "Codgoo Software"
-                              : "Codgoo App"}
+                            {t(`dashboard.apps.${app.id}`, { ns: "landing" })}
                           </span>
                         </button>
                         <button
                           type="button"
                           onClick={(e) => {
                             e.stopPropagation();
-                            setDefaultDashboard(targetAppId);
-                            setDefaultDashboardState(targetAppId);
+                            // Switch to this dashboard
+                            onSelectApp(targetAppId);
+                            setSwitcherOpen(false);
                           }}
-                          className={`ml-2 flex items-center justify-center rounded-full p-1.5 transition-colors ${
+                          className={`ml-2 flex items-center justify-center rounded-full p-1.5 transition-all ${
                             isDefault
-                              ? tokens.isDark
-                                ? "bg-black text-white"
-                                : "bg-black/20 text-white"
+                              ? "bg-black text-white scale-100"
                               : tokens.isDark
-                              ? "text-white/50 hover:text-white hover:bg-white/10"
-                              : "text-[#718EBF] hover:text-white hover:bg-black/20"
+                              ? "text-white/30 hover:text-white hover:bg-white/10 scale-90"
+                              : "text-gray-400 hover:text-white hover:bg-black/20 scale-90"
                           }`}
-                          title="Set as default dashboard"
+                          title={isDefault ? t("dashboard.overview.currentDashboard", { ns: "landing" }) : t("dashboard.overview.switchToDashboard", { ns: "landing" })}
                         >
-                          <CheckIcon className={`h-4 w-4 ${isDefault ? "" : "opacity-50"}`} />
+                          <CheckIcon className={`h-4 w-4 transition-opacity ${isDefault ? "opacity-100" : "opacity-40"}`} />
                         </button>
                       </div>
                     </li>
                   );
                 })}
               </ul>
-            </div>
+            </div>,
+            document.body
           )}
         </div>
       </div>
+
+      {/* Mobile: Horizontal slider for app switcher */}
+      <div className="xl:hidden flex flex-wrap items-center justify-between gap-3 mx-2 rounded-[20px]">
+        <button
+          type="button"
+          onClick={() => {
+            const currentIndex = apps.findIndex(app => app.id === activeAppId);
+            const prevIndex = currentIndex === 0 ? apps.length - 1 : currentIndex - 1;
+            onSelectApp(apps[prevIndex].id as DashboardAppId);
+          }}
+          className={`flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full transition-all ${
+            tokens.isDark ? 'bg-[#1F2937] hover:bg-[#374151]' : 'bg-[#F0F4F8] hover:bg-[#E0E8F0]'
+          }`}
+          aria-label="Previous app"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+
+        <div className="flex-1 flex items-center justify-center">
+          <img
+            src={activeLogo}
+            alt={`${activeAppId} logo`}
+            className="h-12 w-auto object-contain"
+            fetchPriority="high"
+          />
+        </div>
+
+        <button
+          type="button"
+          onClick={() => {
+            const currentIndex = apps.findIndex(app => app.id === activeAppId);
+            const nextIndex = currentIndex === apps.length - 1 ? 0 : currentIndex + 1;
+            onSelectApp(apps[nextIndex].id as DashboardAppId);
+          }}
+          className={`flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full transition-all ${
+            tokens.isDark ? 'bg-[#1F2937] hover:bg-[#374151]' : 'bg-[#F0F4F8] hover:bg-[#E0E8F0]'
+          }`}
+          aria-label="Next app"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
 <div className=" border-b border-[color:var(--color-sidebar-divider)] border-b-[1.58px] py-2 mx-2"></div>
 
-      <nav className={`mt-4 grid grid-cols-2 gap-3 px-2 ${activeAppId === "cloud" ? "mb-0" : activeAppId === "software" ? "mb-0" : "mb-0"}`}>
-        {navigationItems.map((item) => {
+      <nav className={`mt-4 grid grid-cols-2 gap-3 px-2 flex-1 content-start ${activeAppId === "cloud" ? "mb-0" : activeAppId === "software" ? "mb-0" : "mb-0"}`}>
+        {navigationItems.map((item, index) => {
           const isActive = item.id === activeNavId;
           const Icon = item.icon ? iconMap[item.icon] : undefined;
 
@@ -296,15 +393,23 @@ export const DashboardSidebar = ({
           const iconColorClass = isActive
             ? navActiveColorClass
             : `${navIdleColorClass} group-hover:${hoverColorClass}`;
+          const isFirstItem = index === 0;
+          const isArabic = i18n.language === "ar";
           const labelColorClass = isActive
-            ? `font-medium ${navActiveColorClass}`
-            : `font-light ${navIdleColorClass} group-hover:${hoverColorClass}`;
+            ? `font-medium ${navActiveColorClass} ${isArabic && isFirstItem ? "text-[14px]" : ""}`
+            : `font-light ${navIdleColorClass} group-hover:${hoverColorClass} ${isArabic && isFirstItem ? "text-sm" : ""}`;
 
           return (
             <button
               key={item.id}
               type="button"
-              onClick={() => onSelectNav(item.id)}
+              onClick={() => {
+                onSelectNav(item.id);
+                // Close sidebar on mobile after selection
+                if (isOpen && onToggle) {
+                  onToggle();
+                }
+              }}
               aria-current={isActive ? "page" : undefined}
               className={`group relative flex flex-col cursor-pointer items-center justify-center overflow-hidden rounded-[20px] px-4 py-4 text-lg font-semibold transition-[border] duration-200 ease-in-out ${
                 tokens.isDark ? 'bg-[#13181E]' : 'bg-[#F9FBFD]'
@@ -316,7 +421,7 @@ export const DashboardSidebar = ({
                   <Icon className={`h-6 w-6 transition-colors duration-200 ease-in-out ${iconColorClass}`} />
                 ) : (
                   <PlaceholderIcon
-                    label={t(`navigation.${item.id}`)}
+                    label={t(`dashboard.navigation.${item.id}`, { ns: "landing", defaultValue: item.label })}
                     isActive={isActive}
                     tokens={tokens}
                     activeClassName={`${navActiveColorClass} bg-transparent`}
@@ -325,51 +430,55 @@ export const DashboardSidebar = ({
                 )}
               </span>
               <span className={`relative transition-colors duration-200 ease-in-out text-center ${labelColorClass}`}>
-                {t(`navigation.${item.id}`)}
+                {t(`dashboard.navigation.${item.id}`, { ns: "landing", defaultValue: item.label })}
               </span>
             </button>
           );
         })}
       </nav>
+        </div>
 
-      <div className="mt-auto flex flex-row items-center justify-between  px-2 pb-4">
-        <button
-          type="button"
-          onClick={async () => {
-            try {
-              await logout();
-            } catch (error) {
-              console.error("Logout failed:", error);
-            } finally {
-              // Always clear and redirect, even if logout API fails
-              // Use window.location for a hard redirect to clear everything
-              window.location.href = "/login";
-            }
-          }}
-          className={`group flex cursor-pointer items-center justify-center rounded-full w-11 h-11 transition-colors ${tokens.isDark ? "bg-white" : "bg-[#FEEFEE]"}`}
-        >
-          <Logout className={`h-5 w-5 transition-colors opacity-70 ${navIdleColorClass} group-hover:${hoverColorClass}`} />
-        </button>
-        <button
-          type="button"
-          className="group flex px-12 cursor-pointer items-center justify-center gap-1 rounded-full py-2.5 text-base font-semibold transition-colors"
-          style={{ 
-            backgroundColor: activeAppId === "software" 
-              ? "#071FD7" 
-              : activeAppId === "app"
-              ? "#0F6773"
-              : "#7469C7"
-          }}
-        >
-          <span className="relative flex items-center justify-center">
-            <SupportIcon className="h-5 w-5 transition-colors text-white" />
-          </span>
-          <span className="relative transition-colors font-light text-white">
-            Support
-          </span>
-        </button>
-      </div>
-    </aside>
+        {/* Bottom Section: Logout and Support */}
+        <div className="flex flex-row items-center justify-between px-2 pb-4 flex-shrink-0">
+          <button
+            type="button"
+            onClick={async () => {
+              try {
+                await logout();
+              } catch (error) {
+                console.error("Logout failed:", error);
+              } finally {
+                // Always clear and redirect, even if logout API fails
+                // Use window.location for a hard redirect to clear everything
+                window.location.href = "/login";
+              }
+            }}
+            className={`group flex cursor-pointer items-center justify-center rounded-full w-11 h-11 transition-colors ${tokens.isDark ? "bg-white" : "bg-[#FEEFEE]"}`}
+          >
+            <Logout className={`h-5 w-5 transition-colors opacity-70 ${navIdleColorClass} group-hover:${hoverColorClass}`} />
+          </button>
+          <button
+            type="button"
+            onClick={() => onSelectNav("support")}
+            className="group flex px-12 cursor-pointer items-center justify-center gap-1 rounded-full py-2.5 text-base font-semibold transition-colors"
+            style={{ 
+              backgroundColor: activeAppId === "software" 
+                ? "#071FD7" 
+                : activeAppId === "app"
+                ? "#0F6773"
+                : "#7469C7"
+            }}
+          >
+            <span className="relative flex items-center justify-center">
+              <SupportIcon className="h-5 w-5 transition-colors text-white" />
+            </span>
+            <span className="relative transition-colors font-light text-white">
+              {t("dashboard.overview.support", { ns: "landing" })}
+            </span>
+          </button>
+        </div>
+      </aside>
+    </>
   );
 };
 

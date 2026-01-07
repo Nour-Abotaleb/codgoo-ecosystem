@@ -47,8 +47,8 @@ export const BackButton = ({ className = "", isDark = false, onClick, showText =
       type="button"
       onClick={handleClick}
       disabled={!hasBackAction}
-      className={`group flex items-center gap-2 rounded-[20px] ${showText ? "px-4 py-2.5" : "p-2.5"} text-sm font-medium transition-all ${
-        hasBackAction ? "hover:scale-105 cursor-pointer" : "opacity-50 cursor-not-allowed"
+      className={`group flex flex-wrap items-center gap-2 rounded-[20px] ${showText ? "px-4 py-2.5" : "p-2.5"} text-sm font-medium transition-all ${
+        hasBackAction ? "hover:scale-105 cursor-pointer" : "cursor-not-allowed"
       } ${
         isDark
           ? "bg-[#0F1217] text-white/80 hover:bg-[#1A2028] hover:text-white"

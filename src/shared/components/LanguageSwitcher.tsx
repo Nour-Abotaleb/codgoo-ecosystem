@@ -20,7 +20,7 @@ export const LanguageSwitcher = () => {
     supportedLanguages[0];
 
   return (
-    <label className="inline-flex items-center gap-2 text-sm font-medium">
+    <label className="inline-flex flex-wrap items-center gap-2 text-sm font-medium">
       <span className="text-slate-300">{t("navigation.language")}:</span>
       <select
         onChange={handleChange}

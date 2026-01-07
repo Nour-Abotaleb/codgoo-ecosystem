@@ -175,7 +175,7 @@ export const PhoneField = ({ label, name = "phone", defaultCountry = "US", error
           style={autofillStyles}
           className={`w-full border-e bg-transparent px-5 text-left text-sm md:text-base focus:outline-none transition-colors ${
             isDark 
-              ? 'border-gray-700 text-white placeholder:text-gray-500' 
+              ? 'border-gray-700 text-white placeholder:text-black' 
               : 'border-[color:var(--color-auth-border)] text-slate-900 placeholder:text-[color:var(--color-auth-placeholder)]'
           }`}
           autoComplete="tel"
@@ -248,7 +248,7 @@ export const PhoneField = ({ label, name = "phone", defaultCountry = "US", error
                       role="option"
                       aria-selected={country.code === selectedCountry}
                     >
-                      <span className="flex items-center gap-3">
+                      <span className="flex flex-wrap items-center gap-3">
                         {country.flagUrl ? (
                           <img
                             src={country.flagUrl}

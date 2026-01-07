@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { i18n } from "@shared/config/i18n";
 import heroWave from "@assets/images/cloud/bg.png";
 import widgetBg from "@assets/images/cloud/widget.png";
@@ -75,6 +76,7 @@ export const DashboardOverview = ({
   dataset,
   tokens,
 }: DashboardOverviewProps) => {
+  const { t } = useTranslation("landing");
   const navigate = useNavigate();
   const [activeSlide, setActiveSlide] = useState(0);
   const [activeNewsPage, setActiveNewsPage] = useState(0);
@@ -153,18 +155,18 @@ export const DashboardOverview = ({
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 ">
       {/* Hero Section */}
       <section>
         <div
-          className="relative overflow-hidden rounded-[20px] px-8 py-8 text-white transition-all duration-500"
+          className="relative z-10 overflow-hidden rounded-[20px] px-8 py-8 text-white transition-all duration-500"
           style={currentSlide.gradient ? { background: currentSlide.gradient } : undefined}
         >
           {/* Hero Image */}
           <img
             src={heroImage}
             alt="Hero background"
-            className={`absolute inset-0 rounded-[20px]  w-full h-full object-cover transition-opacity duration-500 ${
+            className={`absolute inset-0  rounded-[20px]  w-full h-full object-cover transition-opacity duration-500 ${
               imageLoaded ? "opacity-100" : "opacity-0"
             }`}
             loading="eager"
@@ -176,11 +178,11 @@ export const DashboardOverview = ({
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight transition-opacity duration-500">
                 {currentSlide.title}
               </h1>
-              <ul className="space-y-2.5 text-sm md:text-base text-white grid grid-cols-2 gap-2">
+              <ul className="space-y-2.5 text-xs sm:text-sm md:text-base text-white grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {currentSlide.highlights.map((highlight, idx) => (
-                  <li key={`${activeSlide}-${idx}`} className="flex items-start text-nowrap gap-3 transition-opacity duration-500">
-                    <DiamondIcon className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                    <span>{highlight}</span>
+                  <li key={`${activeSlide}-${idx}`} className="flex items-start gap-3 transition-opacity duration-500">
+                    <DiamondIcon className="h-3 w-3 sm:h-4 sm:w-4 mt-1 flex-shrink-0" />
+                    <span className="truncate sm:whitespace-normal">{highlight}</span>
                   </li>
                 ))}
               </ul>
@@ -222,7 +224,7 @@ export const DashboardOverview = ({
               key={stat.id}
               className={`${cardClass} flex flex-col gap-2 px-4 py-7 `}
             >
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 <div className={`flex items-center justify-center rounded-full p-3 ${tokens.isDark ? "bg-[var(--color-icon-surface)]" : "bg-[#EEEDF8]"}`}>
                   <Icon 
                     className={`h-6 w-6 md:h-8 md:w-8 ${tokens.isDark ? "[&_path]:fill-white" : "[&_path]:fill-[#584ABC]"}`}
@@ -240,12 +242,12 @@ export const DashboardOverview = ({
 
        <section className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         <div className={cardClass}>
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <h3 className={`text-lg lg:text-xl font-bold ${tokens.isDark ? "text-[var(--color-page-text)]" : "text-[#2B3674]"}`}>
               Your Active Products/Services
             </h3>
             <button type="button" className="px-1 text-sm font-bold text-[#A3AED0] flex items-center gap-1 cursor-pointer">
-              See All <ArrowRight className={`h-4 w-4 [&_path]:stroke-[#A3AED0] ${isRTL ? "rotate-180" : ""}`} />
+              {t("dashboard.overview.seeAll")} <ArrowRight className={`h-4 w-4 [&_path]:stroke-[#A3AED0] ${isRTL ? "rotate-180" : ""}`} />
             </button>
           </div>
           <div className="mt-4 flex flex-col gap-4">
@@ -306,7 +308,7 @@ export const DashboardOverview = ({
         </div>
       </section>
 
-      <section className="grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1.8fr)]">
+      <section className="md:grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1.8fr)]">
         <div className="relative">
           <img src={widget3Bg} alt="" className="w-full object-cover" />
           <div className="absolute inset-0 p-10 flex flex-col gap-5">
@@ -339,9 +341,9 @@ export const DashboardOverview = ({
         </div>
 
         <div className={cardClass}>
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <h3 className={`text-lg lg:text-xl font-bold ${tokens.isDark ? "text-[var(--color-page-text)]" : "text-[#2B3674]"}`}>Domains</h3>
-            <div className="flex items-center gap-3 text-sm text-[var(--color-page-text)]/60">
+            <div className="flex flex-wrap items-center gap-3 text-sm text-[var(--color-page-text)]/60">
               <div className="flex h-10 items-center gap-2 rounded-full border border-[var(--color-border-divider)]  px-4">
                 <SearchIcon className="h-4 w-4" />
                 <input
@@ -353,7 +355,7 @@ export const DashboardOverview = ({
                 />
               </div>
               <button type="button" className="px-1 text-sm font-bold text-[#A3AED0] flex items-center gap-1 cursor-pointer">
-                See All <ArrowRight className={`h-4 w-4 [&_path]:stroke-[#A3AED0] ${isRTL ? "rotate-180" : ""}`} />
+                {t("dashboard.overview.seeAll")} <ArrowRight className={`h-4 w-4 [&_path]:stroke-[#A3AED0] ${isRTL ? "rotate-180" : ""}`} />
               </button>
             </div>
           </div>
@@ -426,10 +428,10 @@ export const DashboardOverview = ({
 
       <section>
         <div className={cardClass}>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between">
             <h3 className={`text-lg lg:text-xl font-bold ${tokens.isDark ? "text-[var(--color-page-text)]" : "text-[#2B3674]"}`}>Managed Sites</h3>
             <button type="button" className="px-1 text-sm font-bold text-[#A3AED0] flex items-center gap-1 cursor-pointer">
-              See All <ArrowRight className={`h-4 w-4 [&_path]:stroke-[#A3AED0] ${isRTL ? "rotate-180" : ""}`} />
+              {t("dashboard.overview.seeAll")} <ArrowRight className={`h-4 w-4 [&_path]:stroke-[#A3AED0] ${isRTL ? "rotate-180" : ""}`} />
             </button>
           </div>
           <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -446,7 +448,7 @@ export const DashboardOverview = ({
                 </div>
 
                 {/* Technology Type */}
-                <div className="mb-6 flex items-center gap-2">
+                <div className="mb-6 flex flex-wrap items-center gap-2">
                   <TechIcon 
                     className={`h-4 w-4 ${tokens.isDark ? "" : "[&_path]:fill-[#584ABC]"}`}
                   />
@@ -474,10 +476,10 @@ export const DashboardOverview = ({
 
       <section className="grid gap-6 lg:grid-cols-2">
         <div className={cardClass}>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between">
             <h3 className={`text-lg lg:text-xl font-bold ${tokens.isDark ? "text-[var(--color-page-text)]" : "text-[#2B3674]"}`}>Recent Support Tickets</h3>
             <button type="button" className="px-1 text-sm font-bold text-[#A3AED0] flex items-center gap-1 cursor-pointer">
-              See All <ArrowRight className={`h-4 w-4 [&_path]:stroke-[#A3AED0] ${isRTL ? "rotate-180" : ""}`} />
+              {t("dashboard.overview.seeAll")} <ArrowRight className={`h-4 w-4 [&_path]:stroke-[#A3AED0] ${isRTL ? "rotate-180" : ""}`} />
             </button>
           </div>
           <div className="mt-4 space-y-4">
@@ -486,7 +488,7 @@ export const DashboardOverview = ({
                 key={ticket.id}
                 className={`flex flex-col gap-3 rounded-[20px] p-6 transition-colors hover:border-[#7469C7] ${tokens.isDark ? "bg-transparent stroke" : "bg-[#F4F4FF]"}`}
               >
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between">
                   <p className={`text-sm md:text-base font-medium ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>{ticket.id}</p>
                   {/* Badge */}
                   <span className="bg-[#FCE1DF] rounded-full px-6 py-2.5 text-sm font-medium text-[#B60F00]">Customer-Reply</span>
@@ -494,7 +496,7 @@ export const DashboardOverview = ({
                 <h4 className="text-base font-semibold text-[var(--color-page-text)]">
                   {ticket.title}
                 </h4>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <div className={`flex items-center gap-1 rounded-[20px] py-2.5 max-w-fit px-4 text-sm ${tokens.isDark ? "bg-[#393C4C] text-white" : "bg-white text-[#584ABC]"}`}>
                     <DateIcon className="h-4 w-4" />
                     <span>
@@ -529,7 +531,7 @@ export const DashboardOverview = ({
             <button
                 type="button"
                 onClick={() => navigate("/dashboard/manage-nameservers")}
-                className="py-2.5 flex items-center gap-2 cursor-pointer "
+                className="py-2.5 flex flex-wrap items-center gap-2 cursor-pointer "
               >
            <PlusIcon className="h-4 w-4" />
                 Open New Ticket
@@ -538,10 +540,10 @@ export const DashboardOverview = ({
         </div>
 
         <div className={cardClass}>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between">
             <h3 className={`text-lg lg:text-xl font-bold ${tokens.isDark ? "text-[var(--color-page-text)]" : "text-[#2B3674]"}`}>Recent News</h3>
             <button type="button" className="px-1 text-sm font-bold text-[#A3AED0] flex items-center gap-1 cursor-pointer">
-              See All <ArrowRight className={`h-4 w-4 [&_path]:stroke-[#A3AED0] ${isRTL ? "rotate-180" : ""}`} />
+              {t("dashboard.overview.seeAll")} <ArrowRight className={`h-4 w-4 [&_path]:stroke-[#A3AED0] ${isRTL ? "rotate-180" : ""}`} />
             </button>
           </div>
           <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">

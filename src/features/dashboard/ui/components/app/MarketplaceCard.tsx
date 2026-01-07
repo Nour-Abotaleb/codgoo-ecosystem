@@ -73,7 +73,7 @@ export const MarketplaceCard = ({
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
           {/* Price Type Badge */}
-          {/* <div className="flex items-center gap-3 mb-3">
+          {/* <div className="flex flex-wrap items-center gap-3 mb-3">
             <span
               className="inline-flex items-center justify-center px-5 py-1 rounded-full text-sm font-light"
               style={{ backgroundColor: colors.bg, color: colors.text }}
@@ -109,11 +109,11 @@ export const MarketplaceCard = ({
       </div>
 
       {/* Price and Rating */}
-      <div className="mt-2 flex items-center justify-between text-sm w-full">
+      <div className="mt-2 flex flex-wrap items-center justify-between text-sm w-full">
         <span className={`text-[15px] font-medium ${tokens.isDark ? "text-white" : "text-[#1A3341]"}`}>
           {item.price || ""}
         </span>
-        <div className="flex items-center gap-2 flex-shrink-0">
+        <div className="flex flex-wrap items-center gap-2 flex-shrink-0">
           <div className="flex items-center">
             {Array.from({ length: 5 }).map((_, i) => (
               <span

@@ -83,10 +83,10 @@ export const ViewSummaryModal = ({
       {/* Modal */}
       <div className={`relative w-full max-w-xl ${tokens.cardBase} ${tokens.isDark ? "bg-[#0F1217]" : "bg-white"} rounded-[20px] max-h-[90vh] overflow-hidden flex flex-col`}>
         {/* Header */}
-        <div className={`flex items-center justify-between px-6 pt-6 pb-4 flex-shrink-0 rounded-t-2xl ${
+        <div className={`flex flex-wrap items-center justify-between px-6 pt-6 pb-4 flex-shrink-0 rounded-t-2xl ${
           tokens.isDark ? "bg-[#0F1217]" : "bg-[#FFFEF7]"
         }`}>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <div
               className={`flex h-9 w-9 items-center justify-center rounded-full ${
                 tokens.isDark ? tokens.buttonGhost : ""
@@ -133,7 +133,7 @@ export const ViewSummaryModal = ({
 
               {/* Meeting Details */}
               <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <span className={`text-sm ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"}`}>
                     Date:{" "}
                   </span>
@@ -141,7 +141,7 @@ export const ViewSummaryModal = ({
                     {meeting?.date || "5 Nov 2025"}
                   </span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <span className={`text-sm ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"}`}>
                     Time:{" "}
                   </span>
@@ -150,7 +150,7 @@ export const ViewSummaryModal = ({
                   </span>
                 </div>
                 {meeting?.duration && (
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className={`text-sm ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"}`}>
                       Duration:{" "}
                     </span>
@@ -160,7 +160,7 @@ export const ViewSummaryModal = ({
                   </div>
                 )}
                 {meeting?.platform && (
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className={`text-sm ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"}`}>
                       Meeting Platform:{" "}
                     </span>
@@ -175,7 +175,7 @@ export const ViewSummaryModal = ({
                   <span className={`text-sm ${tokens.isDark ? "text-white/70" : "text-[#718EBF]"}`}>
                     Attendees:
                   </span>
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-wrap items-center gap-3">
                     {defaultAttendees.map((attendee, index) => (
                       <div key={attendee.id} className="flex items-center gap-1 bg-[#FFF8D1] rounded-full p-1 pe-4">
                         <div
@@ -209,7 +209,7 @@ export const ViewSummaryModal = ({
               </h4>
               <ul className="flex flex-col gap-2">
                 {defaultNotes.map((note, index) => (
-                  <li key={index} className="flex items-center gap-2">
+                  <li key={index} className="flex flex-wrap items-center gap-2">
                     <div className="flex-shrink-0 w-4 h-4 rounded-full bg-[#FFF7D1]" />
                     <span className={`text-sm ${tokens.isDark ? "text-white/70" : "text-black"}`}>
                       {note}
@@ -233,7 +233,7 @@ export const ViewSummaryModal = ({
                 {/* Timeline entries */}
                 <div className="flex flex-col gap-6">
                   {defaultActionLog.map((log, index) => (
-                    <div key={index} className="relative flex items-start gap-4">
+                    <div key={index} className="relative flex flex-col md:flex-row flex-wrap items-start gap-4">
                       {/* Circle marker */}
                       <div className="absolute -left-6 flex items-center justify-center">
                         <div className={`h-5 w-5 rounded-full border-3 ${

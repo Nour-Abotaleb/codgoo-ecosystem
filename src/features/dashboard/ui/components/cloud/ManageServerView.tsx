@@ -143,7 +143,7 @@ export const ManageServerView = ({ service, tokens }: ManageServerViewProps) => 
   const labelClass = `text-base ${tokens.subtleText}`;
   const sectionTitleClass = "text-lg md:text-xl lg:text-2xl font-semibold";
   const statusBadgeClass =
-    "inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium";
+    "inline-flex flex-wrap items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium";
   const usageMetricIcons: Record<string, typeof ServerIcon> = {
     memory: MemoryIcon,
     bandwidth: BandwidthIcon,
@@ -163,7 +163,7 @@ export const ManageServerView = ({ service, tokens }: ManageServerViewProps) => 
 
       <div className={`${tokens.cardBase} ${cardClass}`}>
         <div className="mb-6 flex flex-col justify-between gap-3 md:flex-row md:items-center border-b border-dashed border-[#A3AED0] pb-6">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <span
               className={`${tokens.buttonGhost} inline-flex h-16 w-16 items-center justify-center rounded-full`}
             >
@@ -210,7 +210,7 @@ export const ManageServerView = ({ service, tokens }: ManageServerViewProps) => 
               >
                 <action.Icon className={`h-5 w-5 md:h-6 md:w-6 ${tokens.isDark ? "" : "[&_path]:fill-[#584ABC]"}`} />
               </span>
-              <div className="flex items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center justify-between gap-3">
                 <span className="text-base font-light text-[var(--color-card-text)]">
                   {action.label}
                 </span>
@@ -234,14 +234,14 @@ export const ManageServerView = ({ service, tokens }: ManageServerViewProps) => 
       <div className="grid gap-6">
         <div className="grid gap-4 xl:grid-cols-2">
           <div className={`${tokens.cardBase} ${cardClass}`}>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between">
               <h2 className={sectionTitleClass}>Billing &amp; Renewal</h2>
             </div>
             <div className="grid grid-cols-1">
               {billingDetails.map(({ label, value, Icon }) => (
                 <div
                   key={label}
-                  className="flex items-center justify-between rounded-[20px] px-5 py-2"
+                  className="flex flex-wrap items-center justify-between rounded-[20px] px-5 py-2"
                 >
                   <div className="flex items-center gap-1">
                     <span
@@ -249,7 +249,7 @@ export const ManageServerView = ({ service, tokens }: ManageServerViewProps) => 
                     >
                       <Icon className={`h-4 w-4 ${tokens.isDark ? "" : "[&_path]:fill-[#584ABC]"}`} />
                     </span>
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-wrap items-center justify-between">
                       <p className={labelClass}>{label}</p>
                     </div>
                   </div>
@@ -313,11 +313,11 @@ export const ManageServerView = ({ service, tokens }: ManageServerViewProps) => 
         <div className="grid items-stretch gap-4 grid-cols-1 lg:grid-cols-[2.4fr_1fr]">
           <div className="flex flex-col">
             <div className={`${tokens.cardBase} ${cardClass} h-full`}>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-wrap items-center justify-between">
                 <h2 className={sectionTitleClass}>Website</h2>
                 {/* <button
                   type="button"
-                  className={`${tokens.buttonGhost} inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold`}
+                  className={`${tokens.buttonGhost} inline-flex flex-wrap items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold`}
                 >
                   <PlusCircleIcon className="h-4 w-4" />
                   Add Site
@@ -411,7 +411,7 @@ export const ManageServerView = ({ service, tokens }: ManageServerViewProps) => 
                 {backupAndSecurity.map((item) => (
                   <div
                     key={item.label}
-                    className="flex items-center justify-between rounded-[20px] px-5 py-4 transition-colors"
+                    className="flex flex-wrap items-center justify-between rounded-[20px] px-5 py-4 transition-colors"
                   >
                     <div>
                       <p className="text-sm font-medium text-[var(--color-card-text)]">

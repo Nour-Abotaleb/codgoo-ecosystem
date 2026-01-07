@@ -77,8 +77,8 @@ export const TwoFactorAuthModal = ({
           {/* Modal */}
           <div className={`relative w-full max-w-lg ${tokens.cardBase} ${tokens.isDark ? "bg-[#0F1217]" : "bg-white"} rounded-[20px] p-6 max-h-[90vh] overflow-hidden flex flex-col`}>
             {/* Header */}
-            <div className="flex items-center justify-between mb-2 flex-shrink-0">
-              <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center justify-between mb-2 flex-shrink-0">
+              <div className="flex flex-wrap items-center gap-3">
                 <h2 className={`text-lg md:text-2xl font-bold ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}>
                     Two-Factor Authentication (2FA)
                 </h2>
@@ -105,14 +105,14 @@ export const TwoFactorAuthModal = ({
                 </p>
 
                 {/* Status Toggle */}
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between">
                   <span className={sectionTitleClass}>Status</span>
                   <ToggleSwitch checked={status} onChange={setStatus} />
                 </div>
 
                 {/* Security Level Info */}
                 <div className="pb-16">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-wrap items-center justify-between">
                     <span className={labelClass}>Security Level</span>
                     <span className="px-4 py-1.5 text-sm font-medium rounded-full" style={{ backgroundColor: APP_COLORS.primaryLight, color: APP_COLORS.primary }}>
                       {status ? "High" : "Low"}

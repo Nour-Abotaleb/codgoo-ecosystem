@@ -1,4 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
+import { i18n } from "@shared/config/i18n";
 import { PlusCircleIcon, SearchIcon, DotsSwitcher, MeetingsIcon, MeetingSummaryIcon, ArrowRightIcon, MeetingCalendarIcon, MeetingClockIcon, MeetingReasonIcon, CloseIcon, EditIcon } from "@utilities/icons";
 import type { DashboardTokens } from "../../types";
 import { useGetMeetingsQuery, useGetMeetingSummaryQuery, useDeleteMeetingMutation, useCancelMeetingMutation, useJoinMeetingQuery } from "@features/dashboard/api/dashboard-api";
@@ -50,25 +52,28 @@ const getStatusBadgeStyle = (status: MeetingStatus) => {
   }
 };
 
-const getActionButtonLabel = (status: MeetingStatus) => {
-  switch (status) {
-    case "Completed":
-      return "View Summary";
-    case "Confirmed":
-      return "Join Meeting";
-    case "Canceled":
-      return "Reschedule";
-    case "Waiting":
-      return "Join";
-    case "request_sent":
-      return "Join";
-    default:
-      return "View";
-  }
-};
+// This function will be moved inside component to use translation
 
 export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
+  const { t } = useTranslation("landing");
   const { data: apiData } = useGetMeetingsQuery();
+  
+  const getActionButtonLabel = (status: MeetingStatus) => {
+    switch (status) {
+      case "Completed":
+        return t("dashboard.meeting.viewSummary");
+      case "Confirmed":
+        return t("dashboard.meeting.joinMeeting");
+      case "Canceled":
+        return t("dashboard.meeting.reschedule");
+      case "Waiting":
+        return t("dashboard.meeting.join");
+      case "request_sent":
+        return t("dashboard.meeting.join");
+      default:
+        return t("dashboard.meeting.view");
+    }
+  };
   const [selectedMeetingId, setSelectedMeetingId] = useState<number | null>(null);
   const { data: summaryData } = useGetMeetingSummaryQuery(selectedMeetingId || 0, {
     skip: !selectedMeetingId,
@@ -89,6 +94,8 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
   const [meetingToDelete, setMeetingToDelete] = useState<MeetingItem | null>(null);
   const [meetingToView, setMeetingToView] = useState<MeetingItem | null>(null);
   const menuRefs = useRef<Map<string | number, HTMLDivElement>>(new Map());
+const isRTL = i18n.language === "ar";
+
 
   // Transform API data to component format
   const meetingsData = useMemo(() => {
@@ -178,18 +185,18 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
           />
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           {/* Create Meeting Button */}
           <button
             type="button"
             onClick={() => setIsAddMeetingModalOpen(true)}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-full font-medium transition-colors cursor-pointer ${
+            className={`flex flex-wrap items-center gap-2 px-4 py-2.5 rounded-full font-medium transition-colors cursor-pointer ${
               tokens.isDark
                 ? "bg-[#071FD7] text-white hover:bg-[#071FD7]/90"
                 : "bg-[#071FD7] text-white hover:bg-[#071FD7]/90"
             }`}
           >
-            <span>Create a meeting</span>
+            <span>{t("dashboard.meeting.createMeeting")}</span>
           </button>
           {/* Status Filter Dropdown */}
           <div className="relative">
@@ -202,12 +209,12 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
                   : "bg-white border-[#E6E9FB] text-[#2B3674]"
               } focus:outline-none focus:ring-1 focus:ring-[#071FD7]/20`}
             >
-              <option value="All">All Meetings</option>
-              <option value="Completed">Completed</option>
-              <option value="Confirmed">Confirmed</option>
-              <option value="Canceled">Canceled</option>
-              <option value="Waiting">Waiting</option>
-              <option value="request_sent">Request Sent</option>
+              <option value="All">{t("dashboard.meeting.allMeetings")}</option>
+              <option value="Completed">{t("dashboard.status.completed")}</option>
+              <option value="Confirmed">{t("dashboard.meeting.confirmed")}</option>
+              <option value="Canceled">{t("dashboard.status.canceled")}</option>
+              <option value="Waiting">{t("dashboard.meeting.waiting")}</option>
+              <option value="request_sent">{t("dashboard.meeting.requestSent")}</option>
             </select>
             <ArrowRightIcon
               className={`absolute right-3 top-1/2 transform -translate-y-1/2 rotate-90 h-4 w-4 pointer-events-none ${
@@ -229,7 +236,7 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
               <div className={`p-6 ${tokens.isDark ? "bg-gradient-to-br from-[#071FD7]/10 to-[#071FD7]/5" : "bg-[#F4F5FF]"}`}>
                 <div className="flex items-start justify-between gap-4">
                   {/* Left Section: Icon, Title, Status */}
-                  <div className="flex items-start gap-4 flex-1">
+                  <div className="flex flex-col md:flex-row flex-wrap items-start gap-4 flex-1">
                     {/* Video Icon */}
                     <div className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center">
                       <MeetingsIcon
@@ -239,7 +246,7 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
 
                     {/* Content */}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-4 mb-2">
+                      <div className="flex flex-wrap items-center justify-between gap-4 mb-2">
                         <div className="min-w-0 flex flex-col gap-2">
                           <h3
                             className={`text-lg font-medium ${tokens.isDark ? "text-white" : "text-[#2B3674]"}`}
@@ -248,7 +255,7 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
                             <span className="text-[#718EBF]"> </span>
                             <span className="text-[#718EBF]">({meeting.project})</span>
                           </h3>
-                          <div className="flex items-center gap-2">
+                          <div className="flex flex-wrap items-center gap-2">
                             <MeetingReasonIcon className="h-5 w-5 flex-shrink-0" style={{ color: "#BEBEBE" }} />
                             <span className="text-sm" style={{ color: "#BEBEBE" }}>
                               {meeting.status === "Completed" && meeting.summary
@@ -330,7 +337,7 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
                                 {/* Dropdown Menu */}
                                 {openMenuId === meeting.id && (
                                   <div
-                                    className={`absolute right-0 top-full mt-2 w-48 rounded-lg shadow-sm z-10 ${
+                                    className={`absolute  ${isRTL ? 'left-0' : 'right-0'}  top-full mt-2 w-48 rounded-lg shadow-sm z-10 ${
                                       tokens.isDark
                                         ? "bg-[#0F1217]"
                                         : "bg-white border border-[#E6E9FB]"
@@ -382,7 +389,7 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between">
                   <div className="flex flex-col gap-2" style={{ marginLeft: "64px" }}>
                     {/* Summary/Agenda/Note/Reason */}
                     {(meeting.summary || meeting.agenda || meeting.note || meeting.reason) && (
@@ -398,7 +405,7 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
                   
                   {/* Canceled By (for Canceled meetings) */}
                   {meeting.status === "Canceled" && (
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <span
                         className={`text-sm font-medium ${
                           tokens.isDark ? "text-white/70" : "text-[#718EBF]"
@@ -412,7 +419,7 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
 
                   {/* Attendees */}
                   {meeting.attendees > 0 && (
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <span
                         className={`text-sm font-medium ${
                           tokens.isDark ? "text-white/70" : "text-[#718EBF]"
@@ -446,12 +453,12 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
 
               {/* Bottom Section - Dashed Border and Background */}
               <div className={`p-6 flex flex-col gap-3 ${tokens.isDark ? "border-t border-dashed border-[#2E3141]" : "border-t border-dashed border-[#E2E8FF] bg-[#FFFEF7]"}`}>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between">
                   {/* Attachment, Date and Time Info - Horizontal Layout */}
                   <div className="flex flex-wrap items-center gap-4">
                     {/* Attachment (for Completed meetings) */}
                      {meeting.attachment && (
-                       <div className="flex items-center gap-2">
+                       <div className="flex flex-wrap items-center gap-2">
                          <MeetingSummaryIcon
                            className={`h-5 w-5 ${tokens.isDark ? "text-white" : "text-[#071FD7]"}`}
                          />
@@ -468,7 +475,7 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
                      {/* Date and Time Info */}
                      {meeting.status === "Canceled" ? (
                        <>
-                         <div className="flex items-center gap-2">
+                         <div className="flex flex-wrap items-center gap-2">
                            <MeetingCalendarIcon
                              className={`h-5 w-5 ${tokens.isDark ? "text-white" : "text-[#071FD7]"}`}
                            />
@@ -476,7 +483,7 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
                              Canceled On: {meeting.canceledDate}
                            </span>
                          </div>
-                         <div className="flex items-center gap-2">
+                         <div className="flex flex-wrap items-center gap-2">
                            <MeetingClockIcon
                              className={`h-5 w-5 ${tokens.isDark ? "text-white" : "text-[#071FD7]"}`}
                            />
@@ -487,20 +494,20 @@ export const MeetingsView = ({ tokens }: MeetingsViewProps) => {
                        </>
                      ) : (
                        <>
-                         <div className="flex items-center gap-2">
+                         <div className="flex flex-wrap items-center gap-2">
                            <MeetingCalendarIcon
                              className={`h-5 w-5 ${tokens.isDark ? "text-white" : "text-[#071FD7]"}`}
                            />
                            <span className={`text-sm ${tokens.isDark ? "text-white" : "text-[#071FD7]"}`}>
-                             {meeting.status === "Completed" ? "Held On" : "Date"}: {meeting.date}
+                             {meeting.status === "Completed" ? t("dashboard.meeting.heldOn") : t("dashboard.meeting.date")}: {meeting.date}
                            </span>
                          </div>
-                         <div className="flex items-center gap-2">
+                         <div className="flex flex-wrap items-center gap-2">
                            <MeetingClockIcon
                              className={`h-5 w-5 ${tokens.isDark ? "text-white" : "text-[#071FD7]"}`}
                            />
                            <span className={`text-sm ${tokens.isDark ? "text-white" : "text-[#071FD7]"}`}>
-                             Time: {meeting.time}
+                             {t("dashboard.meeting.time")}: {meeting.time}
                            </span>
                          </div>
                        </>

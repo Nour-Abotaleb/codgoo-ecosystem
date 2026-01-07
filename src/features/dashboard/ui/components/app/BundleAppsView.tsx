@@ -273,8 +273,8 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
     <div className="flex flex-col gap-4">
       {/* Bundle Details */}
       <div className={`flex flex-col gap-2 ${tokens.isDark ? "bg-[#1F2733]" : "bg-white"} rounded-[20px] p-4`}>
-        <div className="flex items-center gap-3">
-          <div className={`flex items-center gap-2 cursor-pointer ${tokens.isDark ? "bg-[#2a2a2a] text-[#34D8D6]" : "bg-[#E7F0F1] text-[#0F6773]"} rounded-full p-2 w-12 h-12 justify-center`} onClick={() => navigate("/dashboard/marketplace/bundles")}>
+        <div className="flex flex-wrap items-center gap-3">
+          <div className={`flex flex-wrap items-center gap-2 cursor-pointer ${tokens.isDark ? "bg-[#2a2a2a] text-[#34D8D6]" : "bg-[#E7F0F1] text-[#0F6773]"} rounded-full p-2 w-12 h-12 justify-center`} onClick={() => navigate("/dashboard/marketplace/bundles")}>
             <ArrowRight className="w-4 h-4 md:w-5 md:h-5 rotate-180" />
           </div>
           <div className="flex flex-col gap-1">
@@ -287,7 +287,7 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
           </div>
         </div>
         <div className={`${tokens.isDark ? "bg-[#2a2a2a]" : "bg-[#FAFAFA]"} rounded-[20px] p-6 mt-4`}>
-          <div className="flex items-start justify-between gap-4 mb-2">
+          <div className="flex flex-wrap items-start justify-between gap-4 mb-2">
             <div className="flex flex-col gap-2 flex-1">
               <span className={`px-3 py-1 rounded-full ${tokens.isDark ? "bg-[#1a3a3a] text-[#34D8D6]" : "bg-[#EBFBFB] text-[#208483]"} text-sm font-medium flex items-center gap-1 w-fit`}>
                 <img src={stars} alt="stars" className="" />
@@ -308,7 +308,7 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
 
           {/* Price Period Selector */}
           {bundleData.prices.length > 0 && (
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex flex-wrap items-center gap-2 mb-4">
               {bundleData.prices.map((priceOption) => (
                 <button
                   key={priceOption.id}
@@ -324,7 +324,7 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
                         : "bg-[#E9ECEA] text-[#5F5F5F] hover:text-black"
                   }`}
                 >
-                  {priceOption.name.charAt(0).toUpperCase() + priceOption.name.slice(1)}
+                  {priceOption.name ? priceOption.name.charAt(0).toUpperCase() + priceOption.name.slice(1) : "Unknown"}
                   <span className="ml-1 text-xs opacity-75">
                     ({priceOption.amount} {priceOption.currency})
                   </span>
@@ -333,7 +333,7 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
             </div>
           )}
 
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex flex-wrap items-center justify-between mb-2">
             <p className={`text-sm md:text-base ${tokens.isDark ? "text-gray-400" : "text-[#5F5F5F]"}`}>
               {selectedCount} of {limit} applications selected
             </p>
@@ -341,7 +341,7 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
               {remaining >= 0 ? remaining : 0} remaining
             </span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <div className={`flex-1 h-6 ${tokens.isDark ? "bg-[#1a1a1a]" : "bg-[#E9ECEA]"} rounded-full overflow-hidden`}>
               <div 
                 className="h-full bg-gradient-to-r from-[#3B838D] to-[#0F6773] transition-all rounded-full duration-300"
@@ -381,13 +381,13 @@ export const BundleAppsView = ({ tokens }: BundleAppsViewProps) => {
       </div>
 
       {/* Apps Section Title */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between">
         <h2 className={`text-xl md:text-2xl font-semibold ${tokens.isDark ? "text-white" : "text-[#142133]"}`}>
           General Services Apps
         </h2>
         <button
           type="button"
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+          className={`flex flex-wrap items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
             tokens.isDark
               ? "bg-white/10 text-white/70 hover:text-white"
               : "bg-white text-black"

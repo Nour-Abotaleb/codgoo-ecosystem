@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import {
   BillingInvoicesIcon,
@@ -41,6 +42,7 @@ const getStatusBadgeStyle = (status: InvoiceItem["status"]) => {
 };
 
 export const InvoicesView = ({ tokens, projectId }: InvoicesViewProps) => {
+  const { t } = useTranslation("landing");
   const iconBaseColor = tokens.isDark ? "#FFFFFF" : "#2B3674";
   
   // Fetch invoices from API
@@ -127,30 +129,30 @@ export const InvoicesView = ({ tokens, projectId }: InvoicesViewProps) => {
     return [
       {
         id: "all",
-        label: "All",
+        label: t("dashboard.overview.all"),
         value: String(total),
         icon: BillingInvoicesIcon,
       },
       {
         id: "paid",
-        label: "Paid",
+        label: t("dashboard.status.paid"),
         value: String(paid),
         icon: PaidInvoicesIcon,
       },
       {
         id: "unpaid",
-        label: "Unpaid",
+        label: t("dashboard.status.unpaid"),
         value: String(unpaid),
         icon: UnPaidInvoicesIcon,
       },
       {
         id: "overdue",
-        label: "Overdue",
+        label: t("dashboard.status.overdue"),
         value: String(overdue),
         icon: OverdueInvoicesIcon,
       },
     ];
-  }, [invoicesData]);
+  }, [invoicesData, t]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -179,7 +181,7 @@ export const InvoicesView = ({ tokens, projectId }: InvoicesViewProps) => {
       {/* Invoices Grid */}
       {isLoading ? (
         <div className="text-center py-12">
-          <p className={tokens.isDark ? "text-white/50" : "text-[#A3AED0]"}>Loading invoices...</p>
+          <p className={tokens.isDark ? "text-white/50" : "text-[#A3AED0]"}>{t("dashboard.invoice.loadingInvoices")}</p>
         </div>
       ) : invoicesData.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -191,7 +193,7 @@ export const InvoicesView = ({ tokens, projectId }: InvoicesViewProps) => {
             {/* Top Section */}
             <div className="flex flex-col gap-1 px-4 py-2">
                 {/* Invoice ID */}
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between">
                   <span className={`text-base font-semibold ${tokens.isDark ? "text-white" : "text-[#607DAE]"}`}>
                     #{invoice.invoiceNumber}
                   </span>
@@ -210,7 +212,7 @@ export const InvoicesView = ({ tokens, projectId }: InvoicesViewProps) => {
                 </span>
 
                 {/* Payment Method */}
-                <div className={`flex items-center gap-2 font-medium ${tokens.isDark ? "text-white/70" : "text-[#071FD7]"}`}>
+                <div className={`flex flex-wrap items-center gap-2 font-medium ${tokens.isDark ? "text-white/70" : "text-[#071FD7]"}`}>
                   <BankTasksIcon className="h-4 w-4" />
                   <span className={`text-sm ${tokens.isDark ? "text-white/70" : "text-[#071FD7]/70"}`}>
                     {invoice.paymentMethod}
@@ -221,14 +223,14 @@ export const InvoicesView = ({ tokens, projectId }: InvoicesViewProps) => {
             {/* Dates */}
             <div className="flex flex-col gap-3 px-4">
               <div className="flex items-center gap-4 pb-4">
-                <div className="flex items-center gap-2">
-                  <span className={`text-sm ${tokens.isDark ? "text-white" : "text-[#718EBF]"}`}>Created at:</span>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className={`text-sm ${tokens.isDark ? "text-white" : "text-[#718EBF]"}`}>{t("dashboard.invoice.createdAt")}:</span>
                   <span className={`text-sm font-medium ${tokens.isDark ? "text-white" : "text-[#071FD7]"}`}>
                     {invoice.createdDate}
                   </span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className={`text-sm text-[#718EBF]`}>Due date:</span>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className={`text-sm text-[#718EBF]`}>{t("dashboard.invoice.dueDate")}:</span>
                   <span className={`text-sm font-medium ${tokens.isDark ? "text-white" : "text-[#071FD7]"}`}>
                     {invoice.dueDate}
                   </span>
@@ -236,7 +238,7 @@ export const InvoicesView = ({ tokens, projectId }: InvoicesViewProps) => {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center gap-3 pb-4">
+              <div className="flex flex-wrap items-center gap-3 pb-4">
                 <button
                   type="button"
                   className={`flex-1 px-2 py-2.5 rounded-full text-sm font-medium transition-colors cursor-pointer ${
@@ -246,7 +248,7 @@ export const InvoicesView = ({ tokens, projectId }: InvoicesViewProps) => {
                   }`}
                   aria-label={`Pay invoice ${invoice.invoiceNumber}`}
                 >
-                  Pay Now
+                  {t("dashboard.invoice.payNow")}
                 </button>
                 <button
                   type="button"
@@ -258,7 +260,7 @@ export const InvoicesView = ({ tokens, projectId }: InvoicesViewProps) => {
                   }`}
                   aria-label={`View invoice ${invoice.invoiceNumber}`}
                 >
-                  View Invoice
+                  {t("dashboard.invoice.viewInvoice")}
                 </button>
               </div>
             </div>
@@ -268,7 +270,7 @@ export const InvoicesView = ({ tokens, projectId }: InvoicesViewProps) => {
       </div>
       ) : (
         <div className="text-center py-12">
-          <p className={tokens.isDark ? "text-white/50" : "text-[#A3AED0]"}>No invoices found</p>
+          <p className={tokens.isDark ? "text-white/50" : "text-[#A3AED0]"}>{t("dashboard.invoice.noInvoicesFound")}</p>
         </div>
       )}
     </div>

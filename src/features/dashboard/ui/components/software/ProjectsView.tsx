@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { PlusCircleIcon, AllProjecs, projectsCompleted, ProjectsOngoing,  ProjectsPending } from "@utilities/icons";
 import type { DashboardTokens } from "../../types";
 import { ProjectCard, type ProjectCardData } from "./ProjectCard";
@@ -8,7 +9,7 @@ import { useGetClientProjectsQuery } from "@features/dashboard/api/dashboard-api
 type ProjectsViewProps = {
   readonly tokens: DashboardTokens;
   readonly onAddProject?: () => void;
-  readonly onViewDetails?: (projectId: string) => void;
+  readonly onViewDetails?: (projectId: string, projectData: ProjectCardData) => void;
   readonly onManage?: (projectId: string) => void;
 };
 
@@ -17,6 +18,7 @@ export const ProjectsView = ({
   onViewDetails,
   onManage
 }: ProjectsViewProps) => {
+  const { t } = useTranslation("landing");
   const iconBaseColor = tokens.isDark ? "#FFFFFF" : "#2B3674";
   const [isAddNewProjectModalOpen, setIsAddNewProjectModalOpen] = useState(false);
   
@@ -27,20 +29,11 @@ export const ProjectsView = ({
   const projects = useMemo(() => {
     if (apiData?.data?.projects) {
       return apiData.data.projects.map((project: any): ProjectCardData => {
-        // Map API status to valid ProjectCardData status
-        const mapStatus = (status: string): "Active" | "Pending" | "Completed" | "Ongoing" => {
-          const statusLower = status.toLowerCase();
-          if (statusLower === "completed") return "Completed";
-          if (statusLower === "pending" || statusLower === "requested") return "Pending";
-          if (statusLower === "ongoing") return "Ongoing";
-          return "Active";
-        };
-
         return {
           id: String(project.id),
           name: project.name || "N/A",
           description: project.description || "N/A",
-          status: mapStatus(project.status || "pending"),
+          status: project.status || "pending",
           team: project.team?.map((member: any) => ({
             id: String(member.id),
             name: member.name || "N/A",
@@ -67,37 +60,37 @@ export const ProjectsView = ({
       return [
         {
           id: "all",
-          label: "All Projects",
+          label: t("dashboard.overview.allProjects"),
           value: String(apiData.data.status_cards.all || 0),
           icon: AllProjecs
         },
         {
           id: "completed",
-          label: "Completed",
+          label: t("dashboard.overview.completed"),
           value: String(apiData.data.status_cards.completed || 0),
           icon: projectsCompleted
         },
         {
           id: "ongoing",
-          label: "Ongoing",
+          label: t("dashboard.overview.ongoing"),
           value: String(apiData.data.status_cards.ongoing || 0),
           icon: ProjectsOngoing
         },
         {
           id: "pending",
-          label: "Pending",
+          label: t("dashboard.overview.pending"),
           value: String(apiData.data.status_cards.pending || 0),
           icon: ProjectsPending
         }
       ];
     }
     return [
-      { id: "all", label: "All Projects", value: "0", icon: AllProjecs },
-      { id: "completed", label: "Completed", value: "0", icon: projectsCompleted },
-      { id: "ongoing", label: "Ongoing", value: "0", icon: ProjectsOngoing },
-      { id: "pending", label: "Pending", value: "0", icon: ProjectsPending }
+      { id: "all", label: t("dashboard.overview.allProjects"), value: "0", icon: AllProjecs },
+      { id: "completed", label: t("dashboard.overview.completed"), value: "0", icon: projectsCompleted },
+      { id: "ongoing", label: t("dashboard.overview.ongoing"), value: "0", icon: ProjectsOngoing },
+      { id: "pending", label: t("dashboard.overview.pending"), value: "0", icon: ProjectsPending }
     ];
-  }, [apiData]);
+  }, [apiData, t]);
 
   return (
     <>
@@ -133,14 +126,14 @@ export const ProjectsView = ({
         <button
           type="button"
           onClick={() => setIsAddNewProjectModalOpen(true)}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-full font-medium transition-colors cursor-pointer ${
+          className={`flex flex-wrap items-center gap-2 px-4 py-2.5 rounded-full font-medium transition-colors cursor-pointer ${
             tokens.isDark
               ? "bg-[#071FD7] text-white hover:bg-[#071FD7]/90"
               : "bg-[#071FD7] text-white hover:bg-[#071FD7]/90"
           }`}
         >
           <PlusCircleIcon className="h-5 w-5 text-white" />
-          <span>Add New Project</span>
+          <span>{t("dashboard.overview.addProject", { defaultValue: "Add New Project" })}</span>
         </button>
       </div>
 
@@ -156,7 +149,12 @@ export const ProjectsView = ({
               key={project.id}
               project={project}
               tokens={tokens}
-              onViewDetails={onViewDetails}
+              onViewDetails={(projectId) => {
+                // Pass project data via navigation state
+                if (onViewDetails) {
+                  onViewDetails(projectId, project);
+                }
+              }}
               onManage={onManage}
             />
           ))}

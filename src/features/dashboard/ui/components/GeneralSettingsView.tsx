@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import toast from "react-hot-toast";
 import { EditIcon, EmailIcon, SettingsIcon, CloseIcon, KeyIcon, PlusCircleIcon, CardIcon } from "@utilities/icons";
 import type { DashboardTokens } from "../types";
-import { TwoFactorAuthModal } from "./modals/TwoFactorAuthModal";
+import { AddEmailModal } from "./modals/AddEmailModal";
 import { AddNewEmailModal } from "./modals/AddNewEmailModal";
 import { ChangeEmailModal } from "./modals/ChangeEmailModal";
 import { ChangePasswordModal } from "./modals/ChangePasswordModal";
 import { PaymentMethodsModal } from "./app/settings/modals/PaymentMethodsModal";
+import { useGetClientSettingsQuery, useGetTwoFactorQuery, useEnableTwoFactorMutation, useDisableTwoFactorMutation, useVerifyTwoFactorMutation, useGetClientEmailsQuery, useChangeProfileMutation, useGetPaymentMethodsQuery } from "../../api/dashboard-api";
 
 // Camera Icon for image upload
 const CameraIcon = () => (
@@ -74,33 +77,159 @@ export const GeneralSettingsView = ({
   primaryColor = "#4318FF",
   buttonBackgroundColor = "#E6E9FB"
 }: GeneralSettingsViewProps) => {
-  const [twoFactorEnabled, setTwoFactorEnabled] = useState(true);
+  const { t } = useTranslation("landing");
+  const { data: clientSettings, isLoading: isLoadingSettings, refetch: refetchSettings } = useGetClientSettingsQuery();
+  const { data: twoFactorData, isLoading: isLoadingTwoFactor, refetch: refetchTwoFactor } = useGetTwoFactorQuery();
+  const { data: clientEmailsData, isLoading: isLoadingEmails } = useGetClientEmailsQuery();
+  const { data: paymentMethodsData, isLoading: isLoadingPaymentMethods } = useGetPaymentMethodsQuery();
+  const [enableTwoFactor] = useEnableTwoFactorMutation();
+  const [disableTwoFactor] = useDisableTwoFactorMutation();
+  const [verifyTwoFactor] = useVerifyTwoFactorMutation();
+  const [changeProfile, { isLoading: isChangingProfile }] = useChangeProfileMutation();
+  
+  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [twoFactorMethod, setTwoFactorMethod] = useState("Email");
-  const [currentEmail, setCurrentEmail] = useState("a----@g----.com");
-  const [currentPhone, setCurrentPhone] = useState("+20 10*******");
+  const [currentEmail, setCurrentEmail] = useState("");
   const [currentPassword] = useState("************");
-  const [isTwoFactorModalOpen, setIsTwoFactorModalOpen] = useState(false);
+  const [isTwoFactorEmailModalOpen, setIsTwoFactorEmailModalOpen] = useState(false);
   const [isAddNewEmailModalOpen, setIsAddNewEmailModalOpen] = useState(false);
   const [isChangeEmailModalOpen, setIsChangeEmailModalOpen] = useState(false);
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
   const [isPaymentMethodsModalOpen, setIsPaymentMethodsModalOpen] = useState(false);
+  const [isEditNameModalOpen, setIsEditNameModalOpen] = useState(false);
+  const [editNameValue, setEditNameValue] = useState("");
   const [accountSharingData, setAccountSharingData] = useState<readonly AccountSharingItem[]>(initialAccountSharingData);
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [userName, setUserName] = useState("");
+  const [userInitials, setUserInitials] = useState("RM");
+  const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
+  const [verificationCode, setVerificationCode] = useState("");
+  const [isDisablePasswordModalOpen, setIsDisablePasswordModalOpen] = useState(false);
+  const [disablePassword, setDisablePassword] = useState("");
+
+  const isLoading = isLoadingSettings || isLoadingTwoFactor || isLoadingEmails;
+
+  // Check if user has verified emails from API
+  const clientEmails = clientEmailsData?.data || [];
+  const hasVerifiedEmail = clientEmails.some(email => email.verified);
+
+  // Get payment methods
+  const paymentMethods = paymentMethodsData?.data || [];
+  const defaultPaymentMethod = paymentMethods.find(pm => pm.default);
+
+  // Update state when client settings are loaded
+  useEffect(() => {
+    if (clientSettings?.data?.client) {
+      const client = clientSettings.data.client;
+      setCurrentEmail(client.email || "");
+      setUserName(client.name || "");
+      
+      // Generate initials from name
+      if (client.name) {
+        const nameParts = client.name.split(" ");
+        const initials = nameParts.length >= 2 
+          ? `${nameParts[0][0]}${nameParts[1][0]}`.toUpperCase()
+          : client.name.substring(0, 2).toUpperCase();
+        setUserInitials(initials);
+      }
+      
+      // Set profile image if available
+      if (client.photo) {
+        setProfileImage(client.photo.startsWith("http") ? client.photo : `https://back.codgoo.com/codgoo/public/storage/${client.photo}`);
+      }
+    }
+  }, [clientSettings]);
+
+  // Update state when two-factor data is loaded
+  useEffect(() => {
+    if (twoFactorData?.data) {
+      const twoFactor = twoFactorData.data;
+      setTwoFactorEnabled(twoFactor.enabled);
+      const method = twoFactor.method || "email";
+      setTwoFactorMethod(method.charAt(0).toUpperCase() + method.slice(1));
+    }
+  }, [twoFactorData]);
+
+  // Handle two-factor toggle
+  const handleTwoFactorToggle = async (enabled: boolean) => {
+    // Check if user has verified emails from API
+    if (!hasVerifiedEmail) {
+      toast.error("Please add and verify an email first to manage two-factor authentication");
+      setIsTwoFactorEmailModalOpen(true);
+      return;
+    }
+
+    try {
+      if (enabled) {
+        await enableTwoFactor({ method: twoFactorMethod.toLowerCase() }).unwrap();
+        toast.success("Verification code sent to your email");
+        setIsVerifyModalOpen(true);
+      } else {
+        setIsDisablePasswordModalOpen(true);
+      }
+    } catch (error) {
+      console.error("Failed to toggle two-factor:", error);
+      toast.error("Failed to update two-factor authentication");
+    }
+  };
+
+  // Handle disable 2FA with password confirmation
+  const handleDisableTwoFactor = async () => {
+    const password = disablePassword.trim();
+    if (!password) {
+      toast.error("Please enter your password");
+      return;
+    }
+    try {
+      await disableTwoFactor({ password }).unwrap();
+      setTwoFactorEnabled(false);
+      setIsDisablePasswordModalOpen(false);
+      setDisablePassword("");
+      toast.success("Two-factor authentication disabled");
+      refetchTwoFactor();
+    } catch (error: any) {
+      console.error("Failed to disable two-factor:", error);
+      const errorMessage = error?.data?.message || "Failed to disable two-factor authentication";
+      toast.error(errorMessage);
+    }
+  };
+
+  // Handle verification code submit
+  const handleVerifyCode = async () => {
+    if (!verificationCode.trim()) {
+      toast.error("Please enter the verification code");
+      return;
+    }
+    try {
+      await verifyTwoFactor({ code: verificationCode }).unwrap();
+      setTwoFactorEnabled(true);
+      setIsVerifyModalOpen(false);
+      setVerificationCode("");
+      toast.success("Two-factor authentication enabled successfully");
+      refetchTwoFactor();
+    } catch (error) {
+      console.error("Failed to verify code:", error);
+      toast.error("Invalid verification code");
+    }
+  };
 
   const cardClass = `${tokens.cardBase} rounded-[20px] p-6 transition-colors`;
   const sectionTitleClass = `text-xl font-bold ${tokens.isDark ? "text-white" : "text-black"}`;
   const labelClass = `text-sm font-medium ${tokens.isDark ? "text-white/70" : "text-black"}`;
   const valueClass = `text-sm md:text-base ${tokens.isDark ? "text-white" : "text-black"}`;
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        setProfileImage(result);
-      };
-      reader.readAsDataURL(file);
+      try {
+        await changeProfile({ photo: file }).unwrap();
+        toast.success("Profile photo updated successfully");
+        refetchSettings();
+      } catch (error: any) {
+        console.error("Failed to update profile photo:", error);
+        const errorMessage = error?.data?.message || "Failed to update profile photo";
+        toast.error(errorMessage);
+      }
     }
   };
 
@@ -116,16 +245,40 @@ export const GeneralSettingsView = ({
     input.click();
   };
 
+  const handleNameChange = async () => {
+    if (!editNameValue.trim()) {
+      toast.error("Please enter a name");
+      return;
+    }
+    try {
+      await changeProfile({ name: editNameValue.trim() }).unwrap();
+      toast.success("Name updated successfully");
+      setIsEditNameModalOpen(false);
+      refetchSettings();
+    } catch (error: any) {
+      console.error("Failed to update name:", error);
+      const errorMessage = error?.data?.message || "Failed to update name";
+      toast.error(errorMessage);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-4">
+      {/* Loading State */}
+      {isLoading && (
+        <div className={`${cardClass} flex items-center justify-center py-8`}>
+          <span className={tokens.subtleText}>Loading settings...</span>
+        </div>
+      )}
+
       {/* Profile Card */}
-      <div className={`${cardClass} flex items-center justify-between`}>
+      <div className={`${cardClass} flex flex-wrap items-center justify-between`}>
         <div className="flex items-center gap-4">
           <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center hover:shadow-lg transition-shadow group">
             {profileImage ? (
               <img src={profileImage} alt="Profile" className="w-full h-full object-cover rounded-full" />
             ) : (
-              <span className="text-2xl font-bold text-white">RM</span>
+              <span className="text-2xl font-bold text-white">{userInitials}</span>
             )}
             {/* Camera Icon Overlay */}
             <button
@@ -135,26 +288,39 @@ export const GeneralSettingsView = ({
               aria-label="Change profile image"
               title="Change profile image"
               onClick={triggerFileInput}
+              disabled={isChangingProfile}
             >
               <CameraIcon />
             </button>
           </div>
           <div className="flex flex-col gap-1">
-            <h2 className={sectionTitleClass}>Reham Mostafa</h2>
-            <span className={`text-sm ${tokens.subtleText}`}>Admin</span>
+            <h2 className={sectionTitleClass}>{userName || "User"}</h2>
+            <span className={`text-sm ${tokens.subtleText}`}>User</span>
           </div>
         </div>
+        <button
+          type="button"
+          onClick={() => {
+            setEditNameValue(userName);
+            setIsEditNameModalOpen(true);
+          }}
+          className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${tokens.isDark ? tokens.buttonGhost : ""}`}
+          style={tokens.isDark ? {} : { backgroundColor: buttonBackgroundColor }}
+          aria-label="Edit name"
+        >
+          <EditIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: primaryColor }} />
+        </button>
       </div>
 
       {/* Main Grid: First card in left column, Second and Third cards in right column */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
         {/* Left Column: Two-Factor Authentication Section */}
         <div className={`${cardClass} flex flex-col h-full`}>
-          <div className="flex items-center justify-between">
-            <h2 className={sectionTitleClass}>Two-Factor Authentication (2FA)</h2>
+          <div className="flex flex-wrap items-center justify-between">
+            <h2 className={sectionTitleClass}>{t("dashboard.settings.twoFactorAuth")}</h2>
             <button
               type="button"
-              onClick={() => setIsTwoFactorModalOpen(true)}
+              onClick={() => setIsTwoFactorEmailModalOpen(true)}
               className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${tokens.isDark ? tokens.buttonGhost : ""}`}
               style={tokens.isDark ? {} : { backgroundColor: buttonBackgroundColor }}
               aria-label="Edit 2FA settings"
@@ -163,19 +329,19 @@ export const GeneralSettingsView = ({
             </button>
           </div>
           <p className={`text-sm mb-6 ${tokens.subtleText}`}>
-            Add an extra layer of security to your account
+            {t("dashboard.settings.addExtraLayerSecurity")}
           </p>
 
           <div className="flex flex-col gap-4">
             {/* Status Toggle */}
-            <div className="flex items-center justify-between">
-              <span className={sectionTitleClass}>Status</span>
-              <ToggleSwitch checked={twoFactorEnabled} onChange={setTwoFactorEnabled} primaryColor={primaryColor} />
+            <div className="flex flex-wrap items-center justify-between">
+              <span className={sectionTitleClass}>{t("dashboard.settings.status")}</span>
+              <ToggleSwitch checked={twoFactorEnabled} onChange={handleTwoFactorToggle} primaryColor={primaryColor} />
             </div>
 
             {/* Method */}
-            <div className="flex items-center justify-between">
-              <span className={labelClass}>Method</span>
+            <div className="flex flex-wrap items-center justify-between">
+              <span className={labelClass}>{t("dashboard.settings.method")}</span>
               <button
                 type="button"
                 className="px-6 py-2 text-sm font-semibold rounded-full"
@@ -191,17 +357,17 @@ export const GeneralSettingsView = ({
         <div className="flex flex-col gap-4 h-full">
           {/* Account Security Section */}
           <div className={`${cardClass} flex-1`}>
-            <h2 className={`${sectionTitleClass} mb-6`}>Account Security</h2>
+            <h2 className={`${sectionTitleClass} mb-6`}>{t("dashboard.settings.accountSecurity")}</h2>
 
             <div className="flex flex-col gap-6">
               {/* Current Email */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center justify-between">
+                <div className="flex flex-wrap items-center gap-3">
                   <div className={`flex h-9 w-9 items-center justify-center rounded-full ${tokens.isDark ? tokens.buttonGhost : ""}`} style={tokens.isDark ? {} : { backgroundColor: buttonBackgroundColor }}>
                     <EmailIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: primaryColor }} />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <span className={labelClass}>Current Email</span>
+                    <span className={labelClass}>{t("dashboard.settings.currentEmail")}</span>
                     <span className={valueClass}>{currentEmail}</span>
                   </div>
                 </div>
@@ -217,13 +383,13 @@ export const GeneralSettingsView = ({
               </div>
 
               {/* Password */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center justify-between">
+                <div className="flex flex-wrap items-center gap-3">
                   <div className={`flex h-9 w-9 items-center justify-center rounded-full ${tokens.isDark ? tokens.buttonGhost : ""}`} style={tokens.isDark ? {} : { backgroundColor: buttonBackgroundColor }}>
                     <KeyIcon className={`h-4 w-4`} style={tokens.isDark ? {} : { color: primaryColor }} />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <span className={labelClass}>Password</span>
+                    <span className={labelClass}>{t("dashboard.settings.password")}</span>
                     <span className={valueClass}>{currentPassword}</span>
                   </div>
                 </div>
@@ -242,8 +408,8 @@ export const GeneralSettingsView = ({
 
           {/* Payment Methods Section */}
           <div className={cardClass}>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className={sectionTitleClass}>Payment Methods</h2>
+            <div className="flex flex-wrap items-center justify-between mb-4">
+              <h2 className={sectionTitleClass}>{t("dashboard.settings.paymentMethods")}</h2>
               <button
                 type="button"
                 onClick={() => setIsPaymentMethodsModalOpen(true)}
@@ -255,33 +421,43 @@ export const GeneralSettingsView = ({
               </button>
             </div>
 
-            <div className="flex items-center gap-3">
-              <div className={`flex h-9 w-9 items-center justify-center rounded-full ${tokens.isDark ? tokens.buttonGhost : ""}`} style={tokens.isDark ? {} : { backgroundColor: buttonBackgroundColor }}>
-                <CardIcon className={`h-5 w-5`} style={tokens.isDark ? {} : { color: primaryColor }} />
+            {isLoadingPaymentMethods ? (
+              <div className="flex items-center justify-center py-4">
+                <span className={tokens.subtleText}>Loading...</span>
               </div>
-              <div>
-                <span className={valueClass}>Mastercard .... 5555</span>
+            ) : defaultPaymentMethod ? (
+              <div className="flex flex-wrap items-center gap-3">
+                <div className={`flex h-9 w-9 items-center justify-center rounded-full ${tokens.isDark ? tokens.buttonGhost : ""}`} style={tokens.isDark ? {} : { backgroundColor: buttonBackgroundColor }}>
+                  <CardIcon className={`h-5 w-5`} style={tokens.isDark ? {} : { color: primaryColor }} />
+                </div>
+                <div>
+                  <span className={valueClass}>{defaultPaymentMethod.card_brand} .... {defaultPaymentMethod.card_last_four}</span>
+                </div>
+                <span className="px-3 py-1.5 text-sm font-medium rounded-full ms-10" style={{ backgroundColor: buttonBackgroundColor, color: primaryColor }}>
+                  {t("dashboard.settings.default")}
+                </span>
               </div>
-              <span className="px-3 py-1.5 text-sm font-medium rounded-full ms-10" style={{ backgroundColor: buttonBackgroundColor, color: primaryColor }}>
-                Default
-              </span>
-            </div>
+            ) : (
+              <div className="flex flex-wrap items-center gap-3">
+                <span className={tokens.subtleText}>{t("dashboard.settings.noPaymentMethods")}</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
       {/* Account Sharing Section */}
       <div className={cardClass}>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className={sectionTitleClass}>Account Sharing</h2>
+        <div className="flex flex-wrap items-center justify-between mb-6">
+          <h2 className={sectionTitleClass}>{t("dashboard.settings.accountSharing")}</h2>
           <button
             type="button"
             onClick={() => setIsAddNewEmailModalOpen(true)}
-            className="px-4 py-2.5 text-white text-sm font-semibold rounded-full flex items-center gap-2"
+            className="px-4 py-2.5 text-white text-sm font-semibold rounded-full flex flex-wrap items-center gap-2"
             style={{ backgroundColor: primaryColor }}
           >
             <PlusCircleIcon className="h-5 w-5 text-white" />
-            <span>Add New Email</span>
+            <span>{t("dashboard.settings.accountSharingView")}</span>
           </button>
         </div>
 
@@ -290,11 +466,11 @@ export const GeneralSettingsView = ({
           <table className="w-full">
             <thead>
               <tr className={`border-b ${tokens.divider}`}>
-                <th className="text-left py-3 px-4 text-sm text-[#B6B6B6] font-medium">EMAIL</th>
-                <th className="text-left py-3 px-4 text-sm text-[#B6B6B6] font-medium">SOFTWARE SERVICES</th>
-                <th className="text-left py-3 px-4 text-sm text-[#B6B6B6] font-medium">APPS SERVICES</th>
-                <th className="text-left py-3 px-4 text-sm text-[#B6B6B6] font-medium">Cloud Services</th>
-                <th className="text-left py-3 px-4 text-sm text-[#B6B6B6] font-medium">ACTIONS</th>
+                <th className="text-start py-3 px-4 text-sm text-[#B6B6B6] font-medium">{t("dashboard.table.email")}</th>
+                <th className="text-start py-3 px-4 text-sm text-[#B6B6B6] font-medium">{t("dashboard.table.softwareServices")}</th>
+                <th className="text-start py-3 px-4 text-sm text-[#B6B6B6] font-medium">{t("dashboard.table.appsServices")}</th>
+                <th className="text-start py-3 px-4 text-sm text-[#B6B6B6] font-medium">{t("dashboard.table.cloudServices")}</th>
+                <th className="text-start py-3 px-4 text-sm text-[#B6B6B6] font-medium">{t("dashboard.table.actions")}</th>
               </tr>
             </thead>
             <tbody>
@@ -305,7 +481,7 @@ export const GeneralSettingsView = ({
                   <td className={`py-3 px-4 ${valueClass}`}>{item.appsServices}</td>
                   <td className={`py-3 px-4 ${valueClass}`}>{item.cloudServices}</td>
                   <td className="py-3 px-4">
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <button
                         type="button"
                         className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${tokens.isDark ? tokens.buttonGhost : ""}`}
@@ -331,21 +507,15 @@ export const GeneralSettingsView = ({
         </div>
       </div>
 
-      {/* Two-Factor Authentication Modal */}
-      <TwoFactorAuthModal
+      {/* Two-Factor Add Email Modal */}
+      <AddEmailModal
         tokens={tokens}
-        isOpen={isTwoFactorModalOpen}
-        onClose={() => setIsTwoFactorModalOpen(false)}
-        initialStatus={twoFactorEnabled}
-        initialMethod={twoFactorMethod}
-        initialEmail={currentEmail}
-        initialPhone={currentPhone}
-        onSave={(data) => {
-          setTwoFactorEnabled(data.status);
-          setTwoFactorMethod(data.method);
-          setCurrentEmail(data.email);
-          setCurrentPhone(data.phone);
+        isOpen={isTwoFactorEmailModalOpen}
+        onClose={() => setIsTwoFactorEmailModalOpen(false)}
+        onAddEmail={(newEmail) => {
+          setCurrentEmail(newEmail);
         }}
+        primaryColor={primaryColor}
       />
 
       {/* Add New Email Modal */}
@@ -374,6 +544,7 @@ export const GeneralSettingsView = ({
 
           setAccountSharingData([...accountSharingData, newItem]);
         }}
+        primaryColor={primaryColor}
       />
 
       {/* Change Email Modal */}
@@ -385,6 +556,7 @@ export const GeneralSettingsView = ({
         onSave={(data) => {
           setCurrentEmail(data.newEmail);
         }}
+        primaryColor={primaryColor}
       />
 
       {/* Change Password Modal */}
@@ -395,6 +567,7 @@ export const GeneralSettingsView = ({
         onSave={(data) => {
           console.log("Password changed", data);
         }}
+        primaryColor={primaryColor}
       />
 
       {/* Payment Methods Modal */}
@@ -406,6 +579,169 @@ export const GeneralSettingsView = ({
           console.log("Payment method added", data);
         }}
       />
+
+      {/* Two-Factor Verification Modal */}
+      {isVerifyModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className={`${tokens.cardBase} rounded-[20px] p-6 w-full max-w-md mx-4`}>
+            <div className="flex flex-wrap items-center justify-between mb-6">
+              <h2 className={sectionTitleClass}>Verify Two-Factor Authentication</h2>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsVerifyModalOpen(false);
+                  setVerificationCode("");
+                }}
+                className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${tokens.isDark ? tokens.buttonGhost : ""}`}
+                style={tokens.isDark ? {} : { backgroundColor: buttonBackgroundColor }}
+              >
+                <CloseIcon className="h-4 w-4" style={tokens.isDark ? {} : { color: primaryColor }} />
+              </button>
+            </div>
+            <p className={`text-sm mb-4 ${tokens.subtleText}`}>
+              A verification code has been sent to your email. Please enter it below.
+            </p>
+            <input
+              type="text"
+              value={verificationCode}
+              onChange={(e) => setVerificationCode(e.target.value)}
+              placeholder="Enter verification code"
+              className={`w-full px-4 py-3 rounded-xl border mb-4 ${tokens.isDark ? "bg-white/5 border-white/10 text-white" : "bg-gray-50 border-gray-200 text-black"}`}
+            />
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsVerifyModalOpen(false);
+                  setVerificationCode("");
+                }}
+                className={`flex-1 px-4 py-3 rounded-xl font-semibold ${tokens.isDark ? "bg-white/10 text-white" : "bg-gray-100 text-black"}`}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleVerifyCode}
+                className="flex-1 px-4 py-3 rounded-xl font-semibold text-white"
+                style={{ backgroundColor: primaryColor }}
+              >
+                Verify
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Disable 2FA Password Confirmation Modal */}
+      {isDisablePasswordModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className={`${tokens.cardBase} rounded-[20px] p-6 w-full max-w-md mx-4`}>
+            <div className="flex flex-wrap items-center justify-between mb-6">
+              <h2 className={sectionTitleClass}>Confirm Password</h2>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsDisablePasswordModalOpen(false);
+                  setDisablePassword("");
+                }}
+                className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${tokens.isDark ? tokens.buttonGhost : ""}`}
+                style={tokens.isDark ? {} : { backgroundColor: buttonBackgroundColor }}
+              >
+                <CloseIcon className="h-4 w-4" style={tokens.isDark ? {} : { color: primaryColor }} />
+              </button>
+            </div>
+            <p className={`text-sm mb-4 ${tokens.subtleText}`}>
+              Please enter your password to disable two-factor authentication.
+            </p>
+            <input
+              type="password"
+              value={disablePassword}
+              onChange={(e) => setDisablePassword(e.target.value)}
+              placeholder="Enter your password"
+              className={`w-full px-4 py-3 rounded-xl border mb-4 ${tokens.isDark ? "bg-white/5 border-white/10 text-white" : "bg-gray-50 border-gray-200 text-black"}`}
+            />
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsDisablePasswordModalOpen(false);
+                  setDisablePassword("");
+                }}
+                className={`flex-1 px-4 py-3 rounded-xl font-semibold ${tokens.isDark ? "bg-white/10 text-white" : "bg-gray-100 text-black"}`}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleDisableTwoFactor}
+                className="flex-1 px-4 py-3 rounded-xl font-semibold text-white bg-red-500"
+              >
+                Disable
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Name Modal */}
+      {isEditNameModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className={`${tokens.cardBase} rounded-[20px] p-6 w-full max-w-md mx-4`}>
+            <div className="flex flex-wrap items-center justify-between mb-6">
+              <h2 className={sectionTitleClass}>Edit Name</h2>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsEditNameModalOpen(false);
+                  setEditNameValue("");
+                }}
+                className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${tokens.isDark ? tokens.buttonGhost : ""}`}
+                style={tokens.isDark ? {} : { backgroundColor: buttonBackgroundColor }}
+              >
+                <CloseIcon className="h-4 w-4" style={tokens.isDark ? {} : { color: primaryColor }} />
+              </button>
+            </div>
+            <input
+              type="text"
+              value={editNameValue}
+              onChange={(e) => setEditNameValue(e.target.value)}
+              placeholder="Enter your name"
+              className={`w-full px-4 py-3 rounded-xl border mb-4 ${tokens.isDark ? "bg-white/5 border-white/10 text-white" : "bg-gray-50 border-gray-200 text-black"}`}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleNameChange();
+                }
+              }}
+            />
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsEditNameModalOpen(false);
+                  setEditNameValue("");
+                }}
+                className={`flex-1 px-4 py-3 rounded-full font-semibold ${
+                  tokens.isDark
+                    ? "border border-white/20 text-white hover:bg-white/10 bg-transparent"
+                    : "bg-transparent hover:opacity-80"
+                }`}
+                style={tokens.isDark ? {} : { color: primaryColor, borderWidth: "1px", borderStyle: "solid", borderColor: primaryColor }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleNameChange}
+                disabled={isChangingProfile}
+                className="flex-1 px-4 py-3 rounded-full font-semibold text-white disabled:opacity-50"
+                style={{ backgroundColor: primaryColor }}
+              >
+                {isChangingProfile ? "Saving..." : "Save"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
